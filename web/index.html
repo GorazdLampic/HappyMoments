@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HappyMoments - Celebrate Life's Special Numbers</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Celebrate life's special numbers - track birthdays, anniversaries, and find amazing numerical milestones!">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HappyMoments">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Icons (SVG works immediately, PNGs optional) -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>HappyMoments</h1>
+            <p class="tagline">Every number tells a story. Find yours and celebrate!</p>
+        </header>
+
+        <!-- Set Switcher (for multiple event sets) -->
+        <div id="setSwitcher" class="set-switcher hidden">
+            <select id="currentSetSelect"></select>
+            <button id="renameCurrentSetBtn" class="btn-rename-set" title="Rename this set">✏️</button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <nav id="tabNav" class="tab-nav hidden">
+            <button class="tab-btn active" data-tab="milestones">Individual</button>
+            <button class="tab-btn" data-tab="combined">Combined</button>
+            <button class="tab-btn" data-tab="events">Events</button>
+            <button class="tab-btn" data-tab="settings">Settings</button>
+        </nav>
+
+        <!-- Onboarding Section -->
+        <section id="onboarding" class="card onboarding-card">
+            <h2>Welcome!</h2>
+            <p>Start tracking special moments in your life. When did your journey begin?</p>
+
+            <div class="form-group">
+                <label for="birthName">Event Name</label>
+                <input type="text" id="birthName" value="My Birthday" required>
+            </div>
+
+            <div class="form-group">
+                <label for="birthDate">Date</label>
+                <input type="date" id="birthDate" required>
+            </div>
+
+            <button id="startBtn" class="btn-primary">Discover My Milestones</button>
+        </section>
+
+        <!-- Individual Milestones Tab Content (PRIMARY) -->
+        <section id="milestonesTab" class="tab-content hidden">
+            <!-- Quick Find - Always visible at top -->
+            <div class="quick-find-bar">
+                <div class="quick-find-label">🔍 Find:</div>
+                <input type="number" id="calcNumber" placeholder="10000" min="1" class="quick-find-input">
+                <select id="calcUnit" class="quick-find-select">
+                    <option value="seconds">sec</option>
+                    <option value="minutes">min</option>
+                    <option value="hours">hrs</option>
+                    <option value="days" selected>days</option>
+                    <option value="weeks">wks</option>
+                    <option value="months">mo</option>
+                    <option value="years">yrs</option>
+                </select>
+                <button id="calcBtn" class="btn-calc-small">Go</button>
+            </div>
+
+            <!-- Calculator Result (shows when searched) -->
+            <div id="calcResult" class="calc-result hidden"></div>
+
+            <!-- Person Filter - Switch between people -->
+            <div id="personFilter" class="person-filter">
+                <!-- Dynamically populated with person buttons -->
+            </div>
+
+            <!-- Milestones by Event -->
+            <div class="card milestones-card">
+                <div class="section-header">
+                    <h2 id="milestonesTitle">Upcoming Milestones</h2>
+                    <button id="refreshMilestonesBtn" class="btn-small">Refresh</button>
+                </div>
+                <div id="milestonesColumns" class="milestones-columns"></div>
+            </div>
+
+            <!-- Share Section - PRIORITY -->
+            <div class="card share-card share-card-priority">
+                <h3>🎉 Share the Joy!</h3>
+                <p class="card-description">Tap a milestone above, then share it with friends!</p>
+                <div id="sharePreview" class="share-preview"></div>
+                <div class="share-buttons">
+                    <button id="whatsappShareBtn" class="btn-primary btn-whatsapp btn-large">
+                        <span class="btn-icon">💬</span> Share via WhatsApp
+                    </button>
+                    <button id="copyShareBtn" class="btn-secondary">📋 Copy Message</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Combined Milestones Tab Content -->
+        <section id="combinedTab" class="tab-content hidden">
+            <div class="card">
+                <div class="section-header">
+                    <h2>Combined Milestones</h2>
+                    <button id="refreshCombinedBtn" class="btn-small">Refresh</button>
+                </div>
+                <p class="card-description">When multiple events add up to something special - great reasons to celebrate together!</p>
+                <div id="combinedMilestonesContent" class="combined-milestones"></div>
+            </div>
+
+            <!-- Combined Share Section -->
+            <div class="card share-card" id="combinedShareCard">
+                <h3>Share This Moment</h3>
+                <p class="card-description">Share a combined milestone with those involved!</p>
+                <div id="combinedSharePreview" class="share-preview"></div>
+                <div class="share-buttons">
+                    <button id="copyCombinedShareBtn" class="btn-secondary">Copy Message</button>
+                    <button id="whatsappCombinedShareBtn" class="btn-primary btn-whatsapp">Share via WhatsApp</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Tab Content -->
+        <section id="eventsTab" class="tab-content hidden">
+            <div class="card">
+                <h2>My Events</h2>
+                <p class="card-description">Add birthdays, anniversaries, and special dates you want to track.</p>
+
+                <!-- Events List -->
+                <div id="eventsList" class="events-list"></div>
+
+                <!-- Simple Add Event Form -->
+                <div class="add-event-form">
+                    <h3>Add Event</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <input type="text" id="newEventName" placeholder="e.g., Mom's Birthday, Wedding Day" list="eventSuggestions">
+                            <datalist id="eventSuggestions">
+                                <option value="Mom's Birthday">
+                                <option value="Dad's Birthday">
+                                <option value="Partner's Birthday">
+                                <option value="Son's Birthday">
+                                <option value="Daughter's Birthday">
+                                <option value="Wedding Anniversary">
+                                <option value="First Met Partner">
+                                <option value="Started Job">
+                                <option value="Graduation Day">
+                            </datalist>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <select id="newEventType">
+                                <option value="birthday">Birthday</option>
+                                <option value="beginning">Beginning</option>
+                                <option value="milestone">Milestone</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <input type="date" id="newEventDate">
+                        </div>
+                        <button id="addEventBtn" class="btn-add">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Event Modal -->
+            <div id="editModal" class="modal hidden">
+                <div class="modal-content">
+                    <h3>Edit Event</h3>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="editEventName">
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="editEventType">
+                            <option value="birthday">Birthday</option>
+                            <option value="beginning">Beginning</option>
+                            <option value="milestone">Milestone</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="editEventDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="editEventNotes" placeholder="Add a note about this event..." rows="2"></textarea>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="saveEditBtn" class="btn-primary">Save</button>
+                        <button id="cancelEditBtn" class="btn-secondary">Cancel</button>
+                        <button id="deleteEditBtn" class="btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Settings Tab Content -->
+        <section id="settingsTab" class="tab-content hidden">
+            <!-- Event Connections -->
+            <div class="card">
+                <h2>Event Connections</h2>
+                <p class="card-description">Select which events to combine for combined milestones.</p>
+                <div id="connectionMatrix" class="connection-matrix"></div>
+            </div>
+
+            <!-- Combination Types -->
+            <div class="card">
+                <h2>Combination Types</h2>
+                <div class="combo-explanation">
+                    <strong>Find reasons to celebrate together!</strong>
+                    <em>Example: "Our family turns 100 today!" or "We've been friends for half my life!"</em>
+                </div>
+                <div class="combination-types">
+                    <label class="combo-type-option">
+                        <input type="checkbox" data-combo-type="sum" checked>
+                        <span>Combined totals ("Together we're 100!")</span>
+                    </label>
+                    <label class="combo-type-option">
+                        <input type="checkbox" data-combo-type="ratio" checked>
+                        <span>Fun ratios ("I'm 3x your age, kiddo!")</span>
+                    </label>
+                    <label class="combo-type-option">
+                        <input type="checkbox" data-combo-type="duration" checked>
+                        <span>Time comparisons ("Friends for half my life!")</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Lucky Numbers -->
+            <div class="card">
+                <h2>My Lucky Digits</h2>
+                <div class="digit-selector">
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="0"> <span>0</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="1"> <span>1</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="2"> <span>2</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="3"> <span>3</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="4"> <span>4</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="5"> <span>5</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="6"> <span>6</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="7" checked> <span>7</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="8"> <span>8</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="9"> <span>9</span></label>
+                </div>
+            </div>
+
+            <!-- Number Patterns -->
+            <div class="card">
+                <h2>Number Patterns</h2>
+                <div class="pattern-options">
+                    <label class="pattern-option">
+                        <input type="checkbox" data-pattern="powers" checked>
+                        <span>Round Numbers (1000, 5000, 10000...)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-pattern="repdigits" checked>
+                        <span>Repdigits (111, 2222, 77777...)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-pattern="alternating" checked>
+                        <span>Alternating (1212, 737373...)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-pattern="palindromes" checked>
+                        <span>Palindromes (12321, 1357531...)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-pattern="sequential" checked>
+                        <span>Sequential (123, 4321...)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-pattern="scientific" checked>
+                        <span>Scientific (Pi, e, Golden Ratio)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-pattern="lucky">
+                        <span>My Lucky Digit Patterns</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Custom Numbers -->
+            <div class="card">
+                <h2>Custom Special Numbers</h2>
+                <div class="custom-numbers-list" id="customNumbersList"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 2;">
+                        <input type="number" id="customNumberInput" placeholder="Enter a number">
+                    </div>
+                    <button id="addCustomNumberBtn" class="btn-add">+</button>
+                </div>
+                <div class="preset-numbers">
+                    <span>Quick add:</span>
+                    <button class="preset-btn" data-number="42">42</button>
+                    <button class="preset-btn" data-number="1337">1337</button>
+                    <button class="preset-btn" data-number="365">365</button>
+                    <button class="preset-btn" data-number="1000000">1M</button>
+                </div>
+            </div>
+
+            <!-- Scientific Constants -->
+            <div class="card">
+                <h2>Scientific Constants</h2>
+                <div class="pattern-options">
+                    <label class="pattern-option">
+                        <input type="checkbox" data-constant="pi" checked>
+                        <span>Pi (314, 3141, 31415...)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-constant="e" checked>
+                        <span>Euler's e (271, 2718...)</span>
+                    </label>
+                    <label class="pattern-option">
+                        <input type="checkbox" data-constant="phi" checked>
+                        <span>Golden Ratio (161, 1618...)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Appearance -->
+            <div class="card">
+                <h2>Appearance</h2>
+                <label class="toggle-option">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span>Dark Mode</span>
+                </label>
+            </div>
+
+            <!-- Data Backup -->
+            <div class="card">
+                <h2>Data Backup</h2>
+                <p class="card-description">Export your data to a file or import from a previous backup.</p>
+                <div class="backup-buttons">
+                    <button id="exportDataBtn" class="btn-secondary">Export Data</button>
+                    <label class="btn-secondary import-btn">
+                        Import Data
+                        <input type="file" id="importDataInput" accept=".json" hidden>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Advanced - Multiple Event Sets -->
+            <div class="card">
+                <h2>Advanced: Event Sets</h2>
+                <p class="card-description">Create separate HappyMoments for different groups (e.g., Family, Friends, Work).</p>
+                <div id="eventSetsList" class="event-sets-list"></div>
+                <div class="add-set-form">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <input type="text" id="newSetName" placeholder="e.g., Friends, Work Buddies">
+                        </div>
+                        <button id="addSetBtn" class="btn-add">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card">
+                <button id="saveSettingsBtn" class="btn-primary">Save Settings</button>
+                <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;">Reset All Data</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="specialNumbers.js"></script>
+    <script src="milestoneCalculator.js"></script>
+    <script src="combinations.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Service Worker Registration for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('HappyMoments: Service Worker registered'))
+                    .catch(err => console.log('HappyMoments: Service Worker registration failed', err));
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Temp files
+tmpclaude-*
+nul
+
+# Dependencies
+node_modules/
+app/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Expo (legacy app/)
+app/.expo/
+
+# Claude internal
+.claude/
+
+# Build
+dist/
+build/

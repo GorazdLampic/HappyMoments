@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate HappyMoments Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        h1 { color: #667eea; }
+        .icon-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
+        .icon-item { background: white; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .icon-item img, .icon-item canvas { display: block; margin: 10px auto; border: 1px solid #ddd; }
+        .download-btn { margin-top: 10px; padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .download-btn:hover { background: #5a6fd6; }
+        .instructions { background: #e8f5e9; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .all-btns { margin: 20px 0; }
+        .all-btns button { padding: 12px 24px; font-size: 16px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>HappyMoments Icon Generator</h1>
+
+    <div class="instructions">
+        <strong>Instructions:</strong>
+        <ol>
+            <li>Click "Generate All Icons" below</li>
+            <li>Click "Download All" or download each icon individually</li>
+            <li>Save them to the <code>icons/</code> folder in your web directory</li>
+        </ol>
+    </div>
+
+    <div class="all-btns">
+        <button onclick="generateAllIcons()" class="download-btn" style="background: #4caf50;">Generate All Icons</button>
+        <button onclick="downloadAll()" class="download-btn">Download All Icons</button>
+    </div>
+
+    <div id="iconGrid" class="icon-grid"></div>
+
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const canvases = {};
+
+        function generateAllIcons() {
+            const grid = document.getElementById('iconGrid');
+            grid.innerHTML = '';
+
+            sizes.forEach(size => {
+                const div = document.createElement('div');
+                div.className = 'icon-item';
+                div.innerHTML = `
+                    <h3>${size}x${size}</h3>
+                    <canvas id="canvas-${size}" width="${size}" height="${size}"></canvas>
+                    <button class="download-btn" onclick="downloadIcon(${size})">Download icon-${size}.png</button>
+                `;
+                grid.appendChild(div);
+
+                // Draw icon
+                setTimeout(() => drawIcon(size), 100);
+            });
+        }
+
+        function drawIcon(size) {
+            const canvas = document.getElementById(`canvas-${size}`);
+            const ctx = canvas.getContext('2d');
+            canvases[size] = canvas;
+
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+
+            // Rounded rectangle background
+            const radius = size * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Scale factor
+            const s = size / 512;
+
+            // Face circle
+            ctx.beginPath();
+            ctx.arc(256 * s, 230 * s, 120 * s, 0, Math.PI * 2);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 12 * s;
+            ctx.stroke();
+
+            // Eyes
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(210 * s, 210 * s, 18 * s, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(302 * s, 210 * s, 18 * s, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Smile
+            ctx.beginPath();
+            ctx.moveTo(190 * s, 260 * s);
+            ctx.quadraticCurveTo(256 * s, 330 * s, 322 * s, 260 * s);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 12 * s;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Stars
+            drawStar(ctx, 420 * s, 120 * s, 5, 25 * s, 12 * s, '#ffd700');
+            drawStar(ctx, 92 * s, 150 * s, 5, 20 * s, 10 * s, '#ffd700');
+            drawStar(ctx, 440 * s, 375 * s, 5, 18 * s, 9 * s, '#ffd700');
+
+            // Number badge
+            ctx.beginPath();
+            ctx.arc(380 * s, 420 * s, 60 * s, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+
+            // Number text
+            ctx.fillStyle = '#667eea';
+            ctx.font = `bold ${60 * s}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('42', 380 * s, 425 * s);
+        }
+
+        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            const step = Math.PI / spikes;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function downloadIcon(size) {
+            const canvas = canvases[size];
+            const link = document.createElement('a');
+            link.download = `icon-${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadAll() {
+            sizes.forEach((size, i) => {
+                setTimeout(() => downloadIcon(size), i * 200);
+            });
+        }
+
+        // Auto-generate on load
+        window.onload = generateAllIcons;
+    </script>
+</body>
+</html>
