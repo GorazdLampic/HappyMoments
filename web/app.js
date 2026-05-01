@@ -10,6 +10,28 @@ const STORAGE_KEY_DATA = 'happyMomentsData';
 const STORAGE_KEY_SETTINGS = 'happyMomentsSettings';
 
 // ============================================================
+// TOAST NOTIFICATION SYSTEM
+// ============================================================
+
+function showToast(message, type = 'info', duration = 3000) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    // Trigger animation
+    requestAnimationFrame(() => toast.classList.add('show'));
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+// ============================================================
 // DOM ELEMENTS
 // ============================================================
 
@@ -48,6 +70,8 @@ const refreshCombinedBtn = document.getElementById('refreshCombinedBtn');
 const combinedSharePreviewEl = document.getElementById('combinedSharePreview');
 const copyCombinedShareBtn = document.getElementById('copyCombinedShareBtn');
 const whatsappCombinedShareBtn = document.getElementById('whatsappCombinedShareBtn');
+const viberCombinedShareBtn = document.getElementById('viberCombinedShareBtn');
+const emailCombinedShareBtn = document.getElementById('emailCombinedShareBtn');
 
 // Settings - connection matrix
 const connectionMatrixEl = document.getElementById('connectionMatrix');
@@ -58,6 +82,8 @@ const refreshMilestonesBtn = document.getElementById('refreshMilestonesBtn');
 const sharePreviewEl = document.getElementById('sharePreview');
 const copyShareBtn = document.getElementById('copyShareBtn');
 const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+const viberShareBtn = document.getElementById('viberShareBtn');
+const emailShareBtn = document.getElementById('emailShareBtn');
 const personFilterEl = document.getElementById('personFilter');
 const milestonesTitleEl = document.getElementById('milestonesTitle');
 
@@ -104,7 +130,8 @@ let appSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
 
 let editingEventId = null;
 let selectedMilestone = null; // For sharing
-let selectedPersonIds = []; // For person filter (empty = most special, array = selected people)
+let selectedPersonIds = []; // For person filter
+let _mostSpecialMode = false; // When true, show only very special milestones across all people
 
 // ============================================================
 // INITIALIZATION
@@ -118,9 +145,13 @@ function init() {
 }
 
 function loadDarkMode() {
-    const isDark = localStorage.getItem('happymoments_darkmode') === 'true';
-    if (isDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
+    // Default is dark. Toggle switches to light mode.
+    const isLight = localStorage.getItem('happymoments_lightmode') === 'true';
+    if (isLight) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        darkModeToggle.checked = false;
+    } else {
+        document.documentElement.removeAttribute('data-theme');
         darkModeToggle.checked = true;
     }
 }
@@ -128,17 +159,23 @@ function loadDarkMode() {
 function handleDarkModeToggle() {
     const isDark = darkModeToggle.checked;
     if (isDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
         document.documentElement.removeAttribute('data-theme');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'light');
     }
-    localStorage.setItem('happymoments_darkmode', isDark);
+    localStorage.setItem('happymoments_lightmode', !isDark);
 }
 
 function loadData() {
     const saved = localStorage.getItem(STORAGE_KEY_DATA);
     if (saved) {
-        const data = JSON.parse(saved);
+        let data;
+        try {
+            data = JSON.parse(saved);
+        } catch (e) {
+            console.error('Failed to parse saved data:', e);
+            return;
+        }
 
         // Check if this is the new multi-set format
         if (data.sets && Array.isArray(data.sets)) {
@@ -165,7 +202,7 @@ function loadData() {
             if (events.length > 0) {
                 allSets = [{
                     id: 'set_default',
-                    name: 'My HappyMoments',
+                    name: 'Family',
                     events: events,
                     connections: connections,
                     comboTypes: data.comboTypes || { sum: true, ratio: true, duration: true }
@@ -205,7 +242,13 @@ function loadCurrentSet() {
 function loadSettings() {
     const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
     if (saved) {
-        const settings = JSON.parse(saved);
+        let settings;
+        try {
+            settings = JSON.parse(saved);
+        } catch (e) {
+            console.error('Failed to parse saved settings:', e);
+            return;
+        }
         appSettings = { ...DEFAULT_SETTINGS, ...settings };
         appSettings.patterns = { ...DEFAULT_SETTINGS.patterns, ...(settings.patterns || {}) };
         appSettings.constants = { ...DEFAULT_SETTINGS.constants, ...(settings.constants || {}) };
@@ -283,6 +326,8 @@ function setupEventListeners() {
     refreshMilestonesBtn.addEventListener('click', renderMilestonesTab);
     copyShareBtn.addEventListener('click', handleCopyShare);
     whatsappShareBtn.addEventListener('click', handleWhatsAppShare);
+    if (viberShareBtn) viberShareBtn.addEventListener('click', handleViberShare);
+    if (emailShareBtn) emailShareBtn.addEventListener('click', handleEmailShare);
 
     // Milestone Calculator
     calcBtn.addEventListener('click', calculateMilestone);
@@ -294,6 +339,8 @@ function setupEventListeners() {
     refreshCombinedBtn.addEventListener('click', renderCombinedTab);
     copyCombinedShareBtn.addEventListener('click', handleCopyCombinedShare);
     whatsappCombinedShareBtn.addEventListener('click', handleWhatsAppCombinedShare);
+    if (viberCombinedShareBtn) viberCombinedShareBtn.addEventListener('click', handleViberCombinedShare);
+    if (emailCombinedShareBtn) emailCombinedShareBtn.addEventListener('click', handleEmailCombinedShare);
 
     // Settings
     addCustomNumberBtn.addEventListener('click', handleAddCustomNumber);
@@ -342,6 +389,15 @@ function switchTab(tabName) {
     eventsTab.classList.toggle('hidden', tabName !== 'events');
     settingsTab.classList.toggle('hidden', tabName !== 'settings');
 
+    const findTab = document.getElementById('findTab');
+    if (findTab) findTab.classList.toggle('hidden', tabName !== 'find');
+
+    // Clear selection state on tab switch
+    selectedMilestone = null;
+    selectedCombinedMilestone = null;
+    if (sharePreviewEl) sharePreviewEl.textContent = '';
+    if (combinedSharePreviewEl) combinedSharePreviewEl.textContent = '';
+
     if (tabName === 'milestones') {
         renderPersonFilter();
         renderMilestonesTab();
@@ -367,17 +423,35 @@ function renderPersonFilter() {
 
     personFilterEl.classList.remove('hidden');
 
-    // Build buttons: "Most Special" + each person (multi-select)
-    const isMostSpecial = selectedPersonIds.length === 0;
-    let html = `
-        <button class="person-filter-btn most-special ${isMostSpecial ? 'active' : ''}"
-                onclick="selectMostSpecial()">
-            ✨ Most Special
+    // If no selection yet, default to all people selected
+    if (selectedPersonIds.length === 0 && !_mostSpecialMode) {
+        selectedPersonIds = appData.events.map(e => e.id);
+    }
+
+    const allSelected = selectedPersonIds.length === appData.events.length;
+    const isMostSpecial = _mostSpecialMode;
+
+    let html = '<div class="person-buttons">';
+
+    // "All" button
+    html += `
+        <button class="person-filter-btn ${allSelected && !isMostSpecial ? 'active' : ''}"
+                onclick="selectAllPeople()">
+            All
         </button>
     `;
 
+    // "Most Special" button
+    html += `
+        <button class="person-filter-btn most-special ${isMostSpecial ? 'active' : ''}"
+                onclick="selectMostSpecial()">
+            Best
+        </button>
+    `;
+
+    // Individual person buttons
     appData.events.forEach(e => {
-        const isActive = selectedPersonIds.includes(e.id);
+        const isActive = selectedPersonIds.includes(e.id) && !isMostSpecial;
         html += `
             <button class="person-filter-btn ${isActive ? 'active' : ''}"
                     onclick="togglePerson('${e.id}')">
@@ -386,17 +460,41 @@ function renderPersonFilter() {
         `;
     });
 
+    html += '</div>';
     personFilterEl.innerHTML = html;
 }
 
 function selectMostSpecial() {
+    _mostSpecialMode = true;
     selectedPersonIds = [];
     renderPersonFilter();
     renderMilestonesTab();
     milestonesTitleEl.textContent = 'Most Special Milestones';
 }
 
+function selectAllPeople() {
+    _mostSpecialMode = false;
+    selectedPersonIds = appData.events.map(e => e.id);
+    renderPersonFilter();
+    renderMilestonesTab();
+    milestonesTitleEl.textContent = 'Upcoming Milestones';
+}
+
+function switchToSetFromFilter(setId) {
+    if (setId === currentSetId) return;
+    currentSetId = setId;
+    loadCurrentSet();
+    _mostSpecialMode = false;
+    selectedPersonIds = appData.events.map(e => e.id);
+    updateSetSwitcher();
+    renderPersonFilter();
+    renderMilestonesTab();
+    milestonesTitleEl.textContent = 'Upcoming Milestones';
+}
+
 function togglePerson(personId) {
+    _mostSpecialMode = false;
+
     const index = selectedPersonIds.indexOf(personId);
 
     if (index === -1) {
@@ -405,14 +503,18 @@ function togglePerson(personId) {
     } else {
         // Remove from selection
         selectedPersonIds.splice(index, 1);
+        // If none left, select all
+        if (selectedPersonIds.length === 0) {
+            selectedPersonIds = appData.events.map(e => e.id);
+        }
     }
 
     renderPersonFilter();
     renderMilestonesTab();
 
     // Update title based on selection
-    if (selectedPersonIds.length === 0) {
-        milestonesTitleEl.textContent = 'Most Special Milestones';
+    if (selectedPersonIds.length === appData.events.length) {
+        milestonesTitleEl.textContent = 'Upcoming Milestones';
     } else if (selectedPersonIds.length === 1) {
         const person = appData.events.find(e => e.id === selectedPersonIds[0]);
         if (person) {
@@ -436,7 +538,7 @@ function calculateMilestone() {
     const unit = calcUnitSelect.value;
 
     if (isNaN(number) || number <= 0) {
-        alert('Please enter a valid positive number');
+        showToast('Please enter a valid positive number', 'error');
         return;
     }
 
@@ -446,7 +548,7 @@ function calculateMilestone() {
         : appData.events;
 
     if (eventsToCalc.length === 0) {
-        alert('No events to calculate for. Add an event first.');
+        showToast('No events to calculate for. Add an event first.', 'error');
         return;
     }
 
@@ -529,13 +631,13 @@ function handleStart() {
     const dateStr = birthDateInput.value;
 
     if (!name || !dateStr) {
-        alert('Please enter event name and date');
+        showToast('Please enter event name and date', 'error');
         return;
     }
 
     const date = new Date(dateStr);
     if (date >= new Date()) {
-        alert('Date must be in the past');
+        showToast('Date must be in the past', 'error');
         return;
     }
 
@@ -543,7 +645,7 @@ function handleStart() {
     if (allSets.length === 0) {
         allSets.push({
             id: 'set_default',
-            name: 'My HappyMoments',
+            name: 'Family',
             events: [],
             connections: {},
             comboTypes: { sum: true, ratio: true, duration: true }
@@ -568,9 +670,11 @@ function showDashboard() {
     onboardingSection.classList.add('hidden');
     tabNav.classList.remove('hidden');
     updateSetSwitcher();
-    // Default to Milestones tab (the main feature!)
+    // Default to Milestones tab with all people as columns
     milestonesTab.classList.remove('hidden');
     fillAllConnections();
+    _mostSpecialMode = false;
+    selectedPersonIds = appData.events.map(e => e.id);
     renderPersonFilter();
     renderMilestonesTab();
 }
@@ -626,13 +730,13 @@ function handleAddEvent() {
     const dateStr = newEventDateInput.value;
 
     if (!name || !dateStr) {
-        alert('Please enter event name and date');
+        showToast('Please enter event name and date', 'error');
         return;
     }
 
     const date = new Date(dateStr);
     if (date > new Date()) {
-        alert('Date must be in the past');
+        showToast('Date must be in the past', 'error');
         return;
     }
 
@@ -699,7 +803,13 @@ function handleSaveEdit() {
     const dateStr = editEventDateInput.value;
 
     if (!name || !dateStr) {
-        alert('Please enter event name and date');
+        showToast('Please enter event name and date', 'error');
+        return;
+    }
+
+    const date = new Date(dateStr);
+    if (date > new Date()) {
+        showToast('Date must be in the past', 'error');
         return;
     }
 
@@ -1172,6 +1282,7 @@ function fillAllConnections() {
 }
 
 function renderConnectionMatrix() {
+    if (!connectionMatrixEl) return;
     const events = appData.events;
 
     if (events.length < 2) {
@@ -1446,20 +1557,10 @@ function renderMilestonesTab() {
 
     allMilestonesFlat = [];
 
-    // Three modes:
-    // 1. No selection (Most Special) - show only very special milestones from all people
-    // 2. Single person - show that person's milestones
-    // 3. Multiple people - show combined milestones
-
-    if (selectedPersonIds.length === 0) {
-        // MOST SPECIAL MODE - show only very special milestones across all people
+    if (_mostSpecialMode) {
         renderMostSpecialMilestones();
-    } else if (selectedPersonIds.length === 1) {
-        // SINGLE PERSON MODE
-        renderSinglePersonMilestones();
     } else {
-        // COMBINED MODE - multiple people selected
-        renderCombinedPersonMilestones();
+        renderPersonColumns();
     }
 
     // Update share preview
@@ -1512,6 +1613,69 @@ function renderMostSpecialMilestones() {
             `;
         });
     }
+
+    html += '</div>';
+    milestonesColumnsEl.innerHTML = html;
+}
+
+function renderPersonColumns() {
+    allMilestonesFlat = [];
+
+    const selectedEvents = appData.events.filter(e => selectedPersonIds.includes(e.id));
+    if (selectedEvents.length === 0) return;
+
+    // Build columns for each selected person
+    let html = '<div class="columns-container">';
+
+    let globalIdx = 0;
+
+    selectedEvents.forEach(event => {
+        const milestones = findAllUpcomingMilestones(event.date, 20, 365, appSettings);
+        milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+        // Apply filtering
+        const filtered = filterNearbyMilestones(milestones);
+
+        filtered.forEach(m => {
+            m.eventName = event.name;
+            m.eventId = event.id;
+            m.eventType = event.type || 'birthday';
+            m.fullDescription = getEventMilestoneDescription(event, m);
+            m.globalIdx = globalIdx;
+            allMilestonesFlat.push(m);
+            globalIdx++;
+        });
+
+        html += `<div class="milestone-column">`;
+        html += `<div class="column-header">${event.name}</div>`;
+        html += `<div class="column-milestones">`;
+
+        if (filtered.length === 0) {
+            html += '<p class="empty-text">No milestones found.</p>';
+        } else {
+            filtered.slice(0, 20).forEach(m => {
+                const isVerySpecial = isVerySpecialNumber(m.value);
+                const timeUntilStr = formatTimeDistance(m.timeUntil);
+                const dateStr = formatDateShort(m.date);
+
+                html += `
+                    <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${selectedMilestone === m.globalIdx ? 'selected-for-share' : ''}"
+                         onclick="selectMilestoneForShare(${m.globalIdx})">
+                        <div class="cm-main">
+                            <span class="cm-value">${m.value.toLocaleString()}</span>
+                            <span class="cm-unit">${m.unitName}</span>
+                        </div>
+                        <div class="cm-when">
+                            <span class="cm-time">${timeUntilStr}</span>
+                            <span class="cm-date">${dateStr}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        html += '</div></div>';
+    });
 
     html += '</div>';
     milestonesColumnsEl.innerHTML = html;
@@ -1967,11 +2131,12 @@ function handleCopyShare() {
     const message = generateShareMessage(m);
     navigator.clipboard.writeText(message).then(() => {
         copyShareBtn.textContent = 'Copied!';
+        showToast('Copied to clipboard!', 'success');
         setTimeout(() => {
             copyShareBtn.textContent = 'Copy Message';
         }, 2000);
     }).catch(() => {
-        alert('Could not copy. Please select the text manually.');
+        showToast('Could not copy. Please select the text manually.', 'error');
     });
 }
 
@@ -1983,6 +2148,27 @@ function handleWhatsAppShare() {
     const message = generateShareMessage(m);
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encoded}`, '_blank');
+}
+
+function handleViberShare() {
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    const m = allMilestonesFlat[idx];
+    if (!m) return;
+
+    const message = generateShareMessage(m);
+    const encoded = encodeURIComponent(message);
+    window.open(`viber://forward?text=${encoded}`, '_blank');
+}
+
+function handleEmailShare() {
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    const m = allMilestonesFlat[idx];
+    if (!m) return;
+
+    const message = generateShareMessage(m);
+    const subject = encodeURIComponent('A special moment to celebrate!');
+    const body = encodeURIComponent(message);
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
 }
 
 // Combined milestone sharing
@@ -2036,11 +2222,12 @@ function handleCopyCombinedShare() {
     const message = generateCombinedShareMessage(m);
     navigator.clipboard.writeText(message).then(() => {
         copyCombinedShareBtn.textContent = 'Copied!';
+        showToast('Copied to clipboard!', 'success');
         setTimeout(() => {
             copyCombinedShareBtn.textContent = 'Copy Message';
         }, 2000);
     }).catch(() => {
-        alert('Could not copy. Please select the text manually.');
+        showToast('Could not copy. Please select the text manually.', 'error');
     });
 }
 
@@ -2052,6 +2239,27 @@ function handleWhatsAppCombinedShare() {
     const message = generateCombinedShareMessage(m);
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encoded}`, '_blank');
+}
+
+function handleViberCombinedShare() {
+    const idx = selectedCombinedMilestone !== null ? selectedCombinedMilestone : 0;
+    const m = allCombinedMilestonesFlat[idx];
+    if (!m) return;
+
+    const message = generateCombinedShareMessage(m);
+    const encoded = encodeURIComponent(message);
+    window.open(`viber://forward?text=${encoded}`, '_blank');
+}
+
+function handleEmailCombinedShare() {
+    const idx = selectedCombinedMilestone !== null ? selectedCombinedMilestone : 0;
+    const m = allCombinedMilestonesFlat[idx];
+    if (!m) return;
+
+    const message = generateCombinedShareMessage(m);
+    const subject = encodeURIComponent('A special moment to celebrate!');
+    const body = encodeURIComponent(message);
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
 }
 
 // ============================================================
@@ -2092,7 +2300,7 @@ function renderCustomNumbers() {
 function handleAddCustomNumber() {
     const value = parseInt(customNumberInput.value, 10);
     if (isNaN(value) || value <= 0) {
-        alert('Please enter a valid positive number');
+        showToast('Please enter a valid positive number', 'error');
         return;
     }
     addCustomNumber(value);
@@ -2129,7 +2337,14 @@ function handleSaveSettings() {
     });
 
     saveSettings();
-    alert('Settings saved!');
+
+    // Invalidate special numbers cache
+    if (typeof _specialNumbersCache !== 'undefined') {
+        _specialNumbersCache = null;
+        _specialNumbersCacheKey = null;
+    }
+
+    showToast('Settings saved!', 'success');
 }
 
 function handleReset() {
@@ -2184,6 +2399,7 @@ function handleExportData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    showToast('Data exported successfully!', 'success');
 }
 
 function handleImportData(e) {
@@ -2194,6 +2410,12 @@ function handleImportData(e) {
     reader.onload = function(event) {
         try {
             const importedData = JSON.parse(event.target.result);
+
+            // Basic structure validation
+            if (!importedData || typeof importedData !== 'object') {
+                showToast('Invalid backup file format', 'error');
+                return;
+            }
 
             if (!confirm('This will replace all your current data. Continue?')) {
                 return;
@@ -2219,7 +2441,7 @@ function handleImportData(e) {
                 }];
                 currentSetId = 'set_imported';
             } else {
-                alert('Invalid backup file format.');
+                showToast('Invalid backup file format', 'error');
                 return;
             }
 
@@ -2244,9 +2466,9 @@ function handleImportData(e) {
                 showDashboard();
             }
 
-            alert('Data imported successfully!');
+            showToast('Data imported successfully!', 'success');
         } catch (err) {
-            alert('Error importing data: ' + err.message);
+            showToast('Error importing data: ' + err.message, 'error');
         }
     };
     reader.readAsText(file);
@@ -2260,17 +2482,15 @@ function handleImportData(e) {
 // ============================================================
 
 function updateSetSwitcher() {
-    // Update the dropdown
-    currentSetSelect.innerHTML = allSets.map(set =>
+    // Update the dropdown - always show it, include "+ New Group" option
+    let options = allSets.map(set =>
         `<option value="${set.id}" ${set.id === currentSetId ? 'selected' : ''}>${set.name}</option>`
     ).join('');
+    options += '<option value="__new__">+ New Group</option>';
+    currentSetSelect.innerHTML = options;
 
-    // Show/hide switcher based on number of sets
-    if (allSets.length > 1) {
-        setSwitcher.classList.remove('hidden');
-    } else {
-        setSwitcher.classList.add('hidden');
-    }
+    // Always show the switcher
+    setSwitcher.classList.remove('hidden');
 
     // Update sets list in settings
     renderEventSetsList();
@@ -2316,6 +2536,28 @@ function renameSet(setId) {
 
 function handleSwitchSet() {
     const newSetId = currentSetSelect.value;
+    if (newSetId === '__new__') {
+        // Prompt for new group name
+        const name = prompt('Name for the new group:');
+        if (name && name.trim()) {
+            const newSet = {
+                id: 'set_' + Date.now(),
+                name: name.trim(),
+                events: [],
+                connections: {},
+                comboTypes: { sum: true, ratio: true, duration: true }
+            };
+            allSets.push(newSet);
+            saveData();
+            switchToSet(newSet.id);
+            updateSetSwitcher();
+            showToast('Group "' + name.trim() + '" created', 'success');
+        } else {
+            // Reset dropdown to current
+            currentSetSelect.value = currentSetId;
+        }
+        return;
+    }
     if (newSetId !== currentSetId) {
         switchToSet(newSetId);
     }
@@ -2328,8 +2570,9 @@ function switchToSet(setId) {
     currentSetId = setId;
     loadCurrentSet();
 
-    // Reset person filter to Most Special
-    selectedPersonIds = [];
+    // Default to all people in the group
+    _mostSpecialMode = false;
+    selectedPersonIds = appData.events.map(e => e.id);
 
     // Ensure connections are filled for any missing pairs
     fillAllConnections();
@@ -2346,7 +2589,7 @@ function switchToSet(setId) {
 function handleAddSet() {
     const name = newSetNameInput.value.trim();
     if (!name) {
-        alert('Please enter a name for the new set');
+        showToast('Please enter a name for the new set', 'error');
         return;
     }
 
@@ -2383,7 +2626,7 @@ function handleAddSet() {
 
 function deleteSet(setId) {
     if (allSets.length <= 1) {
-        alert('Cannot delete the last set');
+        showToast('Cannot delete the last set', 'error');
         return;
     }
 

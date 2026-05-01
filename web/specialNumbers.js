@@ -437,8 +437,24 @@ const TIME_UNITS = {
 // DYNAMIC NUMBER GENERATION BASED ON SETTINGS
 // ============================================================
 
+let _specialNumbersCache = null;
+let _specialNumbersCacheKey = null;
+
 function generateAllSpecialNumbers(settings) {
     settings = settings || DEFAULT_SETTINGS;
+
+    // Cache key based on settings that affect generation
+    const cacheKey = JSON.stringify({
+        patterns: settings.patterns,
+        constants: settings.constants,
+        luckyDigits: settings.luckyDigits,
+        customNumbers: settings.customNumbers
+    });
+
+    if (_specialNumbersCache && _specialNumbersCacheKey === cacheKey) {
+        return _specialNumbersCache;
+    }
+
     const numbers = new Set();
 
     // Powers of 10
@@ -487,7 +503,10 @@ function generateAllSpecialNumbers(settings) {
         settings.customNumbers.forEach(n => numbers.add(n));
     }
 
-    return [...numbers].sort((a, b) => a - b);
+    const result = [...numbers].sort((a, b) => a - b);
+    _specialNumbersCacheKey = cacheKey;
+    _specialNumbersCache = result;
+    return result;
 }
 
 // ============================================================

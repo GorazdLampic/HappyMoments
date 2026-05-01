@@ -3,7 +3,7 @@
  * Enables offline functionality and app-like experience
  */
 
-const CACHE_NAME = 'happymoments-v1';
+const CACHE_NAME = 'happymoments-v6';
 const urlsToCache = [
   './',
   './index.html',
@@ -12,7 +12,8 @@ const urlsToCache = [
   './specialNumbers.js',
   './milestoneCalculator.js',
   './combinations.js',
-  './manifest.json'
+  './manifest.json',
+  './icons/icon.svg'
 ];
 
 // Install event - cache all resources
@@ -48,16 +49,13 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Return cached version or fetch from network
         if (response) {
           return response;
         }
         return fetch(event.request).then(response => {
-          // Don't cache non-successful responses or non-GET requests
           if (!response || response.status !== 200 || event.request.method !== 'GET') {
             return response;
           }
-          // Clone and cache the response
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);
@@ -66,11 +64,11 @@ self.addEventListener('fetch', event => {
         });
       })
       .catch(() => {
-        // If both cache and network fail, show offline message for HTML requests
-        if (event.request.headers.get('accept').includes('text/html')) {
-          return new Response('<h1>HappyMoments - Offline</h1><p>Please check your connection.</p>', {
-            headers: { 'Content-Type': 'text/html' }
-          });
+        if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
+          return new Response(
+            '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HappyMoments - Offline</title><style>body{font-family:-apple-system,sans-serif;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center}h1{font-size:2rem;margin-bottom:1rem;background:linear-gradient(135deg,#c084fc,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}p{color:#8e8e93;font-size:1.1rem}</style></head><body><div><h1>HappyMoments</h1><p>You appear to be offline.<br>Please check your connection and try again.</p></div></body></html>',
+            { headers: { 'Content-Type': 'text/html' } }
+          );
         }
       })
   );

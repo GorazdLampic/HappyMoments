@@ -223,6 +223,7 @@ function findDifferenceMilestones(combination, events, maxResults, maxDaysAhead,
     // Difference is constant over time (both ages increase equally)
     // So we just show the current difference as a "static" milestone
     for (const unit of Object.keys(TIME_UNITS)) {
+        const unitConfig = TIME_UNITS[unit];
         const currentDiff = calculateDifference(combination.eventIds, events, unit, now);
 
         if (currentDiff > 0) {
