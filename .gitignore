@@ -4,7 +4,6 @@ nul
 
 # Dependencies
 node_modules/
-app/node_modules/
 
 # OS
 .DS_Store
@@ -14,12 +13,20 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Expo (legacy app/)
-app/.expo/
-
 # Claude internal
 .claude/
 
-# Build
+# Build output
 dist/
-build/
+
+# Android build artifacts (but keep the project structure)
+android/app/build/
+android/.gradle/
+android/build/
+android/local.properties
+
+# Generated icons (built from SVG)
+web/icons/icon-*.png
+
+# Legacy
+app/

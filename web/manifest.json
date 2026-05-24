@@ -4,8 +4,8 @@
   "description": "Celebrate life's special numbers - track birthdays, anniversaries, and find amazing numerical milestones!",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#667eea",
-  "theme_color": "#667eea",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
   "orientation": "portrait-primary",
   "icons": [
     {

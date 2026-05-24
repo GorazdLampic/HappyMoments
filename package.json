@@ -1,18 +1,24 @@
 {
   "name": "happymoments",
   "version": "1.0.0",
-  "description": "",
+  "description": "Celebrate life's special numbers - track birthdays, anniversaries, and find amazing numerical milestones",
   "main": "build.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "python serve.py",
+    "build": "node build.js",
+    "build:icons": "node scripts/generate-icons.js",
+    "cap:sync": "npx cap sync",
+    "cap:open": "npx cap open android",
+    "cap:run": "npx cap run android",
+    "android": "npm run build && npx cap sync && npx cap open android"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/GorazdLampic/HappyMoments.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["milestones", "birthdays", "anniversaries", "numbers", "celebrations"],
+  "author": "Quantum Wave Ltd (Kvantni Val d.o.o.)",
+  "license": "UNLICENSED",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/GorazdLampic/HappyMoments/issues"
@@ -20,6 +26,16 @@
   "homepage": "https://github.com/GorazdLampic/HappyMoments#readme",
   "devDependencies": {
     "clean-css": "^5.3.3",
-    "terser": "^5.48.0"
+    "terser": "^5.48.0",
+    "sharp": "^0.34.5"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "@capacitor/local-notifications": "^6.0.0",
+    "@capacitor/share": "^6.0.0"
   }
 }
