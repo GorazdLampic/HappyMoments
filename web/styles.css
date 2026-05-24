@@ -30,9 +30,9 @@
     --bg-hover: #303030;
     --bg-input: #1e1e1e;
 
-    --text-primary: #d8d8d8;
-    --text-secondary: #999999;
-    --text-muted: #666666;
+    --text-primary: #e0e0e0;
+    --text-secondary: #aaaaaa;
+    --text-muted: #888888;
 
     --border: #333333;
     --border-light: #2a2a2a;
@@ -45,8 +45,8 @@
     --space-xl: 26px;
     --space-2xl: 38px;
 
-    --font-size-xs: 0.92rem;
-    --font-size-sm: 0.98rem;
+    --font-size-xs: 0.82rem;
+    --font-size-sm: 0.9rem;
     --font-size-base: 1.06rem;
     --font-size-lg: 1.12rem;
     --font-size-xl: 1.2rem;
@@ -75,8 +75,8 @@
     --bg-hover: #efe9de;
     --bg-input: #f0ebe0;
     --text-primary: #2a2420;
-    --text-secondary: #5a5448;
-    --text-muted: #8a8478;
+    --text-secondary: #504840;
+    --text-muted: #706860;
     --border: #d8d0c4;
     --border-light: #e4dcd0;
     --separator: rgba(42,36,32,0.08);
@@ -98,6 +98,7 @@ body {
     background: var(--bg-page);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
 }
 
 #app {
@@ -235,7 +236,8 @@ body {
 }
 
 .person-filter-btn {
-    padding: 6px 18px;
+    padding: 8px 18px;
+    min-height: 40px;
     background: transparent;
     border: 1px solid var(--border);
     border-radius: var(--radius-full);
@@ -362,6 +364,22 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-md);
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+}
+
+.btn-highlights {
+    border-color: var(--warning) !important;
+    color: var(--warning) !important;
+}
+
+.btn-highlights.active {
+    background: var(--warning) !important;
+    color: var(--bg-page) !important;
 }
 
 /* ============================================================
@@ -632,11 +650,12 @@ body {
 
 .columns-container {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-sm);
     overflow-x: auto;
     padding-bottom: var(--space-sm);
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
+    flex-wrap: nowrap;
 }
 
 .columns-container::-webkit-scrollbar { height: 2px; }
@@ -644,14 +663,14 @@ body {
 
 .milestone-column {
     flex: 0 0 auto;
-    width: 200px;
-    min-width: 200px;
+    width: 140px;
+    min-width: 140px;
     background: transparent;
     border-radius: 0;
     padding: 0;
     border: none;
     border-right: 1px solid var(--separator);
-    padding-right: var(--space-md);
+    padding-right: var(--space-sm);
     scroll-snap-align: start;
 }
 
@@ -685,7 +704,11 @@ body {
 .column-milestone {
     background: transparent;
     border-radius: 0;
-    padding: var(--space-sm) var(--space-sm);
+    padding: 6px 4px;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     text-align: center;
     border: none;
     border-bottom: 1px solid var(--separator);
@@ -704,6 +727,22 @@ body {
     background: rgba(212,184,118,0.05);
 }
 
+.column-milestone.birthday-milestone {
+    background: rgba(212,184,118,0.08);
+    border-bottom: 1px solid rgba(212,184,118,0.15);
+}
+
+.column-milestone.birthday-milestone .cm-value {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--warning);
+}
+
+.column-milestone.birthday-milestone .cm-when .cm-time {
+    color: var(--warning);
+}
+
 .column-milestone.selected-for-share {
     background: var(--bg-elevated);
     outline: 1px solid var(--text-muted);
@@ -719,7 +758,7 @@ body {
 
 .cm-value {
     font-family: var(--font-mono);
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-base);
     font-weight: 300;
     color: var(--text-primary);
 }
@@ -734,6 +773,39 @@ body {
     font-weight: 400;
     color: var(--text-muted);
     font-style: italic;
+}
+
+.cm-why {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.3;
+    margin-bottom: 2px;
+}
+
+.column-milestone-hidden {
+    display: none !important;
+}
+
+.btn-show-more {
+    width: 100%;
+    padding: 8px 4px;
+    min-height: 36px;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--separator);
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xs);
+    font-style: italic;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn-show-more:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
 }
 
 .cm-when {
@@ -752,7 +824,7 @@ body {
 
 .cm-date {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: var(--font-size-xs);
     color: var(--text-muted);
 }
 
@@ -1138,9 +1210,133 @@ body {
 .btn-viber:hover { background: #4a1f68 !important; }
 .btn-viber:active { opacity: 0.9 !important; }
 
+.btn-native-share {
+    background: var(--text-primary) !important;
+    color: var(--bg-page) !important;
+    border: none !important;
+    grid-column: 1 / -1;
+}
+.btn-native-share:hover { opacity: 0.9; }
+
+/* Calendar buttons */
+.calendar-buttons {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--separator);
+}
+
+.calendar-label {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.btn-calendar {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    padding: 8px 14px;
+    min-height: 36px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn-calendar:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+}
+
+.btn-gcal:hover { border-color: #4285f4; color: #4285f4; }
+.btn-outlook:hover { border-color: #0078d4; color: #0078d4; }
+.btn-ics:hover { border-color: var(--accent); color: var(--accent); }
+
 /* ============================================================
    SETTINGS
    ============================================================ */
+
+/* Gift Store */
+.gift-card {
+    border-top: 1px solid var(--warning);
+}
+
+.gift-intro {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: var(--space-md);
+}
+
+.gift-products {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+@media (max-width: 480px) {
+    .gift-products { grid-template-columns: 1fr; }
+}
+
+.gift-product-card {
+    display: flex;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    min-height: 44px;
+}
+
+.gift-product-card:hover {
+    border-color: var(--warning);
+    background: var(--bg-elevated);
+}
+
+.gift-icon {
+    font-size: 1.6rem;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gift-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.gift-name {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.gift-tagline {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.gift-price {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--warning);
+    margin-top: 2px;
+}
+
+/* ============================================================ */
 
 .digit-selector {
     display: flex;
@@ -1370,6 +1566,7 @@ body {
 
 .onboarding-card p { color: var(--text-muted); margin-bottom: var(--space-xl); font-size: var(--font-size-base); font-style: italic; }
 .onboarding-card .form-group { text-align: left; }
+.onboarding-hint { margin-top: var(--space-md); font-size: var(--font-size-xs); color: var(--text-muted); font-style: italic; }
 
 /* ============================================================
    EVENT SETS
@@ -1460,13 +1657,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .miv-left { min-width: 120px; }
     .quick-find-input { font-size: var(--font-size-lg); max-width: 200px; }
     .digit-selector { justify-content: center; }
-    .milestone-column { width: 220px; min-width: 220px; }
+    .milestone-column { width: 160px; min-width: 160px; }
 }
 
 @media (min-width: 1024px) {
-    #app { max-width: 880px; }
-    .columns-container { flex-wrap: wrap; justify-content: center; }
-    .milestone-column { width: 240px; min-width: 240px; }
+    #app { max-width: 960px; }
+    .milestone-column { width: 170px; min-width: 170px; }
 }
 
 /* ============================================================
@@ -1485,7 +1681,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .event-item-main { width: 100%; }
     .event-item-details { width: 100%; justify-content: space-between; }
     .columns-container { scroll-snap-type: x mandatory; }
-    .milestone-column { width: 175px; min-width: 175px; }
+    .milestone-column { width: 130px; min-width: 130px; }
     .column-milestones { max-height: 300px; }
     .form-row { flex-direction: column; }
     .form-row .form-group { width: 100%; }
@@ -1497,7 +1693,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .share-message-preview p { font-size: var(--font-size-sm); padding-left: var(--space-lg); }
     .cmi-value { font-size: var(--font-size-xl); }
     .person-filter { padding: var(--space-sm) 0; gap: 6px; }
-    .person-filter-btn { padding: 5px 14px; font-size: var(--font-size-xs); }
+    .person-filter-btn { padding: 8px 14px; min-height: 36px; font-size: var(--font-size-xs); }
     .milestones-vertical-list { max-height: 420px; }
     .milestone-item-vertical { padding: var(--space-sm) var(--space-md); gap: var(--space-md); }
     .miv-left { min-width: 72px; padding-right: var(--space-sm); }

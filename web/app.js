@@ -9,6 +9,12 @@
 const STORAGE_KEY_DATA = 'happyMomentsData';
 const STORAGE_KEY_SETTINGS = 'happyMomentsSettings';
 
+// Parse YYYY-MM-DD as local midnight (not UTC)
+function parseLocalDate(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+}
+
 // ============================================================
 // TOAST NOTIFICATION SYSTEM
 // ============================================================
@@ -87,7 +93,7 @@ const emailShareBtn = document.getElementById('emailShareBtn');
 const personFilterEl = document.getElementById('personFilter');
 const milestonesTitleEl = document.getElementById('milestonesTitle');
 
-// Milestone Calculator
+// Milestone Calculator (removed from UI but kept references safe)
 const calcNumberInput = document.getElementById('calcNumber');
 const calcUnitSelect = document.getElementById('calcUnit');
 const calcBtn = document.getElementById('calcBtn');
@@ -142,6 +148,12 @@ function init() {
     loadData();
     loadSettings();
     setupEventListeners();
+
+    // Default date pickers to today as max (past dates prominent)
+    const today = new Date().toISOString().split('T')[0];
+    [birthDateInput, newEventDateInput, editEventDateInput].forEach(el => {
+        if (el) el.max = today;
+    });
 }
 
 function loadDarkMode() {
@@ -202,7 +214,7 @@ function loadData() {
             if (events.length > 0) {
                 allSets = [{
                     id: 'set_default',
-                    name: 'Family',
+                    name: 'My Dates',
                     events: events,
                     connections: connections,
                     comboTypes: data.comboTypes || { sum: true, ratio: true, duration: true }
@@ -329,9 +341,25 @@ function setupEventListeners() {
     if (viberShareBtn) viberShareBtn.addEventListener('click', handleViberShare);
     if (emailShareBtn) emailShareBtn.addEventListener('click', handleEmailShare);
 
-    // Milestone Calculator
-    calcBtn.addEventListener('click', calculateMilestone);
-    calcNumberInput.addEventListener('keypress', e => {
+    // Native share (Web Share API)
+    const nativeShareBtn = document.getElementById('nativeShareBtn');
+    const nativeCombinedShareBtn = document.getElementById('nativeCombinedShareBtn');
+    if (navigator.share) {
+        if (nativeShareBtn) { nativeShareBtn.classList.remove('hidden'); nativeShareBtn.addEventListener('click', handleNativeShare); }
+        if (nativeCombinedShareBtn) { nativeCombinedShareBtn.classList.remove('hidden'); nativeCombinedShareBtn.addEventListener('click', handleNativeCombinedShare); }
+    }
+
+    // Calendar buttons — Individual
+    const googleCalBtn = document.getElementById('googleCalBtn');
+    const outlookCalBtn = document.getElementById('outlookCalBtn');
+    const icsCalBtn = document.getElementById('icsCalBtn');
+    if (googleCalBtn) googleCalBtn.addEventListener('click', handleGoogleCal);
+    if (outlookCalBtn) outlookCalBtn.addEventListener('click', handleOutlookCal);
+    if (icsCalBtn) icsCalBtn.addEventListener('click', handleIcsCal);
+
+    // Milestone Calculator (only if elements exist)
+    if (calcBtn) calcBtn.addEventListener('click', calculateMilestone);
+    if (calcNumberInput) calcNumberInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') calculateMilestone();
     });
 
@@ -341,6 +369,14 @@ function setupEventListeners() {
     whatsappCombinedShareBtn.addEventListener('click', handleWhatsAppCombinedShare);
     if (viberCombinedShareBtn) viberCombinedShareBtn.addEventListener('click', handleViberCombinedShare);
     if (emailCombinedShareBtn) emailCombinedShareBtn.addEventListener('click', handleEmailCombinedShare);
+
+    // Calendar buttons — Combined
+    const googleCalCombinedBtn = document.getElementById('googleCalCombinedBtn');
+    const outlookCalCombinedBtn = document.getElementById('outlookCalCombinedBtn');
+    const icsCalCombinedBtn = document.getElementById('icsCalCombinedBtn');
+    if (googleCalCombinedBtn) googleCalCombinedBtn.addEventListener('click', handleGoogleCalCombined);
+    if (outlookCalCombinedBtn) outlookCalCombinedBtn.addEventListener('click', handleOutlookCalCombined);
+    if (icsCalCombinedBtn) icsCalCombinedBtn.addEventListener('click', handleIcsCalCombined);
 
     // Settings
     addCustomNumberBtn.addEventListener('click', handleAddCustomNumber);
@@ -387,10 +423,7 @@ function switchTab(tabName) {
     milestonesTab.classList.toggle('hidden', tabName !== 'milestones');
     combinedTab.classList.toggle('hidden', tabName !== 'combined');
     eventsTab.classList.toggle('hidden', tabName !== 'events');
-    settingsTab.classList.toggle('hidden', tabName !== 'settings');
-
-    const findTab = document.getElementById('findTab');
-    if (findTab) findTab.classList.toggle('hidden', tabName !== 'find');
+    if (settingsTab) settingsTab.classList.toggle('hidden', tabName !== 'settings');
 
     // Clear selection state on tab switch
     selectedMilestone = null;
@@ -403,11 +436,12 @@ function switchTab(tabName) {
         renderMilestonesTab();
     }
     else if (tabName === 'combined') renderCombinedTab();
-    else if (tabName === 'events') renderEventsTab();
+    else if (tabName === 'events') {
+        renderEventsTab();
+        renderPeopleTabGroups();
+    }
     else if (tabName === 'settings') {
         loadSettingsUI();
-        renderConnectionMatrix();
-        renderEventSetsList();
     }
 }
 
@@ -423,35 +457,16 @@ function renderPersonFilter() {
 
     personFilterEl.classList.remove('hidden');
 
-    // If no selection yet, default to all people selected
+    // Default to all people selected
     if (selectedPersonIds.length === 0 && !_mostSpecialMode) {
         selectedPersonIds = appData.events.map(e => e.id);
     }
 
-    const allSelected = selectedPersonIds.length === appData.events.length;
-    const isMostSpecial = _mostSpecialMode;
-
     let html = '<div class="person-buttons">';
 
-    // "All" button
-    html += `
-        <button class="person-filter-btn ${allSelected && !isMostSpecial ? 'active' : ''}"
-                onclick="selectAllPeople()">
-            All
-        </button>
-    `;
-
-    // "Most Special" button
-    html += `
-        <button class="person-filter-btn most-special ${isMostSpecial ? 'active' : ''}"
-                onclick="selectMostSpecial()">
-            Best
-        </button>
-    `;
-
-    // Individual person buttons
+    // Individual person buttons only — no All, no Best
     appData.events.forEach(e => {
-        const isActive = selectedPersonIds.includes(e.id) && !isMostSpecial;
+        const isActive = selectedPersonIds.includes(e.id) && !_mostSpecialMode;
         html += `
             <button class="person-filter-btn ${isActive ? 'active' : ''}"
                     onclick="togglePerson('${e.id}')">
@@ -465,16 +480,25 @@ function renderPersonFilter() {
 }
 
 function selectMostSpecial() {
-    _mostSpecialMode = true;
-    selectedPersonIds = [];
+    _mostSpecialMode = !_mostSpecialMode; // toggle
+    if (_mostSpecialMode) {
+        selectedPersonIds = [];
+        milestonesTitleEl.textContent = 'Highlights';
+    } else {
+        selectedPersonIds = appData.events.map(e => e.id);
+        milestonesTitleEl.textContent = 'Upcoming Milestones';
+    }
+    const btn = document.getElementById('highlightsBtn');
+    if (btn) btn.classList.toggle('active', _mostSpecialMode);
     renderPersonFilter();
     renderMilestonesTab();
-    milestonesTitleEl.textContent = 'Most Special Milestones';
 }
 
 function selectAllPeople() {
     _mostSpecialMode = false;
     selectedPersonIds = appData.events.map(e => e.id);
+    const btn = document.getElementById('highlightsBtn');
+    if (btn) btn.classList.remove('active');
     renderPersonFilter();
     renderMilestonesTab();
     milestonesTitleEl.textContent = 'Upcoming Milestones';
@@ -635,17 +659,13 @@ function handleStart() {
         return;
     }
 
-    const date = new Date(dateStr);
-    if (date >= new Date()) {
-        showToast('Date must be in the past', 'error');
-        return;
-    }
+    const date = parseLocalDate(dateStr);
 
     // Create default set if none exists
     if (allSets.length === 0) {
         allSets.push({
             id: 'set_default',
-            name: 'Family',
+            name: 'My Dates',
             events: [],
             connections: {},
             comboTypes: { sum: true, ratio: true, duration: true }
@@ -734,11 +754,7 @@ function handleAddEvent() {
         return;
     }
 
-    const date = new Date(dateStr);
-    if (date > new Date()) {
-        showToast('Date must be in the past', 'error');
-        return;
-    }
+    const date = parseLocalDate(dateStr);
 
     const newEvent = {
         id: 'event_' + Date.now(),
@@ -807,17 +823,13 @@ function handleSaveEdit() {
         return;
     }
 
-    const date = new Date(dateStr);
-    if (date > new Date()) {
-        showToast('Date must be in the past', 'error');
-        return;
-    }
+    const date = parseLocalDate(dateStr);
 
     const event = appData.events.find(e => e.id === editingEventId);
     if (event) {
         event.name = name;
         event.type = type;
-        event.date = new Date(dateStr);
+        event.date = parseLocalDate(dateStr);
         event.notes = editEventNotesInput.value.trim();
 
         saveData();
@@ -1572,6 +1584,10 @@ function renderMostSpecialMilestones() {
 
     // Get milestones for all events but only keep very special ones
     appData.events.forEach(e => {
+        // Include upcoming birthday/anniversary only if within 30 days
+        const yearlyMilestones = getUpcomingYearlyMilestones(e, 30);
+        allMilestonesFlat = allMilestonesFlat.concat(yearlyMilestones);
+
         const milestones = findAllUpcomingMilestones(e.date, 50, 730, appSettings); // Look further ahead
         milestones.forEach(m => {
             m.eventName = e.name;
@@ -1618,29 +1634,99 @@ function renderMostSpecialMilestones() {
     milestonesColumnsEl.innerHTML = html;
 }
 
+// Get the next upcoming birthday/anniversary IF it's within maxDays (default 30)
+function getUpcomingYearlyMilestones(event, maxDays) {
+    maxDays = maxDays || 30;
+    const now = new Date();
+    const eventDate = event.date instanceof Date ? event.date : new Date(event.date);
+    const type = event.type || 'birthday';
+    const thisYear = now.getFullYear();
+    const eventMonth = eventDate.getMonth();
+    const eventDay = eventDate.getDate();
+
+    // Check this year, then next year
+    for (let offset = 0; offset <= 1; offset++) {
+        const candidateYear = thisYear + offset;
+        let nextDate = new Date(candidateYear, eventMonth, eventDay);
+
+        // Handle Feb 29 for non-leap years
+        if (eventMonth === 1 && eventDay === 29 && nextDate.getMonth() !== 1) {
+            nextDate = new Date(candidateYear, 1, 28);
+        }
+
+        if (nextDate <= now) continue;
+
+        const timeUntil = nextDate.getTime() - now.getTime();
+        const daysUntil = timeUntil / (24 * 60 * 60 * 1000);
+        if (daysUntil > maxDays) return [];
+
+        const age = candidateYear - eventDate.getFullYear();
+        if (age <= 0) continue;
+
+        const label = type === 'birthday' ? `Turns ${age}` : `${age}y`;
+
+        return [{
+            value: age,
+            unit: 'birthday',
+            unitName: type === 'birthday' ? 'birthday' : 'anniversary',
+            date: nextDate,
+            type: 'yearly',
+            description: label,
+            timeUntil: timeUntil,
+            eventName: event.name,
+            eventId: event.id,
+            eventType: type,
+            fullDescription: type === 'birthday'
+                ? `🎂 ${event.name} turns ${age}!`
+                : `🎉 ${age} years since ${event.name}!`,
+            isBirthday: true
+        }];
+    }
+
+    return [];
+}
+
 function renderPersonColumns() {
     allMilestonesFlat = [];
 
     const selectedEvents = appData.events.filter(e => selectedPersonIds.includes(e.id));
     if (selectedEvents.length === 0) return;
 
+    const DEFAULT_SHOW = 7;
+
     // Build columns for each selected person
     let html = '<div class="columns-container">';
 
     let globalIdx = 0;
 
-    selectedEvents.forEach(event => {
+    selectedEvents.forEach((event, eventIdx) => {
+        // Get yearly milestones (birthdays/anniversaries) — always shown first
+        const yearlyMilestones = getUpcomingYearlyMilestones(event, 30);
+
+        // Get special number milestones
         const milestones = findAllUpcomingMilestones(event.date, 20, 365, appSettings);
-        milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+        // Score and sort by combined roundness + proximity
+        milestones.forEach(m => {
+            const rScore = roundnessScore(m.value);
+            const daysAway = m.timeUntil / (24 * 60 * 60 * 1000);
+            // Proximity score: closer = higher (max ~100 for today, ~0 for 365d away)
+            const pScore = Math.max(0, 100 - daysAway * 0.27);
+            m._score = rScore * 0.7 + pScore * 0.3;
+        });
+        milestones.sort((a, b) => b._score - a._score);
 
         // Apply filtering
         const filtered = filterNearbyMilestones(milestones);
 
-        filtered.forEach(m => {
-            m.eventName = event.name;
-            m.eventId = event.id;
-            m.eventType = event.type || 'birthday';
-            m.fullDescription = getEventMilestoneDescription(event, m);
+        // Combine: birthdays first, then scored special numbers
+        const allForPerson = [...yearlyMilestones, ...filtered];
+
+        allForPerson.forEach(m => {
+            m.eventName = m.eventName || event.name;
+            m.eventId = m.eventId || event.id;
+            m.eventType = m.eventType || event.type || 'birthday';
+            m.fullDescription = m.fullDescription || getEventMilestoneDescription(event, m);
             m.globalIdx = globalIdx;
             allMilestonesFlat.push(m);
             globalIdx++;
@@ -1648,30 +1734,63 @@ function renderPersonColumns() {
 
         html += `<div class="milestone-column">`;
         html += `<div class="column-header">${event.name}</div>`;
-        html += `<div class="column-milestones">`;
+        html += `<div class="column-milestones" id="col-milestones-${eventIdx}">`;
 
-        if (filtered.length === 0) {
+        if (allForPerson.length === 0) {
             html += '<p class="empty-text">No milestones found.</p>';
         } else {
-            filtered.slice(0, 20).forEach(m => {
-                const isVerySpecial = isVerySpecialNumber(m.value);
-                const timeUntilStr = formatTimeDistance(m.timeUntil);
-                const dateStr = formatDateShort(m.date);
+            allForPerson.forEach((m, i) => {
+                const hiddenClass = i >= DEFAULT_SHOW ? 'column-milestone-hidden' : '';
 
-                html += `
-                    <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${selectedMilestone === m.globalIdx ? 'selected-for-share' : ''}"
-                         onclick="selectMilestoneForShare(${m.globalIdx})">
-                        <div class="cm-main">
-                            <span class="cm-value">${m.value.toLocaleString()}</span>
-                            <span class="cm-unit">${m.unitName}</span>
+                if (m.isBirthday) {
+                    const timeUntilStr = formatTimeDistance(m.timeUntil);
+                    const dateStr = formatDateShort(m.date);
+                    html += `
+                        <div class="column-milestone birthday-milestone ${hiddenClass} ${selectedMilestone === m.globalIdx ? 'selected-for-share' : ''}"
+                             onclick="selectMilestoneForShare(${m.globalIdx})">
+                            <div class="cm-main">
+                                <span class="cm-value">${m.description}</span>
+                            </div>
+                            <div class="cm-when">
+                                <span class="cm-time">${timeUntilStr}</span>
+                                <span class="cm-date">${dateStr}</span>
+                            </div>
                         </div>
-                        <div class="cm-when">
-                            <span class="cm-time">${timeUntilStr}</span>
-                            <span class="cm-date">${dateStr}</span>
+                    `;
+                } else {
+                    const isVerySpecial = isVerySpecialNumber(m.value);
+                    const timeUntilStr = formatTimeDistance(m.timeUntil);
+                    const dateStr = formatDateShort(m.date);
+                    // Get "why" description
+                    const why = classifyNumber(m.value, appSettings);
+                    const whyText = why.length > 0 ? why[0].description : '';
+
+                    html += `
+                        <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${hiddenClass} ${selectedMilestone === m.globalIdx ? 'selected-for-share' : ''}"
+                             onclick="selectMilestoneForShare(${m.globalIdx})">
+                            <div class="cm-main">
+                                <span class="cm-value">${m.value.toLocaleString()}</span>
+                                <span class="cm-unit">${m.unitName}</span>
+                            </div>
+                            ${whyText ? `<div class="cm-why">${whyText}</div>` : ''}
+                            <div class="cm-when">
+                                <span class="cm-time">${timeUntilStr}</span>
+                                <span class="cm-date">${dateStr}</span>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             });
+
+            // Show more button if there are hidden items
+            if (allForPerson.length > DEFAULT_SHOW) {
+                const moreCount = allForPerson.length - DEFAULT_SHOW;
+                html += `
+                    <button class="btn-show-more" onclick="toggleColumnExpand(${eventIdx}, this)">
+                        ${moreCount} beyond the horizon...
+                    </button>
+                `;
+            }
         }
 
         html += '</div></div>';
@@ -1679,6 +1798,20 @@ function renderPersonColumns() {
 
     html += '</div>';
     milestonesColumnsEl.innerHTML = html;
+}
+
+function toggleColumnExpand(eventIdx, btn) {
+    const col = document.getElementById('col-milestones-' + eventIdx);
+    if (!col) return;
+    const hidden = col.querySelectorAll('.column-milestone-hidden');
+    if (hidden.length > 0) {
+        hidden.forEach(el => el.classList.remove('column-milestone-hidden'));
+        btn.textContent = 'closer view';
+    } else {
+        const items = col.querySelectorAll('.column-milestone');
+        items.forEach((el, i) => { if (i >= 7) el.classList.add('column-milestone-hidden'); });
+        btn.textContent = `${items.length - 7} beyond the horizon...`;
+    }
 }
 
 function renderSinglePersonMilestones() {
@@ -2081,6 +2214,9 @@ function isCombinedSpecialNumber(num, unit) {
 function selectMilestoneForShare(idx) {
     selectedMilestone = idx;
     updateSharePreview();
+    // Update gift suggestions
+    const m = allMilestonesFlat[idx];
+    if (typeof renderGiftSuggestions === 'function') renderGiftSuggestions(m);
     renderMilestonesTab();
 }
 
@@ -2108,19 +2244,62 @@ function updateSharePreview() {
     `;
 }
 
+function pickShareTemplate(category) {
+    if (typeof SHARE_MESSAGES === 'undefined') return null;
+    const templates = SHARE_MESSAGES[category] || SHARE_MESSAGES.generic || [];
+    if (templates.length === 0) return null;
+    return templates[Math.floor(Math.random() * templates.length)];
+}
+
+function fillShareTemplate(template, m) {
+    const dateStr = m.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const countdown = formatTimeDistance(m.timeUntil);
+    const val = m.value.toLocaleString();
+    const unit = m.unitName;
+    const name = m.eventName || 'someone special';
+    const why = m.description || m.type || 'special';
+
+    return template
+        .replace(/\{name\}/g, name)
+        .replace(/\{value\}/g, val)
+        .replace(/\{unit\}/g, unit)
+        .replace(/\{date\}/g, dateStr)
+        .replace(/\{countdown\}/g, countdown)
+        .replace(/\{why\}/g, why);
+}
+
+function getShareCategory(m) {
+    if (m.isBirthday) return 'birthday';
+    if (m.eventId === 'combined_sum' || m.eventName === 'Combined Sum') return 'combined';
+    if (m.eventId === 'combined_ratio' || m.type === 'ratio') return 'ratio';
+    // Map milestone type to message category
+    const typeMap = {
+        'power_of_10': 'round', 'round': 'round',
+        'repdigit': 'repdigit', 'palindrome': 'palindrome',
+        'fibonacci': 'fibonacci', 'power_of_2': 'power_of_2',
+        'scientific': 'scientific', 'sequential': 'sequential',
+        'alternating': 'alternating'
+    };
+    return typeMap[m.type] || 'generic';
+}
+
 function generateShareMessage(m) {
-    const dateStr = m.date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    const category = getShareCategory(m);
+    const template = pickShareTemplate(category);
 
-    let eventContext = m.eventName === 'Combined'
-        ? 'our combined ages'
-        : m.eventName;
+    if (template) {
+        return fillShareTemplate(template, m);
+    }
 
-    return `Hey! I just discovered something special - ${eventContext} will reach ${m.value.toLocaleString()} ${m.unitName} on ${dateStr}! That's ${formatTimeDistance(m.timeUntil)} from now. Let's celebrate this HappyMoment together!`;
+    // Fallback if no templates loaded
+    const dateStr = m.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const countdown = formatTimeDistance(m.timeUntil);
+    const val = m.value.toLocaleString();
+
+    if (m.isBirthday) {
+        return m.fullDescription.replace(/[🎂🎉]\s*/g, '') + ` on ${dateStr} (${countdown} from now)!`;
+    }
+    return `${m.eventName} will be ${val} ${m.unitName} old on ${dateStr} — just ${countdown} away!`;
 }
 
 function handleCopyShare() {
@@ -2138,6 +2317,22 @@ function handleCopyShare() {
     }).catch(() => {
         showToast('Could not copy. Please select the text manually.', 'error');
     });
+}
+
+function handleNativeShare() {
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    const m = allMilestonesFlat[idx];
+    if (!m) return;
+    const message = generateShareMessage(m);
+    navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+}
+
+function handleNativeCombinedShare() {
+    const idx = selectedCombinedMilestone !== null ? selectedCombinedMilestone : 0;
+    const m = allCombinedMilestonesFlat[idx];
+    if (!m) return;
+    const message = generateCombinedShareMessage(m);
+    navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
 }
 
 function handleWhatsAppShare() {
@@ -2263,6 +2458,127 @@ function handleEmailCombinedShare() {
 }
 
 // ============================================================
+// CALENDAR EXPORT
+// ============================================================
+
+function getCalendarEventDetails(milestone) {
+    if (!milestone) return null;
+
+    const d = milestone.date;
+    const title = milestone.isBirthday
+        ? milestone.fullDescription.replace(/[🎂🎉]\s*/g, '')
+        : `HappyMoment: ${milestone.value.toLocaleString()} ${milestone.unitName}` +
+          (milestone.eventName ? ` — ${milestone.eventName}` : '');
+
+    const description = milestone.fullDescription || generateShareMessage(milestone);
+
+    // Format as all-day event date string: YYYYMMDD
+    const pad = n => String(n).padStart(2, '0');
+    const startDate = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+    const nextDay = new Date(d);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const endDate = `${nextDay.getFullYear()}${pad(nextDay.getMonth() + 1)}${pad(nextDay.getDate())}`;
+
+    return { title, description, startDate, endDate };
+}
+
+function openGoogleCalendar(milestone) {
+    const ev = getCalendarEventDetails(milestone);
+    if (!ev) { showToast('Select a milestone first', 'error'); return; }
+
+    const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: ev.title,
+        dates: `${ev.startDate}/${ev.endDate}`,
+        details: ev.description
+    });
+    window.open(`https://calendar.google.com/calendar/render?${params}`, '_blank');
+}
+
+function openOutlookCalendar(milestone) {
+    const ev = getCalendarEventDetails(milestone);
+    if (!ev) { showToast('Select a milestone first', 'error'); return; }
+
+    const d = milestone.date;
+    const iso = d.toISOString().split('T')[0];
+    const nextDay = new Date(d);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const isoEnd = nextDay.toISOString().split('T')[0];
+
+    const params = new URLSearchParams({
+        path: '/calendar/action/compose',
+        rru: 'addevent',
+        subject: ev.title,
+        startdt: iso,
+        enddt: isoEnd,
+        body: ev.description,
+        allday: 'true'
+    });
+    window.open(`https://outlook.live.com/calendar/0/action/compose?${params}`, '_blank');
+}
+
+function downloadIcsFile(milestone) {
+    const ev = getCalendarEventDetails(milestone);
+    if (!ev) { showToast('Select a milestone first', 'error'); return; }
+
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}T${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+
+    const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//HappyMoments//EN',
+        'BEGIN:VEVENT',
+        `DTSTART;VALUE=DATE:${ev.startDate}`,
+        `DTEND;VALUE=DATE:${ev.endDate}`,
+        `DTSTAMP:${stamp}`,
+        `UID:happymoments-${ev.startDate}-${Date.now()}@app`,
+        `SUMMARY:${ev.title}`,
+        `DESCRIPTION:${ev.description.replace(/\n/g, '\\n')}`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'happymoment.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Calendar file downloaded', 'success');
+}
+
+// Individual milestone calendar handlers
+function handleGoogleCal() {
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    openGoogleCalendar(allMilestonesFlat[idx]);
+}
+function handleOutlookCal() {
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    openOutlookCalendar(allMilestonesFlat[idx]);
+}
+function handleIcsCal() {
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    downloadIcsFile(allMilestonesFlat[idx]);
+}
+
+// Combined milestone calendar handlers
+function handleGoogleCalCombined() {
+    const idx = selectedCombinedMilestone !== null ? selectedCombinedMilestone : 0;
+    openGoogleCalendar(allCombinedMilestonesFlat[idx]);
+}
+function handleOutlookCalCombined() {
+    const idx = selectedCombinedMilestone !== null ? selectedCombinedMilestone : 0;
+    openOutlookCalendar(allCombinedMilestonesFlat[idx]);
+}
+function handleIcsCalCombined() {
+    const idx = selectedCombinedMilestone !== null ? selectedCombinedMilestone : 0;
+    downloadIcsFile(allCombinedMilestonesFlat[idx]);
+}
+
+// ============================================================
 // SETTINGS TAB
 // ============================================================
 
@@ -2372,7 +2688,7 @@ function handleReset() {
     eventsTab.classList.add('hidden');
     combinedTab.classList.add('hidden');
     milestonesTab.classList.add('hidden');
-    settingsTab.classList.add('hidden');
+    if (settingsTab) settingsTab.classList.add('hidden');
     onboardingSection.classList.remove('hidden');
 
     loadSettingsUI();
@@ -2496,20 +2812,16 @@ function updateSetSwitcher() {
     renderEventSetsList();
 }
 
-function renderEventSetsList() {
-    if (allSets.length === 0) {
-        eventSetsListEl.innerHTML = '<p class="empty-text small">No event sets yet. Add one below.</p>';
-        return;
-    }
-
-    eventSetsListEl.innerHTML = allSets.map(set => {
+function renderEventSetsHTML() {
+    if (allSets.length === 0) return '<p class="empty-text small">No groups yet.</p>';
+    return allSets.map(set => {
         const isCurrent = set.id === currentSetId;
         const eventCount = set.events.length;
         return `
             <div class="event-set-item ${isCurrent ? 'current' : ''}">
                 <div class="event-set-info">
-                    <strong>${set.name}${isCurrent ? ' (current)' : ''}</strong>
-                    <span class="event-set-count">${eventCount} event${eventCount !== 1 ? 's' : ''}</span>
+                    <strong>${set.name}${isCurrent ? ' (active)' : ''}</strong>
+                    <span class="event-set-count">${eventCount} date${eventCount !== 1 ? 's' : ''}</span>
                 </div>
                 <div class="event-set-actions">
                     <button class="btn-small btn-edit" onclick="renameSet('${set.id}')">Edit</button>
@@ -2519,6 +2831,11 @@ function renderEventSetsList() {
             </div>
         `;
     }).join('');
+}
+
+function renderEventSetsList() {
+    if (eventSetsListEl) eventSetsListEl.innerHTML = renderEventSetsHTML();
+    renderPeopleTabGroups();
 }
 
 function renameSet(setId) {
@@ -2617,11 +2934,34 @@ function handleAddSet() {
         milestonesTab.classList.add('hidden');
         combinedTab.classList.add('hidden');
         eventsTab.classList.add('hidden');
-        settingsTab.classList.add('hidden');
+        if (settingsTab) settingsTab.classList.add('hidden');
     }
 
     renderEventSetsList();
     updateSetSwitcher();
+}
+
+function handleAddSetFromPeopleTab() {
+    const input = document.getElementById('newSetName2');
+    const name = input ? input.value.trim() : '';
+    if (!name) { showToast('Please enter a group name', 'error'); return; }
+    const newSet = { id: 'set_' + Date.now(), name: name, events: [], connections: {}, comboTypes: { sum: true, ratio: true, duration: true } };
+    allSets.push(newSet);
+    input.value = '';
+    currentSetId = newSet.id;
+    loadCurrentSet();
+    saveData();
+    renderEventSetsList();
+    renderPeopleTabGroups();
+    updateSetSwitcher();
+    showToast(`Group "${name}" created`, 'success');
+}
+
+function renderPeopleTabGroups() {
+    const el = document.getElementById('eventSetsList2');
+    if (!el) return;
+    // Reuse the same rendering as the settings groups list
+    el.innerHTML = renderEventSetsHTML();
 }
 
 function deleteSet(setId) {

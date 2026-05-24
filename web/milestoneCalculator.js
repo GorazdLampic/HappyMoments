@@ -5,25 +5,66 @@
 
 // Calculate age/duration in a specific time unit
 function calculateAge(startDate, endDate, unit) {
-    // Ensure dates are Date objects
     const start = startDate instanceof Date ? startDate : new Date(startDate);
     const end = endDate ? (endDate instanceof Date ? endDate : new Date(endDate)) : new Date();
     unit = unit || 'days';
 
+    if (unit === 'months') {
+        return calendarMonthsBetween(start, end);
+    }
+    if (unit === 'years') {
+        return calendarYearsBetween(start, end);
+    }
+
     const diffMs = end.getTime() - start.getTime();
     if (diffMs < 0) return 0;
-
     const unitConfig = TIME_UNITS[unit];
     return Math.floor(diffMs / unitConfig.msMultiplier);
 }
 
+// Calendar-accurate month count
+function calendarMonthsBetween(start, end) {
+    if (end < start) return 0;
+    let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+    if (end.getDate() < start.getDate()) months--;
+    return Math.max(0, months);
+}
+
+// Calendar-accurate year count
+function calendarYearsBetween(start, end) {
+    if (end < start) return 0;
+    let years = end.getFullYear() - start.getFullYear();
+    const monthDiff = end.getMonth() - start.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && end.getDate() < start.getDate())) years--;
+    return Math.max(0, years);
+}
+
 // Calculate when a milestone will be reached
 function calculateMilestoneDate(startDate, targetValue, unit) {
-    // Ensure startDate is a Date object
     const start = startDate instanceof Date ? startDate : new Date(startDate);
+
+    if (unit === 'months') {
+        return addCalendarMonths(start, targetValue);
+    }
+    if (unit === 'years') {
+        return addCalendarMonths(start, targetValue * 12);
+    }
+
     const unitConfig = TIME_UNITS[unit];
     const milestoneMs = start.getTime() + targetValue * unitConfig.msMultiplier;
     return new Date(milestoneMs);
+}
+
+// Add N calendar months to a date
+function addCalendarMonths(date, months) {
+    const result = new Date(date);
+    const targetMonth = result.getMonth() + months;
+    result.setMonth(targetMonth);
+    // Handle end-of-month overflow (e.g., Jan 31 + 1 month = Feb 28, not Mar 3)
+    if (result.getDate() !== date.getDate()) {
+        result.setDate(0); // last day of previous month
+    }
+    return result;
 }
 
 // Get current age/duration in all time units

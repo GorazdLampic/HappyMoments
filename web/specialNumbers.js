@@ -87,6 +87,24 @@ const ROUND_NUMBERS = [
     20000000000, 25000000000, 30000000000, 50000000000, 100000000000
 ];
 
+// Fibonacci numbers
+const FIBONACCI = (() => {
+    const fibs = [1, 1];
+    while (fibs[fibs.length - 1] < 100000000000) {
+        fibs.push(fibs[fibs.length - 1] + fibs[fibs.length - 2]);
+    }
+    return fibs.filter(n => n >= 5); // skip trivial ones
+})();
+
+// Powers of 2
+const POWERS_OF_TWO = (() => {
+    const pows = [];
+    for (let i = 3; i <= 40; i++) { // 8 to ~1 trillion
+        pows.push(Math.pow(2, i));
+    }
+    return pows;
+})();
+
 // Generate repdigit numbers (111, 222, 3333, etc.)
 function generateRepdigits(maxDigits = 11, digits = null) {
     const repdigits = [];
@@ -462,6 +480,10 @@ function generateAllSpecialNumbers(settings) {
         POWERS_OF_TEN.forEach(n => numbers.add(n));
         // Also add nice round numbers (5000, 2000, etc.)
         ROUND_NUMBERS.forEach(n => numbers.add(n));
+        // Powers of 2
+        POWERS_OF_TWO.forEach(n => numbers.add(n));
+        // Fibonacci
+        FIBONACCI.forEach(n => numbers.add(n));
     }
 
     // Repdigits (up to 11 digits for big combined milestones like 2222222222 seconds)
@@ -521,6 +543,17 @@ function classifyNumber(num, settings) {
     // Power of 10
     if (POWERS_OF_TEN.includes(num)) {
         types.push({ type: 'power_of_10', description: `Power of 10` });
+    }
+
+    // Fibonacci
+    if (FIBONACCI.includes(num)) {
+        types.push({ type: 'fibonacci', description: `Fibonacci number` });
+    }
+
+    // Power of 2
+    if (POWERS_OF_TWO.includes(num)) {
+        const exp = Math.round(Math.log2(num));
+        types.push({ type: 'power_of_2', description: `2^${exp}` });
     }
 
     // Nice round number (multiple of 500 or 1000)
@@ -614,4 +647,57 @@ function isSpecialNumber(num, settings) {
         type: types[0].type,
         description: types.map(t => t.description).join(', ')
     };
+}
+
+// Score how "round" or aesthetically pleasing a number is (higher = better)
+function roundnessScore(num) {
+    let score = 0;
+    const s = String(num);
+
+    // Powers of 10 are the roundest
+    if (POWERS_OF_TEN.includes(num)) {
+        score += 100 + s.length * 10; // 1000 > 100
+        return score;
+    }
+
+    // Count trailing zeros — more = rounder
+    const trailingZeros = s.length - s.replace(/0+$/, '').length;
+    score += trailingZeros * 15;
+
+    // Divisibility by large round factors
+    if (num % 1000000 === 0) score += 50;
+    else if (num % 100000 === 0) score += 40;
+    else if (num % 10000 === 0) score += 30;
+    else if (num % 1000 === 0) score += 20;
+    else if (num % 500 === 0) score += 15;
+    else if (num % 100 === 0) score += 10;
+
+    // Simple multiplier of a power of 10 (e.g., 2000000 = 2 * 10^6)
+    const digits = s.replace(/0+$/, '');
+    if (digits.length === 1 && trailingZeros >= 2) {
+        score += 25; // single non-zero digit like 5000, 3000000
+    } else if (digits.length === 2 && digits[1] === '5' && trailingZeros >= 2) {
+        score += 15; // like 1500, 2500000
+    }
+
+    // Repdigit bonus
+    if (s.length >= 3 && new Set(s).size === 1) score += 20 + s.length * 3;
+
+    // Palindrome bonus (modest)
+    if (s === s.split('').reverse().join('') && s.length >= 3) score += 10;
+
+    // Fibonacci bonus
+    if (FIBONACCI.includes(num)) score += 8;
+
+    // Power of 2 bonus
+    if (POWERS_OF_TWO.includes(num)) score += 8;
+
+    // Scientific constant — interesting but less "round"
+    for (const constant of Object.values(SCIENTIFIC_CONSTANTS)) {
+        if (constant.numbers.includes(num)) { score += 12; break; }
+    }
+
+    // Alternating patterns are less "round" — no bonus
+
+    return score;
 }
