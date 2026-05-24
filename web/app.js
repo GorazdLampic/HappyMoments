@@ -157,6 +157,18 @@ function init() {
 
     checkConsent();
 
+    // Initialize i18n
+    if (typeof I18N !== 'undefined') {
+        I18N.init();
+        // Populate language selector
+        const langSelect = document.getElementById('languageSelect');
+        if (langSelect) {
+            langSelect.innerHTML = I18N.SUPPORTED_LOCALES.map(loc =>
+                `<option value="${loc}" ${loc === I18N.getLocale() ? 'selected' : ''}>${I18N.LOCALE_NAMES[loc]}</option>`
+            ).join('');
+        }
+    }
+
     // Check for Stripe checkout return
     if (typeof checkCheckoutResult === 'function') checkCheckoutResult();
 }
@@ -2253,9 +2265,10 @@ function isCombinedSpecialNumber(num, unit) {
 function selectMilestoneForShare(idx) {
     selectedMilestone = idx;
     updateSharePreview();
-    // Update gift suggestions
     const m = allMilestonesFlat[idx];
+    // Update gift suggestions and card preview
     if (typeof renderGiftSuggestions === 'function') renderGiftSuggestions(m);
+    if (typeof renderCardPreview === 'function') renderCardPreview(m, 'cardPreview');
     renderMilestonesTab();
 }
 
@@ -2298,13 +2311,21 @@ function fillShareTemplate(template, m) {
     const name = m.eventName || 'someone special';
     const why = m.description || m.type || 'special';
 
-    return template
+    let filled = template
         .replace(/\{name\}/g, name)
         .replace(/\{value\}/g, val)
         .replace(/\{unit\}/g, unit)
         .replace(/\{date\}/g, dateStr)
         .replace(/\{countdown\}/g, countdown)
         .replace(/\{why\}/g, why);
+
+    // Ensure the message communicates WHEN it will happen
+    // If template doesn't mention date/countdown, append it
+    if (!template.includes('{date}') && !template.includes('{countdown}')) {
+        filled += ` On ${dateStr} — ${countdown} from now!`;
+    }
+
+    return filled;
 }
 
 function getShareCategory(m) {

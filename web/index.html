@@ -31,7 +31,7 @@
         <!-- Header -->
         <header class="header">
             <h1>HappyMoments</h1>
-            <p class="tagline">The poetry of numbers in your life, revealed.</p>
+            <p class="tagline" data-i18n="tagline">The poetry of numbers in your life, revealed.</p>
         </header>
 
         <!-- Set Switcher (for multiple event sets) -->
@@ -42,15 +42,15 @@
 
         <!-- Tab Navigation -->
         <nav id="tabNav" class="tab-nav hidden">
-            <button class="tab-btn active" data-tab="milestones">Personal</button>
-            <button class="tab-btn" data-tab="combined">Team</button>
-            <button class="tab-btn" data-tab="events">Data</button>
-            <button class="tab-btn" data-tab="settings">Settings</button>
+            <button class="tab-btn active" data-tab="milestones" data-i18n="tab_personal">Personal</button>
+            <button class="tab-btn" data-tab="combined" data-i18n="tab_team">Team</button>
+            <button class="tab-btn" data-tab="events" data-i18n="tab_data">Data</button>
+            <button class="tab-btn" data-tab="settings" data-i18n="tab_settings">Settings</button>
         </nav>
 
         <!-- Onboarding Section -->
         <section id="onboarding" class="card onboarding-card">
-            <h2>Welcome</h2>
+            <h2 data-i18n="welcome">Welcome</h2>
             <p>Enter a date that matters to you. Your birthday, an anniversary, the day you met someone, when you started a new chapter. Any moment worth remembering.</p>
 
             <div class="form-group">
@@ -88,7 +88,7 @@
 
             <!-- Share Section - PRIORITY -->
             <div class="card share-card share-card-priority">
-                <h3>Share</h3>
+                <h3 data-i18n="share">Share</h3>
                 <p class="card-description">Tap a milestone above, then share or save to calendar.</p>
                 <div id="sharePreview" class="share-preview"></div>
                 <div class="share-buttons">
@@ -106,9 +106,16 @@
                 </div>
             </div>
 
+            <!-- Image Card -->
+            <div class="card share-card">
+                <h3 data-i18n="create_card">Create a Card</h3>
+                <p class="card-description">Generate a shareable image card for this milestone.</p>
+                <div id="cardPreview" class="card-preview-container"></div>
+            </div>
+
             <!-- Gift Store Section -->
             <div class="card gift-card" id="giftSection">
-                <h3>Celebrate with a Gift</h3>
+                <h3 data-i18n="celebrate_gift">Celebrate with a Gift</h3>
                 <p class="card-description">Turn this milestone into something tangible. Select a milestone above to see personalized gift ideas.</p>
                 <div id="giftPreview" class="gift-preview">
                     <p class="empty-text">Select a milestone to see gift options.</p>
@@ -281,11 +288,16 @@
             </div>
 
             <div class="card">
-                <h2>Appearance</h2>
+                <h2 data-i18n="appearance">Appearance</h2>
                 <label class="toggle-option">
                     <input type="checkbox" id="darkModeToggle">
-                    <span>Dark Mode</span>
+                    <span data-i18n="dark_mode">Dark Mode</span>
                 </label>
+                <div class="language-selector" style="margin-top: var(--space-md);">
+                    <label style="font-style: italic; color: var(--text-secondary); font-size: var(--font-size-sm);">Language</label>
+                    <select id="languageSelect" class="checkout-email-input" style="margin-top: var(--space-xs);" onchange="I18N.setLocale(this.value)">
+                    </select>
+                </div>
             </div>
 
             <div class="card">
@@ -296,7 +308,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <a href="legal.html" target="_blank">Terms &amp; Privacy</a>
+            <a href="legal.html" target="_blank" data-i18n="terms_privacy">Terms &amp; Privacy</a>
             <span class="footer-sep">&middot;</span>
             <span class="footer-copy">HappyMoments &copy; 2026 Quantum Wave Ltd</span>
         </footer>
@@ -311,12 +323,14 @@
         </div>
     </div>
 
+    <script src="i18n.js"></script>
     <script src="specialNumbers.js"></script>
     <script src="milestoneCalculator.js"></script>
     <script src="combinations.js"></script>
     <script src="shareMessages.js"></script>
     <script src="giftStore.js"></script>
     <script src="dataProtection.js"></script>
+    <script src="imageCard.js"></script>
     <script src="checkout.js"></script>
     <script src="app.js"></script>
 
