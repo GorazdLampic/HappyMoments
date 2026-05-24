@@ -319,10 +319,38 @@
 
             <div class="card">
                 <h2 data-i18n="appearance">Appearance</h2>
+                <div class="theme-selector">
+                    <button class="theme-btn active" data-theme-val="dark" onclick="setAppTheme('dark')">
+                        <span class="theme-dot" style="background:#1a1a1a;"></span> Dark
+                    </button>
+                    <button class="theme-btn" data-theme-val="light" onclick="setAppTheme('light')">
+                        <span class="theme-dot" style="background:#f5f0e8;"></span> Light
+                    </button>
+                    <button class="theme-btn" data-theme-val="ocean" onclick="setAppTheme('ocean')">
+                        <span class="theme-dot" style="background:#0c1929;"></span> Ocean
+                    </button>
+                    <button class="theme-btn" data-theme-val="sunset" onclick="setAppTheme('sunset')">
+                        <span class="theme-dot" style="background:#1f1018;"></span> Sunset
+                    </button>
+                    <button class="theme-btn" data-theme-val="forest" onclick="setAppTheme('forest')">
+                        <span class="theme-dot" style="background:#0f1a10;"></span> Forest
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="card">
+                <h2>Reminders</h2>
+                <p class="card-description">Get notified before birthdays and special number milestones.</p>
                 <label class="toggle-option">
-                    <input type="checkbox" id="darkModeToggle">
-                    <span data-i18n="dark_mode">Dark Mode</span>
+                    <input type="checkbox" id="notifToggle" onchange="toggleNotifications(this.checked)">
+                    <span>Enable reminders</span>
                 </label>
+                <div id="notifOptions" class="notif-options" style="display:none;">
+                    <label class="toggle-option"><input type="checkbox" id="notifDay" checked onchange="updateNotifPrefs()"><span>1 day before</span></label>
+                    <label class="toggle-option"><input type="checkbox" id="notifHour" checked onchange="updateNotifPrefs()"><span>1 hour before</span></label>
+                    <label class="toggle-option"><input type="checkbox" id="notifOnDay" checked onchange="updateNotifPrefs()"><span>On the day</span></label>
+                </div>
             </div>
 
             <div class="card">
@@ -348,6 +376,7 @@
         </div>
     </div>
 
+    <script src="notifications.js"></script>
     <script src="i18n.js"></script>
     <script src="specialNumbers.js"></script>
     <script src="milestoneCalculator.js"></script>

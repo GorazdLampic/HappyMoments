@@ -157,6 +157,12 @@ function init() {
 
     checkConsent();
 
+    // Init notifications
+    if (typeof NOTIF !== 'undefined') {
+        NOTIF.init();
+        loadNotifUI();
+    }
+
     // Initialize i18n
     if (typeof I18N !== 'undefined') {
         I18N.init();
@@ -220,26 +226,71 @@ document.addEventListener('click', function(e) {
     }
 });
 
-function loadDarkMode() {
-    // Default is dark. Toggle switches to light mode.
-    const isLight = localStorage.getItem('happymoments_lightmode') === 'true';
-    if (isLight) {
-        document.documentElement.setAttribute('data-theme', 'light');
-        darkModeToggle.checked = false;
+// Notification UI
+function loadNotifUI() {
+    if (typeof NOTIF === 'undefined') return;
+    const toggle = document.getElementById('notifToggle');
+    const options = document.getElementById('notifOptions');
+    if (!toggle || !options) return;
+
+    const prefs = NOTIF.getPrefs();
+    toggle.checked = NOTIF.isEnabled();
+    options.style.display = NOTIF.isEnabled() ? 'block' : 'none';
+
+    const dayEl = document.getElementById('notifDay');
+    const hourEl = document.getElementById('notifHour');
+    const onDayEl = document.getElementById('notifOnDay');
+    if (dayEl) dayEl.checked = prefs.dayBefore;
+    if (hourEl) hourEl.checked = prefs.hourBefore;
+    if (onDayEl) onDayEl.checked = prefs.onDay;
+}
+
+async function toggleNotifications(enabled) {
+    if (typeof NOTIF === 'undefined') return;
+    if (enabled) {
+        await NOTIF.enable();
     } else {
-        document.documentElement.removeAttribute('data-theme');
-        darkModeToggle.checked = true;
+        NOTIF.disable();
     }
+    loadNotifUI();
+}
+
+function updateNotifPrefs() {
+    if (typeof NOTIF === 'undefined') return;
+    const prefs = NOTIF.getPrefs();
+    const dayEl = document.getElementById('notifDay');
+    const hourEl = document.getElementById('notifHour');
+    const onDayEl = document.getElementById('notifOnDay');
+    if (dayEl) prefs.dayBefore = dayEl.checked;
+    if (hourEl) prefs.hourBefore = hourEl.checked;
+    if (onDayEl) prefs.onDay = onDayEl.checked;
+    NOTIF.savePrefs(prefs);
+}
+
+function loadDarkMode() {
+    const saved = localStorage.getItem('happymoments_theme') || 'dark';
+    setAppTheme(saved, true);
+}
+
+function setAppTheme(theme, skipSave) {
+    if (theme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+    if (!skipSave) localStorage.setItem('happymoments_theme', theme);
+
+    // Update button states
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-val') === theme);
+    });
+
+    // Keep legacy darkModeToggle in sync if it exists
+    if (darkModeToggle) darkModeToggle.checked = (theme === 'dark');
 }
 
 function handleDarkModeToggle() {
-    const isDark = darkModeToggle.checked;
-    if (isDark) {
-        document.documentElement.removeAttribute('data-theme');
-    } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-    }
-    localStorage.setItem('happymoments_lightmode', !isDark);
+    setAppTheme(darkModeToggle.checked ? 'dark' : 'light');
 }
 
 function loadData() {
@@ -694,14 +745,14 @@ function displayCalcResults(results, number, unit) {
     let html = '';
 
     results.forEach(result => {
-        const dateStr = result.milestoneDate.toLocaleDateString('en-US', {
+        const dateStr = result.milestoneDate.toLocaleDateString(getAppLocale(), {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
 
-        const timeStr = result.milestoneDate.toLocaleTimeString('en-US', {
+        const timeStr = result.milestoneDate.toLocaleTimeString(getAppLocale(), {
             hour: '2-digit',
             minute: '2-digit'
         });
@@ -2112,7 +2163,7 @@ function formatDateWithTime(date) {
 
     // For dates within a week, show day name
     if (daysDiff <= 7) {
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(getAppLocale(), {
             weekday: 'short',
             month: 'short',
             day: 'numeric'
@@ -2121,14 +2172,14 @@ function formatDateWithTime(date) {
 
     // For dates within a year, show month and day
     if (date.getFullYear() === now.getFullYear()) {
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(getAppLocale(), {
             month: 'short',
             day: 'numeric'
         });
     }
 
     // For future years, include year
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(getAppLocale(), {
         month: 'short',
         day: 'numeric',
         year: '2-digit'
@@ -2165,7 +2216,7 @@ function isRepdigit(num) {
 }
 
 function formatDateCompact(date) {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString(getAppLocale(), { month: 'short', day: 'numeric' });
 }
 
 function findSumMilestonesForEvents(events, maxResults, maxDaysAhead, settings) {
@@ -2346,7 +2397,7 @@ function pickShareTemplate(category) {
 }
 
 function fillShareTemplate(template, m) {
-    const dateStr = m.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
     const countdown = formatTimeDistance(m.timeUntil);
     const val = m.value.toLocaleString();
     const unit = m.unitName;
@@ -2394,7 +2445,7 @@ function generateShareMessage(m) {
     }
 
     // Fallback if no templates loaded
-    const dateStr = m.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
     const countdown = formatTimeDistance(m.timeUntil);
     const val = m.value.toLocaleString();
 
@@ -2499,7 +2550,7 @@ function updateCombinedSharePreview() {
 }
 
 function generateCombinedShareMessage(m) {
-    const dateStr = m.date.toLocaleDateString('en-US', {
+    const dateStr = m.date.toLocaleDateString(getAppLocale(), {
         weekday: 'long',
         year: 'numeric',
         month: 'long',

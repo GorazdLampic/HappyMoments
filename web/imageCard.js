@@ -70,7 +70,7 @@ function generateMilestoneCard(milestone, options) {
     const val = milestone.value.toLocaleString();
     const unit = milestone.unitName || '';
     const name = milestone.eventName || '';
-    const dateStr = milestone.date.toLocaleDateString('en-US', {
+    const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
     const countdown = typeof formatTimeDistance === 'function'

@@ -237,8 +237,12 @@ function formatTimeDistance(ms) {
 }
 
 // Format date for display
+function getAppLocale() {
+    return (typeof I18N !== 'undefined') ? I18N.getLocale() : 'en';
+}
+
 function formatDate(date) {
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(getAppLocale(), {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
@@ -249,7 +253,7 @@ function formatDate(date) {
 
 // Format date short (without time)
 function formatDateShort(date) {
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(getAppLocale(), {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
