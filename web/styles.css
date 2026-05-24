@@ -127,6 +127,27 @@
     --primary-light: #f08858;
 }
 
+/* Blossom (pink) */
+[data-theme="blossom"] {
+    --bg-page: #1e1020;
+    --bg-card: #281428;
+    --bg-elevated: #321a32;
+    --bg-hover: #3c2038;
+    --bg-input: #1a0c1a;
+    --text-primary: #f0d8e8;
+    --text-secondary: #c890b0;
+    --text-muted: #986888;
+    --border: #381838;
+    --border-light: #321a32;
+    --separator: rgba(220,120,180,0.08);
+    --accent: #e078b0;
+    --warning: #e8a0c0;
+    --danger: #d06080;
+    --primary: #e078b0;
+    --primary-dark: #c86898;
+    --primary-light: #f088c0;
+}
+
 /* Forest */
 [data-theme="forest"] {
     --bg-page: #0f1a10;
