@@ -293,6 +293,22 @@
                 <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;">Reset All Data</button>
             </div>
         </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <a href="legal.html" target="_blank">Terms &amp; Privacy</a>
+            <span class="footer-sep">&middot;</span>
+            <span class="footer-copy">HappyMoments &copy; 2026 Quantum Wave Ltd</span>
+        </footer>
+
+        <!-- Consent Banner (first run) -->
+        <div id="consentBanner" class="consent-banner hidden">
+            <p>HappyMoments stores your dates and preferences locally on your device. No data is sent to any server.</p>
+            <div class="consent-actions">
+                <button onclick="acceptConsent()" class="btn-primary btn-consent">OK, got it</button>
+                <a href="legal.html" target="_blank" class="consent-link">Read full policy</a>
+            </div>
+        </div>
     </div>
 
     <script src="specialNumbers.js"></script>
@@ -300,6 +316,8 @@
     <script src="combinations.js"></script>
     <script src="shareMessages.js"></script>
     <script src="giftStore.js"></script>
+    <script src="dataProtection.js"></script>
+    <script src="checkout.js"></script>
     <script src="app.js"></script>
 
     <!-- Service Worker Registration for PWA -->

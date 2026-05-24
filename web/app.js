@@ -154,6 +154,25 @@ function init() {
     [birthDateInput, newEventDateInput, editEventDateInput].forEach(el => {
         if (el) el.max = today;
     });
+
+    checkConsent();
+
+    // Check for Stripe checkout return
+    if (typeof checkCheckoutResult === 'function') checkCheckoutResult();
+}
+
+// Consent banner
+function checkConsent() {
+    if (!localStorage.getItem('happymoments_consent')) {
+        const banner = document.getElementById('consentBanner');
+        if (banner) banner.classList.remove('hidden');
+    }
+}
+
+function acceptConsent() {
+    localStorage.setItem('happymoments_consent', 'true');
+    const banner = document.getElementById('consentBanner');
+    if (banner) banner.classList.add('hidden');
 }
 
 function loadDarkMode() {
@@ -179,58 +198,69 @@ function handleDarkModeToggle() {
 }
 
 function loadData() {
+    // Try encrypted load first, then plain JSON fallback
     const saved = localStorage.getItem(STORAGE_KEY_DATA);
-    if (saved) {
-        let data;
-        try {
-            data = JSON.parse(saved);
-        } catch (e) {
-            console.error('Failed to parse saved data:', e);
-            return;
+    if (!saved) { loadComboTypesUI(); return; }
+
+    if (saved.startsWith('enc:') && typeof DATA_PROTECTION !== 'undefined') {
+        DATA_PROTECTION.loadSecure(STORAGE_KEY_DATA).then(data => {
+            if (data) applyLoadedData(data);
+            loadComboTypesUI();
+        }).catch(() => {
+            applyLoadedDataFromRaw(saved);
+            loadComboTypesUI();
+        });
+    } else {
+        applyLoadedDataFromRaw(saved);
+        loadComboTypesUI();
+    }
+}
+
+function applyLoadedDataFromRaw(saved) {
+    try {
+        const data = JSON.parse(saved);
+        applyLoadedData(data);
+    } catch (e) {
+        console.error('Failed to parse saved data');
+    }
+}
+
+function applyLoadedData(data) {
+    if (!data) return;
+
+    if (data.sets && Array.isArray(data.sets)) {
+        allSets = data.sets.map(set => ({
+            ...set,
+            events: (set.events || []).map(e => ({ ...e, date: new Date(e.date) }))
+        }));
+        currentSetId = data.currentSetId || (allSets.length > 0 ? allSets[0].id : null);
+    } else {
+        const events = (data.events || []).map(e => ({ ...e, date: new Date(e.date) }));
+        let connections = data.connections || {};
+
+        if (!data.connections && data.groups && data.groups.length > 0) {
+            connections = {};
+            data.groups.forEach(g => {
+                Object.assign(connections, g.connections || {});
+            });
         }
 
-        // Check if this is the new multi-set format
-        if (data.sets && Array.isArray(data.sets)) {
-            // New multi-set format
-            allSets = data.sets.map(set => ({
-                ...set,
-                events: (set.events || []).map(e => ({ ...e, date: new Date(e.date) }))
-            }));
-            currentSetId = data.currentSetId || (allSets.length > 0 ? allSets[0].id : null);
-        } else {
-            // Migrate from old single-set format
-            const events = (data.events || []).map(e => ({ ...e, date: new Date(e.date) }));
-            let connections = data.connections || {};
-
-            // Migrate from groups if needed
-            if (!data.connections && data.groups && data.groups.length > 0) {
-                connections = {};
-                data.groups.forEach(g => {
-                    Object.assign(connections, g.connections || {});
-                });
-            }
-
-            // Create default set from existing data
-            if (events.length > 0) {
-                allSets = [{
-                    id: 'set_default',
-                    name: 'My Dates',
-                    events: events,
-                    connections: connections,
-                    comboTypes: data.comboTypes || { sum: true, ratio: true, duration: true }
-                }];
-                currentSetId = 'set_default';
-            }
-        }
-
-        // Load current set into appData
-        loadCurrentSet();
-
-        if (appData.events.length > 0) {
-            showDashboard();
+        if (events.length > 0) {
+            allSets = [{
+                id: 'set_default',
+                name: 'My Dates',
+                events: events,
+                connections: connections,
+                comboTypes: data.comboTypes || { sum: true, ratio: true, duration: true }
+            }];
+            currentSetId = 'set_default';
         }
     }
-    loadComboTypesUI();
+
+    loadCurrentSet();
+    if (appData.events.length > 0) {
+        showDashboard();
+    }
 }
 
 function loadCurrentSet() {
@@ -282,8 +312,8 @@ function saveData() {
         };
     }
 
-    // Save all sets
-    localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify({
+    // Prepare data object
+    const dataObj = {
         sets: allSets.map(set => ({
             ...set,
             events: (set.events || []).map(e => ({
@@ -294,7 +324,16 @@ function saveData() {
             comboTypes: set.comboTypes || { sum: true, ratio: true, duration: true }
         })),
         currentSetId: currentSetId
-    }));
+    };
+
+    // Save encrypted if available, with sync fallback
+    if (typeof DATA_PROTECTION !== 'undefined' && DATA_PROTECTION.isAvailable()) {
+        DATA_PROTECTION.saveSecure(STORAGE_KEY_DATA, dataObj).catch(() => {
+            localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj));
+        });
+    } else {
+        localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj));
+    }
 }
 
 function saveSettings() {

@@ -192,12 +192,87 @@ function openGiftOrder(productId, value, unit) {
     const product = GIFT_CATALOG.find(p => p.id === productId);
     if (!product) return;
 
-    // For now, show a "coming soon" modal
     const val = value.toLocaleString();
-    const msg = `${product.name} — personalized with "${val} ${unit}"\n\nThe gift store is coming soon! We're partnering with artisan producers to bring you beautiful, personalized milestone gifts.\n\nWant to be notified when it launches?`;
+    const price = (typeof PRODUCT_PRICES !== 'undefined' && PRODUCT_PRICES[productId])
+        ? (PRODUCT_PRICES[productId].amount / 100).toFixed(2)
+        : product.priceRange;
 
-    if (confirm(msg)) {
-        showToast('Thanks! We\'ll notify you when the gift store launches.', 'success');
+    // Build customization form based on product
+    const hasSize = product.customizable.includes('size');
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'giftOrderModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `
+        <div class="modal-content checkout-modal">
+            <h3>${product.icon} ${product.name}</h3>
+            <p class="checkout-custom">${product.description}</p>
+
+            <div class="gift-order-form">
+                <div class="form-group">
+                    <label>Number on the gift</label>
+                    <input type="text" id="giftNumber" value="${val} ${unit}" readonly class="checkout-email-input" style="background: var(--bg-elevated);">
+                </div>
+                <div class="form-group">
+                    <label>Recipient name</label>
+                    <input type="text" id="giftRecipient" placeholder="Who is this for?" class="checkout-email-input">
+                </div>
+                <div class="form-group">
+                    <label>Personal message (optional)</label>
+                    <input type="text" id="giftMessage" placeholder="e.g. Happy 10,000 days!" maxlength="80" class="checkout-email-input">
+                </div>
+                ${hasSize ? `
+                <div class="form-group">
+                    <label>Size</label>
+                    <select id="giftSize" class="checkout-email-input">
+                        <option value="S">Small</option>
+                        <option value="M" selected>Medium</option>
+                        <option value="L">Large</option>
+                        <option value="XL">X-Large</option>
+                    </select>
+                </div>
+                ` : ''}
+            </div>
+
+            <div class="checkout-price">EUR ${price}</div>
+
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="submitGiftOrder('${productId}', ${value}, '${unit}')">
+                    Order Now
+                </button>
+                <button class="btn-secondary" onclick="document.getElementById('giftOrderModal').remove()">Cancel</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function submitGiftOrder(productId, value, unit) {
+    const recipient = document.getElementById('giftRecipient');
+    const message = document.getElementById('giftMessage');
+    const sizeEl = document.getElementById('giftSize');
+
+    const order = {
+        productId: productId,
+        customization: {
+            number: value.toLocaleString(),
+            unit: unit,
+            recipientName: recipient ? recipient.value.trim() : '',
+            message: message ? message.value.trim() : '',
+            size: sizeEl ? sizeEl.value : null,
+        }
+    };
+
+    // Remove the order form modal
+    const modal = document.getElementById('giftOrderModal');
+    if (modal) modal.remove();
+
+    // Start checkout (demo or Stripe)
+    if (typeof startCheckout === 'function') {
+        startCheckout(order);
+    } else {
+        showToast('Checkout system loading, please try again.', 'error');
     }
 }
 
