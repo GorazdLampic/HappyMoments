@@ -385,6 +385,8 @@ const DEFAULT_SETTINGS = {
         palindromes: true,
         sequential: true,
         scientific: true,
+        fibonacci: true,
+        powers2: true,
         lucky: false
     },
     constants: {
@@ -475,14 +477,19 @@ function generateAllSpecialNumbers(settings) {
 
     const numbers = new Set();
 
-    // Powers of 10
+    // Powers of 10 & round numbers
     if (settings.patterns.powers) {
         POWERS_OF_TEN.forEach(n => numbers.add(n));
-        // Also add nice round numbers (5000, 2000, etc.)
         ROUND_NUMBERS.forEach(n => numbers.add(n));
-        // Powers of 2
+    }
+
+    // Powers of 2
+    if (settings.patterns.powers2 !== false) {
         POWERS_OF_TWO.forEach(n => numbers.add(n));
-        // Fibonacci
+    }
+
+    // Fibonacci
+    if (settings.patterns.fibonacci !== false) {
         FIBONACCI.forEach(n => numbers.add(n));
     }
 
@@ -539,15 +546,16 @@ function classifyNumber(num, settings) {
     settings = settings || DEFAULT_SETTINGS;
     const strNum = String(num);
     const types = [];
+    const _t = (typeof I18N !== 'undefined') ? I18N.t : (k) => null;
 
     // Power of 10
     if (POWERS_OF_TEN.includes(num)) {
-        types.push({ type: 'power_of_10', description: `Power of 10` });
+        types.push({ type: 'power_of_10', description: _t('power_of_10') || 'Power of 10' });
     }
 
     // Fibonacci
     if (FIBONACCI.includes(num)) {
-        types.push({ type: 'fibonacci', description: `Fibonacci number` });
+        types.push({ type: 'fibonacci', description: _t('fibonacci_number') || 'Fibonacci number' });
     }
 
     // Power of 2
@@ -559,35 +567,37 @@ function classifyNumber(num, settings) {
     // Nice round number (multiple of 500 or 1000)
     if (ROUND_NUMBERS.includes(num) && !POWERS_OF_TEN.includes(num)) {
         if (num % 1000 === 0) {
-            types.push({ type: 'round', description: `${(num/1000).toLocaleString()}k milestone` });
+            const tmpl = _t('k_milestone') || '{value}k milestone';
+            types.push({ type: 'round', description: tmpl.replace('{value}', (num/1000).toLocaleString()) });
         } else {
-            types.push({ type: 'round', description: `Round number` });
+            types.push({ type: 'round', description: _t('round_number') || 'Round number' });
         }
     }
 
     // Repdigit
     if (strNum.length >= 2 && new Set(strNum).size === 1) {
-        types.push({ type: 'repdigit', description: `All ${strNum[0]}s` });
+        const tmpl = _t('all_digits') || 'All {digit}s';
+        types.push({ type: 'repdigit', description: tmpl.replace('{digit}', strNum[0]) });
     }
 
     // Palindrome
     if (strNum === strNum.split('').reverse().join('') && strNum.length >= 3) {
-        types.push({ type: 'palindrome', description: `Palindrome` });
+        types.push({ type: 'palindrome', description: _t('palindrome_label') || 'Palindrome' });
     }
 
     // Sequential ascending
     if ('123456789'.includes(strNum) && strNum.length >= 3) {
-        types.push({ type: 'sequential', description: `Ascending sequence` });
+        types.push({ type: 'sequential', description: _t('ascending_seq') || 'Ascending sequence' });
     }
 
     // Sequential descending
     if ('987654321'.includes(strNum) && strNum.length >= 3) {
-        types.push({ type: 'sequential', description: `Descending sequence` });
+        types.push({ type: 'sequential', description: _t('descending_seq') || 'Descending sequence' });
     }
 
     // Alternating pattern
     if (isAlternating(strNum) && strNum.length >= 4) {
-        types.push({ type: 'alternating', description: `Alternating pattern` });
+        types.push({ type: 'alternating', description: _t('alternating_label') || 'Alternating pattern' });
     }
 
     // Scientific constants
@@ -601,17 +611,17 @@ function classifyNumber(num, settings) {
     if (settings.luckyDigits && settings.luckyDigits.length > 0) {
         const digits = strNum.split('').map(Number);
         if (digits.every(d => settings.luckyDigits.includes(d))) {
-            types.push({ type: 'lucky', description: `Lucky digits` });
+            types.push({ type: 'lucky', description: _t('lucky_label') || 'Lucky digits' });
         }
     }
 
     // Custom number
     if (settings.customNumbers && settings.customNumbers.includes(num)) {
-        types.push({ type: 'custom', description: `Your special number` });
+        types.push({ type: 'custom', description: _t('custom_label') || 'Your special number' });
     }
 
     if (types.length === 0) {
-        types.push({ type: 'special', description: 'Special number' });
+        types.push({ type: 'special', description: _t('special_label') || 'Special number' });
     }
 
     return types;

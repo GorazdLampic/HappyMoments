@@ -160,13 +160,7 @@ function init() {
     // Initialize i18n
     if (typeof I18N !== 'undefined') {
         I18N.init();
-        // Populate language selector
-        const langSelect = document.getElementById('languageSelect');
-        if (langSelect) {
-            langSelect.innerHTML = I18N.SUPPORTED_LOCALES.map(loc =>
-                `<option value="${loc}" ${loc === I18N.getLocale() ? 'selected' : ''}>${I18N.LOCALE_NAMES[loc]}</option>`
-            ).join('');
-        }
+        initLangPicker();
     }
 
     // Check for Stripe checkout return
@@ -186,6 +180,45 @@ function acceptConsent() {
     const banner = document.getElementById('consentBanner');
     if (banner) banner.classList.add('hidden');
 }
+
+// Language picker with flags
+const LANG_FLAGS = {
+    en: '🇬🇧', es: '🇪🇸', de: '🇩🇪', pt: '🇵🇹', it: '🇮🇹',
+    fr: '🇫🇷', hr: '🇭🇷', sl: '🇸🇮', nl: '🇳🇱', pl: '🇵🇱',
+    zh: '🇨🇳', hi: '🇮🇳', ar: '🇸🇦', bn: '🇧🇩', ja: '🇯🇵',
+    vi: '🇻🇳', id: '🇮🇩'
+};
+
+function initLangPicker() {
+    // Just update the displayed flag/code to match current locale
+    if (typeof I18N === 'undefined') return;
+    const loc = I18N.getLocale();
+    const flagEl = document.getElementById('langFlagDisplay');
+    const codeEl = document.getElementById('langCodeDisplay');
+    if (flagEl) flagEl.textContent = LANG_FLAGS[loc] || '';
+    if (codeEl) codeEl.textContent = loc.toUpperCase();
+}
+
+function selectLanguage(locale) {
+    if (typeof I18N !== 'undefined') I18N.setLocale(locale);
+    // Update button display
+    const flagEl = document.getElementById('langFlagDisplay');
+    const codeEl = document.getElementById('langCodeDisplay');
+    if (flagEl) flagEl.textContent = LANG_FLAGS[locale] || '';
+    if (codeEl) codeEl.textContent = locale.toUpperCase();
+    // Close dropdown
+    const drop = document.getElementById('langDropFallback');
+    if (drop) drop.style.display = 'none';
+}
+
+// Close lang dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    const picker = document.getElementById('langPicker');
+    const drop = document.getElementById('langDropFallback');
+    if (drop && picker && !picker.contains(e.target)) {
+        drop.style.display = 'none';
+    }
+});
 
 function loadDarkMode() {
     // Default is dark. Toggle switches to light mode.
@@ -1442,21 +1475,21 @@ function getEventMilestoneDescription(event, milestone) {
     const value = milestone.value.toLocaleString();
     const unit = milestone.unitName;
     const name = event.name;
+    const _t = (typeof I18N !== 'undefined') ? I18N.t : (k) => null;
 
     switch (type) {
         case 'birthday':
-            // For birthdays, use age-related language
             if (unit === 'years' || unit === 'y') {
-                return `${name} turns ${value} years old`;
+                const tmpl = _t('turns_age') || '{name} turns {value}!';
+                return tmpl.replace('{name}', name).replace('{value}', value);
             }
-            return `${name} is ${value} ${unit} old`;
+            const tmpl2 = _t('is_old') || '{name} will be {value} {unit} old';
+            return tmpl2.replace('{name}', name).replace('{value}', value).replace('{unit}', unit);
         case 'beginning':
-            // For beginnings (first met, started job, etc.)
-            return `${value} ${unit} since ${name}`;
         case 'milestone':
         default:
-            // For other events, use neutral "since" language
-            return `${value} ${unit} since ${name}`;
+            const tmpl3 = _t('since') || '{value} {unit} since {name}';
+            return tmpl3.replace('{name}', name).replace('{value}', value).replace('{unit}', unit);
     }
 }
 
@@ -1714,7 +1747,18 @@ function getUpcomingYearlyMilestones(event, maxDays) {
         const age = candidateYear - eventDate.getFullYear();
         if (age <= 0) continue;
 
-        const label = type === 'birthday' ? `Turns ${age}` : `${age}y`;
+        const _t = (typeof I18N !== 'undefined') ? I18N.t : (k) => null;
+        const turnsLabel = _t('turns') || 'Turns';
+        const label = type === 'birthday' ? `${turnsLabel} ${age}` : `${age}y`;
+
+        let fullDesc;
+        if (type === 'birthday') {
+            const tmpl = _t('turns_age') || '{name} turns {value}!';
+            fullDesc = '🎂 ' + tmpl.replace('{name}', event.name).replace('{value}', age);
+        } else {
+            const tmpl = _t('years_since') || '{value} years since {name}!';
+            fullDesc = '🎉 ' + tmpl.replace('{name}', event.name).replace('{value}', age);
+        }
 
         return [{
             value: age,
@@ -1727,9 +1771,7 @@ function getUpcomingYearlyMilestones(event, maxDays) {
             eventName: event.name,
             eventId: event.id,
             eventType: type,
-            fullDescription: type === 'birthday'
-                ? `🎂 ${event.name} turns ${age}!`
-                : `🎉 ${age} years since ${event.name}!`,
+            fullDescription: fullDesc,
             isBirthday: true
         }];
     }

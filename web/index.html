@@ -34,6 +34,34 @@
             <p class="tagline" data-i18n="tagline">The poetry of numbers in your life, revealed.</p>
         </header>
 
+        <!-- Language Picker — always visible -->
+        <div class="lang-picker" id="langPicker">
+            <button class="lang-current" id="langBtnFallback" onclick="document.getElementById('langDropFallback').style.display=document.getElementById('langDropFallback').style.display==='block'?'none':'block'">
+                <span id="langFlagDisplay">🇬🇧</span>
+                <span id="langCodeDisplay">EN</span>
+                <span class="lang-arrow">&#9662;</span>
+            </button>
+            <div class="lang-dropdown" id="langDropFallback" style="display:none;">
+                <button class="lang-option" onclick="selectLanguage('en')"><span class="lang-option-flag">🇬🇧</span><span>English</span></button>
+                <button class="lang-option" onclick="selectLanguage('es')"><span class="lang-option-flag">🇪🇸</span><span>Español</span></button>
+                <button class="lang-option" onclick="selectLanguage('de')"><span class="lang-option-flag">🇩🇪</span><span>Deutsch</span></button>
+                <button class="lang-option" onclick="selectLanguage('fr')"><span class="lang-option-flag">🇫🇷</span><span>Français</span></button>
+                <button class="lang-option" onclick="selectLanguage('it')"><span class="lang-option-flag">🇮🇹</span><span>Italiano</span></button>
+                <button class="lang-option" onclick="selectLanguage('pt')"><span class="lang-option-flag">🇵🇹</span><span>Português</span></button>
+                <button class="lang-option" onclick="selectLanguage('hr')"><span class="lang-option-flag">🇭🇷</span><span>Hrvatski</span></button>
+                <button class="lang-option" onclick="selectLanguage('sl')"><span class="lang-option-flag">🇸🇮</span><span>Slovenščina</span></button>
+                <button class="lang-option" onclick="selectLanguage('nl')"><span class="lang-option-flag">🇳🇱</span><span>Nederlands</span></button>
+                <button class="lang-option" onclick="selectLanguage('pl')"><span class="lang-option-flag">🇵🇱</span><span>Polski</span></button>
+                <button class="lang-option" onclick="selectLanguage('zh')"><span class="lang-option-flag">🇨🇳</span><span>中文</span></button>
+                <button class="lang-option" onclick="selectLanguage('hi')"><span class="lang-option-flag">🇮🇳</span><span>हिन्दी</span></button>
+                <button class="lang-option" onclick="selectLanguage('ar')"><span class="lang-option-flag">🇸🇦</span><span>العربية</span></button>
+                <button class="lang-option" onclick="selectLanguage('bn')"><span class="lang-option-flag">🇧🇩</span><span>বাংলা</span></button>
+                <button class="lang-option" onclick="selectLanguage('ja')"><span class="lang-option-flag">🇯🇵</span><span>日本語</span></button>
+                <button class="lang-option" onclick="selectLanguage('vi')"><span class="lang-option-flag">🇻🇳</span><span>Tiếng Việt</span></button>
+                <button class="lang-option" onclick="selectLanguage('id')"><span class="lang-option-flag">🇮🇩</span><span>Indonesia</span></button>
+            </div>
+        </div>
+
         <!-- Set Switcher (for multiple event sets) -->
         <div id="setSwitcher" class="set-switcher hidden">
             <select id="currentSetSelect"></select>
@@ -250,6 +278,8 @@
                     <label class="pattern-option"><input type="checkbox" data-pattern="palindromes" checked><span>Palindromes (12321...)</span></label>
                     <label class="pattern-option"><input type="checkbox" data-pattern="sequential" checked><span>Sequential (123, 4321...)</span></label>
                     <label class="pattern-option"><input type="checkbox" data-pattern="scientific" checked><span>Scientific (Pi, e, Phi)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="fibonacci" checked><span>Fibonacci (5, 8, 13, 21, 34, 55, 89...)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="powers2" checked><span>Powers of 2 (256, 1024, 4096, 65536...)</span></label>
                     <label class="pattern-option"><input type="checkbox" data-pattern="lucky"><span>My Lucky Digit Patterns</span></label>
                 </div>
             </div>
@@ -293,11 +323,6 @@
                     <input type="checkbox" id="darkModeToggle">
                     <span data-i18n="dark_mode">Dark Mode</span>
                 </label>
-                <div class="language-selector" style="margin-top: var(--space-md);">
-                    <label style="font-style: italic; color: var(--text-secondary); font-size: var(--font-size-sm);">Language</label>
-                    <select id="languageSelect" class="checkout-email-input" style="margin-top: var(--space-xs);" onchange="I18N.setLocale(this.value)">
-                    </select>
-                </div>
             </div>
 
             <div class="card">
