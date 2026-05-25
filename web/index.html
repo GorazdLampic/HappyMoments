@@ -93,7 +93,7 @@
                     <span class="date-sep">/</span>
                     <input type="number" id="birthMonth" placeholder="MM" min="1" max="12" class="date-field date-mm" oninput="autoAdvance(this, 'birthYear', 2)">
                     <span class="date-sep">/</span>
-                    <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy">
+                    <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy" oninput="syncDateFields(this)">
                 </div>
                 <input type="hidden" id="birthDate">
             </div>
@@ -222,7 +222,7 @@
                                 <span class="date-sep">/</span>
                                 <input type="number" id="newEventMonth" placeholder="MM" min="1" max="12" class="date-field date-mm" oninput="autoAdvance(this, 'newEventYear', 2)">
                                 <span class="date-sep">/</span>
-                                <input type="number" id="newEventYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy">
+                                <input type="number" id="newEventYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy" oninput="syncDateFields(this)">
                             </div>
                             <input type="hidden" id="newEventDate">
                         </div>
@@ -276,7 +276,7 @@
                             <span class="date-sep">/</span>
                             <input type="number" id="editEventMonth" placeholder="MM" min="1" max="12" class="date-field date-mm" oninput="autoAdvance(this, 'editEventYear', 2)">
                             <span class="date-sep">/</span>
-                            <input type="number" id="editEventYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy">
+                            <input type="number" id="editEventYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy" oninput="syncDateFields(this)">
                         </div>
                         <input type="hidden" id="editEventDate">
                     </div>

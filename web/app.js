@@ -48,6 +48,21 @@ function syncDateFields(anyField) {
     }
 }
 
+// Build ISO date string directly from DD/MM/YYYY fields
+function buildDateFromFields(prefix) {
+    const dd = document.getElementById(prefix + 'Day');
+    const mm = document.getElementById(prefix + 'Month');
+    const yy = document.getElementById(prefix + 'Year');
+    if (!dd || !mm || !yy) return '';
+    const d = parseInt(dd.value, 10);
+    const m = parseInt(mm.value, 10);
+    const y = parseInt(yy.value, 10);
+    if (d >= 1 && d <= 31 && m >= 1 && m <= 12 && y >= 1900 && y <= 2100) {
+        return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    }
+    return '';
+}
+
 // Set date fields from an ISO string (for edit modal)
 function setDateFields(prefix, isoDate) {
     if (!isoDate) return;
@@ -829,10 +844,10 @@ function displayCalcResults(results, number, unit) {
 
 function handleStart() {
     const name = birthNameInput.value.trim();
-    const dateStr = birthDateInput.value;
+    const dateStr = birthDateInput.value || buildDateFromFields('birth');
 
     if (!name || !dateStr) {
-        showToast('Please enter event name and date', 'error');
+        showToast('Please enter name and date', 'error');
         return;
     }
 
@@ -924,7 +939,7 @@ function getEventTypeIcon(type) {
 function handleAddEvent() {
     const name = newEventNameInput.value.trim();
     const type = newEventTypeSelect.value;
-    const dateStr = newEventDateInput.value;
+    const dateStr = newEventDateInput.value || buildDateFromFields('newEvent');
 
     if (!name || !dateStr) {
         showToast('Please enter event name and date', 'error');
@@ -998,7 +1013,7 @@ function handleSaveEdit() {
 
     const name = editEventNameInput.value.trim();
     const type = editEventTypeSelect.value;
-    const dateStr = editEventDateInput.value;
+    const dateStr = editEventDateInput.value || buildDateFromFields('editEvent');
 
     if (!name || !dateStr) {
         showToast('Please enter event name and date', 'error');
@@ -2882,6 +2897,9 @@ function handleReset() {
 
     birthNameInput.value = 'My Birthday';
     birthDateInput.value = '';
+    ['birthDay', 'birthMonth', 'birthYear'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
 
     tabNav.classList.add('hidden');
     setSwitcher.classList.add('hidden');
