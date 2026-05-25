@@ -61,3 +61,14 @@ jobs:
           name: happymoments-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 90
+
+      - name: Create GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0-debug
+          name: "HappyMoments v1.0.0 (Debug)"
+          body: "Debug APK for testing. Download app-debug.apk and install on your Android phone."
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
