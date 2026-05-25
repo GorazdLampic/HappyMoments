@@ -110,7 +110,7 @@
                 <!-- Dynamically populated with person buttons -->
             </div>
             <!-- Quick add person button -->
-            <button class="btn-add-person" onclick="switchTab('events'); document.getElementById('newEventName').focus();">+ Add person or date</button>
+            <button class="btn-add-person" onclick="switchTab('events'); document.getElementById('newEventName').focus();" data-i18n="add_date">+ Add person or date</button>
 
             <!-- Today highlight -->
             <div class="today-highlight" id="todayHighlight" style="display:none;"></div>
@@ -118,10 +118,10 @@
             <!-- Milestones by Event -->
             <div class="card milestones-card">
                 <div class="section-header">
-                    <h2 id="milestonesTitle">Upcoming Milestones</h2>
+                    <h2 id="milestonesTitle" data-i18n="upcoming_milestones">Upcoming Milestones</h2>
                     <div class="header-actions">
-                        <button id="highlightsBtn" class="btn-small btn-highlights" onclick="selectMostSpecial()">Highlights</button>
-                        <button id="refreshMilestonesBtn" class="btn-small">Refresh</button>
+                        <button id="highlightsBtn" class="btn-small btn-highlights" onclick="selectMostSpecial()" data-i18n="highlights">Highlights</button>
+                        <button id="refreshMilestonesBtn" class="btn-small" data-i18n="refresh">Refresh</button>
                     </div>
                 </div>
                 <div id="milestonesColumns" class="milestones-columns"></div>
@@ -170,8 +170,8 @@
         <section id="combinedTab" class="tab-content hidden">
             <div class="card">
                 <div class="section-header">
-                    <h2>Combined Milestones</h2>
-                    <button id="refreshCombinedBtn" class="btn-small">Refresh</button>
+                    <h2 data-i18n="combined_milestones">Combined Milestones</h2>
+                    <button id="refreshCombinedBtn" class="btn-small" data-i18n="refresh">Refresh</button>
                 </div>
                 <p class="card-description">Combined milestones for everyone in the group — when your ages, time together, or ratios reach special numbers.</p>
                 <div id="combinedMilestonesContent" class="combined-milestones"></div>
@@ -201,11 +201,11 @@
         <!-- Data Tab -->
         <section id="eventsTab" class="tab-content hidden">
             <div class="card">
-                <h2>Dates &amp; Events</h2>
+                <h2 data-i18n="dates_events">Dates &amp; Events</h2>
                 <p class="card-description">Add birthdays, anniversaries, and any meaningful date to track.</p>
                 <div id="eventsList" class="events-list"></div>
                 <div class="add-event-form">
-                    <h3>Add a Date</h3>
+                    <h3 data-i18n="add_date">Add a Date</h3>
                     <div class="form-row">
                         <div class="form-group" style="flex: 2;">
                             <input type="text" id="newEventName" placeholder="e.g. Anna, Our Wedding, First Day at Work" autocomplete="off">
@@ -247,7 +247,7 @@
             </div>
 
             <div class="card">
-                <h3>Backup</h3>
+                <h3 data-i18n="backup">Backup</h3>
                 <div class="backup-buttons">
                     <button id="exportDataBtn" class="btn-secondary">Export Data</button>
                     <label class="btn-secondary import-btn">
@@ -291,7 +291,7 @@
         <!-- Settings Tab -->
         <section id="settingsTab" class="tab-content hidden">
             <div class="card">
-                <h2>Number Patterns</h2>
+                <h2 data-i18n="number_patterns">Number Patterns</h2>
                 <div class="pattern-options">
                     <label class="pattern-option"><input type="checkbox" data-pattern="powers" checked><span>Round Numbers (1000, 5000...)</span></label>
                     <label class="pattern-option"><input type="checkbox" data-pattern="repdigits" checked><span>Repdigits (111, 2222...)</span></label>
@@ -306,7 +306,7 @@
             </div>
 
             <div class="card">
-                <h2>Lucky Digits</h2>
+                <h2 data-i18n="lucky_digits">Lucky Digits</h2>
                 <div class="digit-selector">
                     <label class="digit-checkbox"><input type="checkbox" data-digit="0"><span>0</span></label>
                     <label class="digit-checkbox"><input type="checkbox" data-digit="1"><span>1</span></label>
@@ -320,7 +320,7 @@
                     <label class="digit-checkbox"><input type="checkbox" data-digit="9"><span>9</span></label>
                 </div>
                 <div class="custom-numbers-section" style="margin-top: var(--space-md);">
-                    <h3>Custom Numbers</h3>
+                    <h3 data-i18n="custom_numbers">Custom Numbers</h3>
                     <div class="custom-numbers-list" id="customNumbersList"></div>
                     <div class="form-row">
                         <div class="form-group" style="flex: 2;">
@@ -378,8 +378,8 @@
             </div>
 
             <div class="card">
-                <button id="saveSettingsBtn" class="btn-primary">Save Settings</button>
-                <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;">Reset All Data</button>
+                <button id="saveSettingsBtn" class="btn-primary" data-i18n="save_settings">Save Settings</button>
+                <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;" data-i18n="reset_all">Reset All Data</button>
             </div>
         </section>
 

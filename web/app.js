@@ -678,10 +678,10 @@ function selectMostSpecial() {
     _mostSpecialMode = !_mostSpecialMode; // toggle
     if (_mostSpecialMode) {
         selectedPersonIds = [];
-        milestonesTitleEl.textContent = 'Highlights';
+        milestonesTitleEl.textContent = (typeof I18N!=='undefined') ? I18N.t('highlights') : 'Highlights';
     } else {
         selectedPersonIds = appData.events.map(e => e.id);
-        milestonesTitleEl.textContent = 'Upcoming Milestones';
+        milestonesTitleEl.textContent = (typeof I18N!=='undefined') ? I18N.t('upcoming_milestones') : 'Upcoming Milestones';
     }
     const btn = document.getElementById('highlightsBtn');
     if (btn) btn.classList.toggle('active', _mostSpecialMode);
@@ -696,7 +696,7 @@ function selectAllPeople() {
     if (btn) btn.classList.remove('active');
     renderPersonFilter();
     renderMilestonesTab();
-    milestonesTitleEl.textContent = 'Upcoming Milestones';
+    milestonesTitleEl.textContent = (typeof I18N!=='undefined') ? I18N.t('upcoming_milestones') : 'Upcoming Milestones';
 }
 
 function switchToSetFromFilter(setId) {
@@ -708,7 +708,7 @@ function switchToSetFromFilter(setId) {
     updateSetSwitcher();
     renderPersonFilter();
     renderMilestonesTab();
-    milestonesTitleEl.textContent = 'Upcoming Milestones';
+    milestonesTitleEl.textContent = (typeof I18N!=='undefined') ? I18N.t('upcoming_milestones') : 'Upcoming Milestones';
 }
 
 function togglePerson(personId) {
@@ -733,7 +733,7 @@ function togglePerson(personId) {
 
     // Update title based on selection
     if (selectedPersonIds.length === appData.events.length) {
-        milestonesTitleEl.textContent = 'Upcoming Milestones';
+        milestonesTitleEl.textContent = (typeof I18N!=='undefined') ? I18N.t('upcoming_milestones') : 'Upcoming Milestones';
     } else if (selectedPersonIds.length === 1) {
         const person = appData.events.find(e => e.id === selectedPersonIds[0]);
         if (person) {
@@ -2078,7 +2078,7 @@ function renderPersonColumns() {
                 const moreCount = allForPerson.length - DEFAULT_SHOW;
                 html += `
                     <button class="btn-show-more" onclick="toggleColumnExpand(${eventIdx}, this)">
-                        ${moreCount} beyond the horizon...
+                        ${moreCount} ${(typeof I18N!=='undefined') ? I18N.t('beyond_horizon') : 'beyond the horizon...'}
                     </button>
                 `;
             }
@@ -2106,11 +2106,11 @@ function toggleColumnExpand(eventIdx, btn) {
     const hidden = col.querySelectorAll('.column-milestone-hidden');
     if (hidden.length > 0) {
         hidden.forEach(el => el.classList.remove('column-milestone-hidden'));
-        btn.textContent = 'closer view';
+        btn.textContent = (typeof I18N!=='undefined') ? I18N.t('closer_view') : 'closer view';
     } else {
         const items = col.querySelectorAll('.column-milestone');
         items.forEach((el, i) => { if (i >= 7) el.classList.add('column-milestone-hidden'); });
-        btn.textContent = `${items.length - 7} beyond the horizon...`;
+        btn.textContent = `${items.length - 7} ${(typeof I18N!=='undefined') ? I18N.t('beyond_horizon') : 'beyond the horizon...'}`;
     }
 }
 
