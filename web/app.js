@@ -3064,13 +3064,47 @@ function renameSet(setId) {
     const set = allSets.find(s => s.id === setId);
     if (!set) return;
 
-    const newName = prompt('Enter new name for this set:', set.name);
-    if (newName && newName.trim()) {
-        set.name = newName.trim();
-        saveData();
-        renderEventSetsList();
-        updateSetSwitcher();
+    // Use a modal instead of prompt() — works better on mobile
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'renameModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h3>Rename Group</h3>
+            <div class="form-group">
+                <label>Group name</label>
+                <input type="text" id="renameInput" value="${set.name}" class="checkout-email-input" style="font-size: 1rem;">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="confirmRename('${setId}')">Save</button>
+                <button class="btn-secondary" onclick="document.getElementById('renameModal').remove()">Cancel</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    setTimeout(() => {
+        const inp = document.getElementById('renameInput');
+        if (inp) { inp.focus(); inp.select(); }
+    }, 100);
+}
+
+function confirmRename(setId) {
+    const inp = document.getElementById('renameInput');
+    if (!inp) return;
+    const newName = inp.value.trim();
+    if (newName) {
+        const set = allSets.find(s => s.id === setId);
+        if (set) {
+            set.name = newName;
+            saveData();
+            renderEventSetsList();
+            renderPeopleTabGroups();
+            updateSetSwitcher();
+        }
     }
+    const modal = document.getElementById('renameModal');
+    if (modal) modal.remove();
 }
 
 function handleSwitchSet() {

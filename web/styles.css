@@ -1049,7 +1049,7 @@ body {
 
 .column-milestone.birthday-milestone .cm-value {
     font-family: var(--font-serif);
-    font-size: var(--font-size-base);
+    font-size: 0.78rem;
     font-weight: 500;
     color: var(--warning);
 }
@@ -1067,15 +1067,19 @@ body {
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 4px;
-    margin-bottom: 2px;
+    gap: 2px;
+    margin-bottom: 1px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .cm-value {
     font-family: var(--font-mono);
-    font-size: var(--font-size-base);
-    font-weight: 300;
+    font-size: 0.78rem;
+    font-weight: 400;
     color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .column-milestone.very-special .cm-value {
@@ -1084,18 +1088,22 @@ body {
 
 .cm-unit {
     font-family: var(--font-serif);
-    font-size: var(--font-size-xs);
+    font-size: 0.68rem;
     font-weight: 400;
     color: var(--text-muted);
     font-style: italic;
+    flex-shrink: 0;
 }
 
 .cm-why {
     font-family: var(--font-serif);
-    font-size: var(--font-size-xs);
+    font-size: 0.65rem;
     color: var(--text-secondary);
     font-style: italic;
-    line-height: 1.3;
+    line-height: 1.2;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     margin-bottom: 2px;
 }
 
@@ -1125,21 +1133,23 @@ body {
 
 .cm-when {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0;
+    justify-content: center;
+    gap: 4px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .cm-time {
     font-family: var(--font-mono);
-    font-size: var(--font-size-xs);
+    font-size: 0.65rem;
     color: var(--accent);
     font-weight: 400;
 }
 
 .cm-date {
     font-family: var(--font-mono);
-    font-size: var(--font-size-xs);
+    font-size: 0.62rem;
     color: var(--text-muted);
 }
 
