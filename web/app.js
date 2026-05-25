@@ -2036,7 +2036,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone birthday-milestone ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1">${m.description}</div>
+                            <div class="cm-line1"><span class="cm-num">${m.description}</span></div>
                             <div class="cm-line2"><span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span></div>
                         </div>
                     `;
@@ -2060,7 +2060,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1">${m.value.toLocaleString()} <span class="cm-unit">${m.unitName}</span>${marker}</div>
+                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${m.unitName}</span>${marker ? `<span class="cm-marker">${marker.replace(/<\/?sup>/g,'')}</span>` : ''}</div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
                                 ${whyText ? `<span class="cm-alt-b">${whyText}</span>` : ''}
@@ -3191,10 +3191,17 @@ function confirmRename(setId) {
             renderEventSetsList();
             renderPeopleTabGroups();
             updateSetSwitcher();
+            showToast(`Group renamed to "${newName}"`, 'success');
         }
     }
     const modal = document.getElementById('renameModal');
     if (modal) modal.remove();
+    // Navigate to Data tab so user can add members
+    switchTab('events');
+    setTimeout(() => {
+        const nameInput = document.getElementById('newEventName');
+        if (nameInput) nameInput.scrollIntoView({ behavior: 'smooth' });
+    }, 200);
 }
 
 function handleSwitchSet() {
