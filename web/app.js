@@ -482,15 +482,18 @@ function saveData() {
     // Save encrypted if available, with sync fallback
     if (typeof DATA_PROTECTION !== 'undefined' && DATA_PROTECTION.isAvailable()) {
         DATA_PROTECTION.saveSecure(STORAGE_KEY_DATA, dataObj).catch(() => {
-            localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj));
+            try { localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj)); }
+            catch (e) { showToast('Storage full — cannot save data.', 'error'); }
         });
     } else {
-        localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj));
+        try { localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj)); }
+        catch (e) { showToast('Storage full — cannot save data.', 'error'); }
     }
 }
 
 function saveSettings() {
-    localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings));
+    try { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings)); }
+    catch (e) { showToast('Storage full — cannot save settings.', 'error'); }
 }
 
 // ============================================================
@@ -576,20 +579,20 @@ function setupEventListeners() {
     resetBtn.addEventListener('click', handleReset);
     exportDataBtn.addEventListener('click', handleExportData);
     importDataInput.addEventListener('change', handleImportData);
-    darkModeToggle.addEventListener('change', handleDarkModeToggle);
+    if (darkModeToggle) darkModeToggle.addEventListener('change', handleDarkModeToggle);
 
     document.querySelectorAll('.preset-btn').forEach(btn => {
         btn.addEventListener('click', () => addCustomNumber(parseInt(btn.dataset.number, 10)));
     });
 
-    customNumberInput.addEventListener('keypress', e => {
+    if (customNumberInput) customNumberInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') handleAddCustomNumber();
     });
 
     // Event Sets (Advanced)
-    currentSetSelect.addEventListener('change', handleSwitchSet);
-    addSetBtn.addEventListener('click', handleAddSet);
-    newSetNameInput.addEventListener('keypress', e => {
+    if (currentSetSelect) currentSetSelect.addEventListener('change', handleSwitchSet);
+    if (addSetBtn) addSetBtn.addEventListener('click', handleAddSet);
+    if (newSetNameInput) newSetNameInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') handleAddSet();
     });
 
