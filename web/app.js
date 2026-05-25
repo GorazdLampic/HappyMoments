@@ -248,7 +248,7 @@ function acceptConsent() {
 const LANG_FLAGS = {
     en: '🇬🇧', es: '🇪🇸', de: '🇩🇪', pt: '🇵🇹', it: '🇮🇹',
     fr: '🇫🇷', hr: '🇭🇷', sl: '🇸🇮', nl: '🇳🇱', pl: '🇵🇱',
-    zh: '🇨🇳', hi: '🇮🇳', ar: '🇸🇦', bn: '🇧🇩', ja: '🇯🇵',
+    ru: '🇷🇺', zh: '🇨🇳', hi: '🇮🇳', ar: '🇸🇦', bn: '🇧🇩', ja: '🇯🇵',
     vi: '🇻🇳', id: '🇮🇩'
 };
 

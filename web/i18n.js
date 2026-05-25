@@ -4,11 +4,11 @@
  */
 
 const I18N = (() => {
-    const SUPPORTED_LOCALES = ['en', 'es', 'de', 'pt', 'it', 'fr', 'hr', 'sl', 'nl', 'pl', 'zh', 'hi', 'ar', 'bn', 'ja', 'vi', 'id'];
+    const SUPPORTED_LOCALES = ['en', 'es', 'de', 'pt', 'it', 'fr', 'hr', 'sl', 'nl', 'pl', 'ru', 'zh', 'hi', 'ar', 'bn', 'ja', 'vi', 'id'];
     const LOCALE_NAMES = {
         en: 'English', es: 'Español', de: 'Deutsch', pt: 'Português',
         it: 'Italiano', fr: 'Français', hr: 'Hrvatski', sl: 'Slovenščina',
-        nl: 'Nederlands', pl: 'Polski',
+        nl: 'Nederlands', pl: 'Polski', ru: 'Русский',
         zh: '中文', hi: 'हिन्दी', ar: 'العربية', bn: 'বাংলা',
         ja: '日本語', vi: 'Tiếng Việt', id: 'Bahasa Indonesia'
     };
@@ -624,6 +624,59 @@ const I18N = (() => {
             happy_moments_brand: 'HappyMoments',
         },
 
+        ru: {
+            tab_personal: 'Личное', tab_team: 'Команда', tab_data: 'Данные', tab_settings: 'Настройки',
+            tagline: 'Поэзия чисел в вашей жизни, раскрытая.',
+            welcome: 'Добро пожаловать',
+            onboarding_text: 'Введите дату, которая важна для вас. Ваш день рождения, годовщина, день знакомства.',
+            what_is_this: 'Что это за момент?', when_happened: 'Когда это произошло?',
+            discover: 'Открыть мои вехи', onboarding_hint: 'Позже можно добавить больше людей и дат.',
+            upcoming_milestones: 'Предстоящие вехи', highlights: 'Избранное', refresh: 'Обновить',
+            no_milestones: 'Вехи не найдены.', beyond_horizon: 'за горизонтом...', closer_view: 'ближе',
+            share: 'Поделиться', share_tap: 'Нажмите на веху выше, чтобы поделиться или сохранить в календарь.',
+            copy: 'Копировать', save_to_calendar: 'Сохранить в календарь:',
+            create_card: 'Создать открытку', card_desc: 'Создайте изображение для этой вехи.',
+            download_png: 'Скачать PNG', share_image: 'Поделиться изображением',
+            celebrate_gift: 'Отпразднуйте подарком', gift_desc: 'Превратите эту веху в нечто осязаемое.',
+            select_milestone_gift: 'Выберите веху для идей подарков.',
+            order_now: 'Заказать', cancel: 'Отмена',
+            combined_milestones: 'Командные вехи', combined_desc: 'Совместные вехи для всех в группе.',
+            share_this_moment: 'Поделиться моментом', share_combined_desc: 'Поделитесь совместной вехой!',
+            dates_events: 'Даты и события', data_desc: 'Добавьте дни рождения, годовщины и важные даты.',
+            add_date: 'Добавить дату', groups: 'Группы', groups_desc: 'Организуйте даты в отдельные группы.',
+            backup: 'Резервная копия', export_data: 'Экспорт данных', import_data: 'Импорт данных',
+            number_patterns: 'Числовые шаблоны', round_numbers: 'Круглые числа (1000, 5000...)',
+            repdigits: 'Повторяющиеся цифры (111, 2222...)', alternating: 'Чередующиеся (1212, 737373...)',
+            palindromes: 'Палиндромы (12321...)', sequential: 'Последовательные (123, 4321...)',
+            scientific: 'Научные (Pi, e, Phi)', lucky_patterns: 'Мои счастливые шаблоны',
+            lucky_digits: 'Счастливые цифры', custom_numbers: 'Свои числа', quick_add: 'Быстро добавить:',
+            appearance: 'Оформление', dark_mode: 'Тёмный режим', save_settings: 'Сохранить настройки', reset_all: 'Сбросить всё',
+            type_birthday: 'День рождения', type_event: 'Дата / Событие', type_milestone: 'Веха',
+            unit_sec: 'сек', unit_min: 'мин', unit_hrs: 'час', unit_d: 'дн', unit_w: 'нед', unit_mo: 'мес', unit_y: 'г',
+            edit_event: 'Редактировать', save: 'Сохранить', delete: 'Удалить',
+            name: 'Имя', type: 'Тип', date: 'Дата', notes: 'Заметки', turns: 'Исполнится',
+            terms_privacy: 'Условия и конфиденциальность', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            consent_text: 'HappyMoments хранит ваши данные локально на устройстве. Никакие данные не отправляются на серверы.',
+            consent_ok: 'Понятно', consent_read: 'Читать полную политику',
+            turns_age: '{name} исполняется {value}!',
+            is_old: '{name} будет {value} {unit}',
+            since: '{value} {unit} с момента {name}',
+            years_since: '{value} лет с момента {name}!',
+            power_of_10: 'Степень 10',
+            fibonacci_number: 'Число Фибоначчи',
+            round_number: 'Круглое число',
+            k_milestone: 'Веха {value}k',
+            all_digits: 'Все {digit}',
+            palindrome_label: 'Палиндром',
+            ascending_seq: 'Возрастающая последовательность',
+            descending_seq: 'Убывающая последовательность',
+            alternating_label: 'Чередующийся узор',
+            lucky_label: 'Счастливые цифры',
+            custom_label: 'Ваше особое число',
+            special_label: 'Особое число',
+            happy_moments_brand: 'HappyMoments',
+        },
+
         zh: {
             tab_personal: '个人', tab_team: '团队', tab_data: '数据', tab_settings: '设置',
             tagline: '生命中数字的诗意，由此揭示。',
@@ -1020,6 +1073,7 @@ const I18N = (() => {
         // 3. Check variants
         if (['sr', 'bs'].includes(browserLang)) return 'hr';
         if (browserLang === 'ms') return 'id'; // Malay → Indonesian
+        if (['uk', 'be'].includes(browserLang)) return 'ru'; // Ukrainian/Belarusian → Russian
 
         return 'en';
     }
