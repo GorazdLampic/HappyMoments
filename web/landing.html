@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HappyMoments — When's Your Billion?</title>
+    <meta name="description" content="Discover when you'll turn 1 billion seconds old. Calculate your special number milestones and celebrate life's hidden mathematical beauty.">
+    <meta name="keywords" content="billion seconds, birthday calculator, how old am I in seconds, milestone birthday, special numbers, happy moments">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="When's Your Billion? | HappyMoments">
+    <meta property="og:description" content="Find out when you turn 1 billion seconds old — and discover hundreds of special number milestones in your life.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="icons/icon-512.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="When's Your Billion? | HappyMoments">
+    <meta name="twitter:description" content="Calculate when you turn 1 billion seconds old.">
+
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Source+Code+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0e0a1a;
+            --card: #1a1428;
+            --gold: #f0d060;
+            --gold-dim: #d4b876;
+            --white: #e8e0d8;
+            --muted: #888;
+            --accent: #a0b8a0;
+            --red: #e85040;
+        }
+
+        body {
+            font-family: 'EB Garamond', Georgia, serif;
+            background: var(--bg);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* === HERO === */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--gold);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            display: block;
+            font-size: 1.4rem;
+            color: var(--gold-dim);
+            font-weight: 400;
+            margin-top: 5px;
+        }
+
+        .hero-sub {
+            font-size: 1.15rem;
+            color: var(--muted);
+            font-style: italic;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* === CALCULATOR === */
+        .calc-card {
+            background: var(--card);
+            border: 1px solid rgba(240,208,96,0.15);
+            border-radius: 16px;
+            padding: 40px 30px;
+            max-width: 500px;
+            margin: 0 auto 50px;
+        }
+
+        .calc-card h2 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--gold-dim);
+            font-style: italic;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .calc-input-row {
+            display: flex;
+            gap: 0;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .calc-field {
+            width: 60px;
+            padding: 14px 6px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--white);
+            -moz-appearance: textfield;
+        }
+
+        .calc-field::-webkit-inner-spin-button,
+        .calc-field::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        .calc-field:focus { outline: none; border-color: var(--gold); background: rgba(240,208,96,0.05); }
+
+        .calc-field-dd { border-radius: 8px 0 0 8px; border-right: none; }
+        .calc-field-mm { border-radius: 0; border-right: none; }
+        .calc-field-yyyy { width: 80px; border-radius: 0 8px 8px 0; }
+
+        .calc-sep {
+            display: flex; align-items: center;
+            padding: 0 4px; color: var(--muted);
+            font-family: 'Source Code Pro', monospace;
+            background: rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255,255,255,0.15);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .calc-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: var(--gold);
+            color: var(--bg);
+            border: none;
+            border-radius: 10px;
+            font-family: 'EB Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calc-btn:hover { background: #f8e070; transform: translateY(-1px); }
+        .calc-btn:active { transform: translateY(0); }
+
+        /* === RESULT === */
+        .result {
+            display: none;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+
+        .result.show { display: block; }
+
+        .result-billion {
+            background: var(--card);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+        }
+
+        .result-label {
+            font-size: 1rem;
+            color: var(--muted);
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .result-number {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--gold);
+            line-height: 1.2;
+        }
+
+        .result-number span {
+            font-size: 1rem;
+            color: var(--gold-dim);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .result-date {
+            font-size: 1.3rem;
+            color: var(--white);
+            margin: 20px 0 10px;
+        }
+
+        .result-countdown {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .result-past {
+            color: var(--gold-dim);
+            font-style: italic;
+        }
+
+        /* More milestones */
+        .more-milestones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 30px 0;
+        }
+
+        .mini-milestone {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .mini-milestone .mm-value {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gold-dim);
+        }
+
+        .mini-milestone .mm-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        .mini-milestone .mm-date {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-top: 4px;
+        }
+
+        /* === SHARE === */
+        .share-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'EB Garamond', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .share-btn-primary {
+            background: var(--gold);
+            color: var(--bg);
+            font-weight: 600;
+        }
+
+        .share-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--muted);
+            color: var(--white);
+        }
+
+        .share-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+
+        /* === CTA === */
+        .cta-section {
+            text-align: center;
+            padding: 40px 20px 30px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-section h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--gold-dim);
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            color: var(--muted);
+            font-style: italic;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: var(--gold);
+            color: var(--bg);
+            border: none;
+            border-radius: 10px;
+            font-family: 'EB Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .cta-btn:hover { background: #f8e070; transform: translateY(-1px); }
+
+        /* === FOOTER === */
+        .landing-footer {
+            text-align: center;
+            padding: 30px 20px 40px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .landing-footer a { color: var(--gold-dim); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2rem; }
+            .hero h1 span { font-size: 1.1rem; }
+            .result-number { font-size: 2.2rem; }
+            .more-milestones { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<section class="hero">
+    <img src="icons/icon.svg" alt="HappyMoments" class="hero-logo">
+    <h1>When's Your Billion?
+        <span>Discover the moment you turn 1,000,000,000 seconds old.</span>
+    </h1>
+    <p class="hero-sub">Every person alive crosses this once-in-a-lifetime milestone. It happens at age 31 years, 251 days. When's yours?</p>
+</section>
+
+<div class="calc-card">
+    <h2>Enter your birthday</h2>
+    <div class="calc-input-row">
+        <input type="number" class="calc-field calc-field-dd" id="landDD" placeholder="DD" min="1" max="31"
+               oninput="if(this.value.length>=2)document.getElementById('landMM').focus()">
+        <span class="calc-sep">/</span>
+        <input type="number" class="calc-field calc-field-mm" id="landMM" placeholder="MM" min="1" max="12"
+               oninput="if(this.value.length>=2)document.getElementById('landYYYY').focus()">
+        <span class="calc-sep">/</span>
+        <input type="number" class="calc-field calc-field-yyyy" id="landYYYY" placeholder="YYYY" min="1920" max="2026">
+    </div>
+    <button class="calc-btn" onclick="calculateBillion()">Find My Billion</button>
+</div>
+
+<div class="result" id="resultSection">
+    <div class="result-billion">
+        <div class="result-label">Your billionth second alive</div>
+        <div class="result-number" id="resultNumber">1,000,000,000</div>
+        <div class="result-date" id="resultDate"></div>
+        <div class="result-countdown" id="resultCountdown"></div>
+    </div>
+
+    <div class="more-milestones" id="moreMilestones"></div>
+
+    <div class="share-row">
+        <button class="share-btn share-btn-primary" onclick="shareBillion()">Share My Billion</button>
+        <button class="share-btn share-btn-secondary" onclick="copyBillion()">Copy</button>
+    </div>
+</div>
+
+<section class="cta-section">
+    <h2>Discover hundreds more milestones</h2>
+    <p>Palindromes, Fibonacci numbers, powers of 2, Pi... your life is full of hidden mathematical beauty. Track them all with HappyMoments.</p>
+    <a href="index.html" class="cta-btn">Open HappyMoments</a>
+</section>
+
+<footer class="landing-footer">
+    <p>HappyMoments &copy; 2026 <a href="https://quantumwave.energy">Quantum Wave Ltd</a></p>
+    <p><a href="legal.html">Terms & Privacy</a></p>
+</footer>
+
+<script>
+function calculateBillion() {
+    const dd = parseInt(document.getElementById('landDD').value, 10);
+    const mm = parseInt(document.getElementById('landMM').value, 10);
+    const yyyy = parseInt(document.getElementById('landYYYY').value, 10);
+
+    if (!dd || !mm || !yyyy || dd<1 || dd>31 || mm<1 || mm>12 || yyyy<1920 || yyyy>2026) {
+        alert('Please enter a valid date');
+        return;
+    }
+
+    const birth = new Date(yyyy, mm-1, dd);
+    const now = new Date();
+
+    // 1 billion seconds
+    const billionDate = new Date(birth.getTime() + 1e9 * 1000);
+    const isPast = billionDate < now;
+    const diff = Math.abs(billionDate.getTime() - now.getTime());
+    const days = Math.floor(diff / (86400000));
+    const years = Math.floor(days / 365.25);
+    const remDays = days - Math.floor(years * 365.25);
+
+    const dateStr = billionDate.toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    document.getElementById('resultNumber').innerHTML = '1,000,000,000<span>seconds alive</span>';
+    document.getElementById('resultDate').textContent = dateStr;
+
+    if (isPast) {
+        document.getElementById('resultCountdown').innerHTML =
+            `<span class="result-past">You passed this milestone ${years > 0 ? years + ' years, ' : ''}${remDays} days ago!</span>`;
+    } else {
+        document.getElementById('resultCountdown').textContent =
+            `${years > 0 ? years + ' years, ' : ''}${remDays} days from now`;
+    }
+
+    // More milestones
+    const milestones = [
+        { value: 500000000, label: '500 million sec', unit: 1000 },
+        { value: 750000000, label: '750 million sec', unit: 1000 },
+        { value: 1500000000, label: '1.5 billion sec', unit: 1000 },
+        { value: 2000000000, label: '2 billion sec', unit: 1000 },
+        { value: 10000, label: '10,000 days', unit: 86400000 },
+        { value: 15000, label: '15,000 days', unit: 86400000 },
+        { value: 20000, label: '20,000 days', unit: 86400000 },
+        { value: 500, label: '500 months', unit: 30.44*86400000 },
+    ];
+
+    let moreHtml = '';
+    milestones.forEach(m => {
+        const mDate = new Date(birth.getTime() + m.value * m.unit);
+        const mPast = mDate < now;
+        const mDateStr = mDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const mDiff = Math.abs(mDate.getTime() - now.getTime());
+        const mDays = Math.floor(mDiff / 86400000);
+
+        moreHtml += `
+            <div class="mini-milestone">
+                <div class="mm-value">${m.label}</div>
+                <div class="mm-date">${mDateStr}</div>
+                <div class="mm-label">${mPast ? mDays + 'd ago' : 'in ' + mDays + 'd'}</div>
+            </div>
+        `;
+    });
+    document.getElementById('moreMilestones').innerHTML = moreHtml;
+
+    document.getElementById('resultSection').classList.add('show');
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function shareBillion() {
+    const date = document.getElementById('resultDate').textContent;
+    const text = `I'll turn 1 BILLION seconds old on ${date}! Find yours at happymoments.app`;
+
+    if (navigator.share) {
+        navigator.share({ title: "When's Your Billion?", text: text }).catch(() => {});
+    } else {
+        copyBillion();
+    }
+}
+
+function copyBillion() {
+    const date = document.getElementById('resultDate').textContent;
+    const text = `I'll turn 1 BILLION seconds old on ${date}! Find yours at happymoments.app`;
+    navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => {});
+}
+</script>
+</body>
+</html>
