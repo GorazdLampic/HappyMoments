@@ -289,6 +289,26 @@ body {
     align-items: center;
 }
 
+/* Today highlight banner */
+.today-highlight {
+    background: rgba(212,184,118,0.1);
+    border: 1px solid rgba(212,184,118,0.25);
+    border-radius: var(--radius-md);
+    padding: 10px var(--space-md);
+    margin-bottom: var(--space-md);
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    color: var(--warning);
+    font-style: italic;
+    line-height: 1.6;
+}
+
+.today-item strong {
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
 /* Add person button on milestones tab */
 .btn-add-person {
     display: block;
@@ -593,12 +613,15 @@ body {
 
 .tab-nav {
     display: flex;
-    background: transparent;
+    background: var(--bg-page);
     border-radius: 0;
     padding: 0;
     margin-bottom: var(--space-md);
     gap: 0;
     border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .tab-btn {

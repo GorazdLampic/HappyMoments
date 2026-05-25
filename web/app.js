@@ -845,6 +845,35 @@ function displayCalcResults(results, number, unit) {
 // ONBOARDING
 // ============================================================
 
+function validateDateFields(dateStr) {
+    if (!dateStr) return false;
+    const parts = dateStr.split('-').map(Number);
+    if (parts.length < 3) return false;
+    const [y, m, d] = parts;
+
+    // Check ranges
+    if (y < 1900 || y > new Date().getFullYear()) {
+        showToast('Please enter a valid year', 'error');
+        return false;
+    }
+    if (m < 1 || m > 12) {
+        showToast('Month must be 1-12', 'error');
+        return false;
+    }
+    // Check day-in-month (including leap years)
+    const maxDay = new Date(y, m, 0).getDate();
+    if (d < 1 || d > maxDay) {
+        showToast(`Day must be 1-${maxDay} for month ${m}`, 'error');
+        return false;
+    }
+    // Future date warning
+    const date = new Date(y, m - 1, d);
+    if (date > new Date()) {
+        showToast('This date is in the future — milestones work best with past dates', 'info', 4000);
+    }
+    return true;
+}
+
 function handleStart() {
     const name = birthNameInput.value.trim();
     const dateStr = birthDateInput.value || buildDateFromFields('birth');
@@ -853,6 +882,7 @@ function handleStart() {
         showToast('Please enter name and date', 'error');
         return;
     }
+    if (!validateDateFields(dateStr)) return;
 
     const date = parseLocalDate(dateStr);
 
@@ -952,6 +982,7 @@ function handleAddEvent() {
         showToast('Please enter event name and date', 'error');
         return;
     }
+    if (!validateDateFields(dateStr)) return;
 
     const date = parseLocalDate(dateStr);
 
@@ -1029,6 +1060,7 @@ function handleSaveEdit() {
         showToast('Please enter event name and date', 'error');
         return;
     }
+    if (!validateDateFields(dateStr)) return;
 
     const date = parseLocalDate(dateStr);
 
@@ -1767,6 +1799,27 @@ let allMilestonesFlat = []; // Store for sharing (individual)
 let allCombinedMilestonesFlat = []; // Store for sharing (combined)
 let selectedCombinedMilestone = null;
 
+function getTodayHighlight() {
+    const now = new Date();
+    const highlights = [];
+    appData.events.forEach(event => {
+        const d = event.date instanceof Date ? event.date : new Date(event.date);
+        const type = event.type || 'birthday';
+        // Check today's numbers
+        const units = ['days', 'weeks', 'months'];
+        units.forEach(unit => {
+            const age = calculateAge(d, now, unit);
+            if (age > 0) {
+                const info = isSpecialNumber(age, appSettings);
+                if (info.type !== 'special') {
+                    highlights.push({ name: event.name, value: age, unit: TIME_UNITS[unit].name, why: info.description });
+                }
+            }
+        });
+    });
+    return highlights.slice(0, 3);
+}
+
 function renderMilestonesTab() {
     if (appData.events.length === 0) {
         milestonesColumnsEl.innerHTML = '<p class="empty-text">Add events first.</p>';
@@ -1775,6 +1828,20 @@ function renderMilestonesTab() {
     }
 
     allMilestonesFlat = [];
+
+    // Show "Today" highlight if anything special
+    const todayBox = document.getElementById('todayHighlight');
+    if (todayBox) {
+        const today = getTodayHighlight();
+        if (today.length > 0) {
+            todayBox.innerHTML = today.map(t =>
+                `<span class="today-item">${t.name}: <strong>${t.value.toLocaleString()}</strong> ${t.unit} (${t.why})</span>`
+            ).join(' · ');
+            todayBox.style.display = 'block';
+        } else {
+            todayBox.style.display = 'none';
+        }
+    }
 
     if (_mostSpecialMode) {
         renderMostSpecialMilestones();
