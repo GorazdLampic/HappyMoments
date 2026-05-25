@@ -2045,25 +2045,28 @@ function renderPersonColumns() {
                     const why = classifyNumber(m.value, appSettings);
                     const whyText = why.length > 0 ? why[0].description : '';
 
-                    // Determine if this needs a footnote marker
+                    // Only explain non-obvious patterns (Fibonacci, 2^n, scientific)
+                    const whyType = why.length > 0 ? why[0].type : '';
+                    const needsExplanation = ['fibonacci', 'power_of_2', 'scientific'].includes(whyType);
+
                     let marker = '';
-                    const needsFootnote = whyText && !['Round number', 'Power of 10'].includes(whyText)
-                        && !/^\d+k milestone$/.test(whyText);
-                    if (needsFootnote) {
+                    let showAlt = '';
+                    if (needsExplanation && whyText) {
                         if (!footnoteMap[whyText]) {
                             footnotes.push(whyText);
                             footnoteMap[whyText] = footnotes.length;
                         }
-                        marker = '<sup>' + '*'.repeat(Math.min(footnoteMap[whyText], 3)) + '</sup>';
+                        marker = '*'.repeat(Math.min(footnoteMap[whyText], 3));
+                        showAlt = whyText;
                     }
 
                     html += `
                         <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${m.unitName}</span>${marker ? `<span class="cm-marker">${marker.replace(/<\/?sup>/g,'')}</span>` : ''}</div>
+                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${m.unitName}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}</div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
-                                ${whyText ? `<span class="cm-alt-b">${whyText}</span>` : ''}
+                                ${showAlt ? `<span class="cm-alt-b">${showAlt}</span>` : ''}
                             </div>
                         </div>
                     `;
