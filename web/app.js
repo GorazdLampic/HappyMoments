@@ -1952,53 +1952,58 @@ function renderPersonColumns() {
         html += `<div class="column-header">${event.name}</div>`;
         html += `<div class="column-milestones" id="col-milestones-${eventIdx}">`;
 
+        // Collect footnotes for this column
+        const footnotes = [];
+        const footnoteMap = {};
+
         if (allForPerson.length === 0) {
             html += '<p class="empty-text">No milestones found.</p>';
         } else {
             allForPerson.forEach((m, i) => {
                 const hiddenClass = i >= DEFAULT_SHOW ? 'column-milestone-hidden' : '';
+                const selected = selectedMilestone === m.globalIdx ? 'selected-for-share' : '';
+                const timeUntilStr = formatTimeDistance(m.timeUntil);
+                const dateStr = formatDateShort(m.date);
 
                 if (m.isBirthday) {
-                    const timeUntilStr = formatTimeDistance(m.timeUntil);
-                    const dateStr = formatDateShort(m.date);
                     html += `
-                        <div class="column-milestone birthday-milestone ${hiddenClass} ${selectedMilestone === m.globalIdx ? 'selected-for-share' : ''}"
+                        <div class="column-milestone birthday-milestone ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-main">
-                                <span class="cm-value">${m.description}</span>
-                            </div>
-                            <div class="cm-when">
-                                <span class="cm-time">${timeUntilStr}</span>
-                                <span class="cm-date">${dateStr}</span>
-                            </div>
+                            <div class="cm-line1">${m.description}</div>
+                            <div class="cm-line2"><span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span></div>
                         </div>
                     `;
                 } else {
                     const isVerySpecial = isVerySpecialNumber(m.value);
-                    const timeUntilStr = formatTimeDistance(m.timeUntil);
-                    const dateStr = formatDateShort(m.date);
-                    // Get "why" description
                     const why = classifyNumber(m.value, appSettings);
                     const whyText = why.length > 0 ? why[0].description : '';
 
+                    // Determine if this needs a footnote marker
+                    let marker = '';
+                    const needsFootnote = whyText && !['Round number', 'Power of 10'].includes(whyText)
+                        && !/^\d+k milestone$/.test(whyText);
+                    if (needsFootnote) {
+                        if (!footnoteMap[whyText]) {
+                            footnotes.push(whyText);
+                            footnoteMap[whyText] = footnotes.length;
+                        }
+                        marker = '<sup>' + '*'.repeat(Math.min(footnoteMap[whyText], 3)) + '</sup>';
+                    }
+
                     html += `
-                        <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${hiddenClass} ${selectedMilestone === m.globalIdx ? 'selected-for-share' : ''}"
+                        <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-main">
-                                <span class="cm-value">${m.value.toLocaleString()}</span>
-                                <span class="cm-unit">${m.unitName}</span>
-                            </div>
-                            ${whyText ? `<div class="cm-why">${whyText}</div>` : ''}
-                            <div class="cm-when">
-                                <span class="cm-time">${timeUntilStr}</span>
-                                <span class="cm-date">${dateStr}</span>
+                            <div class="cm-line1">${m.value.toLocaleString()} <span class="cm-unit">${m.unitName}</span>${marker}</div>
+                            <div class="cm-line2">
+                                <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
+                                ${whyText ? `<span class="cm-alt-b">${whyText}</span>` : ''}
                             </div>
                         </div>
                     `;
                 }
             });
 
-            // Show more button if there are hidden items
+            // Show more button
             if (allForPerson.length > DEFAULT_SHOW) {
                 const moreCount = allForPerson.length - DEFAULT_SHOW;
                 html += `
@@ -2006,6 +2011,15 @@ function renderPersonColumns() {
                         ${moreCount} beyond the horizon...
                     </button>
                 `;
+            }
+
+            // Footnotes legend
+            if (footnotes.length > 0) {
+                html += '<div class="cm-footnotes">';
+                footnotes.forEach((fn, idx) => {
+                    html += `<div class="cm-footnote">${'*'.repeat(Math.min(idx + 1, 3))} ${fn}</div>`;
+                });
+                html += '</div>';
             }
         }
 
