@@ -289,6 +289,55 @@ body {
     align-items: center;
 }
 
+/* Add person button on milestones tab */
+.btn-add-person {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    min-height: 44px;
+    margin-bottom: var(--space-md);
+    background: transparent;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-md);
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    font-style: italic;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.btn-add-person:hover {
+    border-color: var(--accent);
+    background: var(--bg-elevated);
+}
+
+/* Event list in Data tab */
+.event-date-display {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--text-primary);
+}
+
+.event-type-label {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Highlight the add form */
+.add-event-form {
+    border: 2px dashed var(--accent) !important;
+    border-radius: var(--radius-md);
+    padding: var(--space-md) !important;
+    background: var(--bg-elevated);
+}
+
+.add-event-form h3 {
+    color: var(--accent) !important;
+}
+
 /* Notification options */
 .notif-options {
     margin-top: var(--space-md);
@@ -928,9 +977,9 @@ body {
 .columns-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 1px; }
 
 .milestone-column {
-    flex: 0 0 auto;
-    width: 140px;
-    min-width: 140px;
+    flex: 1 1 140px;
+    min-width: 130px;
+    max-width: 300px;
     background: transparent;
     border-radius: 0;
     padding: 0;
@@ -1923,12 +1972,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .miv-left { min-width: 120px; }
     .quick-find-input { font-size: var(--font-size-lg); max-width: 200px; }
     .digit-selector { justify-content: center; }
-    .milestone-column { width: 160px; min-width: 160px; }
+    .milestone-column { min-width: 160px; }
 }
 
 @media (min-width: 1024px) {
     #app { max-width: 960px; }
-    .milestone-column { width: 170px; min-width: 170px; }
+    .milestone-column { min-width: 170px; }
 }
 
 /* ============================================================
@@ -1947,7 +1996,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .event-item-main { width: 100%; }
     .event-item-details { width: 100%; justify-content: space-between; }
     .columns-container { scroll-snap-type: x mandatory; }
-    .milestone-column { width: 130px; min-width: 130px; }
+    .milestone-column { min-width: 120px; }
     .column-milestones { max-height: 300px; }
     .form-row { flex-direction: column; }
     .form-row .form-group { width: 100%; }

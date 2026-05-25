@@ -377,7 +377,7 @@ function generateLuckyPatterns(luckyDigits, maxValue = 10000000000) {
 // ============================================================
 
 const DEFAULT_SETTINGS = {
-    luckyDigits: [7],
+    luckyDigits: [3, 7],
     patterns: {
         powers: true,
         repdigits: true,

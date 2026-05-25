@@ -108,6 +108,8 @@
             <div id="personFilter" class="person-filter">
                 <!-- Dynamically populated with person buttons -->
             </div>
+            <!-- Quick add person button -->
+            <button class="btn-add-person" onclick="switchTab('events'); document.getElementById('newEventName').focus();">+ Add person or date</button>
 
             <!-- Milestones by Event -->
             <div class="card milestones-card">
@@ -313,7 +315,7 @@
                     <label class="digit-checkbox"><input type="checkbox" data-digit="0"><span>0</span></label>
                     <label class="digit-checkbox"><input type="checkbox" data-digit="1"><span>1</span></label>
                     <label class="digit-checkbox"><input type="checkbox" data-digit="2"><span>2</span></label>
-                    <label class="digit-checkbox"><input type="checkbox" data-digit="3"><span>3</span></label>
+                    <label class="digit-checkbox"><input type="checkbox" data-digit="3" checked><span>3</span></label>
                     <label class="digit-checkbox"><input type="checkbox" data-digit="4"><span>4</span></label>
                     <label class="digit-checkbox"><input type="checkbox" data-digit="5"><span>5</span></label>
                     <label class="digit-checkbox"><input type="checkbox" data-digit="6"><span>6</span></label>

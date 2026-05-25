@@ -885,6 +885,8 @@ function showDashboard() {
     // Default to Milestones tab with all people as columns
     milestonesTab.classList.remove('hidden');
     fillAllConnections();
+    // Scroll to top so user sees the milestones
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     _mostSpecialMode = false;
     selectedPersonIds = appData.events.map(e => e.id);
     renderPersonFilter();
@@ -901,24 +903,26 @@ function renderEventsTab() {
 
 function renderEventsList() {
     if (appData.events.length === 0) {
-        eventsListEl.innerHTML = '<p class="empty-text">No events yet.</p>';
+        eventsListEl.innerHTML = '<p class="empty-text">No events yet. Add your first date below!</p>';
         return;
     }
 
     eventsListEl.innerHTML = appData.events.map(e => {
-        const stats = getCurrentAgeStats(e.date);
         const type = e.type || 'birthday';
         const typeIcon = getEventTypeIcon(type);
-        const ageLabel = type === 'birthday' ? 'Age' : 'Since';
+        const dateObj = e.date instanceof Date ? e.date : new Date(e.date);
+        const dateStr = dateObj.toLocaleDateString(getAppLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
+        const typeLabel = type === 'birthday' ? 'Birthday' : type === 'beginning' ? 'Event' : 'Milestone';
 
         return `
-            <div class="event-item compact" onclick="openEditModal('${e.id}')" title="Click to edit">
+            <div class="event-item compact" onclick="openEditModal('${e.id}')" title="Tap to edit">
                 <div class="event-item-main">
                     <span class="event-type-icon">${typeIcon}</span>
                     <span class="event-name">${e.name}</span>
                 </div>
                 <div class="event-item-details">
-                    <span class="event-age-compact">${stats.years.formatted}y ${stats.days.value % 365}d</span>
+                    <span class="event-date-display">${dateStr}</span>
+                    <span class="event-type-label">${typeLabel}</span>
                     <span class="event-edit-icon">&#9998;</span>
                 </div>
             </div>
