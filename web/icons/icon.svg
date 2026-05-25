@@ -5,60 +5,121 @@
       <stop offset="100%" style="stop-color:#1a1a2a"/>
     </linearGradient>
     <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8c860"/>
+      <stop offset="0%" style="stop-color:#f0d060"/>
       <stop offset="100%" style="stop-color:#d4a030"/>
+    </linearGradient>
+    <linearGradient id="hat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f05050"/>
+      <stop offset="50%" style="stop-color:#e83838"/>
+      <stop offset="100%" style="stop-color:#d02828"/>
     </linearGradient>
   </defs>
 
-  <!-- Background — rounded square -->
+  <!-- Background -->
   <rect width="512" height="512" rx="110" fill="url(#bg)"/>
 
-  <!-- Subtle circle behind the number -->
-  <circle cx="256" cy="240" r="155" fill="none" stroke="#d4b876" stroke-width="3" opacity="0.15"/>
+  <!-- Subtle glow behind the 3 -->
+  <circle cx="260" cy="270" r="140" fill="#d4b876" opacity="0.04"/>
 
-  <!-- The big "3" as a smiley — the hero -->
-  <!-- Number 3 body -->
-  <text x="256" y="310" font-family="Georgia, 'Times New Roman', serif" font-size="280" font-weight="700" fill="url(#gold)" text-anchor="middle" opacity="0.95">3</text>
+  <!-- === THE "3" CHARACTER — drawn as two arcs to place eyes/mouth === -->
 
-  <!-- Left eye (wink) — a curved line -->
-  <path d="M 195 185 Q 205 175 215 185" fill="none" stroke="#1a1a2a" stroke-width="7" stroke-linecap="round"/>
+  <!-- Top curve of 3 (forehead + eyes area) -->
+  <path d="M 160 165 C 160 90, 360 90, 360 165 C 360 215, 280 235, 260 240"
+        fill="none" stroke="url(#gold)" stroke-width="32" stroke-linecap="round"/>
 
-  <!-- Right eye — open, happy -->
-  <circle cx="295" cy="180" r="9" fill="#1a1a2a"/>
+  <!-- Bottom curve of 3 (mouth/smile area) -->
+  <path d="M 260 240 C 280 245, 370 260, 370 330 C 370 415, 150 415, 150 340"
+        fill="none" stroke="url(#gold)" stroke-width="32" stroke-linecap="round"/>
 
-  <!-- Sparkle top-left -->
-  <g transform="translate(85, 80)" opacity="0.9">
-    <line x1="0" y1="-18" x2="0" y2="18" stroke="#e8c860" stroke-width="4" stroke-linecap="round"/>
-    <line x1="-18" y1="0" x2="18" y2="0" stroke="#e8c860" stroke-width="4" stroke-linecap="round"/>
-    <line x1="-12" y1="-12" x2="12" y2="12" stroke="#e8c860" stroke-width="3" stroke-linecap="round"/>
-    <line x1="12" y1="-12" x2="-12" y2="12" stroke="#e8c860" stroke-width="3" stroke-linecap="round"/>
+  <!-- === FACE ON THE 3 === -->
+
+  <!-- Left eye — happy squint (on upper curve) -->
+  <path d="M 225 148 Q 237 128 249 148" fill="none" stroke="#1a1a2a" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Right eye — happy squint (on upper curve) -->
+  <path d="M 285 148 Q 297 128 309 148" fill="none" stroke="#1a1a2a" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Smile on lower curve — wide happy grin -->
+  <path d="M 230 345 Q 275 390 320 345" fill="none" stroke="#1a1a2a" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Rosy cheeks -->
+  <circle cx="215" cy="175" r="12" fill="#f08080" opacity="0.3"/>
+  <circle cx="320" cy="175" r="12" fill="#f08080" opacity="0.3"/>
+
+  <!-- === PARTY HAT — bigger, more visible === -->
+  <polygon points="265,30 220,130 310,130" fill="url(#hat)"/>
+  <!-- Hat stripes -->
+  <line x1="248" y1="70" x2="233" y2="115" stroke="#f8d040" stroke-width="3" opacity="0.6"/>
+  <line x1="265" y1="50" x2="265" y2="120" stroke="#f8d040" stroke-width="3" opacity="0.5"/>
+  <line x1="282" y1="70" x2="297" y2="115" stroke="#f8d040" stroke-width="3" opacity="0.6"/>
+  <!-- Hat pom-pom -->
+  <circle cx="265" cy="28" r="14" fill="#f8d040"/>
+  <!-- Hat brim -->
+  <ellipse cx="265" cy="132" rx="52" ry="8" fill="#f05050" opacity="0.5"/>
+
+  <!-- === SPARKLES === -->
+
+  <!-- Star top-left -->
+  <g transform="translate(75, 85)" opacity="0.85">
+    <line x1="0" y1="-20" x2="0" y2="20" stroke="#f0d060" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-20" y1="0" x2="20" y2="0" stroke="#f0d060" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-13" y1="-13" x2="13" y2="13" stroke="#f0d060" stroke-width="3" stroke-linecap="round"/>
+    <line x1="13" y1="-13" x2="-13" y2="13" stroke="#f0d060" stroke-width="3" stroke-linecap="round"/>
   </g>
 
-  <!-- Sparkle top-right -->
-  <g transform="translate(420, 100)" opacity="0.7">
-    <line x1="0" y1="-14" x2="0" y2="14" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
-    <line x1="-14" y1="0" x2="14" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
-    <line x1="-9" y1="-9" x2="9" y2="9" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="9" y1="-9" x2="-9" y2="9" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Star right -->
+  <g transform="translate(435, 180)" opacity="0.65">
+    <line x1="0" y1="-15" x2="0" y2="15" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-15" y1="0" x2="15" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-10" y1="-10" x2="10" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="10" y1="-10" x2="-10" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
   </g>
 
-  <!-- Sparkle bottom-left -->
-  <g transform="translate(100, 400)" opacity="0.5">
-    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Small star bottom-right -->
+  <g transform="translate(420, 400)" opacity="0.5">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="#f0d060" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#f0d060" stroke-width="2.5" stroke-linecap="round"/>
   </g>
 
-  <!-- Confetti dots -->
-  <circle cx="140" cy="140" r="6" fill="#e87848" opacity="0.7"/>
-  <circle cx="400" cy="60" r="5" fill="#5aaad0" opacity="0.6"/>
-  <circle cx="430" cy="380" r="7" fill="#e078b0" opacity="0.6"/>
-  <circle cx="75" cy="300" r="5" fill="#70b870" opacity="0.5"/>
-  <circle cx="350" cy="440" r="4" fill="#5aaad0" opacity="0.5"/>
+  <!-- === MUSIC NOTES === -->
 
-  <!-- Party hat hint on top of the 3 -->
-  <polygon points="256,55 235,115 277,115" fill="#e87848" opacity="0.8"/>
-  <circle cx="256" cy="52" r="7" fill="#e8c860"/>
+  <!-- Music note left -->
+  <g transform="translate(70, 320)" opacity="0.6">
+    <ellipse cx="0" cy="0" rx="10" ry="7" fill="#d4b876" transform="rotate(-20)"/>
+    <line x1="9" y1="-3" x2="9" y2="-38" stroke="#d4b876" stroke-width="3"/>
+    <path d="M 9 -38 Q 22 -42 20 -30 Q 18 -22 9 -25" fill="#d4b876"/>
+  </g>
+
+  <!-- Music notes right -->
+  <g transform="translate(440, 300)" opacity="0.5">
+    <ellipse cx="0" cy="0" rx="8" ry="6" fill="#d4b876" transform="rotate(-15)"/>
+    <line x1="7" y1="-2" x2="7" y2="-30" stroke="#d4b876" stroke-width="2.5"/>
+    <ellipse cx="22" cy="-5" rx="8" ry="6" fill="#d4b876" transform="rotate(-15)"/>
+    <line x1="29" y1="-7" x2="29" y2="-35" stroke="#d4b876" stroke-width="2.5"/>
+    <line x1="7" y1="-30" x2="29" y2="-35" stroke="#d4b876" stroke-width="3"/>
+  </g>
+
+  <!-- === CONFETTI DOTS === -->
+  <circle cx="105" cy="190" r="5" fill="#e87848" opacity="0.7"/>
+  <circle cx="420" cy="80" r="6" fill="#5aaad0" opacity="0.6"/>
+  <circle cx="90" cy="420" r="5" fill="#e078b0" opacity="0.6"/>
+  <circle cx="395" cy="445" r="6" fill="#70b870" opacity="0.55"/>
+  <circle cx="130" cy="60" r="4" fill="#5aaad0" opacity="0.5"/>
+  <circle cx="455" cy="260" r="4" fill="#e078b0" opacity="0.45"/>
+
+  <!-- === ROCKET small === -->
+  <g transform="translate(80, 240) rotate(-30)" opacity="0.55">
+    <!-- Rocket body -->
+    <ellipse cx="0" cy="0" rx="6" ry="16" fill="#d4b876"/>
+    <!-- Nose -->
+    <path d="M -4 -16 Q 0 -26 4 -16" fill="#e87848"/>
+    <!-- Fins -->
+    <path d="M -6 10 L -12 18 L -4 12 Z" fill="#e87848" opacity="0.7"/>
+    <path d="M 6 10 L 12 18 L 4 12 Z" fill="#e87848" opacity="0.7"/>
+    <!-- Flame -->
+    <path d="M -3 16 Q 0 26 3 16" fill="#f0d060" opacity="0.8"/>
+  </g>
 
   <!-- Bottom text -->
-  <text x="256" y="465" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="400" fill="#d4b876" text-anchor="middle" opacity="0.8" font-style="italic">HappyMoments</text>
+  <text x="256" y="478" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-weight="400" fill="#d4b876" text-anchor="middle" opacity="0.7" font-style="italic">HappyMoments</text>
 </svg>
