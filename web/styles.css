@@ -1026,7 +1026,7 @@ body {
     justify-content: center;
     text-align: center;
     border: none;
-    border-bottom: 1px solid var(--separator);
+    border-bottom: 1px solid var(--border);
     cursor: pointer;
     transition: all var(--transition);
     position: relative;
@@ -1049,7 +1049,7 @@ body {
 
 .column-milestone.birthday-milestone .cm-value {
     font-family: var(--font-serif);
-    font-size: 0.78rem;
+    font-size: 0.88rem;
     font-weight: 500;
     color: var(--warning);
 }
@@ -1064,22 +1064,18 @@ body {
 }
 
 .cm-main {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 2px;
-    margin-bottom: 1px;
-    overflow: hidden;
-    white-space: nowrap;
+    display: block;
+    text-align: center;
+    margin-bottom: 3px;
+    line-height: 1.3;
 }
 
 .cm-value {
     font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 400;
+    font-size: 0.88rem;
+    font-weight: 500;
     color: var(--text-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: inline;
 }
 
 .column-milestone.very-special .cm-value {
@@ -1088,22 +1084,25 @@ body {
 
 .cm-unit {
     font-family: var(--font-serif);
-    font-size: 0.68rem;
+    font-size: 0.78rem;
     font-weight: 400;
     color: var(--text-muted);
     font-style: italic;
-    flex-shrink: 0;
+    display: inline;
+    margin-left: 2px;
 }
 
 .cm-why {
+    display: block;
     font-family: var(--font-serif);
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
     font-style: italic;
-    line-height: 1.2;
+    line-height: 1.3;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin-top: 2px;
     margin-bottom: 2px;
 }
 
@@ -1132,25 +1131,26 @@ body {
 }
 
 .cm-when {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    overflow: hidden;
-    white-space: nowrap;
+    display: block;
+    text-align: center;
+    margin-top: 2px;
+    line-height: 1.4;
 }
 
 .cm-time {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     color: var(--accent);
     font-weight: 400;
+    display: inline;
 }
 
 .cm-date {
     font-family: var(--font-mono);
-    font-size: 0.62rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
+    display: inline;
+    margin-left: 3px;
 }
 
 .cm-when-compact {
@@ -2008,9 +2008,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .columns-container { scroll-snap-type: x mandatory; }
     .milestone-column { min-width: 120px; }
     .column-milestones { max-height: 350px; }
-    /* Bump milestone fonts for readability on phone */
-    .cm-value { font-size: 0.82rem; }
-    .cm-unit { font-size: 0.72rem; }
+    /* Milestone fonts on phone — readable for 50+ */
+    .cm-value { font-size: 0.85rem; }
+    .cm-unit { font-size: 0.75rem; }
     .cm-why { font-size: 0.72rem; }
     .cm-time { font-size: 0.72rem; }
     .cm-date { font-size: 0.70rem; }
