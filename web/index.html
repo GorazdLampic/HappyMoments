@@ -207,12 +207,7 @@
                     <h3>Add a Date</h3>
                     <div class="form-row">
                         <div class="form-group" style="flex: 2;">
-                            <input type="text" id="newEventName" placeholder="e.g. Anna, Our Wedding, First Day at Work" list="eventSuggestions">
-                            <datalist id="eventSuggestions">
-                                <option value="My Birthday"><option value="Partner's Birthday"><option value="Mom"><option value="Dad">
-                                <option value="Son"><option value="Daughter"><option value="Our Wedding"><option value="Day We Met">
-                                <option value="Started This Job"><option value="Graduation"><option value="Moved Here"><option value="Best Friend">
-                            </datalist>
+                            <input type="text" id="newEventName" placeholder="e.g. Anna, Our Wedding, First Day at Work" autocomplete="off">
                         </div>
                         <div class="form-group" style="flex: 1;">
                             <select id="newEventType">
@@ -243,10 +238,7 @@
                 <div class="add-set-form">
                     <div class="form-row">
                         <div class="form-group" style="flex: 2;">
-                            <input type="text" id="newSetName2" placeholder="e.g. Friends, Colleagues" list="groupSuggestions2">
-                            <datalist id="groupSuggestions2">
-                                <option value="Family"><option value="Friends"><option value="Colleagues"><option value="Partner & Me"><option value="Extended Family">
-                            </datalist>
+                            <input type="text" id="newSetName2" placeholder="e.g. Friends, Colleagues" autocomplete="off">
                         </div>
                         <button class="btn-add" onclick="handleAddSetFromPeopleTab()">+</button>
                     </div>
