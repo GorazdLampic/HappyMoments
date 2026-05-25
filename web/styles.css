@@ -226,50 +226,67 @@ body {
     letter-spacing: 0.02em;
 }
 
-/* Date input combo — text + calendar picker */
-.date-input-combo {
+/* Date fields — DD / MM / YYYY */
+.date-fields {
     display: flex;
+    align-items: center;
     gap: 0;
     width: 100%;
 }
 
-.date-text-input {
-    flex: 1;
-    padding: 10px;
+.date-field {
+    padding: 10px 4px;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    min-height: 44px;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.date-field::-webkit-inner-spin-button,
+.date-field::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.date-field:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-elevated);
+}
+
+.date-dd {
+    width: 52px;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    border-right: none;
+}
+
+.date-mm {
+    width: 52px;
+    border-radius: 0;
+    border-right: none;
+}
+
+.date-yyyy {
+    width: 72px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.date-sep {
+    padding: 0 2px;
+    color: var(--text-muted);
     font-family: var(--font-mono);
     font-size: var(--font-size-sm);
     background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-right: none;
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-    color: var(--text-primary);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     min-height: 44px;
-}
-
-.date-text-input:focus {
-    outline: none;
-    border-color: var(--text-secondary);
-}
-
-.date-picker-input {
-    width: 44px;
-    min-width: 44px;
-    padding: 4px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    color: var(--text-primary);
-    cursor: pointer;
-    min-height: 44px;
-}
-
-.date-picker-input::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    filter: invert(0.7);
-}
-
-[data-theme="light"] .date-picker-input::-webkit-calendar-picker-indicator {
-    filter: none;
+    display: flex;
+    align-items: center;
 }
 
 /* Notification options */

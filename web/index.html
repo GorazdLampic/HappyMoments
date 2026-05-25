@@ -88,10 +88,14 @@
 
             <div class="form-group">
                 <label for="birthDate">When did it happen?</label>
-                <div class="date-input-combo">
-                    <input type="text" id="birthDateText" placeholder="e.g. 1978-06-02 or 2 Jun 1978" class="date-text-input" oninput="syncDateText(this, 'birthDate')">
-                    <input type="date" id="birthDate" required class="date-picker-input" onchange="syncDatePicker(this, 'birthDateText')">
+                <div class="date-fields">
+                    <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="date-field date-dd" oninput="autoAdvance(this, 'birthMonth', 2)">
+                    <span class="date-sep">/</span>
+                    <input type="number" id="birthMonth" placeholder="MM" min="1" max="12" class="date-field date-mm" oninput="autoAdvance(this, 'birthYear', 2)">
+                    <span class="date-sep">/</span>
+                    <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy">
                 </div>
+                <input type="hidden" id="birthDate">
             </div>
 
             <button id="startBtn" class="btn-primary">Discover My Milestones</button>
@@ -213,10 +217,14 @@
                             </select>
                         </div>
                         <div class="form-group" style="flex: 1;">
-                            <div class="date-input-combo">
-                                <input type="text" id="newEventDateText" placeholder="YYYY-MM-DD" class="date-text-input" oninput="syncDateText(this, 'newEventDate')">
-                                <input type="date" id="newEventDate" class="date-picker-input" onchange="syncDatePicker(this, 'newEventDateText')">
+                            <div class="date-fields">
+                                <input type="number" id="newEventDay" placeholder="DD" min="1" max="31" class="date-field date-dd" oninput="autoAdvance(this, 'newEventMonth', 2)">
+                                <span class="date-sep">/</span>
+                                <input type="number" id="newEventMonth" placeholder="MM" min="1" max="12" class="date-field date-mm" oninput="autoAdvance(this, 'newEventYear', 2)">
+                                <span class="date-sep">/</span>
+                                <input type="number" id="newEventYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy">
                             </div>
+                            <input type="hidden" id="newEventDate">
                         </div>
                         <button id="addEventBtn" class="btn-add">+</button>
                     </div>
@@ -263,10 +271,14 @@
                         </select>
                     </div>
                     <div class="form-group"><label>Date</label>
-                        <div class="date-input-combo">
-                            <input type="text" id="editEventDateText" placeholder="YYYY-MM-DD" class="date-text-input" oninput="syncDateText(this, 'editEventDate')">
-                            <input type="date" id="editEventDate" class="date-picker-input" onchange="syncDatePicker(this, 'editEventDateText')">
+                        <div class="date-fields">
+                            <input type="number" id="editEventDay" placeholder="DD" min="1" max="31" class="date-field date-dd" oninput="autoAdvance(this, 'editEventMonth', 2)">
+                            <span class="date-sep">/</span>
+                            <input type="number" id="editEventMonth" placeholder="MM" min="1" max="12" class="date-field date-mm" oninput="autoAdvance(this, 'editEventYear', 2)">
+                            <span class="date-sep">/</span>
+                            <input type="number" id="editEventYear" placeholder="YYYY" min="1900" max="2026" class="date-field date-yyyy">
                         </div>
+                        <input type="hidden" id="editEventDate">
                     </div>
                     <div class="form-group"><label>Notes</label><textarea id="editEventNotes" placeholder="Add a note..." rows="2"></textarea></div>
                     <div class="modal-buttons">

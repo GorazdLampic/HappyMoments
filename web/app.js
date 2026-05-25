@@ -15,68 +15,50 @@ function parseLocalDate(dateStr) {
     return new Date(y, m - 1, d);
 }
 
-// Flexible date parser — accepts many formats
-function parseFlexibleDate(text) {
-    if (!text || text.trim().length < 6) return null;
-    text = text.trim();
-
-    // Try YYYY-MM-DD
-    const isoMatch = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-    if (isoMatch) return { y: +isoMatch[1], m: +isoMatch[2], d: +isoMatch[3] };
-
-    // Try DD.MM.YYYY or DD/MM/YYYY
-    const euMatch = text.match(/^(\d{1,2})[.\/](\d{1,2})[.\/](\d{4})$/);
-    if (euMatch) return { y: +euMatch[3], m: +euMatch[2], d: +euMatch[1] };
-
-    // Try MM/DD/YYYY
-    const usMatch = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (usMatch) return { y: +usMatch[3], m: +usMatch[1], d: +usMatch[2] };
-
-    // Try "2 Jun 1978", "Jun 2 1978", "2 June 1978", etc.
-    const months = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, oct:10, nov:11, dec:12,
-                     january:1, february:2, march:3, april:4, june:6, july:7, august:8, september:9, october:10, november:11, december:12 };
-    const namedMatch = text.match(/^(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})$/);
-    if (namedMatch && months[namedMatch[2].toLowerCase()]) {
-        return { y: +namedMatch[3], m: months[namedMatch[2].toLowerCase()], d: +namedMatch[1] };
+// Auto-advance: when user types enough digits, move to next field
+function autoAdvance(field, nextFieldId, maxLen) {
+    // Strip non-digits
+    field.value = field.value.replace(/[^0-9]/g, '');
+    if (field.value.length >= maxLen) {
+        const next = document.getElementById(nextFieldId);
+        if (next) next.focus();
     }
-    const namedMatch2 = text.match(/^([a-zA-Z]+)\s+(\d{1,2}),?\s+(\d{4})$/);
-    if (namedMatch2 && months[namedMatch2[1].toLowerCase()]) {
-        return { y: +namedMatch2[3], m: months[namedMatch2[1].toLowerCase()], d: +namedMatch2[2] };
-    }
-
-    // Try native Date.parse as last resort
-    const d = new Date(text);
-    if (!isNaN(d.getTime()) && d.getFullYear() > 1900) {
-        return { y: d.getFullYear(), m: d.getMonth() + 1, d: d.getDate() };
-    }
-
-    return null;
+    // Sync to hidden date field
+    syncDateFields(field);
 }
 
-// Sync text input → date picker
-function syncDateText(textEl, datePickerId) {
-    const parsed = parseFlexibleDate(textEl.value);
-    const picker = document.getElementById(datePickerId);
-    if (!picker) return;
+// Read DD/MM/YYYY fields and write ISO to the hidden date input
+function syncDateFields(anyField) {
+    // Find the parent .date-fields container
+    const container = anyField.closest('.date-fields');
+    if (!container) return;
+    const fields = container.querySelectorAll('.date-field');
+    if (fields.length < 3) return;
 
-    if (parsed && parsed.y > 1900 && parsed.m >= 1 && parsed.m <= 12 && parsed.d >= 1 && parsed.d <= 31) {
-        const iso = `${parsed.y}-${String(parsed.m).padStart(2,'0')}-${String(parsed.d).padStart(2,'0')}`;
-        picker.value = iso;
-        textEl.style.borderColor = 'var(--accent)';
-    } else if (textEl.value.length > 0) {
-        textEl.style.borderColor = 'var(--danger)';
-    } else {
-        textEl.style.borderColor = 'var(--border)';
+    const dd = parseInt(fields[0].value, 10);
+    const mm = parseInt(fields[1].value, 10);
+    const yyyy = parseInt(fields[2].value, 10);
+
+    // Find the hidden input (next sibling of container)
+    const hidden = container.nextElementSibling;
+    if (!hidden || hidden.type !== 'hidden') return;
+
+    if (dd >= 1 && dd <= 31 && mm >= 1 && mm <= 12 && yyyy >= 1900 && yyyy <= 2100) {
+        hidden.value = `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
     }
 }
 
-// Sync date picker → text input
-function syncDatePicker(pickerEl, textId) {
-    const textEl = document.getElementById(textId);
-    if (textEl && pickerEl.value) {
-        textEl.value = pickerEl.value;
-        textEl.style.borderColor = 'var(--accent)';
-    }
+// Set date fields from an ISO string (for edit modal)
+function setDateFields(prefix, isoDate) {
+    if (!isoDate) return;
+    const parts = isoDate.split('-');
+    if (parts.length < 3) return;
+    const dayEl = document.getElementById(prefix + 'Day');
+    const monthEl = document.getElementById(prefix + 'Month');
+    const yearEl = document.getElementById(prefix + 'Year');
+    if (dayEl) dayEl.value = parseInt(parts[2], 10);
+    if (monthEl) monthEl.value = parseInt(parts[1], 10);
+    if (yearEl) yearEl.value = parseInt(parts[0], 10);
 }
 
 // ============================================================
@@ -213,11 +195,7 @@ function init() {
     loadSettings();
     setupEventListeners();
 
-    // Default date pickers to today as max (past dates prominent)
-    const today = new Date().toISOString().split('T')[0];
-    [birthDateInput, newEventDateInput, editEventDateInput].forEach(el => {
-        if (el) el.max = today;
-    });
+    // Date fields are now DD/MM/YYYY number inputs — no max needed
 
     checkConsent();
 
@@ -983,6 +961,9 @@ function handleAddEvent() {
     newEventNameInput.value = '';
     newEventTypeSelect.value = 'birthday';
     newEventDateInput.value = '';
+    ['newEventDay', 'newEventMonth', 'newEventYear'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
 
     renderEventsTab();
     renderConnectionMatrix();
@@ -1001,8 +982,7 @@ function openEditModal(eventId) {
     editEventTypeSelect.value = event.type || 'birthday';
     const isoDate = event.date.toISOString().split('T')[0];
     editEventDateInput.value = isoDate;
-    const editDateText = document.getElementById('editEventDateText');
-    if (editDateText) editDateText.value = isoDate;
+    setDateFields('editEvent', isoDate);
     editEventNotesInput.value = event.notes || '';
 
     editModal.classList.remove('hidden');
