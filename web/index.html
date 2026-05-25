@@ -88,7 +88,10 @@
 
             <div class="form-group">
                 <label for="birthDate">When did it happen?</label>
-                <input type="date" id="birthDate" required>
+                <div class="date-input-combo">
+                    <input type="text" id="birthDateText" placeholder="e.g. 1978-06-02 or 2 Jun 1978" class="date-text-input" oninput="syncDateText(this, 'birthDate')">
+                    <input type="date" id="birthDate" required class="date-picker-input" onchange="syncDatePicker(this, 'birthDateText')">
+                </div>
             </div>
 
             <button id="startBtn" class="btn-primary">Discover My Milestones</button>
@@ -210,7 +213,10 @@
                             </select>
                         </div>
                         <div class="form-group" style="flex: 1;">
-                            <input type="date" id="newEventDate">
+                            <div class="date-input-combo">
+                                <input type="text" id="newEventDateText" placeholder="YYYY-MM-DD" class="date-text-input" oninput="syncDateText(this, 'newEventDate')">
+                                <input type="date" id="newEventDate" class="date-picker-input" onchange="syncDatePicker(this, 'newEventDateText')">
+                            </div>
                         </div>
                         <button id="addEventBtn" class="btn-add">+</button>
                     </div>
@@ -256,7 +262,12 @@
                             <option value="milestone">Milestone</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>Date</label><input type="date" id="editEventDate"></div>
+                    <div class="form-group"><label>Date</label>
+                        <div class="date-input-combo">
+                            <input type="text" id="editEventDateText" placeholder="YYYY-MM-DD" class="date-text-input" oninput="syncDateText(this, 'editEventDate')">
+                            <input type="date" id="editEventDate" class="date-picker-input" onchange="syncDatePicker(this, 'editEventDateText')">
+                        </div>
+                    </div>
                     <div class="form-group"><label>Notes</label><textarea id="editEventNotes" placeholder="Add a note..." rows="2"></textarea></div>
                     <div class="modal-buttons">
                         <button id="saveEditBtn" class="btn-primary">Save</button>
