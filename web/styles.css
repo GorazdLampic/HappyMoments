@@ -2007,7 +2007,21 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .event-item-details { width: 100%; justify-content: space-between; }
     .columns-container { scroll-snap-type: x mandatory; }
     .milestone-column { min-width: 120px; }
-    .column-milestones { max-height: 300px; }
+    .column-milestones { max-height: 350px; }
+    /* Bump milestone fonts for readability on phone */
+    .cm-value { font-size: 0.82rem; }
+    .cm-unit { font-size: 0.72rem; }
+    .cm-why { font-size: 0.72rem; }
+    .cm-time { font-size: 0.72rem; }
+    .cm-date { font-size: 0.70rem; }
+    .column-milestone { padding: 8px 6px; }
+    /* Better selection visibility */
+    .column-milestone.selected-for-share { outline: 2px solid var(--accent); background: var(--bg-elevated); }
+    /* Scrollable person filter instead of wrapping */
+    .person-buttons { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+    .person-filter-btn { flex-shrink: 0; }
+    /* Bigger touch targets for small buttons */
+    .btn-small { min-height: 40px; padding: 8px 16px; }
     .form-row { flex-direction: column; }
     .form-row .form-group { width: 100%; }
     .btn-add { width: 100%; margin-top: var(--space-sm); }

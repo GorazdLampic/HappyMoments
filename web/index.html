@@ -79,15 +79,15 @@
         <!-- Onboarding Section -->
         <section id="onboarding" class="card onboarding-card">
             <h2 data-i18n="welcome">Welcome</h2>
-            <p>Enter a date that matters to you. Your birthday, an anniversary, the day you met someone, when you started a new chapter. Any moment worth remembering.</p>
+            <p data-i18n="onboarding_text">Enter a date that matters to you. Your birthday, an anniversary, the day you met someone, when you started a new chapter. Any moment worth remembering.</p>
 
             <div class="form-group">
-                <label for="birthName">What is this moment?</label>
+                <label for="birthName" data-i18n="what_is_this">What is this moment?</label>
                 <input type="text" id="birthName" value="My Birthday" placeholder="e.g. My Birthday, Our Anniversary, First Day at Work" required>
             </div>
 
             <div class="form-group">
-                <label for="birthDate">When did it happen?</label>
+                <label for="birthDate" data-i18n="when_happened">When did it happen?</label>
                 <div class="date-fields">
                     <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="date-field date-dd" oninput="autoAdvance(this, 'birthMonth', 2)">
                     <span class="date-sep">/</span>
@@ -98,8 +98,8 @@
                 <input type="hidden" id="birthDate">
             </div>
 
-            <button id="startBtn" class="btn-primary">Discover My Milestones</button>
-            <p class="onboarding-hint">You can add more people and dates afterward.</p>
+            <button id="startBtn" class="btn-primary" data-i18n="discover">Discover My Milestones</button>
+            <p class="onboarding-hint" data-i18n="onboarding_hint">You can add more people and dates afterward.</p>
         </section>
 
         <!-- Individual Milestones Tab Content (PRIMARY) -->
@@ -404,17 +404,17 @@
         </div>
     </div>
 
-    <script src="notifications.js"></script>
-    <script src="i18n.js"></script>
-    <script src="specialNumbers.js"></script>
-    <script src="milestoneCalculator.js"></script>
-    <script src="combinations.js"></script>
-    <script src="shareMessages.js"></script>
-    <script src="giftStore.js"></script>
-    <script src="dataProtection.js"></script>
-    <script src="imageCard.js"></script>
-    <script src="checkout.js"></script>
-    <script src="app.js"></script>
+    <script defer src="notifications.js"></script>
+    <script defer src="i18n.js"></script>
+    <script defer src="specialNumbers.js"></script>
+    <script defer src="milestoneCalculator.js"></script>
+    <script defer src="combinations.js"></script>
+    <script defer src="shareMessages.js"></script>
+    <script defer src="giftStore.js"></script>
+    <script defer src="dataProtection.js"></script>
+    <script defer src="imageCard.js"></script>
+    <script defer src="checkout.js"></script>
+    <script defer src="app.js"></script>
 
     <!-- Service Worker Registration for PWA -->
     <script>

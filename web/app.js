@@ -989,6 +989,9 @@ function handleAddEvent() {
 
     renderEventsTab();
     renderConnectionMatrix();
+    showToast(`${name} added!`, 'success');
+    // Focus name input for adding next person
+    if (newEventNameInput) newEventNameInput.focus();
 }
 
 // ============================================================
@@ -2432,6 +2435,9 @@ function selectMilestoneForShare(idx) {
     if (typeof renderGiftSuggestions === 'function') renderGiftSuggestions(m);
     if (typeof renderCardPreview === 'function') renderCardPreview(m, 'cardPreview');
     renderMilestonesTab();
+    // Auto-scroll to share section
+    const shareCard = document.querySelector('.share-card-priority');
+    if (shareCard) setTimeout(() => shareCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
 }
 
 function updateSharePreview() {
