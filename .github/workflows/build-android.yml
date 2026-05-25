@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,13 +19,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate PNG icons
+      - name: Generate PNG icons from SVG
         run: |
           node -e "
           const sharp = require('sharp');
@@ -34,7 +37,7 @@ jobs:
           )).then(() => console.log('Icons generated'));
           "
 
-      - name: Sync Capacitor
+      - name: Sync Capacitor (copy web assets to Android)
         run: npx cap sync android
 
       - name: Set up JDK 17
@@ -52,9 +55,9 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: happymoments-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
+          retention-days: 90

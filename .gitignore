@@ -28,5 +28,5 @@ android/local.properties
 # Generated icons (built from SVG)
 web/icons/icon-*.png
 
-# Legacy
-app/
+# Legacy React Native app (top-level only)
+/app/
