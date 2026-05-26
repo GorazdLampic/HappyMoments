@@ -626,6 +626,7 @@ function setupEventListeners() {
 // ============================================================
 
 function switchTab(tabName) {
+    _track('tab_switched', { tab: tabName });
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
@@ -927,6 +928,7 @@ function handleStart() {
 }
 
 function showDashboard() {
+    _track('onboard_complete', { event_count: appData.events.length });
     onboardingSection.classList.add('hidden');
     tabNav.classList.remove('hidden');
     updateSetSwitcher();
@@ -1002,6 +1004,7 @@ function handleAddEvent() {
         _addingEvent = false;
         return;
     }
+    if (!checkEventLimit()) { _addingEvent = false; return; }
     if (!validateDateFields(dateStr)) { _addingEvent = false; return; }
 
     const date = parseLocalDate(dateStr);
@@ -1041,6 +1044,7 @@ function handleAddEvent() {
     renderEventsTab();
     renderConnectionMatrix();
     showToast(`${name} added!`, 'success');
+    _track('event_added', { event_count: appData.events.length });
     // Focus name input for adding next person
     if (newEventNameInput) newEventNameInput.focus();
     _addingEvent = false;
@@ -3555,9 +3559,14 @@ function updateAccountUI(user) {
         if (nameEl) nameEl.textContent = HM_AUTH.getUserDisplayName();
         if (emailEl) emailEl.textContent = HM_AUTH.getUserEmail() || '';
         if (statusEl) {
-            // TODO: Check premium status from backend
-            statusEl.textContent = 'Free';
-            statusEl.className = 'account-status free';
+            const isPrem = localStorage.getItem('happymoments_premium_until');
+            if (isPrem && parseInt(isPrem) * 1000 > Date.now()) {
+                statusEl.textContent = 'Premium';
+                statusEl.className = 'account-status premium';
+            } else {
+                statusEl.textContent = 'Free';
+                statusEl.className = 'account-status free';
+            }
         }
         if (verifyEl) {
             if (user.email && !user.emailVerified) {
@@ -3573,19 +3582,164 @@ function updateAccountUI(user) {
 }
 
 // ============================================================
+// PREMIUM GATE
+// ============================================================
+
+const FREE_EVENT_LIMIT = 5;
+
+function isPremium() {
+    const until = localStorage.getItem('happymoments_premium_until');
+    return until && parseInt(until) * 1000 > Date.now();
+}
+
+function checkEventLimit() {
+    if (isPremium()) return true;
+    if (appData.events.length >= FREE_EVENT_LIMIT) {
+        showUpgradePrompt();
+        return false;
+    }
+    return true;
+}
+
+function showUpgradePrompt() {
+    if (!HM_AUTH.isLoggedIn()) {
+        openAuthModal();
+        showToast('Sign in to add more events, or upgrade to Premium.', 'info');
+        return;
+    }
+    // Show upgrade modal
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'upgradeModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `
+        <div class="modal-content auth-modal">
+            <h3>Upgrade to Premium</h3>
+            <p class="auth-subtitle">You've reached the free limit of ${FREE_EVENT_LIMIT} events.</p>
+            <div style="margin: 16px 0; padding: 16px; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <div style="font-size: var(--font-size-lg); font-weight: 500; margin-bottom: 8px;">HappyMoments Premium</div>
+                <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 8px;">&euro;1.49<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> / year</span></div>
+                <ul style="text-align: left; font-size: var(--font-size-sm); color: var(--text-secondary); list-style: none; padding: 0;">
+                    <li>&#10003; Unlimited events &amp; people</li>
+                    <li>&#10003; All milestone types (Fibonacci, Pi, powers...)</li>
+                    <li>&#10003; Combined milestones &amp; team tab</li>
+                    <li>&#10003; Image card generator</li>
+                    <li>&#10003; All 18 languages</li>
+                </ul>
+            </div>
+            <button class="btn-primary" onclick="handleUpgrade()" style="width:100%;">Upgrade Now</button>
+            <button class="auth-skip" onclick="document.getElementById('upgradeModal').remove()">Maybe later</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+async function handleUpgrade() {
+    const modal = document.getElementById('upgradeModal');
+    if (modal) modal.remove();
+
+    if (!HM_AUTH.isLoggedIn()) {
+        openAuthModal();
+        return;
+    }
+
+    const _t = typeof HM_ANALYTICS !== 'undefined' ? HM_ANALYTICS.track : () => {};
+    _t('checkout_started', { product: 'premium' });
+
+    try {
+        const token = await HM_AUTH.getIdToken();
+        const res = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                type: 'premium',
+                uid: HM_AUTH.getUser().uid,
+                email: HM_AUTH.getUserEmail()
+            })
+        });
+        const data = await res.json();
+        if (data.url) {
+            window.location.href = data.url;
+        } else {
+            showToast('Payment is not yet configured. Coming soon!', 'info');
+        }
+    } catch (err) {
+        showToast('Payment is not yet configured. Coming soon!', 'info');
+    }
+}
+
+async function checkPremiumStatus() {
+    if (!HM_AUTH.isLoggedIn()) return;
+    try {
+        const token = await HM_AUTH.getIdToken();
+        const res = await fetch('/api/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        if (data.premium_until) {
+            localStorage.setItem('happymoments_premium_until', data.premium_until);
+        } else {
+            localStorage.removeItem('happymoments_premium_until');
+        }
+        updateAccountUI(HM_AUTH.getUser());
+    } catch {
+        // Backend not available — use cached status
+    }
+}
+
+function checkPremiumReturn() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'premium_success') {
+        showToast('Welcome to Premium! Thank you!', 'success');
+        // Re-check status from backend
+        setTimeout(checkPremiumStatus, 2000);
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+    } else if (params.get('checkout') === 'premium_cancelled') {
+        showToast('Upgrade cancelled.', 'info');
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+}
+
+// ============================================================
+// ANALYTICS TRACKING
+// ============================================================
+
+function _track(action, data) {
+    if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track(action, data);
+}
+
+// ============================================================
 // START APP
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
 
+    // Track page view
+    _track('page_view', { page: 'app' });
+
     // Initialize auth (non-blocking — app works without it)
     if (typeof HM_AUTH !== 'undefined') {
         HM_AUTH.init();
         HM_AUTH.onAuthChange(user => {
             updateAccountUI(user);
+            if (user) {
+                checkPremiumStatus();
+                _track('auth_signed_in', { method: user.providerData?.[0]?.providerId || 'unknown' });
+            }
         });
     }
+
+    // Check for premium checkout return
+    checkPremiumReturn();
 
     // Close auth modal on backdrop click
     const authModal = document.getElementById('authModal');

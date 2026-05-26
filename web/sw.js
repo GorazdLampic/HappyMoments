@@ -3,7 +3,7 @@
  * Enables offline functionality and app-like experience
  */
 
-const CACHE_NAME = 'happymoments-v9';
+const CACHE_NAME = 'happymoments-v10';
 const urlsToCache = [
   './',
   './index.html',
@@ -17,6 +17,7 @@ const urlsToCache = [
   './dataProtection.js',
   './imageCard.js',
   './checkout.js',
+  './analytics.js',
   './auth.js',
   './notifications.js',
   './i18n.js',
@@ -58,6 +59,10 @@ self.addEventListener('activate', event => {
 
 // Fetch event - serve from cache, fall back to network
 self.addEventListener('fetch', event => {
+  // Never cache API calls or Firebase auth requests
+  if (event.request.url.includes('/api/') || event.request.url.includes('googleapis.com') || event.request.url.includes('firebaseapp.com')) {
+    return;
+  }
   event.respondWith(
     caches.match(event.request)
       .then(response => {
