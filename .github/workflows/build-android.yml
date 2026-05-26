@@ -40,7 +40,10 @@ jobs:
           )).then(() => console.log('Icons generated'));
           "
 
-      - name: Sync Capacitor (copy web assets to Android)
+      - name: Build production assets
+        run: node build.js
+
+      - name: Sync Capacitor (copy dist/ to Android)
         run: npx cap sync android
 
       - name: Set up JDK 17

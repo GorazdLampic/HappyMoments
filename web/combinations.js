@@ -107,19 +107,19 @@ function calculateBalanceDiff(groupA, groupB, events, unit, date) {
  * Duration between earliest and latest event
  */
 function calculateDurationBetween(eventIds, events, unit) {
-    const selectedEvents = eventIds
+    const selectedDates = eventIds
         .map(id => events.find(e => e.id === id))
         .filter(e => e)
-        .map(e => new Date(e.date).getTime());
+        .map(e => new Date(e.date));
 
-    if (selectedEvents.length < 2) return 0;
+    if (selectedDates.length < 2) return 0;
 
-    const earliest = Math.min(...selectedEvents);
-    const latest = Math.max(...selectedEvents);
+    const sorted = selectedDates.sort((a, b) => a.getTime() - b.getTime());
+    const earliest = sorted[0];
+    const latest = sorted[sorted.length - 1];
 
-    const diffMs = latest - earliest;
-    const unitConfig = TIME_UNITS[unit];
-    return Math.floor(diffMs / unitConfig.msMultiplier);
+    // Use calendar math for months/years (consistent with calculateAge)
+    return calculateAge(earliest, latest, unit);
 }
 
 // ============================================================
@@ -184,8 +184,15 @@ function findSumMilestones(combination, events, maxResults, maxDaysAhead, settin
             if (num > currentSum) {
                 // For sum, combined age increases by numEvents per unit of time
                 const unitsNeeded = (num - currentSum) / numEvents;
-                const msNeeded = unitsNeeded * unitConfig.msMultiplier;
-                const milestoneDate = new Date(now.getTime() + msNeeded);
+                let milestoneDate;
+                if (unit === 'months') {
+                    milestoneDate = addCalendarMonths(now, Math.ceil(unitsNeeded));
+                } else if (unit === 'years') {
+                    milestoneDate = addCalendarMonths(now, Math.ceil(unitsNeeded * 12));
+                } else {
+                    const msNeeded = unitsNeeded * unitConfig.msMultiplier;
+                    milestoneDate = new Date(now.getTime() + msNeeded);
+                }
 
                 if (milestoneDate.getTime() <= maxDateMs) {
                     const specialInfo = isSpecialNumber(num, settings);
@@ -274,21 +281,20 @@ function findRatioMilestones(combination, events, maxResults, maxDaysAhead, sett
 
         for (const targetRatio of targetRatios) {
             // Solve: age1(t) / age2(t) = targetRatio
+            // Use days internally for precise prediction, then display in target unit
             // (age1_now + x) / (age2_now + x) = targetRatio
-            // age1_now + x = targetRatio * age2_now + targetRatio * x
-            // x - targetRatio * x = targetRatio * age2_now - age1_now
-            // x * (1 - targetRatio) = targetRatio * age2_now - age1_now
             // x = (targetRatio * age2_now - age1_now) / (1 - targetRatio)
 
-            const age1Now = calculateAge(date1, now, unit);
-            const age2Now = calculateAge(date2, now, unit);
+            // Always compute with days for precision (avoids integer truncation with years)
+            const age1Days = calculateAge(date1, now, 'days');
+            const age2Days = calculateAge(date2, now, 'days');
 
             if (targetRatio === 1) continue; // Division by zero
 
-            const x = (targetRatio * age2Now - age1Now) / (1 - targetRatio);
+            const xDays = (targetRatio * age2Days - age1Days) / (1 - targetRatio);
 
-            if (x > 0) {
-                const msNeeded = x * unitConfig.msMultiplier;
+            if (xDays > 0) {
+                const msNeeded = xDays * TIME_UNITS.days.msMultiplier;
                 const milestoneDate = new Date(now.getTime() + msNeeded);
 
                 if (milestoneDate.getTime() <= now.getTime() + maxDaysAhead * 24 * 60 * 60 * 1000) {

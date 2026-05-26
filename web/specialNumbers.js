@@ -74,7 +74,7 @@ const ROUND_NUMBERS = [
     1000000, 1500000, 2000000, 2500000, 3000000, 4000000, 5000000,
     6000000, 7000000, 8000000, 9000000, 10000000,
     15000000, 20000000, 25000000, 30000000, 40000000, 50000000,
-    75000000, 100000000,
+    75000000,
     // Hundred millions
     100000000, 150000000, 200000000, 250000000, 300000000, 400000000, 500000000,
     600000000, 700000000, 750000000, 800000000, 900000000,
@@ -178,7 +178,6 @@ function generatePalindromes(maxDigits = 10) {
 
     // Fibonacci-style: 11235...
     palindromes.add(11211);
-    palindromes.add(112358531211);
 
     // === REPDIGIT PALINDROMES (special subset) ===
     // These are inherently palindromes but we include some special ones
@@ -350,6 +349,9 @@ function generateSequentials() {
 function generateLuckyPatterns(luckyDigits, maxValue = 10000000000) {
     if (!luckyDigits || luckyDigits.length === 0) return [];
 
+    // Cap at 3 lucky digits to prevent exponential blowup (4+ digits = millions of combos)
+    const digits = luckyDigits.slice(0, 3);
+
     const patterns = new Set();
 
     // Generate combinations of lucky digits
@@ -358,12 +360,12 @@ function generateLuckyPatterns(luckyDigits, maxValue = 10000000000) {
         if (current > 0 && depth >= 2) {
             patterns.add(current);
         }
-        for (const digit of luckyDigits) {
+        for (const digit of digits) {
             generate(current * 10 + digit, depth + 1);
         }
     }
 
-    for (const digit of luckyDigits) {
+    for (const digit of digits) {
         if (digit > 0) {
             generate(digit, 1);
         }

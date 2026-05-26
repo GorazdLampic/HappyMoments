@@ -1,7 +1,7 @@
 {
   "appId": "si.quantumwave.happymoments",
   "appName": "HappyMoments",
-  "webDir": "web",
+  "webDir": "dist",
   "server": {
     "androidScheme": "https"
   },

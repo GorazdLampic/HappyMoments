@@ -160,10 +160,11 @@ function renderGiftSuggestions(milestone) {
         return;
     }
 
+    const _esc = typeof escapeHtml === 'function' ? escapeHtml : (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     const val = milestone.value.toLocaleString();
-    const unit = milestone.unitName || '';
-    const name = milestone.eventName || '';
-    const why = milestone.description || '';
+    const unit = _esc(milestone.unitName || '');
+    const name = _esc(milestone.eventName || '');
+    const why = _esc(milestone.description || '');
 
     const suggestions = getGiftSuggestions(milestone);
 

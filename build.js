@@ -47,12 +47,16 @@ staticDirs.forEach(d => {
 
 // JS files to minify (order matters for concatenation)
 const jsFiles = [
+    'notifications.js',
+    'i18n.js',
     'specialNumbers.js',
     'milestoneCalculator.js',
     'combinations.js',
     'shareMessages.js',
     'giftStore.js',
     'dataProtection.js',
+    'imageCard.js',
+    'checkout.js',
     'app.js'
 ];
 
@@ -126,12 +130,14 @@ html = html.replace(/(styles\.css)(")/g, `$1?v=${VERSION}$2`);
 fs.writeFileSync(path.join(DIST, 'index.html'), html);
 console.log(`  Processed: index.html (v=${VERSION})`);
 
-// Copy legal page
-const legalSrc = path.join(SRC, 'legal.html');
-if (fs.existsSync(legalSrc)) {
-    fs.copyFileSync(legalSrc, path.join(DIST, 'legal.html'));
-    console.log(`  Copied: legal.html`);
-}
+// Copy HTML pages
+['legal.html', 'landing.html'].forEach(f => {
+    const src = path.join(SRC, f);
+    if (fs.existsSync(src)) {
+        fs.copyFileSync(src, path.join(DIST, f));
+        console.log(`  Copied: ${f}`);
+    }
+});
 
 // Generate versioned service worker
 const swContent = `

@@ -101,6 +101,7 @@ function showOrderPreview(order) {
     const product = GIFT_CATALOG.find(p => p.id === order.productId);
     if (!product) return;
 
+    const _esc = typeof escapeHtml === 'function' ? escapeHtml : (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     const price = PRODUCT_PRICES[order.productId];
     const formattedPrice = price ? (price.amount / 100).toFixed(2) : product.priceRange;
 
@@ -114,9 +115,9 @@ function showOrderPreview(order) {
                 <span class="checkout-icon">${product.icon}</span>
                 <div>
                     <strong>${product.name}</strong>
-                    <p class="checkout-custom">Personalized with: "${order.customization.number} ${order.customization.unit}"</p>
-                    ${order.customization.recipientName ? `<p class="checkout-custom">For: ${order.customization.recipientName}</p>` : ''}
-                    ${order.customization.message ? `<p class="checkout-custom">Message: "${order.customization.message}"</p>` : ''}
+                    <p class="checkout-custom">Personalized with: "${_esc(order.customization.number)} ${_esc(order.customization.unit)}"</p>
+                    ${order.customization.recipientName ? `<p class="checkout-custom">For: ${_esc(order.customization.recipientName)}</p>` : ''}
+                    ${order.customization.message ? `<p class="checkout-custom">Message: "${_esc(order.customization.message)}"</p>` : ''}
                 </div>
             </div>
             <div class="checkout-price">EUR ${formattedPrice}</div>

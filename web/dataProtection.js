@@ -47,7 +47,10 @@ const DATA_PROTECTION = (() => {
             combined.set(iv);
             combined.set(new Uint8Array(ciphertext), iv.length);
 
-            return ENCRYPTED_PREFIX + btoa(String.fromCharCode(...combined));
+            // Chunked conversion to avoid call stack overflow with large data
+            let binaryStr = '';
+            for (let i = 0; i < combined.length; i++) binaryStr += String.fromCharCode(combined[i]);
+            return ENCRYPTED_PREFIX + btoa(binaryStr);
         } catch (e) {
             console.warn('Encryption failed, using obfuscation:', e.message);
             return ENCRYPTED_PREFIX + btoa(unescape(encodeURIComponent(plaintext)));
@@ -103,7 +106,7 @@ const DATA_PROTECTION = (() => {
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && key.startsWith('happyMoments') || key.startsWith('happymoments')) {
+            if (key && (key.startsWith('happyMoments') || key.startsWith('happymoments'))) {
                 keysToRemove.push(key);
             }
         }

@@ -25,8 +25,18 @@ const PORT = process.env.PORT || 3000;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_PLACEHOLDER';
 const stripe = require('stripe')(STRIPE_SECRET_KEY);
 
-app.use(cors());
-app.use(express.json());
+// CORS — restrict to app origins
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,https://happymoments.app').split(',');
+app.use(cors({ origin: (origin, cb) => {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) cb(null, true);
+    else cb(new Error('CORS blocked'));
+}}));
+
+// JSON body parser — exclude webhook route (needs raw body for Stripe signature)
+app.use((req, res, next) => {
+    if (req.path === '/api/webhook') return next();
+    express.json()(req, res, next);
+});
 
 // Serve static files from dist/ (production) or web/ (development)
 const staticDir = process.env.NODE_ENV === 'production'
@@ -52,12 +62,15 @@ const PRODUCTS = {
 // Create Checkout Session
 app.post('/api/create-checkout-session', async (req, res) => {
     try {
-        const { productId, customization, quantity, successUrl, cancelUrl } = req.body;
+        const { productId, customization, quantity } = req.body;
 
         const product = PRODUCTS[productId];
         if (!product) {
             return res.status(400).json({ error: 'Invalid product' });
         }
+
+        // Validate quantity
+        const qty = Math.max(1, Math.min(10, parseInt(quantity) || 1));
 
         // Build product description with customization
         let description = product.name;
@@ -85,11 +98,12 @@ app.post('/api/create-checkout-session', async (req, res) => {
                     },
                     unit_amount: product.price,
                 },
-                quantity: quantity || 1,
+                quantity: qty,
             }],
             mode: 'payment',
-            success_url: successUrl || `${req.headers.origin}/index.html?checkout=success`,
-            cancel_url: cancelUrl || `${req.headers.origin}/index.html?checkout=cancelled`,
+            // URLs hardcoded server-side to prevent open redirect attacks
+            success_url: `${process.env.APP_URL || req.headers.origin || 'https://happymoments.app'}/index.html?checkout=success`,
+            cancel_url: `${process.env.APP_URL || req.headers.origin || 'https://happymoments.app'}/index.html?checkout=cancelled`,
             shipping_address_collection: {
                 allowed_countries: [
                     'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',

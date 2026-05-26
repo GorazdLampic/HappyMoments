@@ -4,6 +4,14 @@
  */
 
 // ============================================================
+// HTML SANITIZATION
+// ============================================================
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+// ============================================================
 // STORAGE KEYS (separate settings)
 // ============================================================
 const STORAGE_KEY_DATA = 'happyMomentsData';
@@ -665,7 +673,7 @@ function renderPersonFilter() {
         html += `
             <button class="person-filter-btn ${isActive ? 'active' : ''}"
                     onclick="togglePerson('${e.id}')">
-                ${e.name}
+                ${escapeHtml(e.name)}
             </button>
         `;
     });
@@ -829,7 +837,7 @@ function displayCalcResults(results, number, unit) {
                 <div class="calc-result-date">${dateStr}</div>
                 <div class="calc-result-time">${timeStr}</div>
                 <div class="calc-result-ago">${statusText}</div>
-                ${results.length > 1 ? `<div class="calc-result-person">${result.event.name}</div>` : ''}
+                ${results.length > 1 ? `<div class="calc-result-person">${escapeHtml(result.event.name)}</div>` : ''}
             </div>
         `;
     });
@@ -951,7 +959,7 @@ function renderEventsList() {
             <div class="event-item compact" onclick="openEditModal('${e.id}')" title="Tap to edit">
                 <div class="event-item-main">
                     <span class="event-type-icon">${typeIcon}</span>
-                    <span class="event-name">${e.name}</span>
+                    <span class="event-name">${escapeHtml(e.name)}</span>
                 </div>
                 <div class="event-item-details">
                     <span class="event-date-display">${dateStr}</span>
@@ -973,21 +981,26 @@ function getEventTypeIcon(type) {
     }
 }
 
+let _addingEvent = false;
 function handleAddEvent() {
+    if (_addingEvent) return;
+    _addingEvent = true;
+
     const name = newEventNameInput.value.trim();
     const type = newEventTypeSelect.value;
     const dateStr = newEventDateInput.value || buildDateFromFields('newEvent');
 
     if (!name || !dateStr) {
         showToast('Please enter event name and date', 'error');
+        _addingEvent = false;
         return;
     }
-    if (!validateDateFields(dateStr)) return;
+    if (!validateDateFields(dateStr)) { _addingEvent = false; return; }
 
     const date = parseLocalDate(dateStr);
 
     const newEvent = {
-        id: 'event_' + Date.now(),
+        id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
         name: name,
         type: type,
         date: date
@@ -1023,6 +1036,7 @@ function handleAddEvent() {
     showToast(`${name} added!`, 'success');
     // Focus name input for adding next person
     if (newEventNameInput) newEventNameInput.focus();
+    _addingEvent = false;
 }
 
 // ============================================================
@@ -1084,6 +1098,9 @@ function handleDeleteEdit() {
     if (!confirm('Delete this event?')) return;
 
     appData.events = appData.events.filter(e => e.id !== editingEventId);
+
+    // Clean up selectedPersonIds
+    selectedPersonIds = selectedPersonIds.filter(id => id !== editingEventId);
 
     // Clean up connections involving this event
     const newConnections = {};
@@ -1168,7 +1185,7 @@ function renderCombinedTab() {
         return;
     }
 
-    const eventNames = connectedEvents.map(e => e.name).join(' + ');
+    const eventNames = connectedEvents.map(e => escapeHtml(e.name)).join(' + ');
     let html = '';
 
     // Sum milestones
@@ -1546,13 +1563,13 @@ function renderConnectionMatrix() {
     // Header row
     html += '<tr><th></th>';
     for (const e of events) {
-        html += `<th class="matrix-header" title="${e.name}">${getShortName(e.name)}</th>`;
+        html += `<th class="matrix-header" title="${escapeHtml(e.name)}">${escapeHtml(getShortName(e.name))}</th>`;
     }
     html += '</tr>';
 
     // Data rows
     for (let i = 0; i < events.length; i++) {
-        html += `<tr><th class="matrix-row-header" title="${events[i].name}">${getShortName(events[i].name)}</th>`;
+        html += `<tr><th class="matrix-row-header" title="${escapeHtml(events[i].name)}">${escapeHtml(getShortName(events[i].name))}</th>`;
         for (let j = 0; j < events.length; j++) {
             if (i === j) {
                 html += `<td class="matrix-cell matrix-diagonal">-</td>`;
@@ -1629,7 +1646,7 @@ function getEventMilestoneDescription(event, milestone) {
     const type = event.type || 'birthday';
     const value = milestone.value.toLocaleString();
     const unit = milestone.unitName;
-    const name = event.name;
+    const name = escapeHtml(event.name);
     const _t = (typeof I18N !== 'undefined') ? I18N.t : (k) => null;
 
     switch (type) {
@@ -1653,7 +1670,7 @@ function getCombinedMilestoneWording(events) {
     const types = events.map(e => e.type || 'birthday');
     const allBirthdays = types.every(t => t === 'birthday');
     const hasBirthdays = types.some(t => t === 'birthday');
-    const names = events.map(e => e.name);
+    const names = events.map(e => escapeHtml(e.name));
 
     if (allBirthdays) {
         return { prefix: 'Together we are', verb: 'reach', names };
@@ -2016,7 +2033,7 @@ function renderPersonColumns() {
         });
 
         html += `<div class="milestone-column">`;
-        html += `<div class="column-header">${event.name}</div>`;
+        html += `<div class="column-header">${escapeHtml(event.name)}</div>`;
         html += `<div class="column-milestones" id="col-milestones-${eventIdx}">`;
 
         // Collect footnotes for this column
@@ -2380,7 +2397,7 @@ function findSumMilestonesForEvents(events, maxResults, maxDaysAhead, settings) 
     const now = new Date();
     const maxDateMs = now.getTime() + maxDaysAhead * 24 * 60 * 60 * 1000;
     const numEvents = events.length;
-    const eventNames = events.map(e => e.name).join(' + ');
+    const eventNames = events.map(e => escapeHtml(e.name)).join(' + ');
 
     // Check ALL time units including seconds, minutes, hours for big combined numbers!
     for (const unit of ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years']) {
@@ -3167,7 +3184,7 @@ function renameSet(setId) {
             <h3>Rename Group</h3>
             <div class="form-group">
                 <label>Group name</label>
-                <input type="text" id="renameInput" value="${set.name}" class="checkout-email-input" style="font-size: 1rem;">
+                <input type="text" id="renameInput" value="${escapeHtml(set.name)}" class="checkout-email-input" style="font-size: 1rem;">
             </div>
             <div class="modal-buttons">
                 <button class="btn-primary" onclick="confirmRename('${setId}')">Save</button>
