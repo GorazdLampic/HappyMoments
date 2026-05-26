@@ -51,8 +51,12 @@ function syncDateFields(anyField) {
     const hidden = container.nextElementSibling;
     if (!hidden || hidden.type !== 'hidden') return;
 
-    if (dd >= 1 && dd <= 31 && mm >= 1 && mm <= 12 && yyyy >= 1900 && yyyy <= 2100) {
-        hidden.value = `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+    if (dd >= 1 && mm >= 1 && mm <= 12 && yyyy >= 1900 && yyyy <= 2100) {
+        // Validate day-in-month (prevents Feb 30, Apr 31, etc.)
+        const maxDay = new Date(yyyy, mm, 0).getDate();
+        if (dd <= maxDay) {
+            hidden.value = `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+        }
     }
 }
 
@@ -65,8 +69,11 @@ function buildDateFromFields(prefix) {
     const d = parseInt(dd.value, 10);
     const m = parseInt(mm.value, 10);
     const y = parseInt(yy.value, 10);
-    if (d >= 1 && d <= 31 && m >= 1 && m <= 12 && y >= 1900 && y <= 2100) {
-        return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if (d >= 1 && m >= 1 && m <= 12 && y >= 1900 && y <= 2100) {
+        const maxDay = new Date(y, m, 0).getDate();
+        if (d <= maxDay) {
+            return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        }
     }
     return '';
 }
@@ -1050,7 +1057,8 @@ function openEditModal(eventId) {
     editingEventId = eventId;
     editEventNameInput.value = event.name;
     editEventTypeSelect.value = event.type || 'birthday';
-    const isoDate = event.date.toISOString().split('T')[0];
+    const dateObj = event.date instanceof Date ? event.date : new Date(event.date);
+    const isoDate = (!isNaN(dateObj.getTime())) ? dateObj.toISOString().split('T')[0] : '';
     editEventDateInput.value = isoDate;
     setDateFields('editEvent', isoDate);
     editEventNotesInput.value = event.notes || '';
@@ -1171,12 +1179,11 @@ function renderCombinedTab() {
     const allEventIds = appData.events.map(e => e.id);
 
     activeKeys.forEach(key => {
-        // Check each event ID to see if it's part of this connection key
-        allEventIds.forEach(eventId => {
-            if (key.includes(eventId)) {
-                connectedIds.add(eventId);
-            }
-        });
+        // Use parseConnectionKey for exact ID extraction (avoids substring false matches)
+        const ids = parseConnectionKey(key);
+        if (ids) {
+            ids.forEach(id => { if (allEventIds.includes(id)) connectedIds.add(id); });
+        }
     });
     const connectedEvents = appData.events.filter(e => connectedIds.has(e.id));
 
@@ -3032,7 +3039,10 @@ function handleExportData() {
         exportDate: new Date().toISOString(),
         sets: allSets.map(set => ({
             ...set,
-            events: set.events.map(e => ({ ...e, date: e.date.toISOString() }))
+            events: set.events.map(e => ({
+                ...e,
+                date: (e.date instanceof Date && !isNaN(e.date)) ? e.date.toISOString() : String(e.date || '')
+            }))
         })),
         currentSetId: currentSetId,
         appSettings: appSettings
@@ -3069,17 +3079,26 @@ function handleImportData(e) {
                 return;
             }
 
+            // Validate and sanitize individual events
+            function validateEvent(e) {
+                if (!e || typeof e !== 'object') return null;
+                if (!e.name || typeof e.name !== 'string') return null;
+                const d = new Date(e.date);
+                if (isNaN(d.getTime())) return null;
+                return { ...e, id: e.id || ('event_' + Date.now() + '_' + Math.random().toString(36).slice(2,7)), date: d };
+            }
+
             // Check if new multi-set format (version 2)
             if (importedData.sets && Array.isArray(importedData.sets)) {
                 allSets = importedData.sets.map(set => ({
                     ...set,
-                    events: (set.events || []).map(e => ({ ...e, date: new Date(e.date) }))
+                    events: (set.events || []).map(validateEvent).filter(Boolean)
                 }));
                 currentSetId = importedData.currentSetId || (allSets.length > 0 ? allSets[0].id : null);
             }
             // Old format (version 1 or earlier)
             else if (importedData.appData && importedData.appData.events) {
-                const events = importedData.appData.events.map(e => ({ ...e, date: new Date(e.date) }));
+                const events = importedData.appData.events.map(validateEvent).filter(Boolean);
                 allSets = [{
                     id: 'set_imported',
                     name: 'Imported Data',

@@ -3,7 +3,7 @@
  * Enables offline functionality and app-like experience
  */
 
-const CACHE_NAME = 'happymoments-v7';
+const CACHE_NAME = 'happymoments-v8';
 const urlsToCache = [
   './',
   './index.html',
@@ -20,8 +20,11 @@ const urlsToCache = [
   './notifications.js',
   './i18n.js',
   './legal.html',
+  './landing.html',
   './manifest.json',
-  './icons/icon.svg'
+  './icons/icon.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 // Install event - cache all resources

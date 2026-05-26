@@ -100,8 +100,8 @@ const NOTIF = (() => {
 
             const notifId = `${event.id}_${nextDate.getFullYear()}`;
 
-            // 1 day before
-            if (prefs.dayBefore && hoursUntil > 23 && hoursUntil <= 25 && !notified.has(notifId + '_1d')) {
+            // 1 day before (widened window for timer drift in background tabs)
+            if (prefs.dayBefore && hoursUntil > 22 && hoursUntil <= 26 && !notified.has(notifId + '_1d')) {
                 const title = type === 'birthday'
                     ? `🎂 ${event.name} turns ${age} tomorrow!`
                     : `🎉 ${age} years since ${event.name} tomorrow!`;
@@ -118,8 +118,8 @@ const NOTIF = (() => {
                 markNotified(notifId + '_1h');
             }
 
-            // On the day (morning check)
-            if (prefs.onDay && hoursUntil > 0 && hoursUntil <= 14 && !notified.has(notifId + '_day')) {
+            // On the day (morning check) — skip if hour-before already covers it
+            if (prefs.onDay && hoursUntil > 1.5 && hoursUntil <= 14 && !notified.has(notifId + '_day')) {
                 const isMorning = now.getHours() >= 7 && now.getHours() <= 10;
                 if (isMorning) {
                     const title = type === 'birthday'
