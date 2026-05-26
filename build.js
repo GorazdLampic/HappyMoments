@@ -26,7 +26,7 @@ if (fs.existsSync(DIST)) {
 fs.mkdirSync(DIST, { recursive: true });
 
 // Copy static assets
-const staticFiles = ['manifest.json'];
+const staticFiles = ['manifest.json', '_redirects'];
 const staticDirs = ['icons'];
 
 staticFiles.forEach(f => {
@@ -57,6 +57,7 @@ const jsFiles = [
     'dataProtection.js',
     'imageCard.js',
     'checkout.js',
+    'auth.js',
     'app.js'
 ];
 

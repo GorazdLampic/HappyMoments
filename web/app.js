@@ -3401,7 +3401,197 @@ window.togglePerson = togglePerson;
 window.selectMostSpecial = selectMostSpecial;
 
 // ============================================================
+// AUTHENTICATION UI
+// ============================================================
+
+function openAuthModal() {
+    const modal = document.getElementById('authModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        showAuthView('signin');
+    }
+}
+
+function closeAuthModal() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.classList.add('hidden');
+    // Clear form fields
+    ['authEmail', 'authPassword', 'signupName', 'signupEmail', 'signupPassword', 'resetEmail'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    // Hide errors
+    ['authError', 'signupError', 'resetMessage'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
+}
+
+function showAuthView(view) {
+    ['authSignIn', 'authSignUp', 'authReset'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
+    const viewMap = { signin: 'authSignIn', signup: 'authSignUp', reset: 'authReset' };
+    const el = document.getElementById(viewMap[view]);
+    if (el) el.classList.remove('hidden');
+}
+
+async function handleGoogleSignIn() {
+    if (typeof HM_AUTH === 'undefined') return;
+    const result = await HM_AUTH.signInWithGoogle();
+    if (result.success) {
+        closeAuthModal();
+        showToast('Signed in!', 'success');
+    } else {
+        showAuthError('authError', result.error);
+    }
+}
+
+async function handleAppleSignIn() {
+    if (typeof HM_AUTH === 'undefined') return;
+    const result = await HM_AUTH.signInWithApple();
+    if (result.success) {
+        closeAuthModal();
+        showToast('Signed in!', 'success');
+    } else {
+        showAuthError('authError', result.error);
+    }
+}
+
+async function handleEmailSignIn() {
+    const email = document.getElementById('authEmail')?.value?.trim();
+    const password = document.getElementById('authPassword')?.value;
+    if (!email || !password) {
+        showAuthError('authError', 'Please enter email and password.');
+        return;
+    }
+    const result = await HM_AUTH.signInWithEmail(email, password);
+    if (result.success) {
+        closeAuthModal();
+        showToast('Signed in!', 'success');
+    } else {
+        showAuthError('authError', result.error);
+    }
+}
+
+async function handleEmailSignUp() {
+    const name = document.getElementById('signupName')?.value?.trim();
+    const email = document.getElementById('signupEmail')?.value?.trim();
+    const password = document.getElementById('signupPassword')?.value;
+    if (!email || !password) {
+        showAuthError('signupError', 'Please enter email and password.');
+        return;
+    }
+    if (password.length < 6) {
+        showAuthError('signupError', 'Password must be at least 6 characters.');
+        return;
+    }
+    const result = await HM_AUTH.signUpWithEmail(email, password, name);
+    if (result.success) {
+        closeAuthModal();
+        showToast('Account created! Check your email to verify.', 'success');
+    } else {
+        showAuthError('signupError', result.error);
+    }
+}
+
+async function handlePasswordReset() {
+    const email = document.getElementById('resetEmail')?.value?.trim();
+    if (!email) {
+        showAuthError('resetMessage', 'Please enter your email.');
+        return;
+    }
+    await HM_AUTH.resetPassword(email);
+    const el = document.getElementById('resetMessage');
+    if (el) {
+        el.textContent = 'If an account exists, a reset link has been sent.';
+        el.className = 'auth-error success';
+        el.classList.remove('hidden');
+    }
+}
+
+async function handleSignOut() {
+    if (typeof HM_AUTH === 'undefined') return;
+    await HM_AUTH.signOut();
+    showToast('Signed out.', 'success');
+}
+
+async function resendVerification() {
+    const user = HM_AUTH.getUser();
+    if (user) {
+        try {
+            await user.sendEmailVerification();
+            showToast('Verification email sent!', 'success');
+        } catch (e) {
+            showToast('Please wait before requesting again.', 'error');
+        }
+    }
+}
+
+function showAuthError(elementId, message) {
+    const el = document.getElementById(elementId);
+    if (el) {
+        el.textContent = message;
+        el.className = 'auth-error';
+        el.classList.remove('hidden');
+    }
+}
+
+function updateAccountUI(user) {
+    const loggedOut = document.getElementById('accountLoggedOut');
+    const loggedIn = document.getElementById('accountLoggedIn');
+    if (!loggedOut || !loggedIn) return;
+
+    if (user) {
+        loggedOut.classList.add('hidden');
+        loggedIn.classList.remove('hidden');
+
+        const nameEl = document.getElementById('accountDisplayName');
+        const emailEl = document.getElementById('accountEmailDisplay');
+        const statusEl = document.getElementById('accountPremiumStatus');
+        const verifyEl = document.getElementById('accountVerifyBanner');
+
+        if (nameEl) nameEl.textContent = HM_AUTH.getUserDisplayName();
+        if (emailEl) emailEl.textContent = HM_AUTH.getUserEmail() || '';
+        if (statusEl) {
+            // TODO: Check premium status from backend
+            statusEl.textContent = 'Free';
+            statusEl.className = 'account-status free';
+        }
+        if (verifyEl) {
+            if (user.email && !user.emailVerified) {
+                verifyEl.classList.remove('hidden');
+            } else {
+                verifyEl.classList.add('hidden');
+            }
+        }
+    } else {
+        loggedOut.classList.remove('hidden');
+        loggedIn.classList.add('hidden');
+    }
+}
+
+// ============================================================
 // START APP
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+
+    // Initialize auth (non-blocking — app works without it)
+    if (typeof HM_AUTH !== 'undefined') {
+        HM_AUTH.init();
+        HM_AUTH.onAuthChange(user => {
+            updateAccountUI(user);
+        });
+    }
+
+    // Close auth modal on backdrop click
+    const authModal = document.getElementById('authModal');
+    if (authModal) {
+        authModal.addEventListener('click', e => {
+            if (e.target === authModal) closeAuthModal();
+        });
+    }
+});
