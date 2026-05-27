@@ -4,13 +4,14 @@
  */
 
 const I18N = (() => {
-    const SUPPORTED_LOCALES = ['en', 'es', 'de', 'pt', 'it', 'fr', 'hr', 'sl', 'nl', 'pl', 'ru', 'zh', 'hi', 'ar', 'bn', 'ja', 'vi', 'id'];
+    const SUPPORTED_LOCALES = ['en', 'es', 'de', 'pt', 'it', 'fr', 'hr', 'sl', 'nl', 'pl', 'ru', 'zh', 'hi', 'ar', 'bn', 'ja', 'vi', 'id', 'th', 'ko'];
     const LOCALE_NAMES = {
         en: 'English', es: 'Español', de: 'Deutsch', pt: 'Português',
         it: 'Italiano', fr: 'Français', hr: 'Hrvatski', sl: 'Slovenščina',
         nl: 'Nederlands', pl: 'Polski', ru: 'Русский',
         zh: '中文', hi: 'हिन्दी', ar: 'العربية', bn: 'বাংলা',
-        ja: '日本語', vi: 'Tiếng Việt', id: 'Bahasa Indonesia'
+        ja: '日本語', vi: 'Tiếng Việt', id: 'Bahasa Indonesia',
+        th: 'ไทย', ko: '한국어'
     };
 
     let currentLocale = 'en';
@@ -1052,6 +1053,56 @@ const I18N = (() => {
             lucky_label: 'Angka keberuntungan',
             custom_label: 'Angka spesial Anda',
             special_label: 'Angka spesial',
+            happy_moments_brand: 'HappyMoments',
+        },
+        th: {
+            tab_personal: 'ส่วนตัว', tab_team: 'ทีม', tab_data: 'ข้อมูล', tab_settings: 'ตั้งค่า',
+            tagline: 'บทกวีแห่งตัวเลขในชีวิตคุณ เปิดเผยแล้ว',
+            welcome: 'ยินดีต้อนรับ',
+            onboarding_text: 'ใส่วันที่สำคัญของคุณ วันเกิด วันครบรอบ วันที่พบเจอใครสักคน',
+            what_is_this: 'ช่วงเวลานี้คืออะไร?', when_happened: 'เกิดขึ้นเมื่อไหร่?',
+            discover: 'ค้นพบเหตุการณ์สำคัญ', onboarding_hint: 'คุณสามารถเพิ่มคนและวันที่อื่นได้ภายหลัง',
+            upcoming_milestones: 'เหตุการณ์สำคัญที่กำลังจะมาถึง', highlights: 'ไฮไลท์', refresh: 'รีเฟรช',
+            no_milestones: 'ไม่พบเหตุการณ์สำคัญ', beyond_horizon: 'ไกลออกไป...', closer_view: 'ดูใกล้ๆ',
+            share: 'แชร์', copy: 'คัดลอก', save_to_calendar: 'บันทึกลงปฏิทิน:',
+            create_card: 'สร้างการ์ด', download_png: 'ดาวน์โหลด PNG', share_image: 'แชร์รูป',
+            combined_milestones: 'เหตุการณ์สำคัญรวม', dates_events: 'วันที่ & กิจกรรม',
+            add_date: 'เพิ่มวันที่', backup: 'สำรอง', export_data: 'ส่งออก', import_data: 'นำเข้า',
+            number_patterns: 'รูปแบบตัวเลข', save_settings: 'บันทึกการตั้งค่า', reset_all: 'รีเซ็ตทั้งหมด',
+            type_birthday: 'วันเกิด', type_event: 'วันที่/กิจกรรม',
+            unit_sec: 'วิ', unit_min: 'นาที', unit_hrs: 'ชม.', unit_d: 'วัน', unit_w: 'สัปดาห์', unit_mo: 'เดือน', unit_y: 'ปี',
+            edit_event: 'แก้ไข', save: 'บันทึก', delete: 'ลบ',
+            name: 'ชื่อ', type: 'ประเภท', date: 'วันที่', notes: 'บันทึก', turns: 'จะครบ',
+            terms_privacy: 'เงื่อนไข & ความเป็นส่วนตัว',
+            turns_age: '{name} ครบ {value}!',
+            years_since: '{value} ปีนับตั้งแต่ {name}!',
+            power_of_10: 'ยกกำลัง 10', fibonacci_number: 'เลขฟีโบนัชชี', round_number: 'เลขกลมๆ',
+            palindrome_label: 'พาลินโดรม', lucky_label: 'เลขนำโชค', special_label: 'เลขพิเศษ',
+            happy_moments_brand: 'HappyMoments',
+        },
+        ko: {
+            tab_personal: '개인', tab_team: '팀', tab_data: '데이터', tab_settings: '설정',
+            tagline: '당신의 인생 속 숫자의 시, 밝혀졌습니다.',
+            welcome: '환영합니다',
+            onboarding_text: '중요한 날짜를 입력하세요. 생일, 기념일, 누군가를 만난 날.',
+            what_is_this: '이 순간은 무엇인가요?', when_happened: '언제 일어났나요?',
+            discover: '마일스톤 발견', onboarding_hint: '나중에 더 많은 사람과 날짜를 추가할 수 있습니다.',
+            upcoming_milestones: '다가오는 마일스톤', highlights: '하이라이트', refresh: '새로고침',
+            no_milestones: '마일스톤이 없습니다.', beyond_horizon: '더 먼 미래...', closer_view: '가까이 보기',
+            share: '공유', copy: '복사', save_to_calendar: '캘린더에 저장:',
+            create_card: '카드 만들기', download_png: 'PNG 다운로드', share_image: '이미지 공유',
+            combined_milestones: '팀 마일스톤', dates_events: '날짜 & 이벤트',
+            add_date: '날짜 추가', backup: '백업', export_data: '데이터 내보내기', import_data: '데이터 가져오기',
+            number_patterns: '숫자 패턴', save_settings: '설정 저장', reset_all: '모두 초기화',
+            type_birthday: '생일', type_event: '날짜/이벤트',
+            unit_sec: '초', unit_min: '분', unit_hrs: '시간', unit_d: '일', unit_w: '주', unit_mo: '월', unit_y: '년',
+            edit_event: '편집', save: '저장', delete: '삭제',
+            name: '이름', type: '유형', date: '날짜', notes: '메모', turns: '도달',
+            terms_privacy: '약관 & 개인정보',
+            turns_age: '{name} {value}세!',
+            years_since: '{name} 이후 {value}년!',
+            power_of_10: '10의 거듭제곱', fibonacci_number: '피보나치 수', round_number: '깔끔한 숫자',
+            palindrome_label: '회문', lucky_label: '행운의 숫자', special_label: '특별한 숫자',
             happy_moments_brand: 'HappyMoments',
         },
     };

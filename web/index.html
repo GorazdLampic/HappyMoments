@@ -74,6 +74,8 @@
                 <button class="lang-option" onclick="selectLanguage('ja')"><span class="lang-option-flag">🇯🇵</span><span>日本語</span></button>
                 <button class="lang-option" onclick="selectLanguage('vi')"><span class="lang-option-flag">🇻🇳</span><span>Tiếng Việt</span></button>
                 <button class="lang-option" onclick="selectLanguage('id')"><span class="lang-option-flag">🇮🇩</span><span>Indonesia</span></button>
+                <button class="lang-option" onclick="selectLanguage('th')"><span class="lang-option-flag">🇹🇭</span><span>ไทย</span></button>
+                <button class="lang-option" onclick="selectLanguage('ko')"><span class="lang-option-flag">🇰🇷</span><span>한국어</span></button>
             </div>
         </div>
 
@@ -452,7 +454,27 @@
                         Continue with Apple
                     </button>
 
+                    <button class="auth-social-btn auth-facebook" onclick="handleFacebookSignIn()">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        Continue with Facebook
+                    </button>
+
                     <div class="auth-divider"><span>or</span></div>
+
+                    <!-- Phone sign-in -->
+                    <div class="auth-form" id="phoneAuthForm">
+                        <div class="auth-phone-row">
+                            <input type="tel" id="authPhone" placeholder="+91 or +62 phone number" class="auth-input" autocomplete="tel" style="flex:1;">
+                            <button id="phoneSignInBtn" class="btn-secondary auth-phone-send" onclick="handlePhoneSend()">Send Code</button>
+                        </div>
+                        <div id="phoneCodeRow" class="hidden">
+                            <input type="text" id="authPhoneCode" placeholder="6-digit verification code" class="auth-input" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+                            <button class="btn-primary auth-submit" onclick="handlePhoneVerify()">Verify</button>
+                        </div>
+                        <div id="phoneError" class="auth-error hidden"></div>
+                    </div>
+
+                    <div class="auth-divider"><span>or use email</span></div>
 
                     <div class="auth-form">
                         <input type="email" id="authEmail" placeholder="Email address" class="auth-input" autocomplete="email">

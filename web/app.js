@@ -2397,6 +2397,8 @@ function isVerySpecialNumber(num) {
     if (num >= 10000 && isRepdigit(num)) return true;
     // Million+
     if (num >= 1000000) return true;
+    // Asian auspicious — triple+ 8s, key codes
+    if ([888, 8888, 9999, 1314, 5201314].includes(num)) return true;
     return false;
 }
 
@@ -3508,6 +3510,52 @@ async function handleAppleSignIn() {
         showToast('Signed in!', 'success');
     } else {
         showAuthError('authError', result.error);
+    }
+}
+
+async function handleFacebookSignIn() {
+    if (typeof HM_AUTH === 'undefined') return;
+    const result = await HM_AUTH.signInWithFacebook();
+    if (result.success) {
+        closeAuthModal();
+        showToast('Signed in!', 'success');
+    } else {
+        showAuthError('authError', result.error);
+    }
+}
+
+async function handlePhoneSend() {
+    if (typeof HM_AUTH === 'undefined') return;
+    const phone = document.getElementById('authPhone')?.value?.trim();
+    if (!phone || !phone.startsWith('+')) {
+        showAuthError('phoneError', 'Enter phone with country code (e.g. +91...)');
+        return;
+    }
+    const btn = document.getElementById('phoneSignInBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    const result = await HM_AUTH.sendPhoneCode(phone);
+    if (result.success) {
+        document.getElementById('phoneCodeRow')?.classList.remove('hidden');
+        showToast('Code sent! Check your phone.', 'success');
+    } else {
+        showAuthError('phoneError', result.error);
+    }
+    if (btn) { btn.disabled = false; btn.textContent = 'Send Code'; }
+}
+
+async function handlePhoneVerify() {
+    if (typeof HM_AUTH === 'undefined') return;
+    const code = document.getElementById('authPhoneCode')?.value?.trim();
+    if (!code || code.length < 6) {
+        showAuthError('phoneError', 'Enter the 6-digit code.');
+        return;
+    }
+    const result = await HM_AUTH.verifyPhoneCode(code);
+    if (result.success) {
+        closeAuthModal();
+        showToast('Signed in!', 'success');
+    } else {
+        showAuthError('phoneError', result.error);
     }
 }
 

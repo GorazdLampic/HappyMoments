@@ -529,6 +529,9 @@ function generateAllSpecialNumbers(settings) {
         generateLuckyPatterns(settings.luckyDigits).forEach(n => numbers.add(n));
     }
 
+    // Asian auspicious numbers (always included — universal appeal)
+    generateAsianAuspicious().forEach(n => numbers.add(n));
+
     // Custom numbers
     if (settings.customNumbers && settings.customNumbers.length > 0) {
         settings.customNumbers.forEach(n => numbers.add(n));
@@ -617,6 +620,12 @@ function classifyNumber(num, settings) {
         }
     }
 
+    // Asian lucky numbers — 8 is prosperity, 9 is longevity, 6 is smooth/lucky
+    const asianLucky = _classifyAsianLucky(num, strNum);
+    if (asianLucky) {
+        types.push(asianLucky);
+    }
+
     // Custom number
     if (settings.customNumbers && settings.customNumbers.includes(num)) {
         types.push({ type: 'custom', description: _t('custom_label') || 'Your special number' });
@@ -644,6 +653,75 @@ function isAlternating(strNum) {
     }
 
     return true;
+}
+
+// Asian lucky number classification
+// 8 = prosperity (ba sounds like fa=wealth in Chinese)
+// 9 = longevity, eternity (jiu=long-lasting)
+// 6 = smooth, lucky (liu=flow smoothly)
+// 88, 888, 8888 = extremely lucky
+// 168 = "yi lu fa" = prosperity all the way
+// 520 = "wo ai ni" = I love you
+// 1314 = "yi sheng yi shi" = one life one world (forever)
+// 99 = "jiu jiu" = long-lasting
+// Unlucky: 4 = death (si), but we don't hide numbers — we note significance
+function _classifyAsianLucky(num, strNum) {
+    // Triple/quad 8s — extremely auspicious
+    if (/^8+$/.test(strNum) && strNum.length >= 2) {
+        return { type: 'asian_lucky', description: strNum.length >= 4 ? 'Extremely lucky (8=prosperity)' : 'Lucky 8s (prosperity)' };
+    }
+    // Triple/quad 9s — longevity
+    if (/^9+$/.test(strNum) && strNum.length >= 2) {
+        return { type: 'asian_lucky', description: 'Lucky 9s (longevity)' };
+    }
+    // Triple/quad 6s — smooth sailing
+    if (/^6+$/.test(strNum) && strNum.length >= 3) {
+        return { type: 'asian_lucky', description: 'Lucky 6s (smooth sailing)' };
+    }
+    // Special Chinese number codes
+    const chineseCodes = {
+        168: '"Yi lu fa" — prosperity all the way',
+        520: '"Wo ai ni" — I love you',
+        521: '"Wo ai ni" — I love you',
+        1314: '"Yi sheng yi shi" — forever & always',
+        1688: 'Prosperity road (yi liu ba ba)',
+        5201314: 'I love you forever',
+        888: 'Triple fortune',
+        8888: 'Supreme prosperity',
+        9999: 'Eternal longevity',
+    };
+    if (chineseCodes[num]) {
+        return { type: 'asian_lucky', description: chineseCodes[num] };
+    }
+    // Numbers ending in 88, 888 (e.g. 1088, 10888)
+    if (strNum.length >= 4 && /88$/.test(strNum) && num % 100 === 88) {
+        return { type: 'asian_lucky', description: 'Ends in 88 (double prosperity)' };
+    }
+    // Indian auspicious numbers
+    // 108 = sacred in Hinduism (prayer beads, cosmic wholeness)
+    // 786 = sacred in Islam (Bismillah numerology)
+    // 1008 = sacred Hindu (1008 names of deity)
+    const indianSacred = {
+        108: 'Sacred 108 (Hindu cosmic wholeness)',
+        786: 'Sacred 786 (Bismillah)',
+        1008: 'Sacred 1008 (divine names)',
+        1080: 'Sacred number (10 x 108)',
+        10008: 'Auspicious (Hindu prayer count)',
+    };
+    if (indianSacred[num]) {
+        return { type: 'asian_lucky', description: indianSacred[num] };
+    }
+    return null;
+}
+
+// Generate Asian auspicious numbers for the milestone search
+function generateAsianAuspicious() {
+    const nums = [
+        88, 99, 108, 168, 188, 288, 388, 520, 521, 666, 786, 888, 999,
+        1008, 1088, 1188, 1314, 1688, 1888, 2888, 3888, 5201314,
+        6666, 8888, 9999, 10008, 10088, 88888, 99999
+    ];
+    return nums;
 }
 
 // Get special numbers up to a maximum value
@@ -710,6 +788,10 @@ function roundnessScore(num) {
     }
 
     // Alternating patterns are less "round" — no bonus
+
+    // Asian auspicious numbers bonus
+    if (_classifyAsianLucky(num, s)) score += 15;
+    if ([888, 8888, 9999, 5201314].includes(num)) score += 25;
 
     return score;
 }
