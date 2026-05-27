@@ -1134,6 +1134,7 @@ function handleDeleteEdit() {
 // ============================================================
 
 function renderCombinedTab() {
+    try {
     if (appData.events.length < 2) {
         combinedMilestonesContentEl.innerHTML = '<p class="empty-text">Add at least 2 events to see combined milestones.</p>';
         return;
@@ -1309,6 +1310,10 @@ function renderCombinedTab() {
     // Sort combined milestones by date for sharing
     allCombinedMilestonesFlat.sort((a, b) => a.date.getTime() - b.date.getTime());
     updateCombinedSharePreview();
+    } catch (err) {
+        console.error('Combined tab error:', err);
+        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">Error loading combined milestones. Check console for details.</p>';
+    }
 }
 
 function renderCombinedMilestonesList(milestones, type, eventNames = '') {
@@ -3545,18 +3550,19 @@ function showAuthError(elementId, message) {
 function updateAccountUI(user) {
     const loggedOut = document.getElementById('accountLoggedOut');
     const loggedIn = document.getElementById('accountLoggedIn');
-    if (!loggedOut || !loggedIn) return;
+    const userBadge = document.getElementById('userBadge');
 
     if (user) {
-        loggedOut.classList.add('hidden');
-        loggedIn.classList.remove('hidden');
+        if (loggedOut) loggedOut.classList.add('hidden');
+        if (loggedIn) loggedIn.classList.remove('hidden');
 
+        const displayName = HM_AUTH.getUserDisplayName();
         const nameEl = document.getElementById('accountDisplayName');
         const emailEl = document.getElementById('accountEmailDisplay');
         const statusEl = document.getElementById('accountPremiumStatus');
         const verifyEl = document.getElementById('accountVerifyBanner');
 
-        if (nameEl) nameEl.textContent = HM_AUTH.getUserDisplayName();
+        if (nameEl) nameEl.textContent = displayName;
         if (emailEl) emailEl.textContent = HM_AUTH.getUserEmail() || '';
         if (statusEl) {
             const isPrem = localStorage.getItem('happymoments_premium_until');
@@ -3575,9 +3581,23 @@ function updateAccountUI(user) {
                 verifyEl.classList.add('hidden');
             }
         }
+
+        // Show user badge in header
+        if (userBadge) {
+            const initials = (displayName || '?').split(' ').map(w => w[0]).join('').slice(0, 2);
+            userBadge.innerHTML = `<span class="user-avatar">${escapeHtml(initials)}</span><span>${escapeHtml(displayName)}</span>`;
+            userBadge.classList.remove('hidden');
+            userBadge.onclick = () => switchTab('settings');
+        }
     } else {
-        loggedOut.classList.remove('hidden');
-        loggedIn.classList.add('hidden');
+        if (loggedOut) loggedOut.classList.remove('hidden');
+        if (loggedIn) loggedIn.classList.add('hidden');
+
+        // Hide user badge
+        if (userBadge) {
+            userBadge.classList.add('hidden');
+            userBadge.innerHTML = '';
+        }
     }
 }
 
