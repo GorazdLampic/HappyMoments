@@ -277,6 +277,32 @@ function submitGiftOrder(productId, value, unit) {
     }
 }
 
+// Generate an inline gift banner for insertion between milestones
+function generateGiftBanner(milestone) {
+    if (!milestone) return '';
+    const suggestions = getGiftSuggestions(milestone, 1);
+    if (suggestions.length === 0) return '';
+
+    const p = suggestions[0];
+    const val = milestone.value.toLocaleString();
+    const unit = milestone.unitName || '';
+    const name = milestone.eventName || 'someone special';
+    const tagline = p.tagline
+        .replace(/\{value\}/g, val)
+        .replace(/\{unit\}/g, unit)
+        .replace(/\{name\}/g, name);
+
+    return `
+        <div class="gift-banner" onclick="openGiftOrder('${p.id}', ${milestone.value}, '${milestone.unitName}')">
+            <span class="gift-banner-icon">${p.icon}</span>
+            <div class="gift-banner-text">
+                <span class="gift-banner-tagline">${tagline}</span>
+                <span class="gift-banner-cta">${p.name} &middot; EUR ${p.priceRange} &rarr;</span>
+            </div>
+        </div>
+    `;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { GIFT_CATALOG, getGiftSuggestions, renderGiftSuggestions };
+    module.exports = { GIFT_CATALOG, getGiftSuggestions, renderGiftSuggestions, generateGiftBanner };
 }

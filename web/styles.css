@@ -2216,6 +2216,62 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .tab-btn { padding: 6px var(--space-sm); font-size: var(--font-size-xs); }
 }
 
+/* Gift Banners (inline between milestones) */
+.gift-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    margin: 6px 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--warning);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: var(--font-size-xs);
+}
+.gift-banner:hover { background: var(--bg-page); }
+.gift-banner-icon { font-size: 20px; flex-shrink: 0; }
+.gift-banner-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.gift-banner-tagline { color: var(--text-secondary); font-style: italic; }
+.gift-banner-cta { color: var(--warning); font-weight: 500; }
+
+/* Premium bottom banner */
+.premium-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: var(--font-size-sm);
+    z-index: 100;
+    cursor: pointer;
+}
+.premium-banner:hover { background: var(--bg-elevated); }
+.premium-banner-star { color: var(--warning); }
+.premium-banner-text { color: var(--text-secondary); }
+.premium-banner-price { color: var(--warning); font-weight: 600; }
+.premium-banner-dismiss {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+.premium-banner ~ .app-footer { padding-bottom: 60px; }
+
 /* Footer */
 .app-footer {
     text-align: center;

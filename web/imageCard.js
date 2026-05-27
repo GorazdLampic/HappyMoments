@@ -139,10 +139,23 @@ function generateMilestoneCard(milestone, options) {
     ctx.lineTo(W - P - 100, H - P - 30);
     ctx.stroke();
 
-    // Footer
+    // Footer — always show app name
     ctx.fillStyle = theme.muted;
     ctx.font = '22px "EB Garamond", Georgia, serif';
     ctx.fillText('happymoments.app', W / 2, H - P + 5);
+
+    // Watermark for free users — premium gets clean cards
+    const _isPremium = typeof isPremium === 'function' && isPremium();
+    if (!_isPremium) {
+        ctx.save();
+        ctx.globalAlpha = 0.08;
+        ctx.fillStyle = theme.text;
+        ctx.font = 'italic 60px "EB Garamond", Georgia, serif';
+        ctx.translate(W / 2, H / 2);
+        ctx.rotate(-Math.PI / 6);
+        ctx.fillText('happymoments.app', 0, 0);
+        ctx.restore();
+    }
 
     return canvas;
 }

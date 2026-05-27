@@ -1916,6 +1916,7 @@ function renderMostSpecialMilestones() {
     if (allMilestonesFlat.length === 0) {
         html += '<p class="empty-text">No special milestones found in the next 2 years.</p>';
     } else {
+        const showBanners = !isPremium() && typeof generateGiftBanner === 'function';
         allMilestonesFlat.slice(0, 30).forEach((m, idx) => {
             const timeUntilStr = formatTimeDistance(m.timeUntil);
             const dateStr = formatDateWithTime(m.date);
@@ -1934,6 +1935,10 @@ function renderMostSpecialMilestones() {
                     </div>
                 </div>
             `;
+            // Gift banner every 4th milestone
+            if (showBanners && idx > 0 && (idx + 1) % 4 === 0) {
+                html += generateGiftBanner(m);
+            }
         });
     }
 
@@ -2011,6 +2016,7 @@ function renderPersonColumns() {
     const DEFAULT_SHOW = 7;
 
     // Build columns for each selected person
+    const showBanners = !isPremium() && typeof generateGiftBanner === 'function';
     let html = '<div class="columns-container">';
 
     let globalIdx = 0;
@@ -2103,6 +2109,10 @@ function renderPersonColumns() {
                             </div>
                         </div>
                     `;
+                }
+                // Gift banner every 4th item in column
+                if (showBanners && i > 0 && (i + 1) % 4 === 0 && i < DEFAULT_SHOW) {
+                    html += generateGiftBanner(m);
                 }
             });
 
@@ -2628,23 +2638,54 @@ function getShareCategory(m) {
     return typeMap[m.type] || 'generic';
 }
 
+const APP_SHARE_LINK = '\n\nDiscover your special numbers \u2192 happymoments.app';
+
+function shareAppLink() {
+    const text = 'Discover when you turn 1 billion seconds old, 10,000 days, or hit a Fibonacci birthday. Track milestones for everyone you love!\n\nhappymoments.app';
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoments', text }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Link copied! Share it with your friends.', 'success');
+        }).catch(() => {
+            showToast('Share this link: happymoments.app', 'info', 5000);
+        });
+    }
+    _track('share_app', { source: 'settings' });
+}
+
+let _shareAppPromptCount = 0;
+function promptShareApp() {
+    _shareAppPromptCount++;
+    // Show after every 2nd share action, max 3 times per session
+    if (_shareAppPromptCount % 2 !== 0) return;
+    if (_shareAppPromptCount > 6) return;
+
+    setTimeout(() => {
+        showToast('Know someone who\u2019d love this? The app link is included in your message!', 'info', 4000);
+    }, 1500);
+}
+
 function generateShareMessage(m) {
     const category = getShareCategory(m);
     const template = pickShareTemplate(category);
 
+    let msg;
     if (template) {
-        return fillShareTemplate(template, m);
-    }
+        msg = fillShareTemplate(template, m);
+    } else {
+        // Fallback if no templates loaded
+        const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
+        const countdown = formatTimeDistance(m.timeUntil);
+        const val = m.value.toLocaleString();
 
-    // Fallback if no templates loaded
-    const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
-    const countdown = formatTimeDistance(m.timeUntil);
-    const val = m.value.toLocaleString();
-
-    if (m.isBirthday) {
-        return m.fullDescription.replace(/[🎂🎉]\s*/g, '') + ` on ${dateStr} (${countdown} from now)!`;
+        if (m.isBirthday) {
+            msg = m.fullDescription.replace(/[🎂🎉]\s*/g, '') + ` on ${dateStr} (${countdown} from now)!`;
+        } else {
+            msg = `${m.eventName} will be ${val} ${m.unitName} old on ${dateStr} — just ${countdown} away!`;
+        }
     }
-    return `${m.eventName} will be ${val} ${m.unitName} old on ${dateStr} — just ${countdown} away!`;
+    return msg + APP_SHARE_LINK;
 }
 
 function handleCopyShare() {
@@ -2659,6 +2700,7 @@ function handleCopyShare() {
         setTimeout(() => {
             copyShareBtn.textContent = 'Copy Message';
         }, 2000);
+        promptShareApp();
     }).catch(() => {
         showToast('Could not copy. Please select the text manually.', 'error');
     });
@@ -2688,6 +2730,7 @@ function handleWhatsAppShare() {
     const message = generateShareMessage(m);
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    promptShareApp();
 }
 
 function handleViberShare() {
@@ -2751,7 +2794,7 @@ function generateCombinedShareMessage(m) {
 
     const description = m.comboDescription || m.description || `${m.value.toLocaleString()} ${m.unitName}`;
 
-    return `Hey! I discovered something amazing - ${description} on ${dateStr}! That's ${formatTimeDistance(m.timeUntil)} from now. Let's celebrate this special moment together!`;
+    return `Hey! I discovered something amazing - ${description} on ${dateStr}! That's ${formatTimeDistance(m.timeUntil)} from now. Let's celebrate this special moment together!` + APP_SHARE_LINK;
 }
 
 function handleCopyCombinedShare() {
@@ -3605,26 +3648,50 @@ function updateAccountUI(user) {
 // PREMIUM GATE
 // ============================================================
 
-const FREE_EVENT_LIMIT = 5;
-
 function isPremium() {
     const until = localStorage.getItem('happymoments_premium_until');
     return until && parseInt(until) * 1000 > Date.now();
 }
 
 function checkEventLimit() {
-    if (isPremium()) return true;
-    if (appData.events.length >= FREE_EVENT_LIMIT) {
-        showUpgradePrompt();
-        return false;
-    }
+    // All features free — no event limit
     return true;
 }
 
+function showPremiumBanner() {
+    if (isPremium()) return;
+    // Don't show if already dismissed this session
+    if (sessionStorage.getItem('hm_banner_dismissed')) return;
+
+    const banner = document.createElement('div');
+    banner.className = 'premium-banner';
+    banner.id = 'premiumBanner';
+    banner.innerHTML = `
+        <span class="premium-banner-star">&#9733;</span>
+        <span class="premium-banner-text">Go Premium</span>
+        <span class="premium-banner-price">&euro;1.49/year</span>
+        <span class="premium-banner-text">&mdash; clean cards, no banners</span>
+        <button class="premium-banner-dismiss" onclick="event.stopPropagation(); dismissPremiumBanner();">&times;</button>
+    `;
+    banner.onclick = () => {
+        if (typeof HM_AUTH !== 'undefined' && !HM_AUTH.isLoggedIn()) {
+            openAuthModal();
+        } else {
+            handleUpgrade();
+        }
+    };
+    document.body.appendChild(banner);
+}
+
+function dismissPremiumBanner() {
+    const banner = document.getElementById('premiumBanner');
+    if (banner) banner.remove();
+    sessionStorage.setItem('hm_banner_dismissed', '1');
+}
+
 function showUpgradePrompt() {
-    if (!HM_AUTH.isLoggedIn()) {
+    if (typeof HM_AUTH !== 'undefined' && !HM_AUTH.isLoggedIn()) {
         openAuthModal();
-        showToast('Sign in to add more events, or upgrade to Premium.', 'info');
         return;
     }
     // Show upgrade modal
@@ -3634,17 +3701,15 @@ function showUpgradePrompt() {
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `
         <div class="modal-content auth-modal">
-            <h3>Upgrade to Premium</h3>
-            <p class="auth-subtitle">You've reached the free limit of ${FREE_EVENT_LIMIT} events.</p>
+            <h3>HappyMoments Premium</h3>
+            <p class="auth-subtitle">Enjoy a cleaner, distraction-free experience.</p>
             <div style="margin: 16px 0; padding: 16px; background: var(--bg-elevated); border-radius: var(--radius-sm);">
-                <div style="font-size: var(--font-size-lg); font-weight: 500; margin-bottom: 8px;">HappyMoments Premium</div>
-                <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 8px;">&euro;1.49<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> / year</span></div>
+                <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 12px;">&euro;1.49<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> / year</span></div>
                 <ul style="text-align: left; font-size: var(--font-size-sm); color: var(--text-secondary); list-style: none; padding: 0;">
-                    <li>&#10003; Unlimited events &amp; people</li>
-                    <li>&#10003; All milestone types (Fibonacci, Pi, powers...)</li>
-                    <li>&#10003; Combined milestones &amp; team tab</li>
-                    <li>&#10003; Image card generator</li>
-                    <li>&#10003; All 18 languages</li>
+                    <li>&#10003; No gift banners &mdash; clean milestone view</li>
+                    <li>&#10003; Clean image cards &mdash; no watermark</li>
+                    <li>&#10003; Calendar export (Google, Outlook, .ics)</li>
+                    <li>&#10003; Support an independent developer</li>
                 </ul>
             </div>
             <button class="btn-primary" onclick="handleUpgrade()" style="width:100%;">Upgrade Now</button>
@@ -3752,6 +3817,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Track page view (includes UTM data if present via analytics.js)
     _track('page_view', { page: 'app', referrer: document.referrer || null });
+
+    // Show premium banner for free users
+    showPremiumBanner();
 
     // Clean UTM params from URL (after analytics captured them)
     if (window.location.search.includes('utm_')) {
