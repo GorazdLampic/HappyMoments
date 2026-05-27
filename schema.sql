@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
     display_name TEXT,
     premium_until INTEGER,
     stripe_customer_id TEXT,
+    utm_source TEXT,
+    utm_medium TEXT,
+    utm_campaign TEXT,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
 );

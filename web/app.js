@@ -3695,12 +3695,19 @@ async function checkPremiumStatus() {
     if (!HM_AUTH.isLoggedIn()) return;
     try {
         const token = await HM_AUTH.getIdToken();
+        const body = {};
+        // Include UTM attribution on registration
+        if (typeof HM_ANALYTICS !== 'undefined') {
+            const utm = HM_ANALYTICS.getUtm();
+            if (utm) body.utm = utm;
+        }
         const res = await fetch('/api/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            body: JSON.stringify(body)
         });
         const data = await res.json();
         if (data.premium_until) {
@@ -3743,8 +3750,15 @@ function _track(action, data) {
 document.addEventListener('DOMContentLoaded', () => {
     init();
 
-    // Track page view
-    _track('page_view', { page: 'app' });
+    // Track page view (includes UTM data if present via analytics.js)
+    _track('page_view', { page: 'app', referrer: document.referrer || null });
+
+    // Clean UTM params from URL (after analytics captured them)
+    if (window.location.search.includes('utm_')) {
+        const url = new URL(window.location);
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(k => url.searchParams.delete(k));
+        window.history.replaceState({}, '', url.pathname + (url.search || ''));
+    }
 
     // Initialize auth (non-blocking — app works without it)
     if (typeof HM_AUTH !== 'undefined') {

@@ -49,15 +49,26 @@ export async function onRequestPost(context) {
 
     const now = Math.floor(Date.now() / 1000);
 
-    // Upsert user
+    // Parse request body for UTM data
+    let utm = {};
+    try {
+        const body = await context.request.json();
+        if (body.utm) utm = body.utm;
+    } catch {}
+
+    // Upsert user (only set UTM on first registration, not on updates)
     await db.prepare(`
-        INSERT INTO users (uid, email, display_name, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users (uid, email, display_name, utm_source, utm_medium, utm_campaign, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(uid) DO UPDATE SET
             email = excluded.email,
             display_name = excluded.display_name,
             updated_at = excluded.updated_at
-    `).bind(claims.uid, claims.email, claims.name, now, now).run();
+    `).bind(
+        claims.uid, claims.email, claims.name,
+        utm.utm_source || null, utm.utm_medium || null, utm.utm_campaign || null,
+        now, now
+    ).run();
 
     // Get current status
     const user = await db.prepare('SELECT * FROM users WHERE uid = ?').bind(claims.uid).first();

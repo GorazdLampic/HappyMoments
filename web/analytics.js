@@ -9,6 +9,33 @@ const HM_ANALYTICS = (() => {
     const SESSION_ID = Math.random().toString(36).slice(2, 10);
     let queue = [];
     let flushTimer = null;
+    let utmParams = null;
+
+    // Capture UTM parameters from URL on load
+    function captureUtm() {
+        const params = new URLSearchParams(window.location.search);
+        const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+        const utm = {};
+        let hasUtm = false;
+        keys.forEach(k => {
+            const v = params.get(k);
+            if (v) { utm[k] = v.slice(0, 100); hasUtm = true; }
+        });
+        if (hasUtm) {
+            utmParams = utm;
+            // Store in sessionStorage so it persists across page navigations
+            try { sessionStorage.setItem('hm_utm', JSON.stringify(utm)); } catch {}
+        } else {
+            // Check sessionStorage for UTM from earlier in this session
+            try {
+                const stored = sessionStorage.getItem('hm_utm');
+                if (stored) utmParams = JSON.parse(stored);
+            } catch {}
+        }
+    }
+
+    // Initialize UTM capture
+    if (typeof window !== 'undefined') captureUtm();
 
     function isEnabled() {
         // Respect Do Not Track
@@ -16,12 +43,20 @@ const HM_ANALYTICS = (() => {
         return true;
     }
 
+    function getUtm() { return utmParams; }
+
     function track(action, data) {
         if (!isEnabled()) return;
 
+        const eventData = data || {};
+        // Attach UTM to first event (page_view) and conversion events
+        if (utmParams && (action === 'page_view' || action === 'auth_signed_in' || action === 'checkout_started')) {
+            eventData.utm = utmParams;
+        }
+
         queue.push({
             action,
-            data: data || {},
+            data: eventData,
             ts: Date.now(),
             sid: SESSION_ID,
             uid: (typeof HM_AUTH !== 'undefined' && HM_AUTH.isLoggedIn())
@@ -66,5 +101,5 @@ const HM_ANALYTICS = (() => {
         window.addEventListener('pagehide', flush);
     }
 
-    return { track, flush };
+    return { track, flush, getUtm };
 })();
