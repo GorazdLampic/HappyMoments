@@ -3623,7 +3623,7 @@ async function handleEmailSignUp() {
     const result = await HM_AUTH.signUpWithEmail(email, password, name);
     if (result.success) {
         closeAuthModal();
-        showToast('Account created! Check your email to verify.', 'success');
+        showToast('Account created! Welcome to HappyMoments.', 'success');
     } else {
         showAuthError('signupError', result.error);
     }
@@ -3731,13 +3731,8 @@ function updateAccountUI(user) {
                 statusEl.className = 'account-status free';
             }
         }
-        if (verifyEl) {
-            if (user.email && !user.emailVerified) {
-                verifyEl.classList.remove('hidden');
-            } else {
-                verifyEl.classList.add('hidden');
-            }
-        }
+        // Email verification disabled for now
+        if (verifyEl) verifyEl.classList.add('hidden');
 
         // Show user badge in header
         if (userBadge) {

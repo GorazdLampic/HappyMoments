@@ -195,7 +195,8 @@ const HM_AUTH = (() => {
                 await result.user.updateProfile({ displayName });
             }
             // Send verification email (non-blocking)
-            result.user.sendEmailVerification().catch(() => {});
+            // Email verification disabled for now — re-enable with custom SMTP later
+            // result.user.sendEmailVerification().catch(() => {});
             return { success: true, user: result.user };
         } catch (error) {
             return { success: false, error: _friendlyError(error) };
