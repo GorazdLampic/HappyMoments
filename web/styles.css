@@ -2027,6 +2027,11 @@ body {
     cursor: pointer; text-decoration: underline;
 }
 .auth-skip:hover { color: var(--text-secondary); }
+.btn-danger-text {
+    background: none; border: none; color: var(--danger); font-size: var(--font-size-sm);
+    cursor: pointer; padding: 8px 4px; font-family: var(--font-family);
+}
+.btn-danger-text:hover { text-decoration: underline; }
 
 /* Account card in settings */
 .account-info { margin-top: 8px; }

@@ -3625,6 +3625,38 @@ async function handleSignOut() {
     showToast('Signed out.', 'success');
 }
 
+async function handleDeleteAccount() {
+    if (typeof HM_AUTH === 'undefined' || !HM_AUTH.isLoggedIn()) return;
+
+    // Double confirmation
+    const name = HM_AUTH.getUserDisplayName() || 'your account';
+    if (!confirm(`Delete ${name}? This will permanently remove your account and all cloud data. Local data on this device will remain.`)) return;
+    if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
+
+    try {
+        const user = HM_AUTH.getUser();
+        // Delete from our backend first
+        try {
+            const token = await HM_AUTH.getIdToken();
+            await fetch('/api/user', {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+        } catch {}
+        // Delete from Firebase
+        await user.delete();
+        // Clear local premium status
+        localStorage.removeItem('happymoments_premium_until');
+        showToast('Account deleted.', 'success');
+    } catch (error) {
+        if (error.code === 'auth/requires-recent-login') {
+            showToast('For security, please sign out and sign back in, then try deleting again.', 'error', 5000);
+        } else {
+            showToast('Could not delete account. Try signing out and back in first.', 'error');
+        }
+    }
+}
+
 async function resendVerification() {
     const user = HM_AUTH.getUser();
     if (user) {

@@ -102,3 +102,23 @@ export async function onRequestGet(context) {
         premium_until: user?.premium_until || null
     });
 }
+
+// DELETE /api/user — Delete user account and associated data
+export async function onRequestDelete(context) {
+    const claims = await getFirebaseUid(context.request);
+    if (!claims) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const db = context.env.DB;
+    if (!db) {
+        return Response.json({ ok: true });
+    }
+
+    // Delete user record
+    await db.prepare('DELETE FROM users WHERE uid = ?').bind(claims.uid).run();
+    // Delete associated analytics events
+    await db.prepare('DELETE FROM events WHERE user_id = ?').bind(claims.uid).run();
+
+    return Response.json({ ok: true, deleted: true });
+}
