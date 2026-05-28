@@ -464,10 +464,10 @@
                     <!-- Phone sign-in -->
                     <div class="auth-form" id="phoneAuthForm">
                         <div class="auth-phone-row">
-                            <input type="tel" id="authPhone" placeholder="+91 or +62 phone number" class="auth-input" autocomplete="tel" style="flex:1;">
+                            <input type="tel" id="authPhone" placeholder="+386 40 123 456" class="auth-input" autocomplete="tel">
                             <button id="phoneSignInBtn" class="btn-secondary auth-phone-send" onclick="handlePhoneSend()">Send Code</button>
                         </div>
-                        <div id="phoneCodeRow" class="hidden">
+                        <div id="phoneCodeRow" class="hidden" style="margin-top: 8px;">
                             <input type="text" id="authPhoneCode" placeholder="6-digit verification code" class="auth-input" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
                             <button class="btn-primary auth-submit" onclick="handlePhoneVerify()">Verify</button>
                         </div>

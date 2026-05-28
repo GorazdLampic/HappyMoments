@@ -3571,7 +3571,11 @@ async function handleEmailSignIn() {
         closeAuthModal();
         showToast('Signed in!', 'success');
     } else {
-        showAuthError('authError', result.error);
+        // If invalid credential, hint they might have used Google/social login
+        const hint = (result.error && result.error.includes('Invalid'))
+            ? result.error + ' If you signed up with Google, use "Continue with Google" instead.'
+            : result.error;
+        showAuthError('authError', hint);
     }
 }
 
