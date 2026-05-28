@@ -3739,6 +3739,46 @@ function showPremiumBanner() {
     document.body.appendChild(banner);
 }
 
+function promptForDisplayName(user) {
+    // Only prompt once per session
+    if (sessionStorage.getItem('hm_name_prompted')) return;
+    sessionStorage.setItem('hm_name_prompted', '1');
+
+    setTimeout(() => {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.id = 'namePromptModal';
+        modal.innerHTML = `
+            <div class="modal-content auth-modal">
+                <h3>What's your name?</h3>
+                <p class="auth-subtitle">So we can personalize your experience.</p>
+                <div class="auth-form">
+                    <input type="text" id="namePromptInput" placeholder="Your name" class="auth-input" autocomplete="name">
+                    <button class="btn-primary auth-submit" onclick="saveDisplayName()">Save</button>
+                </div>
+                <button class="auth-skip" onclick="document.getElementById('namePromptModal').remove()">Skip</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.getElementById('namePromptInput')?.focus();
+    }, 500);
+}
+
+async function saveDisplayName() {
+    const name = document.getElementById('namePromptInput')?.value?.trim();
+    if (!name) return;
+    try {
+        const user = HM_AUTH.getUser();
+        if (user) {
+            await user.updateProfile({ displayName: name });
+            updateAccountUI(user);
+            showToast(`Welcome, ${name}!`, 'success');
+        }
+    } catch {}
+    const modal = document.getElementById('namePromptModal');
+    if (modal) modal.remove();
+}
+
 function dismissPremiumBanner() {
     const banner = document.getElementById('premiumBanner');
     if (banner) banner.remove();
@@ -3892,6 +3932,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (user) {
                 checkPremiumStatus();
                 _track('auth_signed_in', { method: user.providerData?.[0]?.providerId || 'unknown' });
+                // If user has no display name (phone sign-in), ask for it
+                if (!user.displayName) {
+                    promptForDisplayName(user);
+                }
             }
         });
     }
