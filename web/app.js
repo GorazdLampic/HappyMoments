@@ -3802,23 +3802,28 @@ function promptForDisplayName(user) {
     if (sessionStorage.getItem('hm_name_prompted')) return;
     sessionStorage.setItem('hm_name_prompted', '1');
 
+    // Try to get a suggestion from email
+    const emailHint = user.email ? user.email.split('@')[0].replace(/[._]/g, ' ') : '';
+    const suggestion = emailHint.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
     setTimeout(() => {
         const modal = document.createElement('div');
         modal.className = 'modal';
         modal.id = 'namePromptModal';
         modal.innerHTML = `
             <div class="modal-content auth-modal">
-                <h3>What's your name?</h3>
-                <p class="auth-subtitle">So we can personalize your experience.</p>
+                <h3>Choose a nickname</h3>
+                <p class="auth-subtitle">How would you like to be called?</p>
                 <div class="auth-form">
-                    <input type="text" id="namePromptInput" placeholder="Your name" class="auth-input" autocomplete="name">
+                    <input type="text" id="namePromptInput" placeholder="Your nickname" value="${escapeHtml(suggestion)}" class="auth-input" autocomplete="name">
                     <button class="btn-primary auth-submit" onclick="saveDisplayName()">Save</button>
                 </div>
                 <button class="auth-skip" onclick="document.getElementById('namePromptModal').remove()">Skip</button>
             </div>
         `;
         document.body.appendChild(modal);
-        document.getElementById('namePromptInput')?.focus();
+        const input = document.getElementById('namePromptInput');
+        if (input) { input.focus(); input.select(); }
     }, 500);
 }
 
