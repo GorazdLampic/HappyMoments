@@ -3528,19 +3528,19 @@ async function handlePhoneSend() {
     if (typeof HM_AUTH === 'undefined') return;
     const phone = document.getElementById('authPhone')?.value?.trim();
     if (!phone || !phone.startsWith('+')) {
-        showAuthError('phoneError', 'Enter phone with country code (e.g. +91...)');
+        showAuthError('phoneError', 'Enter phone with country code (e.g. +386 40...)');
         return;
     }
     const btn = document.getElementById('phoneSignInBtn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
     const result = await HM_AUTH.sendPhoneCode(phone);
-    if (result.success) {
-        document.getElementById('phoneCodeRow')?.classList.remove('hidden');
-        showToast('Code sent! Check your phone.', 'success');
-    } else {
+    if (result.success && result.needsCaptcha) {
+        // reCAPTCHA widget shown — user solves it, then code sends automatically
+        if (btn) btn.classList.add('hidden');
+    } else if (!result.success) {
         showAuthError('phoneError', result.error);
+        if (btn) { btn.disabled = false; btn.textContent = 'Send Verification Code'; }
     }
-    if (btn) { btn.disabled = false; btn.textContent = 'Send Code'; }
 }
 
 async function handlePhoneVerify() {

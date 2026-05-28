@@ -117,25 +117,52 @@ const HM_AUTH = (() => {
     let _recaptchaVerifier = null;
     let _phoneConfirmation = null;
 
-    function setupRecaptcha(buttonId) {
-        if (_recaptchaVerifier) return;
-        _recaptchaVerifier = new firebase.auth.RecaptchaVerifier(buttonId, {
-            size: 'invisible',
-            callback: () => {}
+    function setupRecaptcha(containerId) {
+        // Clear previous verifier
+        if (_recaptchaVerifier) {
+            try { _recaptchaVerifier.clear(); } catch {}
+            _recaptchaVerifier = null;
+        }
+        // Clear container
+        const container = document.getElementById(containerId);
+        if (container) container.innerHTML = '';
+
+        _recaptchaVerifier = new firebase.auth.RecaptchaVerifier(containerId, {
+            size: 'normal',
+            callback: () => {
+                // reCAPTCHA solved — auto-send the code
+                const phone = document.getElementById('authPhone')?.value?.trim();
+                if (phone) _doSendPhoneCode(phone);
+            },
+            'expired-callback': () => {
+                _recaptchaVerifier = null;
+            }
         });
+        return _recaptchaVerifier.render();
     }
 
     async function sendPhoneCode(phoneNumber) {
         try {
-            if (!_recaptchaVerifier) {
-                setupRecaptcha('phoneSignInBtn');
-            }
-            _phoneConfirmation = await firebase.auth().signInWithPhoneNumber(phoneNumber, _recaptchaVerifier);
-            return { success: true };
+            // Show reCAPTCHA widget first, code sends automatically after solving
+            await setupRecaptcha('recaptchaContainer');
+            return { success: true, needsCaptcha: true };
         } catch (error) {
-            // Reset reCAPTCHA on error
             _recaptchaVerifier = null;
-            return { success: false, error: _friendlyError(error) };
+            return { success: false, error: 'Could not load verification. Please refresh and try again.' };
+        }
+    }
+
+    async function _doSendPhoneCode(phoneNumber) {
+        try {
+            _phoneConfirmation = await firebase.auth().signInWithPhoneNumber(phoneNumber, _recaptchaVerifier);
+            // Show code input
+            document.getElementById('phoneCodeRow')?.classList.remove('hidden');
+            document.getElementById('recaptchaContainer').innerHTML = '';
+            if (typeof showToast === 'function') showToast('Code sent! Check your phone.', 'success');
+        } catch (error) {
+            _recaptchaVerifier = null;
+            const el = document.getElementById('phoneError');
+            if (el) { el.textContent = _friendlyError(error); el.classList.remove('hidden'); }
         }
     }
 
