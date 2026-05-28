@@ -1979,6 +1979,11 @@ body {
 .auth-apple:hover { background: #1a1a1a; }
 .auth-facebook { background: #1877F2; color: #fff; border-color: #1877F2; }
 .auth-facebook:hover { background: #166fe5; }
+.auth-email-toggle {
+    display: block; text-align: center; margin: 12px 0 4px;
+    color: var(--text-muted); font-size: var(--font-size-sm); text-decoration: none;
+}
+.auth-email-toggle:hover { color: var(--text-secondary); }
 .auth-phone-row { display: flex; gap: 8px; align-items: center; }
 .auth-phone-row .auth-input { flex: 1; width: auto; margin-bottom: 0; min-width: 0; }
 .auth-phone-send { white-space: nowrap; padding: 11px 14px; font-size: var(--font-size-sm); }

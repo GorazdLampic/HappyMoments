@@ -474,18 +474,20 @@
                         <div id="phoneError" class="auth-error hidden"></div>
                     </div>
 
-                    <div class="auth-divider"><span>or use email</span></div>
+                    <a href="#" class="auth-email-toggle" onclick="document.getElementById('emailAuthSection').classList.toggle('hidden'); return false;">Sign in with email &amp; password</a>
 
-                    <div class="auth-form">
-                        <input type="email" id="authEmail" placeholder="Email address" class="auth-input" autocomplete="email">
-                        <input type="password" id="authPassword" placeholder="Password" class="auth-input" autocomplete="current-password">
-                        <div id="authError" class="auth-error hidden"></div>
-                        <button class="btn-primary auth-submit" onclick="handleEmailSignIn()">Sign In</button>
-                    </div>
+                    <div id="emailAuthSection" class="hidden">
+                        <div class="auth-form">
+                            <input type="email" id="authEmail" placeholder="Email address" class="auth-input" autocomplete="email">
+                            <input type="password" id="authPassword" placeholder="Password" class="auth-input" autocomplete="current-password">
+                            <div id="authError" class="auth-error hidden"></div>
+                            <button class="btn-primary auth-submit" onclick="handleEmailSignIn()">Sign In with Email</button>
+                        </div>
 
-                    <div class="auth-links">
-                        <a href="#" onclick="showAuthView('signup'); return false;">Create account</a>
-                        <a href="#" onclick="showAuthView('reset'); return false;">Forgot password?</a>
+                        <div class="auth-links">
+                            <a href="#" onclick="showAuthView('signup'); return false;">Create email account</a>
+                            <a href="#" onclick="showAuthView('reset'); return false;">Forgot password?</a>
+                        </div>
                     </div>
 
                     <button class="auth-skip" onclick="closeAuthModal()">Continue as guest</button>
