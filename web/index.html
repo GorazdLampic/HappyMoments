@@ -450,11 +450,19 @@
                         Continue with Google
                     </button>
 
+                    <button class="auth-social-btn auth-apple" onclick="handleAppleSignIn()">
+                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                        Continue with Apple
+                    </button>
+
                     <div class="auth-divider"><span>or use email</span></div>
 
                     <div class="auth-form">
                         <input type="email" id="authEmail" placeholder="Email address" class="auth-input" autocomplete="email">
-                        <input type="password" id="authPassword" placeholder="Password" class="auth-input" autocomplete="current-password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="authPassword" placeholder="Password" class="auth-input" autocomplete="current-password">
+                            <button type="button" class="auth-peek" onclick="togglePasswordVisibility('authPassword', this)" tabindex="-1" title="Show password">&#128065;</button>
+                        </div>
                         <div id="authError" class="auth-error hidden"></div>
                         <button class="btn-primary auth-submit" onclick="handleEmailSignIn()">Sign In</button>
                     </div>
@@ -462,6 +470,20 @@
                     <div class="auth-links">
                         <a href="#" onclick="showAuthView('signup'); return false;">Create account</a>
                         <a href="#" onclick="showAuthView('reset'); return false;">Forgot password?</a>
+                    </div>
+
+                    <a href="#" class="auth-email-toggle" onclick="document.getElementById('phoneAuthSection').classList.toggle('hidden'); return false;">Sign in with phone number</a>
+                    <div id="phoneAuthSection" class="hidden">
+                        <div class="auth-form" id="phoneAuthForm">
+                            <input type="tel" id="authPhone" placeholder="Phone with country code, e.g. +386 40 123 456" class="auth-input" autocomplete="tel">
+                            <button id="phoneSignInBtn" class="btn-primary auth-submit" onclick="handlePhoneSend()">Send Verification Code</button>
+                            <div id="recaptchaContainer" style="margin-top: 8px; display: flex; justify-content: center;"></div>
+                            <div id="phoneCodeRow" class="hidden" style="margin-top: 8px;">
+                                <input type="text" id="authPhoneCode" placeholder="6-digit verification code" class="auth-input" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+                                <button class="btn-primary auth-submit" onclick="handlePhoneVerify()">Verify &amp; Sign In</button>
+                            </div>
+                            <div id="phoneError" class="auth-error hidden"></div>
+                        </div>
                     </div>
 
                     <button class="auth-skip" onclick="closeAuthModal()">Continue as guest</button>
@@ -475,7 +497,14 @@
                     <div class="auth-form">
                         <input type="text" id="signupName" placeholder="Your name" class="auth-input" autocomplete="name">
                         <input type="email" id="signupEmail" placeholder="Email address" class="auth-input" autocomplete="email">
-                        <input type="password" id="signupPassword" placeholder="Password (8+ chars, 1 uppercase, 1 number)" class="auth-input" autocomplete="new-password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="signupPassword" placeholder="Password (8+ chars, 1 uppercase, 1 number)" class="auth-input" autocomplete="new-password">
+                            <button type="button" class="auth-peek" onclick="togglePasswordVisibility('signupPassword', this)" tabindex="-1" title="Show password">&#128065;</button>
+                        </div>
+                        <div class="auth-password-wrap">
+                            <input type="password" id="signupPasswordConfirm" placeholder="Confirm password" class="auth-input" autocomplete="new-password">
+                            <button type="button" class="auth-peek" onclick="togglePasswordVisibility('signupPasswordConfirm', this)" tabindex="-1" title="Show password">&#128065;</button>
+                        </div>
                         <div id="signupError" class="auth-error hidden"></div>
                         <button class="btn-primary auth-submit" onclick="handleEmailSignUp()">Create Account</button>
                     </div>

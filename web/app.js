@@ -3559,11 +3559,23 @@ async function handlePhoneVerify() {
     }
 }
 
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.style.opacity = '1';
+    } else {
+        input.type = 'password';
+        btn.style.opacity = '0.6';
+    }
+}
+
 async function handleEmailSignIn() {
     const email = document.getElementById('authEmail')?.value?.trim();
     const password = document.getElementById('authPassword')?.value;
     if (!email || !password) {
-        showAuthError('authError', 'Please enter email and password.');
+        showAuthError('authError', 'Please enter both email and password.');
         return;
     }
     const result = await HM_AUTH.signInWithEmail(email, password);
@@ -3571,10 +3583,14 @@ async function handleEmailSignIn() {
         closeAuthModal();
         showToast('Signed in!', 'success');
     } else {
-        // If invalid credential, hint they might have used Google/social login
-        const hint = (result.error && result.error.includes('Invalid'))
-            ? result.error + ' If you signed up with Google, use "Continue with Google" instead.'
-            : result.error;
+        // Provide helpful guidance based on the error
+        let hint = result.error;
+        if (hint && (hint.includes('Invalid') || hint.includes('No account') || hint.includes('Incorrect'))) {
+            hint = 'No account found with this email and password. You can:\n'
+                 + '- Check your spelling and try again\n'
+                 + '- Use "Create account" to make a new one\n'
+                 + '- Use "Continue with Google" if you signed up with Google';
+        }
         showAuthError('authError', hint);
     }
 }
@@ -3583,6 +3599,11 @@ async function handleEmailSignUp() {
     const name = document.getElementById('signupName')?.value?.trim();
     const email = document.getElementById('signupEmail')?.value?.trim();
     const password = document.getElementById('signupPassword')?.value;
+    const confirmPassword = document.getElementById('signupPasswordConfirm')?.value;
+    if (!name) {
+        showAuthError('signupError', 'Please enter your name.');
+        return;
+    }
     if (!email || !password) {
         showAuthError('signupError', 'Please enter email and password.');
         return;
@@ -3593,6 +3614,10 @@ async function handleEmailSignUp() {
     }
     if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
         showAuthError('signupError', 'Password needs at least one uppercase letter and one number.');
+        return;
+    }
+    if (password !== confirmPassword) {
+        showAuthError('signupError', 'Passwords do not match.');
         return;
     }
     const result = await HM_AUTH.signUpWithEmail(email, password, name);
@@ -3672,7 +3697,8 @@ async function resendVerification() {
 function showAuthError(elementId, message) {
     const el = document.getElementById(elementId);
     if (el) {
-        el.textContent = message;
+        // Support multiline messages
+        el.innerHTML = escapeHtml(message).replace(/\n/g, '<br>');
         el.className = 'auth-error';
         el.classList.remove('hidden');
     }

@@ -1979,6 +1979,17 @@ body {
 .auth-apple:hover { background: #1a1a1a; }
 .auth-facebook { background: #1877F2; color: #fff; border-color: #1877F2; }
 .auth-facebook:hover { background: #166fe5; }
+.auth-password-wrap {
+    position: relative;
+}
+.auth-password-wrap .auth-input { padding-right: 44px; }
+.auth-peek {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; font-size: 18px;
+    color: var(--text-muted); padding: 4px; line-height: 1;
+    opacity: 0.6;
+}
+.auth-peek:hover { opacity: 1; }
 .auth-email-toggle {
     display: block; text-align: center; margin: 12px 0 4px;
     color: var(--text-muted); font-size: var(--font-size-sm); text-decoration: none;
