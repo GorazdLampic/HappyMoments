@@ -463,13 +463,11 @@
 
                     <!-- Phone sign-in -->
                     <div class="auth-form" id="phoneAuthForm">
-                        <div class="auth-phone-row">
-                            <input type="tel" id="authPhone" placeholder="+386 40 123 456" class="auth-input" autocomplete="tel">
-                            <button id="phoneSignInBtn" class="btn-secondary auth-phone-send" onclick="handlePhoneSend()">Send Code</button>
-                        </div>
+                        <input type="tel" id="authPhone" placeholder="Phone with country code, e.g. +386 40 123 456" class="auth-input" autocomplete="tel">
+                        <button id="phoneSignInBtn" class="btn-primary auth-submit" onclick="handlePhoneSend()">Send Verification Code</button>
                         <div id="phoneCodeRow" class="hidden" style="margin-top: 8px;">
                             <input type="text" id="authPhoneCode" placeholder="6-digit verification code" class="auth-input" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
-                            <button class="btn-primary auth-submit" onclick="handlePhoneVerify()">Verify</button>
+                            <button class="btn-primary auth-submit" onclick="handlePhoneVerify()">Verify &amp; Sign In</button>
                         </div>
                         <div id="phoneError" class="auth-error hidden"></div>
                     </div>
@@ -501,7 +499,7 @@
                     <div class="auth-form">
                         <input type="text" id="signupName" placeholder="Your name" class="auth-input" autocomplete="name">
                         <input type="email" id="signupEmail" placeholder="Email address" class="auth-input" autocomplete="email">
-                        <input type="password" id="signupPassword" placeholder="Password (6+ characters)" class="auth-input" autocomplete="new-password">
+                        <input type="password" id="signupPassword" placeholder="Password (8+ chars, 1 uppercase, 1 number)" class="auth-input" autocomplete="new-password">
                         <div id="signupError" class="auth-error hidden"></div>
                         <button class="btn-primary auth-submit" onclick="handleEmailSignUp()">Create Account</button>
                     </div>
