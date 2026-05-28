@@ -450,44 +450,18 @@
                         Continue with Google
                     </button>
 
-                    <button class="auth-social-btn auth-apple" onclick="handleAppleSignIn()">
-                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-                        Continue with Apple
-                    </button>
+                    <div class="auth-divider"><span>or use email</span></div>
 
-                    <button class="auth-social-btn auth-facebook" onclick="handleFacebookSignIn()">
-                        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        Continue with Facebook
-                    </button>
-
-                    <div class="auth-divider"><span>or</span></div>
-
-                    <!-- Phone sign-in -->
-                    <div class="auth-form" id="phoneAuthForm">
-                        <input type="tel" id="authPhone" placeholder="Phone with country code, e.g. +386 40 123 456" class="auth-input" autocomplete="tel">
-                        <button id="phoneSignInBtn" class="btn-primary auth-submit" onclick="handlePhoneSend()">Send Verification Code</button>
-                        <div id="recaptchaContainer" style="margin-top: 8px; display: flex; justify-content: center;"></div>
-                        <div id="phoneCodeRow" class="hidden" style="margin-top: 8px;">
-                            <input type="text" id="authPhoneCode" placeholder="6-digit verification code" class="auth-input" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
-                            <button class="btn-primary auth-submit" onclick="handlePhoneVerify()">Verify &amp; Sign In</button>
-                        </div>
-                        <div id="phoneError" class="auth-error hidden"></div>
+                    <div class="auth-form">
+                        <input type="email" id="authEmail" placeholder="Email address" class="auth-input" autocomplete="email">
+                        <input type="password" id="authPassword" placeholder="Password" class="auth-input" autocomplete="current-password">
+                        <div id="authError" class="auth-error hidden"></div>
+                        <button class="btn-primary auth-submit" onclick="handleEmailSignIn()">Sign In</button>
                     </div>
 
-                    <a href="#" class="auth-email-toggle" onclick="document.getElementById('emailAuthSection').classList.toggle('hidden'); return false;">Sign in with email &amp; password</a>
-
-                    <div id="emailAuthSection" class="hidden">
-                        <div class="auth-form">
-                            <input type="email" id="authEmail" placeholder="Email address" class="auth-input" autocomplete="email">
-                            <input type="password" id="authPassword" placeholder="Password" class="auth-input" autocomplete="current-password">
-                            <div id="authError" class="auth-error hidden"></div>
-                            <button class="btn-primary auth-submit" onclick="handleEmailSignIn()">Sign In with Email</button>
-                        </div>
-
-                        <div class="auth-links">
-                            <a href="#" onclick="showAuthView('signup'); return false;">Create email account</a>
-                            <a href="#" onclick="showAuthView('reset'); return false;">Forgot password?</a>
-                        </div>
+                    <div class="auth-links">
+                        <a href="#" onclick="showAuthView('signup'); return false;">Create account</a>
+                        <a href="#" onclick="showAuthView('reset'); return false;">Forgot password?</a>
                     </div>
 
                     <button class="auth-skip" onclick="closeAuthModal()">Continue as guest</button>
