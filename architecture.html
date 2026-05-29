@@ -6,24 +6,24 @@
 <title>HappyMoments — System Architecture</title>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html{font-size:14px;scroll-behavior:smooth}
+  html{font-size:17px;scroll-behavior:smooth}
   body{
     background:#1a1a1a;color:#e0e0e0;
     font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    line-height:1.5;padding:2rem 1rem 3rem;
+    line-height:1.55;padding:2.5rem 1.5rem 3rem;
     min-height:100vh;
   }
 
   /* Header */
   .header{text-align:center;margin-bottom:2.5rem;position:relative}
   .header h1{
-    font-size:2.2rem;font-weight:300;letter-spacing:.08em;
+    font-size:2.8rem;font-weight:300;letter-spacing:.08em;
     color:#d4b876;margin-bottom:.3rem;
   }
   .header h1 span{font-weight:600}
-  .header .subtitle{color:#999;font-size:.95rem;letter-spacing:.04em}
+  .header .subtitle{color:#999;font-size:1.15rem;letter-spacing:.04em}
   .header::after{
-    content:'';display:block;width:120px;height:2px;
+    content:'';display:block;width:140px;height:2px;
     background:linear-gradient(90deg,transparent,#d4b876,transparent);
     margin:1rem auto 0;
   }
@@ -40,7 +40,7 @@
 
   /* Sections */
   .section{
-    border-radius:12px;padding:1.2rem 1.1rem;
+    border-radius:12px;padding:1.4rem 1.3rem;
     position:relative;overflow:hidden;
   }
   .section::before{
@@ -48,12 +48,12 @@
     border-radius:12px 12px 0 0;
   }
   .section-title{
-    font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    font-size:1.05rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
     margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;
   }
   .section-title .icon{
-    width:22px;height:22px;border-radius:6px;display:flex;align-items:center;
-    justify-content:center;font-size:.75rem;flex-shrink:0;
+    width:26px;height:26px;border-radius:6px;display:flex;align-items:center;
+    justify-content:center;font-size:.9rem;flex-shrink:0;
   }
 
   /* PWA Section */
@@ -99,51 +99,51 @@
   /* Module cards */
   .module{
     background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-    border-radius:8px;padding:.55rem .7rem;margin-bottom:.45rem;
+    border-radius:8px;padding:.65rem .8rem;margin-bottom:.5rem;
     transition:all .2s;cursor:default;
   }
   .module:hover{
     background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);
     transform:translateX(2px);
   }
-  .module-name{font-weight:600;font-size:.82rem;color:#f0f0f0}
-  .module-desc{font-size:.72rem;color:#888;margin-top:.1rem}
+  .module-name{font-weight:600;font-size:1rem;color:#f0f0f0}
+  .module-desc{font-size:.88rem;color:#888;margin-top:.15rem}
   .module-file{
-    font-family:'Cascadia Code','Fira Code',monospace;font-size:.7rem;
+    font-family:'Cascadia Code','Fira Code',monospace;font-size:.85rem;
     color:#666;margin-top:.15rem;
   }
 
   /* Sub-groups */
   .subgroup{
-    margin:.6rem 0 .4rem;padding:.6rem .7rem;
+    margin:.6rem 0 .4rem;padding:.7rem .8rem;
     background:rgba(0,0,0,.2);border-radius:8px;
     border-left:2px solid rgba(255,255,255,.1);
   }
   .subgroup-title{
-    font-size:.72rem;font-weight:600;text-transform:uppercase;
+    font-size:.88rem;font-weight:600;text-transform:uppercase;
     letter-spacing:.08em;color:#999;margin-bottom:.4rem;
   }
 
   /* Tables */
   .db-table{
     width:100%;border-collapse:collapse;margin:.3rem 0;
-    font-size:.7rem;
+    font-size:.88rem;
   }
   .db-table th{
-    text-align:left;padding:.25rem .4rem;
+    text-align:left;padding:.3rem .5rem;
     background:rgba(255,255,255,.06);color:#aaa;
     font-weight:600;letter-spacing:.04em;text-transform:uppercase;
-    font-size:.65rem;
+    font-size:.82rem;
   }
   .db-table td{
-    padding:.2rem .4rem;color:#888;border-top:1px solid rgba(255,255,255,.04);
-    font-family:'Cascadia Code','Fira Code',monospace;font-size:.68rem;
+    padding:.25rem .5rem;color:#888;border-top:1px solid rgba(255,255,255,.04);
+    font-family:'Cascadia Code','Fira Code',monospace;font-size:.85rem;
   }
 
   /* Data flows section */
   .flows{
     grid-column:1/4;grid-row:2;
-    display:none; /* Hidden — flows shown inline via SVG overlay */
+    display:none;
   }
 
   /* Data flow diagram */
@@ -157,16 +157,16 @@
     display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;
   }
   .plan-card{
-    background:rgba(0,0,0,.25);border-radius:8px;padding:.8rem;
+    background:rgba(0,0,0,.25);border-radius:8px;padding:1rem;
     border:1px solid rgba(255,255,255,.06);text-align:center;
   }
   .plan-card.premium{border-color:#d4b876;background:rgba(212,184,118,.05)}
-  .plan-name{font-weight:700;font-size:.9rem;margin-bottom:.3rem}
-  .plan-price{font-size:1.3rem;font-weight:300;color:#d4b876;margin-bottom:.4rem}
-  .plan-price span{font-size:.75rem;color:#888}
-  .plan-features{list-style:none;text-align:left;font-size:.75rem}
-  .plan-features li{padding:.15rem 0;color:#aaa;display:flex;align-items:flex-start;gap:.4rem}
-  .plan-features li::before{content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:5px}
+  .plan-name{font-weight:700;font-size:1.1rem;margin-bottom:.3rem}
+  .plan-price{font-size:1.6rem;font-weight:300;color:#d4b876;margin-bottom:.4rem}
+  .plan-price span{font-size:.9rem;color:#888}
+  .plan-features{list-style:none;text-align:left;font-size:.92rem}
+  .plan-features li{padding:.18rem 0;color:#aaa;display:flex;align-items:flex-start;gap:.4rem}
+  .plan-features li::before{content:'';flex-shrink:0;width:7px;height:7px;border-radius:50%;margin-top:6px}
   .plan-card:not(.premium) .plan-features li::before{background:#4ade80}
   .plan-card.premium .plan-features li::before{background:#d4b876}
 
@@ -175,35 +175,35 @@
     max-width:1400px;margin:1.5rem auto 0;
   }
   .data-flows-title{
-    font-size:.85rem;font-weight:700;letter-spacing:.1em;
+    font-size:1.05rem;font-weight:700;letter-spacing:.1em;
     text-transform:uppercase;color:#f97316;margin-bottom:.8rem;
     display:flex;align-items:center;gap:.5rem;
   }
   .data-flows-title .icon{
-    width:22px;height:22px;border-radius:6px;
+    width:26px;height:26px;border-radius:6px;
     background:#f97316;color:#fff;display:flex;
-    align-items:center;justify-content:center;font-size:.75rem;
+    align-items:center;justify-content:center;font-size:.9rem;
   }
   .flow-list{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:.6rem;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:.6rem;
   }
   .flow-item{
     display:flex;align-items:center;gap:.5rem;
-    padding:.55rem .8rem;border-radius:8px;
+    padding:.65rem .9rem;border-radius:8px;
     background:rgba(249,115,22,.04);border:1px solid rgba(249,115,22,.15);
-    font-size:.78rem;transition:all .2s;
+    font-size:.95rem;transition:all .2s;
   }
   .flow-item:hover{background:rgba(249,115,22,.08);transform:translateY(-1px)}
   .flow-num{
-    width:22px;height:22px;border-radius:50%;
+    width:26px;height:26px;border-radius:50%;
     background:rgba(249,115,22,.2);color:#f97316;
     display:flex;align-items:center;justify-content:center;
-    font-size:.7rem;font-weight:700;flex-shrink:0;
+    font-size:.85rem;font-weight:700;flex-shrink:0;
   }
-  .flow-arrow{color:#f97316;font-size:.75rem;flex-shrink:0}
+  .flow-arrow{color:#f97316;font-size:.92rem;flex-shrink:0}
   .flow-node{
-    background:rgba(255,255,255,.06);padding:.15rem .45rem;
-    border-radius:4px;font-size:.72rem;white-space:nowrap;
+    background:rgba(255,255,255,.06);padding:.2rem .5rem;
+    border-radius:4px;font-size:.88rem;white-space:nowrap;
   }
   .flow-node.pwa-node{border-left:2px solid #3b82f6}
   .flow-node.be-node{border-left:2px solid #a855f7}
@@ -226,16 +226,16 @@
     border:1px solid rgba(255,255,255,.05);
   }
   .legend-item{
-    display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:#888;
+    display:flex;align-items:center;gap:.4rem;font-size:.92rem;color:#888;
   }
-  .legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+  .legend-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
 
   /* Footer */
   .footer{
     text-align:center;margin-top:2.5rem;padding-top:1.5rem;
     border-top:1px solid rgba(255,255,255,.06);
   }
-  .footer p{color:#555;font-size:.78rem;letter-spacing:.04em}
+  .footer p{color:#555;font-size:.95rem;letter-spacing:.04em}
   .footer p:first-child{color:#888}
 
   /* Responsive */
@@ -246,20 +246,24 @@
     .external{grid-column:1/3;grid-row:2}
     .monetization{grid-column:1/3;grid-row:3}
     .monetization-grid{grid-template-columns:1fr 1fr}
+    .extra-sections{grid-template-columns:1fr 1fr}
+    .new-sections{grid-template-columns:1fr}
   }
   @media(max-width:700px){
-    html{font-size:13px}
+    html{font-size:15px}
     .arch-grid{grid-template-columns:1fr;grid-template-rows:auto}
     .pwa,.backend,.external,.monetization{grid-column:1;grid-row:auto}
     .monetization-grid{grid-template-columns:1fr}
     .flow-list{grid-template-columns:1fr}
     .legend{flex-direction:column;align-items:flex-start}
+    .extra-sections{grid-template-columns:1fr}
+    .new-sections{grid-template-columns:1fr}
   }
 
   /* Auth providers badge row */
-  .auth-providers{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.3rem}
+  .auth-providers{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem}
   .auth-badge{
-    font-size:.65rem;padding:.15rem .4rem;border-radius:4px;
+    font-size:.8rem;padding:.2rem .45rem;border-radius:4px;
     background:rgba(212,184,118,.1);color:#d4b876;
     border:1px solid rgba(212,184,118,.15);
   }
@@ -274,13 +278,13 @@
 
   /* Stripe detail */
   .stripe-detail{
-    font-size:.7rem;color:#777;margin-top:.2rem;
+    font-size:.88rem;color:#777;margin-top:.25rem;
     padding-left:.6rem;border-left:2px solid rgba(212,184,118,.2);
   }
 
   /* Pulse animation for live service indicators */
   .live-dot{
-    display:inline-block;width:6px;height:6px;border-radius:50%;
+    display:inline-block;width:7px;height:7px;border-radius:50%;
     background:#4ade80;margin-right:.3rem;
     animation:pulse 2s ease-in-out infinite;
   }
@@ -291,7 +295,7 @@
   /* Connection diagram */
   .connections-diagram{
     max-width:1400px;margin:1.5rem auto 0;
-    padding:1.2rem;border-radius:12px;
+    padding:1.4rem;border-radius:12px;
     background:linear-gradient(135deg,#1e1e2a,#1a1a24);
     border:1px solid rgba(255,255,255,.06);
     position:relative;overflow:hidden;
@@ -312,7 +316,7 @@
     display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;
   }
   .extra-section{
-    border-radius:12px;padding:1.2rem 1.1rem;
+    border-radius:12px;padding:1.4rem 1.3rem;
     position:relative;overflow:hidden;
   }
   .extra-section::before{
@@ -358,7 +362,7 @@
 
   /* Status badges */
   .status-badge{
-    display:inline-block;font-size:.6rem;padding:.1rem .35rem;border-radius:3px;
+    display:inline-block;font-size:.75rem;padding:.12rem .4rem;border-radius:3px;
     font-weight:600;letter-spacing:.03em;text-transform:uppercase;
     vertical-align:middle;margin-left:.3rem;
   }
@@ -373,6 +377,178 @@
   @media(max-width:700px){
     .extra-sections{grid-template-columns:1fr}
   }
+
+  /* ============ NEW SECTIONS STYLES ============ */
+
+  .new-sections{
+    max-width:1400px;margin:2rem auto 0;
+    display:grid;grid-template-columns:1fr;gap:2rem;
+  }
+
+  /* Shared new-section card */
+  .new-section{
+    border-radius:12px;padding:1.6rem 1.5rem;
+    position:relative;overflow:hidden;
+  }
+  .new-section::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    border-radius:12px 12px 0 0;
+  }
+  .new-section-title{
+    font-size:1.15rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;
+  }
+  .new-section-title .icon{
+    width:30px;height:30px;border-radius:6px;display:flex;align-items:center;
+    justify-content:center;font-size:1rem;flex-shrink:0;
+  }
+
+  /* User Story section */
+  .user-story{
+    background:linear-gradient(135deg,#1a2530,#1a2028);
+    border:1px solid #2a4a6a;
+  }
+  .user-story::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+  .user-story .new-section-title{color:#60a5fa}
+  .user-story .new-section-title .icon{background:#3b82f6;color:#fff}
+
+  /* User story flow */
+  .story-flow{
+    display:flex;flex-wrap:wrap;gap:.6rem;align-items:stretch;
+    justify-content:center;
+  }
+  .story-step{
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    border-radius:10px;padding:.9rem;width:180px;min-height:130px;
+    display:flex;flex-direction:column;transition:all .2s;position:relative;
+  }
+  .story-step:hover{
+    background:rgba(255,255,255,.07);border-color:rgba(96,165,250,.3);
+    transform:translateY(-2px);
+  }
+  .story-step-num{
+    width:28px;height:28px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.82rem;font-weight:700;flex-shrink:0;margin-bottom:.5rem;
+  }
+  .story-step-title{font-weight:700;font-size:.95rem;color:#f0f0f0;margin-bottom:.3rem}
+  .story-step-desc{font-size:.85rem;color:#999;line-height:1.4;flex:1}
+  .story-arrow{
+    display:flex;align-items:center;font-size:1.4rem;color:#3b82f6;
+    opacity:.5;flex-shrink:0;align-self:center;
+  }
+
+  /* Viral loop indicator */
+  .viral-loop-bar{
+    margin-top:1rem;padding:.7rem 1rem;
+    border-radius:8px;
+    background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2);
+    text-align:center;
+  }
+  .viral-loop-bar span{
+    font-size:.95rem;color:#22d3ee;font-weight:600;letter-spacing:.05em;
+  }
+
+  /* Backend Activity section */
+  .backend-activity{
+    background:linear-gradient(135deg,#22182e,#1e1628);
+    border:1px solid #4a2a6a;
+  }
+  .backend-activity::before{background:linear-gradient(90deg,#a855f7,#c084fc)}
+  .backend-activity .new-section-title{color:#c084fc}
+  .backend-activity .new-section-title .icon{background:#a855f7;color:#fff}
+
+  .backend-table{
+    width:100%;border-collapse:collapse;font-size:.9rem;
+    margin-top:.5rem;
+  }
+  .backend-table thead th{
+    text-align:left;padding:.55rem .7rem;
+    background:rgba(168,85,247,.1);color:#c084fc;
+    font-weight:700;font-size:.85rem;letter-spacing:.06em;
+    text-transform:uppercase;border-bottom:2px solid rgba(168,85,247,.2);
+    white-space:nowrap;
+  }
+  .backend-table tbody td{
+    padding:.5rem .7rem;color:#bbb;
+    border-bottom:1px solid rgba(255,255,255,.04);
+    font-size:.88rem;vertical-align:top;
+  }
+  .backend-table tbody tr:hover{background:rgba(168,85,247,.04)}
+  .backend-table .mono{
+    font-family:'Cascadia Code','Fira Code',monospace;
+    font-size:.82rem;color:#c084fc;
+  }
+  .backend-table .dim{color:#666}
+  .backend-table .api-call{color:#f97316;font-family:'Cascadia Code','Fira Code',monospace;font-size:.82rem}
+
+  /* Growth section */
+  .growth-section{
+    background:linear-gradient(135deg,#1a2e20,#182a1e);
+    border:1px solid #2a6a3a;
+  }
+  .growth-section::before{background:linear-gradient(90deg,#22c55e,#4ade80)}
+  .growth-section .new-section-title{color:#4ade80}
+  .growth-section .new-section-title .icon{background:#22c55e;color:#fff}
+
+  .growth-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:.5rem;
+  }
+  @media(max-width:900px){
+    .growth-grid{grid-template-columns:1fr}
+  }
+  .growth-card{
+    background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.06);
+    border-radius:10px;padding:1.1rem;position:relative;overflow:hidden;
+  }
+  .growth-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    border-radius:10px 10px 0 0;
+  }
+  .growth-card-title{
+    font-weight:700;font-size:1rem;margin-bottom:.6rem;
+    display:flex;align-items:center;gap:.4rem;
+  }
+  .growth-card-title .gc-icon{
+    width:24px;height:24px;border-radius:5px;display:flex;
+    align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;
+  }
+  .growth-list{list-style:none;padding:0}
+  .growth-list li{
+    padding:.3rem 0;font-size:.9rem;color:#bbb;
+    display:flex;align-items:flex-start;gap:.4rem;
+  }
+  .growth-list li .gl-marker{
+    flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px;
+  }
+  .growth-sublist{
+    list-style:none;padding:0;margin-left:1rem;
+  }
+  .growth-sublist li{
+    padding:.2rem 0;font-size:.85rem;color:#999;
+  }
+  .growth-sublist li::before{
+    content:'-';margin-right:.4rem;color:#666;
+  }
+
+  /* Tier badges */
+  .tier-badge{
+    display:inline-block;font-size:.75rem;padding:.1rem .35rem;border-radius:3px;
+    font-weight:600;margin-right:.3rem;
+  }
+  .tier-1{background:rgba(74,222,128,.15);color:#4ade80}
+  .tier-2{background:rgba(96,165,250,.15);color:#60a5fa}
+  .tier-3{background:rgba(212,184,118,.15);color:#d4b876}
+  .tier-4{background:rgba(249,115,22,.15);color:#fb923c}
+
+  /* Revenue highlight */
+  .revenue-highlight{
+    margin-top:.6rem;padding:.6rem .8rem;border-radius:6px;
+    background:rgba(212,184,118,.06);border:1px solid rgba(212,184,118,.15);
+  }
+  .revenue-highlight .rev-label{font-size:.82rem;color:#999;margin-bottom:.2rem}
+  .revenue-highlight .rev-value{font-size:1.1rem;font-weight:700;color:#d4b876}
+  .revenue-highlight .rev-calc{font-size:.82rem;color:#777;margin-top:.15rem}
 </style>
 </head>
 <body>
@@ -388,7 +564,7 @@
   <div class="data-flows-title" style="margin-bottom:1rem">
     <span class="icon">&#x21C6;</span> Architecture Overview &amp; Data Flows
   </div>
-  <svg class="arch-flow-svg" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <svg class="arch-flow-svg" viewBox="0 0 1200 620" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
         <path d="M0,0 L8,3 L0,6" fill="#f97316" opacity=".8"/>
@@ -408,10 +584,6 @@
       <marker id="arrowCyan" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
         <path d="M0,0 L8,3 L0,6" fill="#22d3ee" opacity=".8"/>
       </marker>
-      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#1e1e2a" stop-opacity="0"/>
-        <stop offset="100%" stop-color="#1a1a24" stop-opacity="0"/>
-      </linearGradient>
       <filter id="glow">
         <feGaussianBlur stdDeviation="2" result="blur"/>
         <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -419,191 +591,191 @@
     </defs>
 
     <!-- USER -->
-    <g transform="translate(80,50)">
-      <circle cx="0" cy="0" r="28" fill="none" stroke="#60a5fa" stroke-width="2" opacity=".6"/>
-      <circle cx="0" cy="-8" r="8" fill="#60a5fa" opacity=".5"/>
-      <path d="M-12,10 Q0,22 12,10" fill="#60a5fa" opacity=".5"/>
-      <text x="0" y="45" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="600">User</text>
+    <g transform="translate(80,55)">
+      <circle cx="0" cy="0" r="30" fill="none" stroke="#60a5fa" stroke-width="2" opacity=".6"/>
+      <circle cx="0" cy="-9" r="9" fill="#60a5fa" opacity=".5"/>
+      <path d="M-13,11 Q0,24 13,11" fill="#60a5fa" opacity=".5"/>
+      <text x="0" y="48" text-anchor="middle" fill="#60a5fa" font-size="14" font-weight="600">User</text>
     </g>
 
     <!-- PWA Box -->
-    <rect x="170" y="15" width="240" height="120" rx="10" fill="rgba(59,130,246,.06)" stroke="#3b82f6" stroke-width="1.5" opacity=".8"/>
-    <text x="290" y="38" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700" letter-spacing="1">PWA FRONTEND (21 LANGS)</text>
-    <text x="185" y="56" fill="#aaa" font-size="9.5">app.js</text>
-    <text x="240" y="56" fill="#888" font-size="8">(~4100 lines)</text>
-    <text x="185" y="71" fill="#aaa" font-size="9.5">auth.js &middot; analytics.js &middot; checkout.js</text>
-    <text x="185" y="86" fill="#aaa" font-size="9.5">i18n.js &middot; specialNumbers.js</text>
-    <text x="185" y="101" fill="#aaa" font-size="9.5">giftStore.js &middot; imageCard.js &middot; sw.js</text>
-    <text x="185" y="116" fill="#aaa" font-size="9.5">shareMessages.js &middot; notifications.js</text>
-    <text x="185" y="129" fill="#666" font-size="8">Service Worker + dataProtection.js + admin.html</text>
+    <rect x="170" y="15" width="240" height="130" rx="10" fill="rgba(59,130,246,.06)" stroke="#3b82f6" stroke-width="1.5" opacity=".8"/>
+    <text x="290" y="40" text-anchor="middle" fill="#60a5fa" font-size="14" font-weight="700" letter-spacing="1">PWA FRONTEND (21 LANGS)</text>
+    <text x="185" y="60" fill="#aaa" font-size="12">app.js</text>
+    <text x="240" y="60" fill="#888" font-size="11">(~4100 lines)</text>
+    <text x="185" y="77" fill="#aaa" font-size="12">auth.js &middot; analytics.js &middot; checkout.js</text>
+    <text x="185" y="94" fill="#aaa" font-size="12">i18n.js &middot; specialNumbers.js</text>
+    <text x="185" y="111" fill="#aaa" font-size="12">giftStore.js &middot; imageCard.js &middot; sw.js</text>
+    <text x="185" y="128" fill="#aaa" font-size="12">shareMessages.js &middot; notifications.js</text>
+    <text x="185" y="142" fill="#666" font-size="10">Service Worker + dataProtection.js + admin.html</text>
 
     <!-- Firebase Auth Box -->
-    <rect x="900" y="15" width="200" height="85" rx="10" fill="rgba(212,184,118,.06)" stroke="#d4b876" stroke-width="1.5" opacity=".8"/>
-    <text x="1000" y="38" text-anchor="middle" fill="#d4b876" font-size="11" font-weight="700" letter-spacing="1">FIREBASE AUTH</text>
-    <text x="915" y="57" fill="#4ade80" font-size="9">&#x2713; Google &middot; &#x2713; Email/Password</text>
-    <text x="915" y="72" fill="#888" font-size="8.5">In code: Apple &middot; Facebook &middot; Phone</text>
-    <text x="915" y="87" fill="#666" font-size="8">JWT token issued to client</text>
+    <rect x="900" y="15" width="210" height="90" rx="10" fill="rgba(212,184,118,.06)" stroke="#d4b876" stroke-width="1.5" opacity=".8"/>
+    <text x="1005" y="40" text-anchor="middle" fill="#d4b876" font-size="14" font-weight="700" letter-spacing="1">FIREBASE AUTH</text>
+    <text x="915" y="60" fill="#4ade80" font-size="12">&#x2713; Google &middot; &#x2713; Email/Password</text>
+    <text x="915" y="78" fill="#888" font-size="11">In code: Apple &middot; Facebook &middot; Phone</text>
+    <text x="915" y="95" fill="#666" font-size="10">JWT token issued to client</text>
 
     <!-- Cloudflare Pages Box -->
-    <rect x="470" y="15" width="370" height="210" rx="10" fill="rgba(168,85,247,.06)" stroke="#a855f7" stroke-width="1.5" opacity=".8"/>
-    <text x="655" y="38" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" letter-spacing="1">CLOUDFLARE PAGES + FUNCTIONS</text>
+    <rect x="470" y="15" width="370" height="220" rx="10" fill="rgba(168,85,247,.06)" stroke="#a855f7" stroke-width="1.5" opacity=".8"/>
+    <text x="655" y="40" text-anchor="middle" fill="#c084fc" font-size="14" font-weight="700" letter-spacing="1">CLOUDFLARE PAGES + FUNCTIONS</text>
     <!-- Sub-boxes for API routes -->
-    <rect x="485" y="48" width="170" height="165" rx="6" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-    <text x="570" y="64" text-anchor="middle" fill="#c084fc" font-size="9" font-weight="600">Pages Functions /api/</text>
-    <text x="497" y="80" fill="#aaa" font-size="8.5">_middleware.js</text><text x="600" y="80" fill="#666" font-size="7.5">CORS</text>
-    <text x="497" y="94" fill="#aaa" font-size="8.5">health.js</text><text x="555" y="94" fill="#666" font-size="7.5">db + stripe check</text>
-    <text x="497" y="108" fill="#aaa" font-size="8.5">event.js</text><text x="547" y="108" fill="#666" font-size="7.5">analytics (max 20/batch)</text>
-    <text x="497" y="122" fill="#aaa" font-size="8.5">user.js</text><text x="540" y="122" fill="#666" font-size="7.5">POST/GET/DELETE</text>
-    <text x="497" y="136" fill="#aaa" font-size="8.5">create-checkout-session.js</text>
-    <text x="497" y="150" fill="#aaa" font-size="8.5">webhook.js</text><text x="560" y="150" fill="#666" font-size="7.5">HMAC-SHA256</text>
-    <text x="497" y="164" fill="#aaa" font-size="8.5">admin.js</text><text x="545" y="164" fill="#666" font-size="7.5">dashboard API</text>
-    <text x="497" y="182" fill="#555" font-size="7.5">Static hosting + auto-deploy</text>
-    <text x="497" y="195" fill="#555" font-size="7.5">from GitHub on push to main</text>
+    <rect x="485" y="50" width="170" height="175" rx="6" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+    <text x="570" y="68" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="600">Pages Functions /api/</text>
+    <text x="497" y="86" fill="#aaa" font-size="11">_middleware.js</text><text x="612" y="86" fill="#666" font-size="10">CORS</text>
+    <text x="497" y="102" fill="#aaa" font-size="11">health.js</text><text x="568" y="102" fill="#666" font-size="10">db + stripe check</text>
+    <text x="497" y="118" fill="#aaa" font-size="11">event.js</text><text x="562" y="118" fill="#666" font-size="10">analytics (max 20/batch)</text>
+    <text x="497" y="134" fill="#aaa" font-size="11">user.js</text><text x="555" y="134" fill="#666" font-size="10">POST/GET/DELETE</text>
+    <text x="497" y="150" fill="#aaa" font-size="11">create-checkout-session.js</text>
+    <text x="497" y="166" fill="#aaa" font-size="11">webhook.js</text><text x="575" y="166" fill="#666" font-size="10">HMAC-SHA256</text>
+    <text x="497" y="182" fill="#aaa" font-size="11">admin.js</text><text x="560" y="182" fill="#666" font-size="10">dashboard API</text>
+    <text x="497" y="200" fill="#555" font-size="10">Static hosting + auto-deploy</text>
+    <text x="497" y="215" fill="#555" font-size="10">from GitHub on push to main</text>
     <!-- Hosting indicator -->
-    <rect x="668" y="48" width="160" height="90" rx="6" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-    <text x="748" y="64" text-anchor="middle" fill="#c084fc" font-size="9" font-weight="600">Static Hosting</text>
-    <text x="680" y="80" fill="#aaa" font-size="8.5">Cloudflare Pages</text>
-    <text x="680" y="94" fill="#d4b876" font-size="8.5">happymoments.app</text>
-    <text x="680" y="108" fill="#666" font-size="7.5">Auto-deploy on push</text>
-    <text x="680" y="120" fill="#666" font-size="7.5">Cloudflare Registrar</text>
-    <text x="680" y="132" fill="#666" font-size="7.5">SSL/TLS included</text>
+    <rect x="668" y="50" width="160" height="100" rx="6" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+    <text x="748" y="68" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="600">Static Hosting</text>
+    <text x="680" y="86" fill="#aaa" font-size="11">Cloudflare Pages</text>
+    <text x="680" y="102" fill="#d4b876" font-size="11">happymoments.app</text>
+    <text x="680" y="118" fill="#666" font-size="10">Auto-deploy on push</text>
+    <text x="680" y="132" fill="#666" font-size="10">Cloudflare Registrar</text>
+    <text x="680" y="146" fill="#666" font-size="10">SSL/TLS included</text>
 
     <!-- D1 Database Box -->
-    <rect x="470" y="280" width="370" height="135" rx="10" fill="rgba(168,85,247,.06)" stroke="#a855f7" stroke-width="1.5" opacity=".8"/>
-    <text x="655" y="303" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700" letter-spacing="1">D1 DATABASE (SQLite at Edge)</text>
+    <rect x="470" y="290" width="370" height="140" rx="10" fill="rgba(168,85,247,.06)" stroke="#a855f7" stroke-width="1.5" opacity=".8"/>
+    <text x="655" y="315" text-anchor="middle" fill="#c084fc" font-size="14" font-weight="700" letter-spacing="1">D1 DATABASE (SQLite at Edge)</text>
     <!-- Users table -->
-    <rect x="485" y="312" width="170" height="95" rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-    <text x="570" y="327" text-anchor="middle" fill="#e0e0e0" font-size="9" font-weight="600">users</text>
-    <text x="497" y="342" fill="#888" font-size="7.5">uid, email, display_name</text>
-    <text x="497" y="355" fill="#888" font-size="7.5">premium_until</text>
-    <text x="497" y="368" fill="#888" font-size="7.5">stripe_customer_id</text>
-    <text x="497" y="381" fill="#888" font-size="7.5">utm_source, utm_medium</text>
-    <text x="497" y="394" fill="#888" font-size="7.5">utm_campaign, created_at, updated_at</text>
+    <rect x="485" y="325" width="170" height="95" rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+    <text x="570" y="342" text-anchor="middle" fill="#e0e0e0" font-size="12" font-weight="600">users</text>
+    <text x="497" y="358" fill="#888" font-size="10">uid, email, display_name</text>
+    <text x="497" y="373" fill="#888" font-size="10">premium_until</text>
+    <text x="497" y="388" fill="#888" font-size="10">stripe_customer_id</text>
+    <text x="497" y="403" fill="#888" font-size="10">utm_source, utm_medium</text>
+    <text x="497" y="416" fill="#888" font-size="9">utm_campaign, created_at, updated_at</text>
     <!-- Events table -->
-    <rect x="668" y="312" width="160" height="95" rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-    <text x="748" y="327" text-anchor="middle" fill="#e0e0e0" font-size="9" font-weight="600">events</text>
-    <text x="680" y="342" fill="#888" font-size="7.5">id, session_id, user_id</text>
-    <text x="680" y="355" fill="#888" font-size="7.5">action, data</text>
-    <text x="680" y="368" fill="#888" font-size="7.5">country, created_at</text>
-    <text x="680" y="385" fill="#666" font-size="7">sendBeacon ingestion</text>
-    <text x="680" y="398" fill="#666" font-size="7">max 20 events per batch</text>
+    <rect x="668" y="325" width="160" height="95" rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+    <text x="748" y="342" text-anchor="middle" fill="#e0e0e0" font-size="12" font-weight="600">events</text>
+    <text x="680" y="358" fill="#888" font-size="10">id, session_id, user_id</text>
+    <text x="680" y="373" fill="#888" font-size="10">action, data</text>
+    <text x="680" y="388" fill="#888" font-size="10">country, created_at</text>
+    <text x="680" y="405" fill="#666" font-size="9">sendBeacon ingestion</text>
+    <text x="680" y="418" fill="#666" font-size="9">max 20 events per batch</text>
 
     <!-- Stripe Box -->
-    <rect x="900" y="140" width="200" height="115" rx="10" fill="rgba(212,184,118,.06)" stroke="#d4b876" stroke-width="1.5" opacity=".8"/>
-    <text x="1000" y="163" text-anchor="middle" fill="#d4b876" font-size="11" font-weight="700" letter-spacing="1">STRIPE</text>
-    <text x="915" y="181" fill="#aaa" font-size="9">Checkout Sessions API</text>
-    <text x="915" y="196" fill="#888" font-size="8.5">Quantum Wave Ltd sandbox</text>
-    <text x="915" y="212" fill="#888" font-size="8">checkout.session.completed</text>
-    <text x="915" y="225" fill="#888" font-size="8">customer.subscription.deleted</text>
-    <text x="915" y="240" fill="#666" font-size="7.5">Test mode &middot; EUR 1.49/yr</text>
-    <text x="915" y="250" fill="#666" font-size="7.5">HMAC-SHA256 webhook verification</text>
+    <rect x="900" y="145" width="210" height="120" rx="10" fill="rgba(212,184,118,.06)" stroke="#d4b876" stroke-width="1.5" opacity=".8"/>
+    <text x="1005" y="168" text-anchor="middle" fill="#d4b876" font-size="14" font-weight="700" letter-spacing="1">STRIPE</text>
+    <text x="915" y="188" fill="#aaa" font-size="12">Checkout Sessions API</text>
+    <text x="915" y="205" fill="#888" font-size="11">Quantum Wave Ltd sandbox</text>
+    <text x="915" y="222" fill="#888" font-size="10">checkout.session.completed</text>
+    <text x="915" y="236" fill="#888" font-size="10">customer.subscription.deleted</text>
+    <text x="915" y="252" fill="#666" font-size="10">Test mode &middot; EUR 1.49/yr</text>
+    <text x="915" y="262" fill="#666" font-size="10">HMAC-SHA256 webhook verification</text>
 
     <!-- GitHub Box -->
-    <rect x="900" y="300" width="200" height="85" rx="10" fill="rgba(212,184,118,.06)" stroke="#d4b876" stroke-width="1.5" opacity=".8"/>
-    <text x="1000" y="323" text-anchor="middle" fill="#d4b876" font-size="11" font-weight="700" letter-spacing="1">GITHUB</text>
-    <text x="915" y="341" fill="#aaa" font-size="9">GorazdLampic/HappyMoments</text>
-    <text x="915" y="356" fill="#666" font-size="7.5">Push &rarr; CF Pages auto-deploy</text>
-    <text x="915" y="369" fill="#666" font-size="7.5">GitHub Actions: APK + AAB build</text>
-    <text x="915" y="382" fill="#666" font-size="7.5">Releases: debug APK + release AAB</text>
+    <rect x="900" y="310" width="210" height="90" rx="10" fill="rgba(212,184,118,.06)" stroke="#d4b876" stroke-width="1.5" opacity=".8"/>
+    <text x="1005" y="333" text-anchor="middle" fill="#d4b876" font-size="14" font-weight="700" letter-spacing="1">GITHUB</text>
+    <text x="915" y="353" fill="#aaa" font-size="12">GorazdLampic/HappyMoments</text>
+    <text x="915" y="370" fill="#666" font-size="10">Push &rarr; CF Pages auto-deploy</text>
+    <text x="915" y="384" fill="#666" font-size="10">GitHub Actions: APK + AAB build</text>
+    <text x="915" y="398" fill="#666" font-size="10">Releases: debug APK + release AAB</text>
 
     <!-- Marketing / UTM -->
-    <rect x="30" y="160" width="120" height="55" rx="8" fill="rgba(34,197,94,.06)" stroke="#22c55e" stroke-width="1.5" opacity=".8"/>
-    <text x="90" y="183" text-anchor="middle" fill="#4ade80" font-size="10" font-weight="700" letter-spacing=".5">MARKETING</text>
-    <text x="90" y="200" text-anchor="middle" fill="#888" font-size="8">UTM params</text>
-    <text x="90" y="210" text-anchor="middle" fill="#666" font-size="7.5">source / medium / campaign</text>
+    <rect x="25" y="165" width="130" height="60" rx="8" fill="rgba(34,197,94,.06)" stroke="#22c55e" stroke-width="1.5" opacity=".8"/>
+    <text x="90" y="190" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700" letter-spacing=".5">MARKETING</text>
+    <text x="90" y="207" text-anchor="middle" fill="#888" font-size="10">UTM params</text>
+    <text x="90" y="220" text-anchor="middle" fill="#666" font-size="10">source / medium / campaign</text>
 
     <!-- Android Box -->
-    <rect x="30" y="240" width="120" height="65" rx="8" fill="rgba(34,197,94,.06)" stroke="#22c55e" stroke-width="1.5" opacity=".8"/>
-    <text x="90" y="260" text-anchor="middle" fill="#4ade80" font-size="10" font-weight="700" letter-spacing=".5">ANDROID</text>
-    <text x="90" y="275" text-anchor="middle" fill="#888" font-size="7.5">Capacitor 6.0.0</text>
-    <text x="90" y="288" text-anchor="middle" fill="#666" font-size="7">si.quantumwave</text>
-    <text x="90" y="299" text-anchor="middle" fill="#666" font-size="7">.happymoments</text>
+    <rect x="25" y="250" width="130" height="70" rx="8" fill="rgba(34,197,94,.06)" stroke="#22c55e" stroke-width="1.5" opacity=".8"/>
+    <text x="90" y="272" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700" letter-spacing=".5">ANDROID</text>
+    <text x="90" y="290" text-anchor="middle" fill="#888" font-size="10">Capacitor 6.0.0</text>
+    <text x="90" y="305" text-anchor="middle" fill="#666" font-size="10">si.quantumwave</text>
+    <text x="90" y="316" text-anchor="middle" fill="#666" font-size="10">.happymoments</text>
 
     <!-- Viral Mechanics box -->
-    <rect x="30" y="330" width="120" height="55" rx="8" fill="rgba(6,182,212,.06)" stroke="#06b6d4" stroke-width="1.5" opacity=".8"/>
-    <text x="90" y="350" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="700" letter-spacing=".5">VIRAL LOOP</text>
-    <text x="90" y="365" text-anchor="middle" fill="#888" font-size="7.5">Share + watermark</text>
-    <text x="90" y="378" text-anchor="middle" fill="#666" font-size="7">#WhenIsYourBillion</text>
+    <rect x="25" y="345" width="130" height="60" rx="8" fill="rgba(6,182,212,.06)" stroke="#06b6d4" stroke-width="1.5" opacity=".8"/>
+    <text x="90" y="368" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="700" letter-spacing=".5">VIRAL LOOP</text>
+    <text x="90" y="385" text-anchor="middle" fill="#888" font-size="10">Share + watermark</text>
+    <text x="90" y="398" text-anchor="middle" fill="#666" font-size="10">#WhenIsYourBillion</text>
 
     <!-- ============ CONNECTION LINES ============ -->
 
     <!-- Flow 1: User -> PWA -> Firebase Auth -> JWT -->
-    <line x1="108" y1="50" x2="170" y2="60" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowBlue)" opacity=".7"/>
+    <line x1="110" y1="55" x2="170" y2="65" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowBlue)" opacity=".7"/>
     <line x1="410" y1="40" x2="900" y2="40" stroke="#d4b876" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowGold)" opacity=".6"/>
-    <text x="640" y="13" text-anchor="middle" fill="#d4b876" font-size="7.5" opacity=".7">1 JWT token</text>
+    <text x="640" y="13" text-anchor="middle" fill="#d4b876" font-size="10" opacity=".7">1 JWT token</text>
 
     <!-- Flow 2: PWA -> /api/user -> D1 users -->
-    <path d="M350,105 C430,105 440,120 530,120" fill="none" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowPurple)" opacity=".6"/>
-    <line x1="570" y1="210" x2="570" y2="280" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowPurple)" opacity=".6"/>
-    <text x="580" y="250" fill="#c084fc" font-size="7.5" opacity=".7">2 /api/user + JWT</text>
+    <path d="M350,110 C430,110 440,130 530,130" fill="none" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowPurple)" opacity=".6"/>
+    <line x1="570" y1="225" x2="570" y2="290" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowPurple)" opacity=".6"/>
+    <text x="582" y="262" fill="#c084fc" font-size="10" opacity=".7">2 /api/user + JWT</text>
 
     <!-- Flow 3: PWA -> /api/event (sendBeacon) -> D1 events -->
-    <path d="M350,90 C440,90 440,108 530,108" fill="none" stroke="#f97316" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowOrange)" opacity=".5"/>
-    <line x1="748" y1="210" x2="748" y2="280" stroke="#f97316" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowOrange)" opacity=".6"/>
-    <text x="766" y="250" fill="#f97316" font-size="7.5" opacity=".7">3 sendBeacon</text>
+    <path d="M350,95 C440,95 440,115 530,115" fill="none" stroke="#f97316" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowOrange)" opacity=".5"/>
+    <line x1="748" y1="225" x2="748" y2="290" stroke="#f97316" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowOrange)" opacity=".6"/>
+    <text x="766" y="262" fill="#f97316" font-size="10" opacity=".7">3 sendBeacon</text>
 
     <!-- Flow 4: PWA -> /api/create-checkout -> Stripe -> redirect -->
-    <path d="M350,118 C430,118 440,136 530,136" fill="none" stroke="#d4b876" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrowGold)" opacity=".5"/>
-    <line x1="840" y1="180" x2="900" y2="180" stroke="#d4b876" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowGold)" opacity=".6"/>
-    <text x="870" y="173" fill="#d4b876" font-size="7.5" opacity=".7">4</text>
+    <path d="M350,125 C430,125 440,148 530,148" fill="none" stroke="#d4b876" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrowGold)" opacity=".5"/>
+    <line x1="840" y1="190" x2="900" y2="190" stroke="#d4b876" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowGold)" opacity=".6"/>
+    <text x="870" y="180" fill="#d4b876" font-size="10" opacity=".7">4</text>
 
     <!-- Flow 5: Stripe -> /api/webhook -> D1 (premium) -->
-    <path d="M900,230 C830,255 690,255 650,280" fill="none" stroke="#d4b876" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowGold)" opacity=".5"/>
-    <text x="800" y="268" fill="#d4b876" font-size="7.5" opacity=".7">5 webhook</text>
+    <path d="M900,245 C830,270 690,270 650,290" fill="none" stroke="#d4b876" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowGold)" opacity=".5"/>
+    <text x="800" y="280" fill="#d4b876" font-size="10" opacity=".7">5 webhook</text>
 
     <!-- Flow 6: GitHub -> Cloudflare Pages + GitHub Actions -> Android -->
-    <line x1="900" y1="340" x2="840" y2="210" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowGreen)" opacity=".5"/>
-    <text x="855" y="288" fill="#4ade80" font-size="7.5" opacity=".7">6 deploy + build</text>
+    <line x1="900" y1="350" x2="840" y2="225" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowGreen)" opacity=".5"/>
+    <text x="860" y="298" fill="#4ade80" font-size="10" opacity=".7">6 deploy + build</text>
 
     <!-- Flow 7: Marketing UTM -> PWA -> /api/event + /api/user -> D1 -->
-    <path d="M150,185 L170,95" fill="none" stroke="#4ade80" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrowGreen)" opacity=".5"/>
-    <text x="130" y="138" fill="#4ade80" font-size="7.5" opacity=".7">7 UTM</text>
+    <path d="M155,190 L170,100" fill="none" stroke="#4ade80" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrowGreen)" opacity=".5"/>
+    <text x="133" y="143" fill="#4ade80" font-size="10" opacity=".7">7 UTM</text>
 
     <!-- Viral -> PWA link -->
-    <path d="M150,355 L170,115" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowCyan)" opacity=".4"/>
+    <path d="M155,370 L170,125" fill="none" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowCyan)" opacity=".4"/>
 
     <!-- Monetization summary bar at bottom of SVG -->
-    <rect x="30" y="430" width="1140" height="155" rx="10" fill="rgba(34,197,94,.04)" stroke="#22c55e" stroke-width="1" opacity=".6"/>
-    <text x="600" y="452" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700" letter-spacing="1">MONETIZATION MODEL</text>
+    <rect x="30" y="445" width="1140" height="145" rx="10" fill="rgba(34,197,94,.04)" stroke="#22c55e" stroke-width="1" opacity=".6"/>
+    <text x="600" y="470" text-anchor="middle" fill="#4ade80" font-size="14" font-weight="700" letter-spacing="1">MONETIZATION MODEL</text>
 
     <!-- Free tier -->
-    <text x="200" y="475" text-anchor="middle" fill="#e0e0e0" font-size="10" font-weight="600">Free Tier</text>
-    <text x="200" y="492" text-anchor="middle" fill="#888" font-size="8">8 people &middot; 1 group</text>
-    <text x="200" y="505" text-anchor="middle" fill="#888" font-size="8">5 Team tab views</text>
-    <text x="200" y="518" text-anchor="middle" fill="#888" font-size="8">Gift banners every 4th milestone</text>
-    <text x="200" y="531" text-anchor="middle" fill="#888" font-size="8">Watermarked cards</text>
-    <text x="200" y="544" text-anchor="middle" fill="#888" font-size="8">App link in all shares</text>
+    <text x="200" y="495" text-anchor="middle" fill="#e0e0e0" font-size="13" font-weight="600">Free Tier</text>
+    <text x="200" y="513" text-anchor="middle" fill="#888" font-size="11">8 people &middot; 1 group</text>
+    <text x="200" y="528" text-anchor="middle" fill="#888" font-size="11">5 Team tab views</text>
+    <text x="200" y="543" text-anchor="middle" fill="#888" font-size="11">Gift banners every 4th milestone</text>
+    <text x="200" y="558" text-anchor="middle" fill="#888" font-size="11">Watermarked cards</text>
+    <text x="200" y="573" text-anchor="middle" fill="#888" font-size="11">App link in all shares</text>
 
     <!-- Divider -->
-    <line x1="380" y1="465" x2="380" y2="555" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+    <line x1="380" y1="485" x2="380" y2="580" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
 
     <!-- Premium -->
-    <text x="520" y="475" text-anchor="middle" fill="#d4b876" font-size="10" font-weight="600">Premium EUR 1.49/yr</text>
-    <text x="520" y="492" text-anchor="middle" fill="#888" font-size="8">Unlimited people/groups/views</text>
-    <text x="520" y="505" text-anchor="middle" fill="#888" font-size="8">No banners &middot; Clean cards</text>
-    <text x="520" y="518" text-anchor="middle" fill="#888" font-size="8">No watermark</text>
+    <text x="520" y="495" text-anchor="middle" fill="#d4b876" font-size="13" font-weight="600">Premium EUR 1.49/yr</text>
+    <text x="520" y="513" text-anchor="middle" fill="#888" font-size="11">Unlimited people/groups/views</text>
+    <text x="520" y="528" text-anchor="middle" fill="#888" font-size="11">No banners &middot; Clean cards</text>
+    <text x="520" y="543" text-anchor="middle" fill="#888" font-size="11">No watermark</text>
 
     <!-- Divider -->
-    <line x1="660" y1="465" x2="660" y2="555" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+    <line x1="660" y1="485" x2="660" y2="580" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
 
     <!-- Gift Store -->
-    <text x="790" y="475" text-anchor="middle" fill="#c084fc" font-size="10" font-weight="600">Gift Store (demo)</text>
-    <text x="790" y="492" text-anchor="middle" fill="#888" font-size="8">Contextual product suggestions</text>
-    <text x="790" y="505" text-anchor="middle" fill="#888" font-size="8">Banners every 4th milestone</text>
-    <text x="790" y="518" text-anchor="middle" fill="#888" font-size="8">Demo checkout flow</text>
+    <text x="790" y="495" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="600">Gift Store (demo)</text>
+    <text x="790" y="513" text-anchor="middle" fill="#888" font-size="11">Contextual product suggestions</text>
+    <text x="790" y="528" text-anchor="middle" fill="#888" font-size="11">Banners every 4th milestone</text>
+    <text x="790" y="543" text-anchor="middle" fill="#888" font-size="11">Demo checkout flow</text>
 
     <!-- Divider -->
-    <line x1="910" y1="465" x2="910" y2="555" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+    <line x1="910" y1="485" x2="910" y2="580" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
 
     <!-- Revenue -->
-    <text x="1040" y="475" text-anchor="middle" fill="#f97316" font-size="10" font-weight="600">Revenue Channels</text>
-    <text x="1040" y="492" text-anchor="middle" fill="#888" font-size="8">Premium subscriptions</text>
-    <text x="1040" y="505" text-anchor="middle" fill="#888" font-size="8">Gift store (future)</text>
-    <text x="1040" y="518" text-anchor="middle" fill="#888" font-size="8">Contextual banners</text>
+    <text x="1040" y="495" text-anchor="middle" fill="#f97316" font-size="13" font-weight="600">Revenue Channels</text>
+    <text x="1040" y="513" text-anchor="middle" fill="#888" font-size="11">Premium subscriptions</text>
+    <text x="1040" y="528" text-anchor="middle" fill="#888" font-size="11">Gift store (future)</text>
+    <text x="1040" y="543" text-anchor="middle" fill="#888" font-size="11">Contextual banners</text>
 
     <!-- Viral bar -->
-    <rect x="30" y="560" width="1140" height="28" rx="6" fill="rgba(6,182,212,.04)" stroke="#06b6d4" stroke-width="1" opacity=".5"/>
-    <text x="600" y="578" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="600" letter-spacing=".5">VIRAL: Share links in 6 langs &middot; Watermark CTA &middot; #WhenIsYourBillion &middot; Instagram Story cards &middot; Happiness counter &middot; Invite Friends &middot; Post-share prompts</text>
+    <rect x="30" y="594" width="1140" height="24" rx="6" fill="rgba(6,182,212,.04)" stroke="#06b6d4" stroke-width="1" opacity=".5"/>
+    <text x="600" y="611" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="600" letter-spacing=".5">VIRAL: Share links in 6 langs &middot; Watermark CTA &middot; #WhenIsYourBillion &middot; Instagram Story cards &middot; Happiness counter &middot; Invite Friends</text>
   </svg>
 </div>
 
@@ -617,7 +789,7 @@
     </div>
 
     <div class="module">
-      <div class="module-name">app.js <span style="color:#d4b876;font-size:.7rem;font-weight:400">~4100 lines</span></div>
+      <div class="module-name">app.js <span style="color:#d4b876;font-size:.85rem;font-weight:400">~4100 lines</span></div>
       <div class="module-desc">Main application: premium gates, quick share, big milestones, challenge mechanic, system theme detection</div>
       <div class="module-file">web/app.js</div>
     </div>
@@ -641,7 +813,7 @@
     </div>
 
     <div class="module">
-      <div class="module-name">i18n.js <span style="color:#60a5fa;font-size:.65rem;font-weight:400">21 LANGS</span></div>
+      <div class="module-name">i18n.js <span style="color:#60a5fa;font-size:.8rem;font-weight:400">21 LANGS</span></div>
       <div class="module-desc">EN, ES, DE, PT, PT-BR, IT, FR, HR, SL, NL, PL, RU, ZH, HI, AR, BN, JA, VI, ID, TH, KO</div>
       <div class="module-file">web/i18n.js</div>
     </div>
@@ -653,7 +825,7 @@
     </div>
 
     <div class="module">
-      <div class="module-name">shareMessages.js <span style="color:#60a5fa;font-size:.65rem;font-weight:400">1000+ templates</span></div>
+      <div class="module-name">shareMessages.js <span style="color:#60a5fa;font-size:.8rem;font-weight:400">1000+ templates</span></div>
       <div class="module-desc">1000+ EN templates + translated templates for PT, HI, ZH, JA, ES</div>
       <div class="module-file">web/shareMessages.js</div>
     </div>
@@ -811,9 +983,9 @@
         <div><strong>Product:</strong> Premium subscription</div>
         <div style="margin-top:.2rem;color:#999">Checkout Sessions API</div>
         <div style="color:#999">Webhook events:</div>
-        <div style="color:#777;font-family:monospace;font-size:.65rem">checkout.session.completed</div>
-        <div style="color:#777;font-family:monospace;font-size:.65rem">customer.subscription.deleted</div>
-        <div style="color:#777;font-family:monospace;font-size:.65rem;margin-top:.15rem">HMAC-SHA256 signature verification</div>
+        <div style="color:#777;font-family:monospace;font-size:.82rem">checkout.session.completed</div>
+        <div style="color:#777;font-family:monospace;font-size:.82rem">customer.subscription.deleted</div>
+        <div style="color:#777;font-family:monospace;font-size:.82rem;margin-top:.15rem">HMAC-SHA256 signature verification</div>
       </div>
     </div>
 
@@ -831,24 +1003,24 @@
       <div class="module-file" style="color:#d4b876">happymoments.app</div>
     </div>
 
-    <div style="margin-top:.8rem;padding:.6rem;background:rgba(0,0,0,.2);border-radius:8px;border-left:2px solid rgba(212,184,118,.2)">
-      <div style="font-size:.72rem;font-weight:600;color:#d4b876;margin-bottom:.3rem">Marketing Attribution</div>
-      <div style="font-size:.7rem;color:#888">UTM parameters captured on landing:</div>
-      <div style="font-size:.68rem;color:#777;font-family:monospace;margin-top:.2rem">
+    <div style="margin-top:.8rem;padding:.65rem;background:rgba(0,0,0,.2);border-radius:8px;border-left:2px solid rgba(212,184,118,.2)">
+      <div style="font-size:.88rem;font-weight:600;color:#d4b876;margin-bottom:.3rem">Marketing Attribution</div>
+      <div style="font-size:.85rem;color:#888">UTM parameters captured on landing:</div>
+      <div style="font-size:.82rem;color:#777;font-family:monospace;margin-top:.2rem">
         utm_source &middot; utm_medium &middot; utm_campaign
       </div>
-      <div style="font-size:.68rem;color:#666;margin-top:.2rem">Stored in both events and user records</div>
+      <div style="font-size:.82rem;color:#666;margin-top:.2rem">Stored in both events and user records</div>
     </div>
 
-    <div style="margin-top:.6rem;padding:.6rem;background:rgba(0,0,0,.2);border-radius:8px;border-left:2px solid rgba(34,197,94,.2)">
-      <div style="font-size:.72rem;font-weight:600;color:#4ade80;margin-bottom:.3rem">Android Build Pipeline</div>
-      <div style="font-size:.7rem;color:#888">GitHub Actions builds on every push to main</div>
-      <div style="font-size:.68rem;color:#777;margin-top:.2rem">
+    <div style="margin-top:.6rem;padding:.65rem;background:rgba(0,0,0,.2);border-radius:8px;border-left:2px solid rgba(34,197,94,.2)">
+      <div style="font-size:.88rem;font-weight:600;color:#4ade80;margin-bottom:.3rem">Android Build Pipeline</div>
+      <div style="font-size:.85rem;color:#888">GitHub Actions builds on every push to main</div>
+      <div style="font-size:.82rem;color:#777;margin-top:.2rem">
         Capacitor 6.0.0 wrapping the PWA
       </div>
-      <div style="font-size:.68rem;color:#777">App ID: <span style="font-family:monospace;color:#aaa">si.quantumwave.happymoments</span></div>
-      <div style="font-size:.68rem;color:#666;margin-top:.2rem">Produces: debug APK (direct install) + release AAB (Play Store)</div>
-      <div style="font-size:.68rem;color:#666">Artifacts at GitHub Releases</div>
+      <div style="font-size:.82rem;color:#777">App ID: <span style="font-family:monospace;color:#aaa">si.quantumwave.happymoments</span></div>
+      <div style="font-size:.82rem;color:#666;margin-top:.2rem">Produces: debug APK (direct install) + release AAB (Play Store)</div>
+      <div style="font-size:.82rem;color:#666">Artifacts at GitHub Releases</div>
     </div>
   </div>
 
@@ -884,7 +1056,7 @@
       </div>
       <div class="plan-card">
         <div class="plan-name" style="color:#c084fc">Gift Store</div>
-        <div class="plan-price" style="font-size:1rem">&#x1F6CD; <span>Demo Mode</span></div>
+        <div class="plan-price" style="font-size:1.2rem">&#x1F6CD; <span>Demo Mode</span></div>
         <ul class="plan-features">
           <li>Contextual product suggestions</li>
           <li>Banners for free users</li>
@@ -894,7 +1066,7 @@
       </div>
       <div class="plan-card">
         <div class="plan-name" style="color:#f97316">Revenue Channels</div>
-        <div class="plan-price" style="font-size:1rem">&#x2139; <span>Active + Planned</span></div>
+        <div class="plan-price" style="font-size:1.2rem">&#x2139; <span>Active + Planned</span></div>
         <ul class="plan-features">
           <li>Premium subscriptions (Stripe)</li>
           <li>Gift store (future)</li>
@@ -905,7 +1077,7 @@
   </div>
 </div>
 
-<!-- Additional sections: Android, App Store, China, Viral -->
+<!-- Additional sections: Viral, App Store, China -->
 <div class="extra-sections">
 
   <!-- Viral Mechanics -->
@@ -1010,7 +1182,7 @@
       <span class="flow-node pwa-node">PWA</span>
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node be-node">/api/user</span>
-      <span style="color:#888;font-size:.7rem">(+JWT, UTM)</span>
+      <span style="color:#888;font-size:.85rem">(+JWT, UTM)</span>
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node db-node">D1 users</span>
     </div>
@@ -1019,7 +1191,7 @@
       <span class="flow-node pwa-node">PWA</span>
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node be-node">/api/event</span>
-      <span style="color:#888;font-size:.7rem">(sendBeacon)</span>
+      <span style="color:#888;font-size:.85rem">(sendBeacon)</span>
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node db-node">D1 events</span>
     </div>
@@ -1031,7 +1203,7 @@
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node ext-node">Stripe API</span>
       <span class="flow-arrow">&rarr;</span>
-      <span style="color:#888;font-size:.7rem">redirect</span>
+      <span style="color:#888;font-size:.85rem">redirect</span>
     </div>
     <div class="flow-item">
       <span class="flow-num">5</span>
@@ -1040,7 +1212,7 @@
       <span class="flow-node be-node">/api/webhook</span>
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node db-node">D1</span>
-      <span style="color:#888;font-size:.7rem">(update premium_until)</span>
+      <span style="color:#888;font-size:.85rem">(update premium_until)</span>
     </div>
     <div class="flow-item">
       <span class="flow-num">6</span>
@@ -1049,7 +1221,7 @@
       <span class="flow-node be-node">CF Pages build</span>
       <span class="flow-arrow">&rarr;</span>
       <span class="flow-node be-node">Deploy</span>
-      <span style="color:#888;font-size:.7rem">(+ Actions &rarr; APK/AAB)</span>
+      <span style="color:#888;font-size:.85rem">(+ Actions &rarr; APK/AAB)</span>
     </div>
     <div class="flow-item">
       <span class="flow-num">7</span>
@@ -1062,6 +1234,297 @@
       <span class="flow-node db-node">D1</span>
     </div>
   </div>
+</div>
+
+<!-- ============ THREE NEW SECTIONS ============ -->
+<div class="new-sections">
+
+  <!-- ====== 1. USER STORY — From Discovery to Delight ====== -->
+  <div class="new-section user-story">
+    <div class="new-section-title">
+      <span class="icon">&#x1F6B6;</span> User Story &mdash; From Discovery to Delight
+    </div>
+
+    <div class="story-flow">
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(96,165,250,.2);color:#60a5fa">1</div>
+        <div class="story-step-title">Discovery</div>
+        <div class="story-step-desc">Friend shares a milestone on WhatsApp/Instagram with "happymoments.app" link. Or sees Instagram Story: "When is YOUR special number?"</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(96,165,250,.2);color:#60a5fa">2</div>
+        <div class="story-step-title">First Visit</div>
+        <div class="story-step-desc">Opens app. No registration needed. Sees onboarding: "Enter a date that matters to you."</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(74,222,128,.2);color:#4ade80">3</div>
+        <div class="story-step-title">First Wow</div>
+        <div class="story-step-desc">Enters birthday. Instantly sees milestones: "You'll be 1 billion seconds on June 15, 2028!" + dozens more. Big Milestones always visible.</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(74,222,128,.2);color:#4ade80">4</div>
+        <div class="story-step-title">Emotional Hook</div>
+        <div class="story-step-desc">Finds something personal and surprising. Wants to share it with someone who matters.</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(6,182,212,.2);color:#22d3ee">5</div>
+        <div class="story-step-title">Share</div>
+        <div class="story-step-desc">One-tap share icon on each milestone. WhatsApp, native share, or Challenge button (#WhenIsYourBillion). Message in user's language (6 langs). App link auto-appended.</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(6,182,212,.2);color:#22d3ee">6</div>
+        <div class="story-step-title">Add More People</div>
+        <div class="story-step-desc">Adds partner, children, parents (up to 8 free). Each person gets their own milestone column.</div>
+      </div>
+    </div>
+
+    <div class="story-flow" style="margin-top:.8rem">
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(168,85,247,.2);color:#c084fc">7</div>
+        <div class="story-step-title">Team Discovery</div>
+        <div class="story-step-desc">Opens Team tab. Sees combined milestones: "Your family's total age reaches 100,000 days on March 3!" (5 free views, then premium gate)</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(168,85,247,.2);color:#c084fc">8</div>
+        <div class="story-step-title">Image Card</div>
+        <div class="story-step-desc">Creates beautiful card (Square or Instagram Story format). Downloads or shares. Free: subtle watermark. Premium: clean.</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(212,184,118,.2);color:#d4b876">9</div>
+        <div class="story-step-title">Premium Decision</div>
+        <div class="story-step-desc">Hits a limit (8 people, or 5 team views) or wants clean cards. Sees upgrade: EUR 1.49/year. Signs in with Google or email.</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(212,184,118,.2);color:#d4b876">10</div>
+        <div class="story-step-title">Retention</div>
+        <div class="story-step-desc">Comes back to check upcoming milestones. Happiness button. Gift banners suggest personalized gifts.</div>
+      </div>
+      <span class="story-arrow">&rarr;</span>
+
+      <div class="story-step">
+        <div class="story-step-num" style="background:rgba(249,115,22,.2);color:#fb923c">11</div>
+        <div class="story-step-title">Viral Loop</div>
+        <div class="story-step-desc">Friends who received shares visit the app, become new users, and repeat the cycle from Step 1.</div>
+      </div>
+    </div>
+
+    <div class="viral-loop-bar">
+      <span>&#x21BA; VIRAL LOOP: Step 11 feeds back to Step 1 &mdash; every share creates a potential new user who discovers, engages, and shares again</span>
+    </div>
+  </div>
+
+  <!-- ====== 2. BACKEND ACTIVITY — What Happens Behind the Scenes ====== -->
+  <div class="new-section backend-activity">
+    <div class="new-section-title">
+      <span class="icon">&#x2699;</span> Backend Activity &mdash; What Happens Behind the Scenes
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="backend-table">
+        <thead>
+          <tr>
+            <th>User Action</th>
+            <th>Frontend</th>
+            <th>API Call</th>
+            <th>Backend</th>
+            <th>D1 Database</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Opens app</td>
+            <td>analytics.js tracks page_view</td>
+            <td class="api-call">POST /api/event</td>
+            <td>Stores event with session_id, country</td>
+            <td class="mono">events table</td>
+          </tr>
+          <tr>
+            <td>Signs in (Google)</td>
+            <td>Firebase Auth popup &rarr; JWT</td>
+            <td class="api-call">POST /api/user</td>
+            <td>Upsert user record with UTM</td>
+            <td class="mono">users table</td>
+          </tr>
+          <tr>
+            <td>Adds 6th person</td>
+            <td>checkEventLimit() &rarr; still free (limit=8)</td>
+            <td class="dim">&mdash;</td>
+            <td class="dim">&mdash;</td>
+            <td class="dim">localStorage only</td>
+          </tr>
+          <tr>
+            <td>Adds 9th person</td>
+            <td>showUpgradePrompt('people')</td>
+            <td class="dim">&mdash;</td>
+            <td class="dim">&mdash;</td>
+            <td class="dim">Premium gate</td>
+          </tr>
+          <tr>
+            <td>Views Team tab</td>
+            <td>incrementTeamView() counter</td>
+            <td class="dim">&mdash;</td>
+            <td class="dim">&mdash;</td>
+            <td class="dim">localStorage</td>
+          </tr>
+          <tr>
+            <td>Clicks Upgrade</td>
+            <td>Stripe checkout session</td>
+            <td class="api-call">POST /api/create-checkout-session</td>
+            <td>Stripe API creates session</td>
+            <td class="dim">&mdash;</td>
+          </tr>
+          <tr>
+            <td>Completes payment</td>
+            <td>Redirected back with success</td>
+            <td class="dim">&mdash;</td>
+            <td>Stripe webhook fires</td>
+            <td class="mono">users.premium_until updated</td>
+          </tr>
+          <tr>
+            <td>Clicks "Happy"</td>
+            <td>track('happy_click')</td>
+            <td class="api-call">POST /api/event</td>
+            <td>Stored</td>
+            <td class="mono">events table</td>
+          </tr>
+          <tr>
+            <td>Shares milestone</td>
+            <td>generateShareMessage() in user's language</td>
+            <td class="api-call">POST /api/event</td>
+            <td>Share tracked</td>
+            <td class="mono">events table</td>
+          </tr>
+          <tr>
+            <td>Deletes account</td>
+            <td>Firebase user.delete()</td>
+            <td class="api-call">DELETE /api/user</td>
+            <td>Delete user + events</td>
+            <td class="mono">Both tables</td>
+          </tr>
+          <tr>
+            <td>Admin views dashboard</td>
+            <td>admin.html with Bearer token</td>
+            <td class="api-call">GET /api/admin?action=...</td>
+            <td>Query D1</td>
+            <td class="dim">Read-only</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ====== 3. GROWTH & PROMOTION STRATEGY ====== -->
+  <div class="new-section growth-section">
+    <div class="new-section-title">
+      <span class="icon">&#x1F4C8;</span> Growth &amp; Promotion Strategy
+    </div>
+
+    <div class="growth-grid">
+
+      <!-- Organic Viral Loop -->
+      <div class="growth-card" style="border-color:rgba(6,182,212,.2)">
+        <div class="growth-card-title" style="color:#22d3ee">
+          <span class="gc-icon" style="background:rgba(6,182,212,.2);color:#22d3ee">&#x21BA;</span>
+          Organic Viral Loop
+        </div>
+        <ul class="growth-list">
+          <li><span class="gl-marker" style="background:#22d3ee"></span>User discovers &rarr; enters birthday &rarr; finds milestone &rarr; shares &rarr; friend discovers &rarr; repeat</li>
+          <li><span class="gl-marker" style="background:#22d3ee"></span>Every share message contains app link (6 languages)</li>
+          <li><span class="gl-marker" style="background:#22d3ee"></span>Image cards have "happymoments.app" branding</li>
+          <li><span class="gl-marker" style="background:#22d3ee"></span>Challenge mechanic: #WhenIsYourBillion with hashtags</li>
+        </ul>
+      </div>
+
+      <!-- Rollout Plan -->
+      <div class="growth-card" style="border-color:rgba(74,222,128,.2)">
+        <div class="growth-card-title" style="color:#4ade80">
+          <span class="gc-icon" style="background:rgba(74,222,128,.2);color:#4ade80">&#x1F3AF;</span>
+          Rollout Plan (4 Tiers)
+        </div>
+        <ul class="growth-list">
+          <li><span class="tier-badge tier-1">T1</span> <span>Inner circle (5-10) &mdash; personal messages with their actual milestones</span></li>
+          <li><span class="tier-badge tier-2">T2</span> <span>Good friends (10-20) &mdash; semi-personal, ask for feedback</span></li>
+          <li><span class="tier-badge tier-3">T3</span> <span>Network (20-50) &mdash; curiosity hook in WhatsApp groups</span></li>
+          <li><span class="tier-badge tier-4">T4</span> <span>Public (50-100) &mdash; social media posts</span></li>
+        </ul>
+      </div>
+
+      <!-- Distribution Channels -->
+      <div class="growth-card" style="border-color:rgba(96,165,250,.2)">
+        <div class="growth-card-title" style="color:#60a5fa">
+          <span class="gc-icon" style="background:rgba(96,165,250,.2);color:#60a5fa">&#x1F310;</span>
+          Distribution Channels
+        </div>
+        <ul class="growth-list">
+          <li><span class="gl-marker" style="background:#4ade80"></span><strong>Web PWA:</strong> happymoments.app <span class="status-badge status-live">live</span></li>
+          <li><span class="gl-marker" style="background:#fb923c"></span><strong>Google Play:</strong> Internal testing &rarr; closed beta &rarr; public <span class="status-badge status-pending">pending</span></li>
+          <li><span class="gl-marker" style="background:#d4b876"></span><strong>Apple App Store:</strong> via Capacitor <span class="status-badge status-ready">planned</span></li>
+          <li><span class="gl-marker" style="background:#f87171"></span><strong>WeChat Mini Program:</strong> for China market (needs local partner)</li>
+        </ul>
+      </div>
+
+      <!-- Analytics & Tracking -->
+      <div class="growth-card" style="border-color:rgba(168,85,247,.2)">
+        <div class="growth-card-title" style="color:#c084fc">
+          <span class="gc-icon" style="background:rgba(168,85,247,.2);color:#c084fc">&#x1F4CA;</span>
+          Analytics &amp; Tracking
+        </div>
+        <ul class="growth-list">
+          <li><span class="gl-marker" style="background:#c084fc"></span><strong>Admin dashboard:</strong> happymoments.app/admin.html</li>
+          <li><span class="gl-marker" style="background:#c084fc"></span><strong>Funnel:</strong> page_view &rarr; onboard_complete &rarr; event_added &rarr; auth_signed_in &rarr; checkout_started</li>
+          <li><span class="gl-marker" style="background:#c084fc"></span><strong>UTM attribution:</strong> utm_source, utm_medium, utm_campaign</li>
+          <li><span class="gl-marker" style="background:#c084fc"></span><strong>Happiness counter:</strong> happy_click events</li>
+          <li><span class="gl-marker" style="background:#c084fc"></span><strong>Country tracking:</strong> via Cloudflare headers</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Revenue Model — full-width card below the grid -->
+    <div class="growth-card" style="border-color:rgba(212,184,118,.2);margin-top:1.2rem">
+      <div class="growth-card-title" style="color:#d4b876">
+        <span class="gc-icon" style="background:rgba(212,184,118,.2);color:#d4b876">&#x1F4B0;</span>
+        Revenue Model
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+        <div>
+          <div style="font-size:.92rem;font-weight:600;color:#d4b876;margin-bottom:.3rem">Premium Subscriptions</div>
+          <div style="font-size:.9rem;color:#bbb">EUR 1.49/year per user</div>
+          <div style="font-size:.85rem;color:#999;margin-top:.15rem">Unlocks: unlimited people, groups, team views, clean image cards</div>
+        </div>
+        <div>
+          <div style="font-size:.92rem;font-weight:600;color:#c084fc;margin-bottom:.3rem">Gift Store (future)</div>
+          <div style="font-size:.9rem;color:#bbb">Contextual product suggestions via dropshipping</div>
+          <div style="font-size:.85rem;color:#999;margin-top:.15rem">Banners every 4th milestone for free users</div>
+        </div>
+        <div>
+          <div class="revenue-highlight">
+            <div class="rev-label">Monthly Target</div>
+            <div class="rev-value">EUR 1,000/month</div>
+            <div class="rev-calc">Gift store: 200 orders/month &times; EUR 25 avg &times; 20% margin = EUR 1,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 <!-- Legend -->
