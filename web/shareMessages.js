@@ -1077,6 +1077,553 @@ const SHARE_MESSAGES = {
     ]
 };
 
+// ---------------------------------------------------------------------------
+// Internationalized share messages (5 languages, 5-8 templates per category)
+// Placeholders: {name}, {value}, {unit}, {date}, {countdown}, {why}
+// ---------------------------------------------------------------------------
+
+const APP_SHARE_LINK_I18N = {
+    en: '\n\nDiscover your special numbers \u2192 happymoments.app',
+    pt: '\n\nDescubra seus n\u00fameros especiais \u2192 happymoments.app',
+    hi: '\n\n\u0905\u092a\u0928\u0947 \u0935\u093f\u0936\u0947\u0937 \u0928\u0902\u092c\u0930 \u0916\u094b\u091c\u0947\u0902 \u2192 happymoments.app',
+    zh: '\n\n\u53d1\u73b0\u4f60\u7684\u7279\u522b\u6570\u5b57 \u2192 happymoments.app',
+    ja: '\n\n\u3042\u306a\u305f\u306e\u7279\u5225\u306a\u6570\u5b57\u3092\u767a\u898b \u2192 happymoments.app',
+    es: '\n\nDescubre tus n\u00fameros especiales \u2192 happymoments.app'
+};
+
+// Fallback text appended when a template has no {date}/{countdown} placeholder
+const SHARE_DATE_FALLBACK_I18N = {
+    en: ' On {date} \u2014 {countdown} from now!',
+    pt: ' Em {date} \u2014 faltam {countdown}!',
+    hi: ' {date} \u0915\u094b \u2014 \u092c\u0938 {countdown} \u092c\u093e\u0915\u0940!',
+    zh: ' {date}\u2014\u2014\u8fd8\u6709{countdown}\uff01',
+    ja: ' {date}\u2014\u2014\u3042\u3068{countdown}\uff01',
+    es: ' El {date} \u2014 \u00a1faltan {countdown}!'
+};
+
+const SHARE_MESSAGES_I18N = {
+
+    // ======================================================================
+    // Portuguese (pt-BR) — warm, informal, "voc\u00ea"
+    // ======================================================================
+    pt: {
+        birthday: [
+            "{name} vai completar {value} {unit} no dia {date}! Cada um deles valeu a pena.",
+            "{value} {unit} de {name} iluminando o mundo \u2014 chegando em {date}!",
+            "Voc\u00ea sabia? {name} vai alcan\u00e7ar exatamente {value} {unit} em {date}. Isso \u00e9 {why}!",
+            "Faltam s\u00f3 {countdown} para {name} completar {value} {unit}. Bora comemorar!",
+            "{name}: prestes a fazer {value} {unit} de vida. Os melhores cap\u00edtulos ainda est\u00e3o por vir.",
+            "Em {date}, far\u00e1 exatamente {value} {unit} desde que {name} chegou ao mundo. Que jornada!",
+            "{value} {unit} de risadas, crescimento e {name} sendo extraordin\u00e1rio(a) \u2014 chegando em {date}.",
+            "Prepare-se para celebrar {name} por {value} {unit} de pura incr\u00edvelidade!"
+        ],
+        round: [
+            "{name} vai bater {value} {unit}! Um n\u00famero redondo perfeito para uma pessoa perfeita.",
+            "{value} {unit} chegando! S\u00e3o muitos zeros e zero raz\u00f5es para n\u00e3o comemorar {name}!",
+            "N\u00fameros redondos, palmas redondas: {name} com {value} {unit} em {date}!",
+            "{name} vai alcan\u00e7ar o grande {value} em {date}. Em {unit}, \u00e9 muita vida vivida!",
+            "Olha esses zeros lindos! {name} vai marcar {value} {unit} em {date}.",
+            "{value} {unit} \u2014 o tipo de n\u00famero redondo que pede uma festa para {name}."
+        ],
+        repdigit: [
+            "{name} vai atingir {value} {unit} em {date}! Todos os d\u00edgitos iguais \u2014 isso \u00e9 {why}!",
+            "Quando cada d\u00edgito \u00e9 o mesmo, voc\u00ea sabe que \u00e9 especial. {name} com {value} {unit} em {date}!",
+            "{value} {unit} \u2014 um n\u00famero feito de ecos. Assim como o impacto de {name}. Em {date}.",
+            "D\u00edgito repetido, alegria repetida: {name} com {value} {unit} em {date}.",
+            "Todos os d\u00edgitos concordam: \u00e9 hora de celebrar {name} com {value} {unit} em {date}!",
+            "{value} \u2014 o n\u00famero que gagueja de emo\u00e7\u00e3o por {name}!"
+        ],
+        palindrome: [
+            "{name} com {value} {unit} em {date} \u2014 um pal\u00edndromo! L\u00ea igual de tr\u00e1s pra frente.",
+            "Espelho, espelho meu: {value} {unit} de {name} ser\u00e1 um pal\u00edndromo em {date}!",
+            "{value} pra frente, {value} pra tr\u00e1s. O marco de {name} ter\u00e1 simetria perfeita!",
+            "Pal\u00edndromo \u00e0 vista! {name} com {value} {unit} em {date} \u2014 perfeito de qualquer \u00e2ngulo.",
+            "De tr\u00e1s pra frente ou de frente pra tr\u00e1s, {name} com {value} {unit} \u00e9 incr\u00edvel.",
+            "Simetria nos n\u00fameros, simetria na vida: {name} com {value} {unit} em {date}."
+        ],
+        fibonacci: [
+            "{name} com {value} {unit} em {date} \u2014 um marco Fibonacci! O n\u00famero da natureza.",
+            "A espiral dourada alcan\u00e7a {value} para {name}! Celebra\u00e7\u00e3o Fibonacci em {date}.",
+            "{name}: {value} {unit} na sequ\u00eancia de Fibonacci. Crescendo como a natureza quis! {date}.",
+            "De girassol a gal\u00e1xia: {value} {unit} de {name} segue o padr\u00e3o dourado. {date}.",
+            "A sequ\u00eancia de Fibonacci sorri para {name}: {value} {unit} de crescimento natural.",
+            "A propor\u00e7\u00e3o \u00e1urea aprova: {name} com {value} {unit} em {date}!"
+        ],
+        power_of_2: [
+            "{name} com {value} {unit} em {date} \u2014 pot\u00eancia de 2! O mundo digital sauda voc\u00ea.",
+            "Perfei\u00e7\u00e3o bin\u00e1ria: {name} vai atingir {value} {unit}. 2 elevado \u00e0 pot\u00eancia do incr\u00edvel!",
+            "{value} {unit} \u2014 um n\u00famero que faz computadores cantarem. Prepare-se, {name}! {date}.",
+            "Os bits v\u00e3o se alinhar: {value} {unit} de {name} ser\u00e1 pot\u00eancia de 2 perfeita em {date}!",
+            "De 1 a 2 a 4 at\u00e9... {value}! O crescimento exponencial de {name} continua em {date}.",
+            "Marco digital! {name} com {value} {unit} \u2014 pot\u00eancia de 2 em {date}."
+        ],
+        scientific: [
+            "{name} com {value} {unit} em {date} \u2014 um n\u00famero ligado a {why}! A ci\u00eancia celebra!",
+            "Marco cientificamente significativo: {name} com {value} {unit} em {date}. {why}!",
+            "Onde a vida encontra as constantes matem\u00e1ticas: {name} com {value} {unit} em {date}.",
+            "N\u00fameros nerds uni-vos: {name} com {value} {unit} em {date} est\u00e1 ligado a {why}!",
+            "Quando matem\u00e1tica encontra marco: {name} com {value} {unit} em {date}. {why}!",
+            "Einstein aprovaria: {name} com {value} {unit} em {date}. {why}!"
+        ],
+        sequential: [
+            "{name} com {value} {unit} em {date} \u2014 um n\u00famero sequencial! Os d\u00edgitos marcham em ordem.",
+            "1, 2, 3... {value}! Os d\u00edgitos de {name} caminham em fila perfeita em {date}.",
+            "Perfei\u00e7\u00e3o sequencial: {name} com {value} {unit} em {date}. Passo a passo!",
+            "Como notas numa escala, os d\u00edgitos de {name} est\u00e3o em sequ\u00eancia perfeita: {value} {unit}.",
+            "Ordem nos d\u00edgitos! {value} {unit} de {name} ser\u00e1 uma celebra\u00e7\u00e3o sequencial em {date}.",
+            "Uma escada de d\u00edgitos: {name} com {value} {unit} em {date}."
+        ],
+        alternating: [
+            "{name} com {value} {unit} em {date} \u2014 padr\u00e3o alternado! Os d\u00edgitos est\u00e3o dan\u00e7ando.",
+            "Pra l\u00e1 e pra c\u00e1, como bati\u00e3o de cora\u00e7\u00e3o: {value} {unit} de {name} alterna perfeitamente em {date}.",
+            "{value} para {name}: um n\u00famero com ritmo pr\u00f3prio! Em {date}.",
+            "Como um p\u00eandulo, {value} {unit} de {name} balan\u00e7a entre d\u00edgitos.",
+            "O ritmo de {value} combina com o ritmo de {name}: constante e bonito.",
+            "Altern\u00e2ncia e celebra\u00e7\u00e3o: {name} com {value} {unit} em {date}!"
+        ],
+        combined: [
+            "Juntos, voc\u00eas v\u00e3o alcan\u00e7ar {value} {unit} em {date}! Marcos combinados s\u00e3o os melhores.",
+            "{value} {unit} de vida combinada \u2014 s\u00e3o muitos momentos compartilhados em {date}!",
+            "Some todos os {unit} e voc\u00ea ter\u00e1 {value}. Some todo o amor e ter\u00e1 infinito.",
+            "Total combinado: {value} {unit} de vida, risadas e uni\u00e3o em {date}.",
+            "{value} {unit} entre todos voc\u00eas! Isso \u00e9 {why} \u2014 vale a pena comemorar juntos em {date}.",
+            "A soma das jornadas: {value} {unit} em {date}. Maior que as partes!"
+        ],
+        ratio: [
+            "A propor\u00e7\u00e3o entre as idades vai ser exatamente {value} em {date}! Harmonia matem\u00e1tica.",
+            "Em {date}, suas idades formar\u00e3o a propor\u00e7\u00e3o {value}. Que satisfa\u00e7\u00e3o!",
+            "Marco de propor\u00e7\u00e3o de idade: {value}! Os n\u00fameros entre voc\u00eas dan\u00e7am em {date}.",
+            "Suas idades v\u00e3o se alinhar na propor\u00e7\u00e3o {value} \u2014 uma bela propor\u00e7\u00e3o fugaz em {date}.",
+            "A propor\u00e7\u00e3o {value} entre suas idades \u00e9 t\u00e3o especial quanto o la\u00e7o de voc\u00eas.",
+            "Em {date}, um de voc\u00eas ser\u00e1 exatamente {value} vezes o outro. Que legal!"
+        ],
+        generic: [
+            "{name} vai atingir {value} {unit}! Isso \u00e9 {why}. Hora de preparar a festa!",
+            "Voc\u00ea sabia? {name} vai alcan\u00e7ar exatamente {value} {unit} em {date}. Que marco!",
+            "Marque o momento: {name} com {value} {unit} em {date}. N\u00fameros assim merecem aten\u00e7\u00e3o.",
+            "O marco de {value} {unit} de {name} est\u00e1 chegando \u2014 um n\u00famero que \u00e9 {why}. Celebre em {date}!",
+            "Nem todo mundo chega a {value} {unit}. {name}, voc\u00ea \u00e9 um(a) dos(as) sortudos(as).",
+            "{value} {unit} de {name}. Um n\u00famero que merece ser compartilhado e celebrado em {date}."
+        ]
+    },
+
+    // ======================================================================
+    // Hindi (hi) \u2014 celebratory, family-oriented
+    // ======================================================================
+    hi: {
+        birthday: [
+            "{name} {date} \u0915\u094b {value} {unit} \u092a\u0942\u0930\u0947 \u0915\u0930\u0947\u0902\u0917\u0947! \u0939\u0930 \u090f\u0915 \u092a\u0932 \u0905\u0928\u092e\u094b\u0932 \u0939\u0948\u0964",
+            "{value} {unit} \u0915\u0940 {name} \u0915\u0940 \u0930\u094b\u0936\u0928\u0940 \u2014 {date} \u0915\u094b \u0906 \u0930\u0939\u0940 \u0939\u0948!",
+            "\u0915\u094d\u092f\u093e \u0906\u092a \u091c\u093e\u0928\u0924\u0947 \u0939\u0948\u0902? {name} {date} \u0915\u094b \u0920\u0940\u0915 {value} {unit} \u092a\u0942\u0930\u0947 \u0915\u0930\u0947\u0902\u0917\u0947\u0964 \u092f\u0939 \u0939\u0948 {why}!",
+            "{name} \u0915\u0947 {value} {unit} \u0915\u093e \u091c\u0936\u094d\u0928 \u0906 \u0930\u0939\u093e \u0939\u0948 \u2014 \u092c\u0938 {countdown} \u092c\u093e\u0915\u0940!",
+            "{name}: {value} {unit} \u0915\u0940 \u091c\u093c\u093f\u0902\u0926\u0917\u0940 \u0914\u0930 \u0905\u092d\u0940 \u0938\u092c\u0938\u0947 \u0905\u091a\u094d\u091b\u0947 \u0905\u0927\u094d\u092f\u093e\u092f \u0906\u0928\u0947 \u092c\u093e\u0915\u0940 \u0939\u0948\u0902\u0964",
+            "{date} \u0915\u094b {name} \u0915\u094b \u0907\u0938 \u0926\u0941\u0928\u093f\u092f\u093e \u092e\u0947\u0902 \u0906\u090f \u0920\u0940\u0915 {value} {unit} \u0939\u094b \u091c\u093e\u090f\u0902\u0917\u0947\u0964 \u0915\u094d\u092f\u093e \u0938\u092b\u093c\u0930!",
+            "{name} \u0915\u0947 {value} {unit} \u2014 \u0939\u0901\u0938\u0940, \u092a\u094d\u092f\u093e\u0930 \u0914\u0930 \u0905\u0926\u094d\u092d\u0941\u0924 \u0939\u094b\u0928\u0947 \u0915\u0947 {unit}\u0964 {date} \u0915\u094b \u0906 \u0930\u0939\u0947 \u0939\u0948\u0902\u0964",
+            "{name} \u0915\u094b {value} {unit} \u0915\u0940 \u092c\u0927\u093e\u0908 \u0926\u0947\u0928\u0947 \u0915\u0940 \u0924\u0948\u092f\u093e\u0930\u0940 \u0915\u0930\u094b!"
+        ],
+        round: [
+            "{name} {value} {unit} \u092a\u0930 \u092a\u0939\u0941\u0901\u091a\u0928\u0947 \u0935\u093e\u0932\u0947 \u0939\u0948\u0902! \u090f\u0915 \u092c\u093f\u0932\u0915\u0941\u0932 \u0917\u094b\u0932 \u0928\u0902\u092c\u0930\u0964",
+            "{value} {unit} \u0906 \u0930\u0939\u0947 \u0939\u0948\u0902! \u0907\u0924\u0928\u0947 \u091c\u093c\u0940\u0930\u094b, \u0914\u0930 {name} \u0915\u094b \u0928\u0939\u0940\u0902 \u092e\u0928\u093e\u0928\u0947 \u0915\u0940 \u091c\u093c\u0940\u0930\u094b \u0935\u091c\u0939!",
+            "\u0917\u094b\u0932 \u0928\u0902\u092c\u0930, \u0917\u094b\u0932 \u0924\u093e\u0932\u093f\u092f\u093e\u0901: {name} {value} {unit} \u092a\u0930 \u2014 {date} \u0915\u094b!",
+            "{name} {date} \u0915\u094b \u092c\u0921\u093c\u0947 {value} \u092a\u0930 \u092a\u0939\u0941\u0901\u091a\u0947\u0902\u0917\u0947\u0964 {unit} \u092e\u0947\u0902, \u092f\u0939 \u092c\u0939\u0941\u0924 \u091c\u0940\u0928\u093e \u0939\u0948!",
+            "\u0909\u0928 \u0938\u0941\u0902\u0926\u0930 \u091c\u093c\u0940\u0930\u094b \u0915\u094b \u0926\u0947\u0916\u094b! {name} {date} \u0915\u094b {value} {unit} \u092a\u0942\u0930\u0947 \u0915\u0930\u0947\u0902\u0917\u0947\u0964",
+            "{value} {unit} \u2014 \u0910\u0938\u093e \u0917\u094b\u0932 \u0928\u0902\u092c\u0930 \u091c\u094b {name} \u0915\u0947 \u0932\u093f\u090f \u091c\u0936\u094d\u0928 \u092e\u093e\u0901\u0917\u0924\u093e \u0939\u0948\u0964"
+        ],
+        repdigit: [
+            "{name} {date} \u0915\u094b {value} {unit} \u092a\u0930 \u092a\u0939\u0941\u0901\u091a\u0947\u0902\u0917\u0947! \u0938\u092c \u0905\u0902\u0915 \u090f\u0915 \u091c\u0948\u0938\u0947 \u2014 \u092f\u0939 \u0939\u0948 {why}!",
+            "\u091c\u092c \u0939\u0930 \u0905\u0902\u0915 \u090f\u0915 \u0939\u0940 \u0939\u094b, \u0924\u094b \u0935\u094b \u0916\u093c\u093e\u0938 \u0939\u094b\u0924\u093e \u0939\u0948\u0964 {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b!",
+            "{value} {unit} \u2014 \u0917\u0942\u0901\u091c \u0915\u093e \u0928\u0902\u092c\u0930\u0964 {name} \u0915\u0947 \u092a\u094d\u0930\u092d\u093e\u0935 \u0915\u0940 \u0924\u0930\u0939\u0964 {date} \u0915\u094b\u0964",
+            "\u0926\u094b\u0939\u0930\u093e\u092f\u093e \u0905\u0902\u0915, \u0926\u094b\u0939\u0930\u093e\u0908 \u0916\u0941\u0936\u0940: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964",
+            "\u0938\u092c \u0905\u0902\u0915 \u0938\u0939\u092e\u0924 \u0939\u0948\u0902: {name} \u0915\u094b {value} {unit} \u092a\u0930 \u092e\u0928\u093e\u0913 {date} \u0915\u094b!",
+            "{value} \u2014 \u0935\u094b \u0928\u0902\u092c\u0930 \u091c\u094b {name} \u0915\u0947 \u0932\u093f\u090f \u091d\u0942\u092e\u0924\u093e \u0939\u0948!"
+        ],
+        palindrome: [
+            "{name} {value} {unit} \u092a\u0930 {date} \u0915\u094b \u2014 \u092a\u0948\u0932\u093f\u0902\u0921\u094d\u0930\u094b\u092e! \u0906\u0917\u0947 \u0938\u0947 \u0914\u0930 \u092a\u0940\u091b\u0947 \u0938\u0947 \u090f\u0915 \u091c\u0948\u0938\u093e\u0964",
+            "\u0906\u0908\u0928\u093e, \u0906\u0908\u0928\u093e: {name} \u0915\u093e {value} {unit} {date} \u0915\u094b \u092a\u0948\u0932\u093f\u0902\u0921\u094d\u0930\u094b\u092e \u0939\u094b\u0917\u093e!",
+            "{value} \u0906\u0917\u0947 \u0938\u0947, {value} \u092a\u0940\u091b\u0947 \u0938\u0947\u0964 {name} \u0915\u093e \u092e\u0940\u0932 \u0915\u093e \u092a\u0924\u094d\u0925\u0930 \u092a\u0942\u0930\u0940 \u0938\u092e\u092e\u093f\u0924\u093f \u092e\u0947\u0902!",
+            "\u092a\u0948\u0932\u093f\u0902\u0921\u094d\u0930\u094b\u092e \u0905\u0932\u0930\u094d\u091f! {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b \u2014 \u0939\u0930 \u0924\u0930\u092b \u0938\u0947 \u0938\u0939\u0940\u0964",
+            "\u0928\u0902\u092c\u0930\u094b\u0902 \u092e\u0947\u0902 \u0938\u092e\u092e\u093f\u0924\u093f, \u091c\u0940\u0935\u0928 \u092e\u0947\u0902 \u0938\u092e\u092e\u093f\u0924\u093f: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964",
+            "\u0906\u0917\u0947 \u092a\u0922\u093c\u094b \u092f\u093e \u092a\u0940\u091b\u0947, {name} \u0915\u093e {value} {unit} \u0939\u0930 \u0924\u0930\u0939 \u0938\u0947 \u0905\u0926\u094d\u092d\u0941\u0924 \u0939\u0948\u0964"
+        ],
+        fibonacci: [
+            "{name} {value} {unit} \u092a\u0930 {date} \u0915\u094b \u2014 \u092b\u093f\u092c\u094b\u0928\u093e\u091a\u0940 \u092e\u0940\u0932 \u0915\u093e \u092a\u0924\u094d\u0925\u0930! \u092a\u094d\u0930\u0915\u0943\u0924\u093f \u0915\u093e \u0905\u092a\u0928\u093e \u0928\u0902\u092c\u0930\u0964",
+            "\u0938\u0941\u0928\u0939\u0930\u0940 \u0938\u094d\u092a\u093e\u0907\u0930\u0932 {name} \u0915\u0947 \u0932\u093f\u090f {value} \u092a\u0930 \u092a\u0939\u0941\u0901\u091a\u0940! \u092b\u093f\u092c\u094b\u0928\u093e\u091a\u0940 {unit} \u0915\u093e \u091c\u0936\u094d\u0928 {date} \u0915\u094b!",
+            "{name}: {value} {unit} \u092b\u093f\u092c\u094b\u0928\u093e\u091a\u0940 \u0905\u0928\u0941\u0915\u094d\u0930\u092e \u092e\u0947\u0902\u0964 \u092a\u094d\u0930\u0915\u0943\u0924\u093f \u091c\u0948\u0938\u093e \u0935\u093f\u0915\u093e\u0938! {date}\u0964",
+            "\u092b\u093f\u092c\u094b\u0928\u093e\u091a\u0940 \u0915\u0939\u0924\u0940 \u0939\u0948 \u091c\u0936\u094d\u0928 \u092e\u0928\u093e\u0913: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b!",
+            "\u0938\u0940\u092a\u0940 \u0938\u0947 \u0924\u093e\u0930\u0947 \u0924\u0915: {value} {unit} \u092a\u094d\u0930\u0915\u0943\u0924\u093f \u0915\u0947 \u0938\u0941\u0928\u0939\u0930\u0947 \u092a\u0948\u091f\u0930\u094d\u0928 \u0915\u093e \u0905\u0928\u0941\u0938\u0930\u0923 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964 {date}\u0964",
+            "\u0938\u094d\u0935\u0930\u094d\u0923\u093f\u092e \u0905\u0928\u0941\u092a\u093e\u0924 \u0938\u094d\u0935\u0940\u0915\u0943\u0924 \u0915\u0930\u0924\u093e \u0939\u0948: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b!"
+        ],
+        power_of_2: [
+            "{name} {value} {unit} \u092a\u0930 {date} \u0915\u094b \u2014 2 \u0915\u0940 \u0918\u093e\u0924! \u0921\u093f\u091c\u093f\u091f\u0932 \u0926\u0941\u0928\u093f\u092f\u093e \u0906\u092a\u0915\u094b \u0938\u0932\u093e\u092e \u0915\u0930\u0924\u0940 \u0939\u0948\u0964",
+            "\u092c\u093e\u0907\u0928\u0930\u0940 \u0915\u0940 \u092a\u0942\u0930\u094d\u0923\u0924\u093e: {name} {value} {unit} \u0924\u0915 \u092a\u0939\u0941\u0901\u091a\u0947\u0902\u0917\u0947\u0964 2 \u0915\u0940 \u0918\u093e\u0924 \u0905\u0926\u094d\u092d\u0941\u0924 \u0939\u0948!",
+            "{value} {unit} \u2014 \u0935\u094b \u0928\u0902\u092c\u0930 \u091c\u094b \u0915\u0902\u092a\u094d\u092f\u0942\u091f\u0930 \u0917\u093e\u0928\u093e \u0917\u093e\u0924\u0947 \u0939\u0948\u0902\u0964 \u0924\u0948\u092f\u093e\u0930 \u0930\u0939\u094b, {name}! {date}\u0964",
+            "\u0921\u093f\u091c\u093f\u091f\u0932 \u092e\u0940\u0932 \u0915\u093e \u092a\u0924\u094d\u0925\u0930! {name} {value} {unit} \u092a\u0930 \u2014 {date} \u0915\u094b 2 \u0915\u0940 \u0918\u093e\u0924\u0964",
+            "1 \u0938\u0947 2 \u0938\u0947 4 \u0938\u0947... {value}! {name} \u0915\u093e \u0918\u093e\u0924\u0940\u092f \u0935\u093f\u0915\u093e\u0938 {date} \u0915\u094b \u091c\u093e\u0930\u0940 \u0939\u0948\u0964",
+            "\u0926\u094b\u0917\u0941\u0928\u093e, \u0926\u094b\u0917\u0941\u0928\u093e, \u0926\u094b\u0917\u0941\u0928\u093e: {name} {date} \u0915\u094b {value} {unit} \u092a\u0930 \u092a\u0939\u0941\u0901\u091a\u0947\u0902\u0917\u0947!"
+        ],
+        scientific: [
+            "{name} {value} {unit} \u092a\u0930 {date} \u0915\u094b \u2014 {why} \u0938\u0947 \u091c\u0941\u0921\u093c\u093e \u0928\u0902\u092c\u0930! \u0935\u093f\u091c\u094d\u091e\u093e\u0928 \u092d\u0940 \u091c\u0936\u094d\u0928 \u092e\u0928\u093e\u090f\u0917\u093e!",
+            "\u0935\u0948\u091c\u094d\u091e\u093e\u0928\u093f\u0915 \u0930\u0942\u092a \u0938\u0947 \u092e\u0939\u0924\u094d\u0935\u092a\u0942\u0930\u094d\u0923: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964 {why}!",
+            "\u091c\u0939\u093e\u0901 \u091c\u0940\u0935\u0928 \u0917\u0923\u093f\u0924\u0940\u092f \u0938\u094d\u0925\u093f\u0930\u093e\u0902\u0915\u094b\u0902 \u0938\u0947 \u092e\u093f\u0932\u0924\u093e \u0939\u0948: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964",
+            "\u092c\u094d\u0930\u0939\u094d\u092e\u093e\u0902\u0921 \u0928\u0947 {why} \u0915\u094b {name} \u0915\u0947 {value} {unit} \u092e\u0947\u0902 \u0938\u092e\u093e\u092f\u093e\u0964 \u0915\u093f\u0924\u0928\u093e \u0915\u093e\u0935\u094d\u092f\u093e\u0924\u094d\u092e\u0915!",
+            "\u0917\u0923\u093f\u0924 \u0914\u0930 \u091c\u0936\u094d\u0928 \u0915\u093e \u0938\u0902\u0917\u092e: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964 {why}!",
+            "\u0906\u0907\u0902\u0938\u094d\u091f\u0940\u0928 \u092d\u0940 \u0907\u0938\u0947 \u092a\u0938\u0902\u0926 \u0915\u0930\u0924\u0947: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964 {why}!"
+        ],
+        sequential: [
+            "{name} {value} {unit} \u092a\u0930 {date} \u0915\u094b \u2014 \u0905\u0928\u0941\u0915\u094d\u0930\u092e\u093f\u0915 \u0928\u0902\u092c\u0930! \u0905\u0902\u0915 \u0915\u094d\u0930\u092e \u0938\u0947 \u091a\u0932 \u0930\u0939\u0947 \u0939\u0948\u0902\u0964",
+            "1, 2, 3... {value}! {name} \u0915\u0947 \u0905\u0902\u0915 {date} \u0915\u094b \u090f\u0915\u0926\u092e \u0938\u0940\u0927\u0940 \u0932\u093e\u0907\u0928 \u092e\u0947\u0902 \u091a\u0932\u0947\u0902\u0917\u0947\u0964",
+            "\u0905\u0928\u0941\u0915\u094d\u0930\u092e\u093f\u0915 \u092a\u0942\u0930\u094d\u0923\u0924\u093e: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964 \u0915\u0926\u092e \u0926\u0930 \u0915\u0926\u092e!",
+            "{name} \u0915\u0947 {value} {unit}: \u0905\u0902\u0915 \u0915\u094d\u0930\u092e \u0938\u0947 \u091a\u0922\u093c\u0924\u0947 \u091c\u093e \u0930\u0939\u0947 \u0939\u0948\u0902 \u091c\u0948\u0938\u0947 {name} \u0915\u0940 \u092f\u093e\u0924\u094d\u0930\u093e\u0964 {date} \u0915\u094b\u0964",
+            "\u0905\u0902\u0915\u094b\u0902 \u092e\u0947\u0902 \u0935\u094d\u092f\u0935\u0938\u094d\u0925\u093e! {name} \u0915\u093e {value} {unit} \u090f\u0915 \u0905\u0928\u0941\u0915\u094d\u0930\u092e\u093f\u0915 \u091c\u0936\u094d\u0928 \u0939\u094b\u0917\u093e {date} \u0915\u094b\u0964",
+            "\u0905\u0902\u0915\u094b\u0902 \u0915\u0940 \u0938\u0940\u0922\u093c\u0940: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964"
+        ],
+        alternating: [
+            "{name} {value} {unit} \u092a\u0930 {date} \u0915\u094b \u2014 \u090f\u0915 \u092c\u0926\u0932\u0924\u093e \u092a\u0948\u091f\u0930\u094d\u0928! \u0905\u0902\u0915 \u0928\u093e\u091a \u0930\u0939\u0947 \u0939\u0948\u0902\u0964",
+            "\u0907\u0927\u0930-\u0909\u0927\u0930, \u091c\u0948\u0938\u0947 \u0926\u093f\u0932 \u0915\u0940 \u0927\u0921\u093c\u0915\u0928: {name} \u0915\u093e {value} {unit} {date} \u0915\u094b \u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u092c\u0926\u0932\u0924\u093e \u0939\u0948\u0964",
+            "{value} {name} \u0915\u0947 \u0932\u093f\u090f: \u0905\u092a\u0928\u0940 \u0932\u092f \u0935\u093e\u0932\u093e \u0928\u0902\u092c\u0930! {date} \u0915\u094b\u0964",
+            "\u091d\u0942\u0932\u0947 \u0915\u0940 \u0924\u0930\u0939, {name} \u0915\u093e {value} {unit} \u0905\u0902\u0915\u094b\u0902 \u0915\u0947 \u092c\u0940\u091a \u091d\u0942\u0932\u0924\u093e \u0939\u0948\u0964",
+            "{value} \u0915\u093e \u0932\u092f {name} \u0915\u0947 \u0932\u092f \u0938\u0947 \u092e\u0947\u0932 \u0916\u093e\u0924\u093e \u0939\u0948: \u0938\u094d\u0925\u093f\u0930 \u0914\u0930 \u0938\u0941\u0902\u0926\u0930\u0964",
+            "\u092c\u0926\u0932\u0924\u0947 \u0905\u0902\u0915 \u0914\u0930 \u091c\u0936\u094d\u0928: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b!"
+        ],
+        combined: [
+            "\u0938\u092c \u092e\u093f\u0932\u093e\u0915\u0930, \u0906\u092a {date} \u0915\u094b {value} {unit} \u092a\u0942\u0930\u0947 \u0915\u0930\u0947\u0902\u0917\u0947! \u0938\u0902\u092f\u0941\u0915\u094d\u0924 \u092e\u0940\u0932 \u0915\u0947 \u092a\u0924\u094d\u0925\u0930 \u0938\u092c\u0938\u0947 \u0905\u091a\u094d\u091b\u0947 \u0939\u094b\u0924\u0947 \u0939\u0948\u0902\u0964",
+            "{value} {unit} \u0915\u093e \u0938\u0902\u092f\u0941\u0915\u094d\u0924 \u091c\u0940\u0935\u0928 \u2014 \u092c\u0939\u0941\u0924 \u0938\u093e\u0930\u0947 \u0938\u093e\u091d\u093e \u092a\u0932 {date} \u0915\u094b!",
+            "\u0938\u092c\u0915\u0947 {unit} \u091c\u094b\u0921\u093c\u094b \u0924\u094b {value} \u092e\u093f\u0932\u0924\u093e \u0939\u0948\u0964 \u0938\u092c\u0915\u093e \u092a\u094d\u092f\u093e\u0930 \u091c\u094b\u0921\u093c\u094b \u0924\u094b \u0905\u0928\u0902\u0924\u0964",
+            "\u0938\u0902\u092f\u0941\u0915\u094d\u0924 \u0915\u0941\u0932: {value} {unit} \u091c\u0940\u0935\u0928, \u0939\u0901\u0938\u0940 \u0914\u0930 \u0938\u093e\u0925 \u0939\u094b\u0928\u0947 \u0915\u093e {date} \u0915\u094b\u0964",
+            "\u0906\u092a \u0938\u092c\u0915\u0947 \u092c\u0940\u091a {value} {unit}! \u092f\u0939 \u0939\u0948 {why} \u2014 \u0938\u093e\u0925 \u092e\u093f\u0932\u0915\u0930 \u092e\u0928\u093e\u0928\u0947 \u0932\u093e\u092f\u0915 {date} \u0915\u094b\u0964",
+            "\u092f\u093e\u0924\u094d\u0930\u093e\u0913\u0902 \u0915\u093e \u092f\u094b\u0917: {value} {unit} {date} \u0915\u094b\u0964 \u092d\u093e\u0917\u094b\u0902 \u0938\u0947 \u092c\u0921\u093c\u093e!"
+        ],
+        ratio: [
+            "\u0906\u092a\u0915\u0940 \u0909\u092e\u094d\u0930 \u0915\u093e \u0905\u0928\u0941\u092a\u093e\u0924 {date} \u0915\u094b \u0920\u0940\u0915 {value} \u0939\u094b\u0917\u093e! \u0917\u0923\u093f\u0924\u0940\u092f \u0938\u093e\u092e\u0902\u091c\u0938\u094d\u092f \u0915\u093e \u092a\u0932\u0964",
+            "{date} \u0915\u094b, \u0906\u092a\u0915\u0940 \u0909\u092e\u094d\u0930\u0947\u0902 {value} \u0915\u093e \u0905\u0928\u0941\u092a\u093e\u0924 \u092c\u0928\u093e\u090f\u0901\u0917\u0940\u0964 \u0915\u093f\u0924\u0928\u093e \u0938\u0902\u0924\u094b\u0937\u091c\u0928\u0915!",
+            "\u0909\u092e\u094d\u0930 \u0905\u0928\u0941\u092a\u093e\u0924 \u0915\u093e \u092e\u0940\u0932 \u0915\u093e \u092a\u0924\u094d\u0925\u0930: {value}! \u0906\u092a\u0915\u0947 \u092c\u0940\u091a \u0915\u0947 \u0928\u0902\u092c\u0930 {date} \u0915\u094b \u0928\u093e\u091a \u0930\u0939\u0947 \u0939\u0948\u0902\u0964",
+            "\u0906\u092a\u0915\u0940 \u0909\u092e\u094d\u0930\u0947\u0902 {value} \u0915\u0947 \u0905\u0928\u0941\u092a\u093e\u0924 \u092e\u0947\u0902 \u0939\u094b\u0902\u0917\u0940 \u2014 {date} \u0915\u094b \u090f\u0915 \u0938\u0941\u0902\u0926\u0930, \u0915\u094d\u0937\u0923\u093f\u0915 \u092a\u0932\u0964",
+            "\u0905\u0928\u0941\u092a\u093e\u0924 {value} \u0906\u092a\u0915\u0947 \u0930\u093f\u0936\u094d\u0924\u0947 \u091c\u093f\u0924\u0928\u093e \u0916\u093e\u0938 \u0939\u0948 \u0909\u0924\u0928\u093e \u0939\u0940 \u0916\u093e\u0938\u0964",
+            "{date} \u0915\u094b, \u0906\u092a \u092e\u0947\u0902 \u0938\u0947 \u090f\u0915 \u0920\u0940\u0915 {value} \u0917\u0941\u0928\u093e \u0926\u0942\u0938\u0930\u0947 \u0938\u0947 \u0939\u094b\u0917\u093e\u0964 \u0915\u093f\u0924\u0928\u093e \u092e\u091c\u093c\u0947\u0926\u093e\u0930!"
+        ],
+        generic: [
+            "{name} {value} {unit} \u092a\u0930 \u092a\u0939\u0941\u0901\u091a\u0928\u0947 \u0935\u093e\u0932\u0947 \u0939\u0948\u0902! \u092f\u0939 \u0939\u0948 {why}\u0964 \u091c\u0936\u094d\u0928 \u0915\u0940 \u0924\u0948\u092f\u093e\u0930\u0940 \u0915\u0930\u094b!",
+            "\u0915\u094d\u092f\u093e \u0906\u092a \u091c\u093e\u0928\u0924\u0947 \u0939\u0948\u0902? {name} {date} \u0915\u094b \u0920\u0940\u0915 {value} {unit} \u092a\u0942\u0930\u0947 \u0915\u0930\u0947\u0902\u0917\u0947\u0964 \u0915\u094d\u092f\u093e \u092e\u0940\u0932 \u0915\u093e \u092a\u0924\u094d\u0925\u0930!",
+            "\u092a\u0932 \u0915\u094b \u092f\u093e\u0926 \u0930\u0916\u094b: {name} {value} {unit} \u092a\u0930 {date} \u0915\u094b\u0964 \u0910\u0938\u0947 \u0916\u093e\u0938 \u0928\u0902\u092c\u0930 \u0927\u094d\u092f\u093e\u0928 \u0915\u0947 \u0932\u093e\u092f\u0915 \u0939\u0948\u0902\u0964",
+            "{name} \u0915\u093e {value} {unit} \u0915\u093e \u092e\u0940\u0932 \u0915\u093e \u092a\u0924\u094d\u0925\u0930 \u0906 \u0930\u0939\u093e \u0939\u0948 \u2014 \u092f\u0939 {why}\u0964 {date} \u0915\u094b \u092e\u0928\u093e\u0913!",
+            "\u0939\u0930 \u0915\u094b\u0908 {value} {unit} \u0924\u0915 \u0928\u0939\u0940\u0902 \u092a\u0939\u0941\u0901\u091a\u0924\u093e\u0964 {name}, \u0906\u092a \u0916\u0941\u0936\u0915\u093f\u0938\u094d\u092e\u0924 \u0939\u094b\u0964",
+            "{name} \u0915\u0947 {value} {unit}\u0964 \u090f\u0915 \u0910\u0938\u093e \u0928\u0902\u092c\u0930 \u091c\u094b \u0938\u093e\u091d\u093e \u0915\u0930\u0928\u0947 \u0914\u0930 \u092e\u0928\u093e\u0928\u0947 \u0932\u093e\u092f\u0915 \u0939\u0948 {date} \u0915\u094b\u0964"
+        ]
+    },
+
+    // ======================================================================
+    // Chinese (zh) \u2014 auspicious, number-positive
+    // ======================================================================
+    zh: {
+        birthday: [
+            "{name}\u5c06\u5728{date}\u8fce\u6765{value}{unit}\uff01\u6bcf\u4e00\u523b\u90fd\u503c\u5f97\u5e86\u795d\u3002",
+            "{value}{unit}\u7684{name}\u7167\u4eae\u4e16\u754c\u2014\u2014{date}\u5373\u5c06\u5230\u6765\uff01",
+            "\u4f60\u77e5\u9053\u5417\uff1f{name}\u5c06\u5728{date}\u521a\u597d\u8fbe\u5230{value}{unit}\u3002\u8fd9\u5c31\u662f{why}\uff01",
+            "{name}\u7684{value}{unit}\u91cc\u7a0b\u7891\u5373\u5c06\u5230\u6765\u2014\u2014\u8fd8\u6709{countdown}\uff01",
+            "{name}\uff1a\u5373\u5c06\u62e5\u6709{value}{unit}\u7684\u4eba\u751f\u3002\u6700\u7cbe\u5f69\u7684\u7bc7\u7ae0\u8fd8\u5728\u524d\u65b9\u3002",
+            "{date}\uff0c{name}\u6765\u5230\u8fd9\u4e2a\u4e16\u754c\u5c06\u6ee1{value}{unit}\u3002\u591a\u4e48\u7f8e\u597d\u7684\u65c5\u7a0b\uff01",
+            "{value}{unit}\u7684\u6b22\u7b11\u3001\u6210\u957f\u548c{name}\u7684\u975e\u51e1\u2014\u2014\u5373\u5c06\u5728{date}\u5230\u6765\u3002",
+            "\u51c6\u5907\u597d\u4e3a{name}\u7684{value}{unit}\u559d\u5f69\u5427\uff01"
+        ],
+        round: [
+            "{name}\u5373\u5c06\u8fbe\u5230{value}{unit}\uff01\u4e00\u4e2a\u5b8c\u7f8e\u7684\u6574\u6570\uff0c\u914d\u5f97\u4e0a\u5b8c\u7f8e\u7684\u4eba\u3002",
+            "{value}{unit}\u6765\u4e86\uff01\u90a3\u4e48\u591a\u96f6\uff0c\u96f6\u4e2a\u7406\u7531\u4e0d\u4e3a{name}\u5e86\u795d\uff01",
+            "\u6574\u6570\u3001\u638c\u58f0\uff1a{name}\u7684{value}{unit}\u2014\u2014{date}\uff01",
+            "{name}\u5c06\u5728{date}\u8fce\u6765\u5927\u5927\u7684{value}\u3002\u7528{unit}\u8ba1\u7b97\uff0c\u90a3\u662f\u6ee1\u6ee1\u7684\u4eba\u751f\uff01",
+            "\u770b\u90a3\u4e9b\u6f02\u4eae\u7684\u96f6\uff01{name}\u5c06\u5728{date}\u8fbe\u5230{value}{unit}\u3002",
+            "{value}{unit}\u2014\u2014\u8fd9\u79cd\u6574\u6570\u503c\u5f97\u4e3a{name}\u529e\u4e00\u573a\u5e86\u795d\u3002"
+        ],
+        repdigit: [
+            "{name}\u5c06\u5728{date}\u8fbe\u5230{value}{unit}\uff01\u6240\u6709\u6570\u5b57\u90fd\u4e00\u6837\u2014\u2014\u8fd9\u5c31\u662f{why}\uff01",
+            "\u5f53\u6bcf\u4e2a\u6570\u5b57\u90fd\u76f8\u540c\uff0c\u4f60\u5c31\u77e5\u9053\u5b83\u5f88\u7279\u522b\u3002{name}\u7684{value}{unit}\u5728{date}\uff01",
+            "{value}{unit}\u2014\u2014\u4e00\u4e2a\u7531\u56de\u58f0\u7ec4\u6210\u7684\u6570\u5b57\u3002\u5c31\u50cf{name}\u7684\u5f71\u54cd\u529b\u3002{date}\u3002",
+            "\u91cd\u590d\u7684\u6570\u5b57\uff0c\u91cd\u590d\u7684\u559c\u60a6\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002",
+            "\u6240\u6709\u6570\u5b57\u90fd\u8fbe\u6210\u4e00\u81f4\uff1a\u662f\u65f6\u5019\u4e3a{name}\u7684{value}{unit}\u5e86\u795d\u4e86\uff01{date}\uff01",
+            "{value}\u2014\u2014\u8fd9\u4e2a\u6570\u5b57\u4e3a{name}\u6b22\u547c\u96c0\u8dc3\uff01"
+        ],
+        palindrome: [
+            "{name}\u7684{value}{unit}\u5728{date}\u2014\u2014\u56de\u6587\u6570\u91cc\u7a0b\u7891\uff01\u6b63\u8bfb\u53cd\u8bfb\u90fd\u4e00\u6837\u3002",
+            "\u955c\u5b50\u955c\u5b50\uff1a{name}\u7684{value}{unit}\u5c06\u5728{date}\u6210\u4e3a\u56de\u6587\u6570\uff01",
+            "{value}\u6b63\u8bfb\uff0c{value}\u53cd\u8bfb\u3002{name}\u7684\u91cc\u7a0b\u7891\u5b8c\u7f8e\u5bf9\u79f0\uff01",
+            "\u56de\u6587\u6570\u8b66\u62a5\uff01{name}\u7684{value}{unit}\u5728{date}\u2014\u2014\u4ece\u4efb\u4f55\u89d2\u5ea6\u770b\u90fd\u5b8c\u7f8e\u3002",
+            "\u6570\u5b57\u4e2d\u7684\u5bf9\u79f0\uff0c\u751f\u6d3b\u4e2d\u7684\u5bf9\u79f0\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002",
+            "\u65e0\u8bba\u600e\u4e48\u8bfb\uff0c{name}\u7684{value}{unit}\u90fd\u5f88\u7cbe\u5f69\u3002"
+        ],
+        fibonacci: [
+            "{name}\u7684{value}{unit}\u5728{date}\u2014\u2014\u6590\u6ce2\u90a3\u5951\u91cc\u7a0b\u7891\uff01\u5927\u81ea\u7136\u7684\u6570\u5b57\u3002",
+            "\u9ec4\u91d1\u87ba\u65cb\u4e3a{name}\u8fbe\u5230{value}\uff01{date}\u7684\u6590\u6ce2\u90a3\u5951{unit}\u5e86\u795d\uff01",
+            "{name}\uff1a{value}{unit}\u5728\u6590\u6ce2\u90a3\u5951\u5e8f\u5217\u4e2d\u3002\u50cf\u5927\u81ea\u7136\u4e00\u6837\u751f\u957f\uff01{date}\u3002",
+            "\u4ece\u5411\u65e5\u8475\u5230\u661f\u7cfb\uff1a{name}\u7684{value}{unit}\u9075\u5faa\u9ec4\u91d1\u6a21\u5f0f\u3002{date}\u3002",
+            "\u6590\u6ce2\u90a3\u5951\u5e8f\u5217\u5411{name}\u5fae\u7b11\uff1a{value}{unit}\u7684\u81ea\u7136\u6210\u957f\u3002",
+            "\u9ec4\u91d1\u6bd4\u4f8b\u6279\u51c6\uff1a{name}\u7684{value}{unit}\u5728{date}\uff01"
+        ],
+        power_of_2: [
+            "{name}\u7684{value}{unit}\u5728{date}\u2014\u20142\u7684\u5e42\uff01\u6570\u5b57\u4e16\u754c\u5411\u4f60\u81f4\u656c\u3002",
+            "\u4e8c\u8fdb\u5236\u5b8c\u7f8e\uff1a{name}\u5c06\u8fbe\u5230{value}{unit}\u30022\u7684\u5e42\u65b9\uff0c\u592a\u68d2\u4e86\uff01",
+            "{value}{unit}\u2014\u2014\u4e00\u4e2a\u8ba9\u8ba1\u7b97\u673a\u6b22\u5531\u7684\u6570\u5b57\u3002\u51c6\u5907\u597d\uff0c{name}\uff01{date}\u3002",
+            "\u6bd4\u7279\u5bf9\u9f50\uff1a{name}\u7684{value}{unit}\u5c06\u662f\u5b8c\u7f8e\u76842\u7684\u5e42\uff01{date}\uff01",
+            "\u4ece1\u52302\u52304\u5230\u2026{value}\uff01{name}\u7684\u6307\u6570\u589e\u957f\u5728{date}\u7ee7\u7eed\u3002",
+            "\u6570\u5b57\u91cc\u7a0b\u7891\uff01{name}\u7684{value}{unit}\u2014\u2014{date}\u76842\u7684\u5e42\u3002"
+        ],
+        scientific: [
+            "{name}\u7684{value}{unit}\u5728{date}\u2014\u2014\u4e0e{why}\u76f8\u5173\u7684\u6570\u5b57\uff01\u79d1\u5b66\u4e5f\u5728\u5e86\u795d\uff01",
+            "\u5177\u6709\u79d1\u5b66\u610f\u4e49\u7684\u91cc\u7a0b\u7891\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002{why}\uff01",
+            "\u751f\u6d3b\u4e0e\u6570\u5b66\u5e38\u6570\u76f8\u9047\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002",
+            "\u6570\u5b66\u8ff7\u56e2\u7ed3\uff1a{name}\u7684{value}{unit}\u5728{date}\u4e0e{why}\u76f8\u8fde\uff01",
+            "\u5f53\u6570\u5b66\u9047\u89c1\u91cc\u7a0b\u7891\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002{why}\uff01",
+            "\u7231\u56e0\u65af\u5766\u4f1a\u8d5e\u8d4f\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002{why}\uff01"
+        ],
+        sequential: [
+            "{name}\u7684{value}{unit}\u5728{date}\u2014\u2014\u987a\u5e8f\u6570\uff01\u6570\u5b57\u6392\u7740\u961f\u524d\u8fdb\u3002",
+            "1\u30012\u30013\u2026{value}\uff01{name}\u7684\u6570\u5b57\u5728{date}\u6392\u6210\u5b8c\u7f8e\u7684\u961f\u5217\u3002",
+            "\u987a\u5e8f\u5b8c\u7f8e\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002\u4e00\u6b65\u4e00\u6b65\uff01",
+            "\u50cf\u97f3\u9636\u4e0a\u7684\u97f3\u7b26\uff0c{name}\u7684{value}{unit}\u6570\u5b57\u5b8c\u7f8e\u6392\u5e8f\u3002",
+            "\u6570\u5b57\u4e95\u7136\u6709\u5e8f\uff01{name}\u7684{value}{unit}\u5c06\u662f\u4e00\u573a\u987a\u5e8f\u5e86\u795d\u3002{date}\u3002",
+            "\u6570\u5b57\u7684\u9636\u68af\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002"
+        ],
+        alternating: [
+            "{name}\u7684{value}{unit}\u5728{date}\u2014\u2014\u4ea4\u66ff\u6a21\u5f0f\uff01\u6570\u5b57\u5728\u8df3\u821e\u3002",
+            "\u6765\u56de\u4ea4\u66ff\uff0c\u50cf\u5fc3\u8df3\uff1a{name}\u7684{value}{unit}\u5728{date}\u5b8c\u7f8e\u4ea4\u66ff\u3002",
+            "{value}\u7ed9{name}\uff1a\u4e00\u4e2a\u6709\u81ea\u5df1\u8282\u594f\u7684\u6570\u5b57\uff01{date}\u3002",
+            "\u50cf\u949f\u6446\u4e00\u6837\uff0c{name}\u7684{value}{unit}\u5728\u6570\u5b57\u95f4\u6446\u52a8\u3002",
+            "{value}\u7684\u8282\u594f\u4e0e{name}\u7684\u8282\u594f\u5339\u914d\uff1a\u7a33\u5b9a\u800c\u7f8e\u4e3d\u3002",
+            "\u4ea4\u66ff\u4e0e\u5e86\u795d\uff1a{name}\u7684{value}{unit}\u5728{date}\uff01"
+        ],
+        combined: [
+            "\u5408\u5728\u4e00\u8d77\uff0c\u4f60\u4eec\u5c06\u5728{date}\u8fbe\u5230{value}{unit}\uff01\u7ec4\u5408\u91cc\u7a0b\u7891\u662f\u6700\u597d\u7684\u91cc\u7a0b\u7891\u3002",
+            "{value}{unit}\u7684\u5171\u540c\u751f\u6d3b\u2014\u2014\u90a3\u662f\u5f88\u591a\u5171\u540c\u7684\u65f6\u523b\uff01{date}\uff01",
+            "\u52a0\u8d77\u6240\u6709\u7684{unit}\u4f60\u5f97\u5230{value}\u3002\u52a0\u8d77\u6240\u6709\u7684\u7231\u4f60\u5f97\u5230\u65e0\u9650\u3002",
+            "\u7ec4\u5408\u603b\u8ba1\uff1a{value}{unit}\u7684\u751f\u6d3b\u3001\u6b22\u7b11\u548c\u5728\u4e00\u8d77\u3002{date}\u3002",
+            "\u4f60\u4eec\u4e4b\u95f4\u5171{value}{unit}\uff01\u8fd9\u662f{why}\u2014\u2014\u503c\u5f97\u4e00\u8d77\u5e86\u795d\uff01{date}\u3002",
+            "\u65c5\u7a0b\u4e4b\u548c\uff1a{value}{unit}\u5728{date}\u3002\u6574\u4f53\u5927\u4e8e\u90e8\u5206\u4e4b\u548c\uff01"
+        ],
+        ratio: [
+            "\u4f60\u4eec\u7684\u5e74\u9f84\u6bd4\u5c06\u5728{date}\u521a\u597d\u662f{value}\uff01\u6570\u5b66\u548c\u8c10\u7684\u65f6\u523b\u3002",
+            "{date}\uff0c\u4f60\u4eec\u7684\u5e74\u9f84\u5c06\u5f62\u6210{value}\u7684\u6bd4\u4f8b\u3002\u591a\u4e48\u5b8c\u7f8e\uff01",
+            "\u5e74\u9f84\u6bd4\u4f8b\u91cc\u7a0b\u7891\uff1a{value}\uff01\u4f60\u4eec\u4e4b\u95f4\u7684\u6570\u5b57\u5728{date}\u8df3\u821e\u3002",
+            "\u4f60\u4eec\u7684\u5e74\u9f84\u5c06\u4ee5{value}\u7684\u6bd4\u4f8b\u5bf9\u9f50\u2014\u2014{date}\u7684\u4e00\u4e2a\u7f8e\u4e3d\u77ac\u95f4\u3002",
+            "\u6bd4\u4f8b{value}\u548c\u4f60\u4eec\u7684\u7f18\u5206\u4e00\u6837\u7279\u522b\u3002",
+            "{date}\uff0c\u4f60\u4eec\u4e2d\u7684\u4e00\u4e2a\u521a\u597d\u662f\u53e6\u4e00\u4e2a\u7684{value}\u500d\u3002\u592a\u5999\u4e86\uff01"
+        ],
+        generic: [
+            "{name}\u5373\u5c06\u8fbe\u5230{value}{unit}\uff01\u8fd9\u662f{why}\u3002\u662f\u65f6\u5019\u51c6\u5907\u5e86\u795d\u4e86\uff01",
+            "\u4f60\u77e5\u9053\u5417\uff1f{name}\u5c06\u5728{date}\u521a\u597d\u8fbe\u5230{value}{unit}\u3002\u591a\u4e48\u68d2\u7684\u91cc\u7a0b\u7891\uff01",
+            "\u8bb0\u4f4f\u8fd9\u4e2a\u65f6\u523b\uff1a{name}\u7684{value}{unit}\u5728{date}\u3002\u8fd9\u4e48\u7279\u522b\u7684\u6570\u5b57\u503c\u5f97\u5173\u6ce8\u3002",
+            "{name}\u7684{value}{unit}\u91cc\u7a0b\u7891\u5373\u5c06\u5230\u6765\u2014\u2014\u8fd9\u4e2a\u6570\u5b57\u662f{why}\u3002{date}\u5e86\u795d\uff01",
+            "\u4e0d\u662f\u6bcf\u4e2a\u4eba\u90fd\u80fd\u8fbe\u5230{value}{unit}\u3002{name}\uff0c\u4f60\u662f\u5e78\u8fd0\u7684\u3002",
+            "{name}\u7684{value}{unit}\u3002\u4e00\u4e2a\u503c\u5f97\u5206\u4eab\u548c\u5e86\u795d\u7684\u6570\u5b57\uff0c{date}\u3002"
+        ]
+    },
+
+    // ======================================================================
+    // Japanese (ja) \u2014 polite, understated elegance
+    // ======================================================================
+    ja: {
+        birthday: [
+            "{name}\u3055\u3093\u306f{date}\u306b{value}{unit}\u3092\u8fce\u3048\u307e\u3059\u3002\u305d\u306e\u3072\u3068\u3064\u3072\u3068\u3064\u304c\u304b\u3051\u304c\u3048\u306e\u306a\u3044\u3082\u306e\u3067\u3059\u3002",
+            "{value}{unit}\u306e{name}\u3055\u3093\u304c\u4e16\u754c\u3092\u7167\u3089\u3057\u3066\u304d\u307e\u3057\u305f\u2014\u2014{date}\u306b\u3002",
+            "\u3054\u5b58\u77e5\u3067\u3059\u304b\uff1f{name}\u3055\u3093\u306f{date}\u306b\u3061\u3087\u3046\u3069{value}{unit}\u306b\u306a\u308a\u307e\u3059\u3002\u305d\u308c\u306f{why}\u3067\u3059\uff01",
+            "{name}\u3055\u3093\u306e{value}{unit}\u306e\u7bc0\u76ee\u304c\u8fd1\u3065\u3044\u3066\u3044\u307e\u3059\u2014\u2014\u3042\u3068{countdown}\u3002",
+            "{name}\u3055\u3093\uff1a\u3082\u3046\u3059\u3050{value}{unit}\u3002\u4e00\u756a\u7d20\u6575\u306a\u7ae0\u306f\u307e\u3060\u66f8\u304b\u308c\u3066\u3044\u307e\u305b\u3093\u3002",
+            "{date}\u3001{name}\u3055\u3093\u304c\u3053\u306e\u4e16\u754c\u306b\u6765\u3066\u304b\u3089\u3061\u3087\u3046\u3069{value}{unit}\u3002\u306a\u3093\u3068\u7d20\u6674\u3089\u3057\u3044\u65c5\u3067\u3057\u3087\u3046\u3002",
+            "{value}{unit}\u306e\u7b11\u3044\u3001\u6210\u9577\u3001\u305d\u3057\u3066{name}\u3055\u3093\u306e\u7279\u5225\u306a\u5b58\u5728\u2014\u2014{date}\u306b\u3002",
+            "{name}\u3055\u3093\u306e{value}{unit}\u3092\u304a\u795d\u3044\u3059\u308b\u6e96\u5099\u3092\u3057\u307e\u3057\u3087\u3046\uff01"
+        ],
+        round: [
+            "{name}\u3055\u3093\u304c{value}{unit}\u306b\u5230\u9054\u3057\u307e\u3059\uff01\u5b8c\u74a7\u306a\u30ad\u30ea\u756a\u3067\u3059\u3002",
+            "{value}{unit}\u304c\u3084\u3063\u3066\u304d\u307e\u3059\uff01\u305f\u304f\u3055\u3093\u306e\u30bc\u30ed\u3001\u304a\u795d\u3044\u3057\u306a\u3044\u7406\u7531\u306f\u30bc\u30ed\u3067\u3059\u3002{name}\u3055\u3093\uff01",
+            "\u30ad\u30ea\u756a\u3001\u62cd\u624b\u55dd\u91c7\uff1a{name}\u3055\u3093\u306e{value}{unit}\u2014\u2014{date}\uff01",
+            "{name}\u3055\u3093\u304c{date}\u306b\u5927\u304d\u306a{value}\u306b\u5230\u9054\u3057\u307e\u3059\u3002{unit}\u3067\u6570\u3048\u308b\u3068\u3001\u305f\u304f\u3055\u3093\u306e\u4eba\u751f\u3067\u3059\uff01",
+            "\u7f8e\u3057\u3044\u30bc\u30ed\u306e\u4e26\u3073\uff01{name}\u3055\u3093\u304c{date}\u306b{value}{unit}\u306b\u5230\u9054\u3057\u307e\u3059\u3002",
+            "{value}{unit}\u2014\u2014{name}\u3055\u3093\u306e\u304a\u795d\u3044\u306b\u3075\u3055\u308f\u3057\u3044\u30ad\u30ea\u306e\u3044\u3044\u6570\u5b57\u3067\u3059\u3002"
+        ],
+        repdigit: [
+            "{name}\u3055\u3093\u304c{date}\u306b{value}{unit}\u306b\u5230\u9054\uff01\u5168\u90e8\u540c\u3058\u6570\u5b57\u2014\u2014{why}\u3067\u3059\uff01",
+            "\u3059\u3079\u3066\u306e\u6841\u304c\u540c\u3058\u3068\u304d\u3001\u305d\u308c\u306f\u7279\u5225\u306a\u3053\u3068\u3002{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u306b\uff01",
+            "{value}{unit}\u2014\u2014\u30a8\u30b3\u30fc\u306e\u3088\u3046\u306a\u6570\u5b57\u3002{name}\u3055\u3093\u306e\u5f71\u97ff\u529b\u306e\u3088\u3046\u306b\u3002{date}\u3002",
+            "\u7e70\u308a\u8fd4\u3059\u6570\u5b57\u3001\u7e70\u308a\u8fd4\u3059\u559c\u3073\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002",
+            "\u3059\u3079\u3066\u306e\u6841\u304c\u540c\u610f\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3092\u304a\u795d\u3044\u3059\u308b\u6642\u3067\u3059\uff01{date}\uff01",
+            "{value}\u2014\u2014{name}\u3055\u3093\u306e\u305f\u3081\u306b\u8e8a\u308a\u4e0a\u304c\u308b\u6570\u5b57\uff01"
+        ],
+        palindrome: [
+            "{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u2014\u2014\u56de\u6587\u6570\u306e\u7bc0\u76ee\uff01\u524d\u304b\u3089\u8aad\u3093\u3067\u3082\u5f8c\u308d\u304b\u3089\u8aad\u3093\u3067\u3082\u540c\u3058\u3002",
+            "\u93e1\u3088\u93e1\uff1a{name}\u3055\u3093\u306e{value}{unit}\u304c{date}\u306b\u56de\u6587\u6570\u306b\uff01",
+            "{value}\u3092\u524d\u304b\u3089\u3001{value}\u3092\u5f8c\u308d\u304b\u3089\u3002{name}\u3055\u3093\u306e\u7bc0\u76ee\u306f\u5b8c\u74a7\u306a\u5bfe\u79f0\uff01",
+            "\u56de\u6587\u6570\u30a2\u30e9\u30fc\u30c8\uff01{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u2014\u2014\u3069\u306e\u89d2\u5ea6\u304b\u3089\u898b\u3066\u3082\u5b8c\u74a7\u3002",
+            "\u6570\u5b57\u306e\u5bfe\u79f0\u3001\u4eba\u751f\u306e\u5bfe\u79f0\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002",
+            "\u3069\u3061\u3089\u304b\u3089\u8aad\u3093\u3067\u3082\u3001{name}\u3055\u3093\u306e{value}{unit}\u306f\u7d20\u6674\u3089\u3057\u3044\u3002"
+        ],
+        fibonacci: [
+            "{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u2014\u2014\u30d5\u30a3\u30dc\u30ca\u30c3\u30c1\u306e\u7bc0\u76ee\uff01\u81ea\u7136\u304c\u611b\u3059\u308b\u6570\u5b57\u3002",
+            "\u9ec4\u91d1\u306e\u3089\u305b\u3093\u304c{name}\u3055\u3093\u306e{value}\u306b\u5230\u9054\uff01{date}\u306e\u30d5\u30a3\u30dc\u30ca\u30c3\u30c1{unit}\u306e\u304a\u795d\u3044\uff01",
+            "{name}\u3055\u3093\uff1a{value}{unit}\u3001\u30d5\u30a3\u30dc\u30ca\u30c3\u30c1\u6570\u5217\u306e\u4e2d\u3002\u81ea\u7136\u306e\u3088\u3046\u306b\u6210\u9577\uff01{date}\u3002",
+            "\u3072\u307e\u308f\u308a\u304b\u3089\u9280\u6cb3\u307e\u3067\uff1a{name}\u3055\u3093\u306e{value}{unit}\u306f\u9ec4\u91d1\u306e\u30d1\u30bf\u30fc\u30f3\u306b\u5f93\u3044\u307e\u3059\u3002{date}\u3002",
+            "\u30d5\u30a3\u30dc\u30ca\u30c3\u30c1\u6570\u5217\u304c{name}\u3055\u3093\u306b\u5fae\u7b11\u3080\uff1a{value}{unit}\u306e\u81ea\u7136\u306a\u6210\u9577\u3002",
+            "\u9ec4\u91d1\u6bd4\u304c\u627f\u8a8d\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\uff01"
+        ],
+        power_of_2: [
+            "{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u2014\u20142\u306e\u7d2f\u4e57\uff01\u30c7\u30b8\u30bf\u30eb\u306e\u4e16\u754c\u304c\u656c\u793c\u3057\u307e\u3059\u3002",
+            "\u30d0\u30a4\u30ca\u30ea\u306e\u5b8c\u74a7\uff1a{name}\u3055\u3093\u304c{value}{unit}\u306b\u5230\u9054\u30022\u306e\u7d2f\u4e57\u3001\u7d20\u6674\u3089\u3057\u3044\uff01",
+            "{value}{unit}\u2014\u2014\u30b3\u30f3\u30d4\u30e5\u30fc\u30bf\u304c\u559c\u3076\u6570\u5b57\u3067\u3059\u3002\u6e96\u5099\u306f\u3044\u3044\u3067\u3059\u304b\u3001{name}\u3055\u3093\uff01{date}\u3002",
+            "\u30d3\u30c3\u30c8\u304c\u63c3\u3044\u307e\u3059\uff1a{name}\u3055\u3093\u306e{value}{unit}\u306f\u5b8c\u74a7\u306a2\u306e\u7d2f\u4e57\uff01{date}\uff01",
+            "1\u304b\u30892\u30014\u304b\u3089\u2026{value}\u3078\uff01{name}\u3055\u3093\u306e\u6307\u6570\u7684\u6210\u9577\u306f{date}\u3082\u7d9a\u304d\u307e\u3059\u3002",
+            "\u30c7\u30b8\u30bf\u30eb\u306e\u7bc0\u76ee\uff01{name}\u3055\u3093\u306e{value}{unit}\u2014\u2014{date}\u306e2\u306e\u7d2f\u4e57\u3002"
+        ],
+        scientific: [
+            "{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u2014\u2014{why}\u306b\u95a2\u9023\u3059\u308b\u6570\u5b57\uff01\u79d1\u5b66\u3082\u304a\u795d\u3044\u3057\u307e\u3059\uff01",
+            "\u79d1\u5b66\u7684\u306b\u610f\u7fa9\u6df1\u3044\u7bc0\u76ee\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002{why}\uff01",
+            "\u4eba\u751f\u304c\u6570\u5b66\u306e\u5b9a\u6570\u3068\u51fa\u4f1a\u3046\u5834\u6240\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002",
+            "\u6570\u5b66\u597d\u304d\u96c6\u5408\uff1a{name}\u3055\u3093\u306e{value}{unit}\u304c{date}\u306b{why}\u3068\u3064\u306a\u304c\u308a\u307e\u3059\uff01",
+            "\u6570\u5b66\u304c\u7bc0\u76ee\u306b\u306a\u308b\u3068\u304d\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002{why}\uff01",
+            "\u30a2\u30a4\u30f3\u30b7\u30e5\u30bf\u30a4\u30f3\u3082\u8a8d\u3081\u308b\u3067\u3057\u3087\u3046\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002{why}\uff01"
+        ],
+        sequential: [
+            "{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u2014\u2014\u9023\u7d9a\u6570\uff01\u6570\u5b57\u304c\u9806\u756a\u306b\u4e26\u3073\u307e\u3059\u3002",
+            "1\u30012\u30013\u2026{value}\uff01{name}\u3055\u3093\u306e\u6570\u5b57\u304c{date}\u306b\u304d\u308c\u3044\u306b\u4e26\u3073\u307e\u3059\u3002",
+            "\u9023\u7d9a\u306e\u5b8c\u74a7\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002\u4e00\u6b69\u305a\u3064\uff01",
+            "\u97f3\u968e\u306e\u97f3\u7b26\u306e\u3088\u3046\u306b\u3001{name}\u3055\u3093\u306e{value}{unit}\u306e\u6570\u5b57\u304c\u5b8c\u74a7\u306a\u9806\u5e8f\u3067\u3002",
+            "\u6570\u5b57\u304c\u6574\u5217\uff01{name}\u3055\u3093\u306e{value}{unit}\u306f{date}\u306b\u9023\u7d9a\u306e\u304a\u795d\u3044\u3002",
+            "\u6570\u5b57\u306e\u968e\u6bb5\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002"
+        ],
+        alternating: [
+            "{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u2014\u2014\u4ea4\u4e92\u30d1\u30bf\u30fc\u30f3\uff01\u6570\u5b57\u304c\u8e0a\u3063\u3066\u3044\u307e\u3059\u3002",
+            "\u884c\u3063\u305f\u308a\u6765\u305f\u308a\u3001\u5fc3\u81d3\u306e\u9f13\u52d5\u306e\u3088\u3046\u306b\uff1a{name}\u3055\u3093\u306e{value}{unit}\u304c{date}\u306b\u5b8c\u74a7\u306b\u4ea4\u4e92\u3002",
+            "{value}\u306f{name}\u3055\u3093\u306b\uff1a\u72ec\u81ea\u306e\u30ea\u30ba\u30e0\u3092\u6301\u3064\u6570\u5b57\uff01{date}\u3002",
+            "\u632f\u308a\u5b50\u306e\u3088\u3046\u306b\u3001{name}\u3055\u3093\u306e{value}{unit}\u304c\u6570\u5b57\u306e\u9593\u3092\u63fa\u308c\u307e\u3059\u3002",
+            "{value}\u306e\u30ea\u30ba\u30e0\u304c{name}\u3055\u3093\u306e\u30ea\u30ba\u30e0\u3068\u4e00\u81f4\uff1a\u5b89\u5b9a\u3057\u3066\u7f8e\u3057\u3044\u3002",
+            "\u4ea4\u4e92\u3068\u304a\u795d\u3044\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\uff01"
+        ],
+        combined: [
+            "\u307f\u306a\u3055\u3093\u5408\u308f\u305b\u3066\u3001{date}\u306b{value}{unit}\u306b\u5230\u9054\uff01\u7d44\u307f\u5408\u308f\u305b\u306e\u7bc0\u76ee\u306f\u6700\u9ad8\u3067\u3059\u3002",
+            "{value}{unit}\u306e\u5171\u540c\u751f\u6d3b\u2014\u2014\u305f\u304f\u3055\u3093\u306e\u5171\u6709\u306e\u77ac\u9593\u3067\u3059\uff01{date}\uff01",
+            "\u3059\u3079\u3066\u306e{unit}\u3092\u8db3\u3059\u3068{value}\u306b\u3002\u3059\u3079\u3066\u306e\u611b\u3092\u8db3\u3059\u3068\u7121\u9650\u5927\u306b\u3002",
+            "\u5408\u8a08\uff1a{value}{unit}\u306e\u4eba\u751f\u3001\u7b11\u3044\u3001\u305d\u3057\u3066\u4e00\u7dd2\u306b\u3044\u308b\u3053\u3068\u3002{date}\u3002",
+            "\u307f\u306a\u3055\u3093\u306e\u9593\u3067{value}{unit}\uff01\u305d\u308c\u306f{why}\u2014\u2014\u4e00\u7dd2\u306b\u304a\u795d\u3044\u3059\u308b\u4fa1\u5024\u304c\u3042\u308a\u307e\u3059\uff01{date}\u3002",
+            "\u65c5\u306e\u5408\u8a08\uff1a{value}{unit}\u3001{date}\u3002\u5168\u4f53\u306f\u90e8\u5206\u306e\u548c\u3088\u308a\u5927\u304d\u3044\uff01"
+        ],
+        ratio: [
+            "\u304a\u4e8c\u4eba\u306e\u5e74\u9f62\u306e\u6bd4\u7387\u304c{date}\u306b\u3061\u3087\u3046\u3069{value}\u306b\uff01\u6570\u5b66\u7684\u306a\u8abf\u548c\u306e\u77ac\u9593\u3002",
+            "{date}\u3001\u304a\u4e8c\u4eba\u306e\u5e74\u9f62\u304c{value}\u306e\u6bd4\u7387\u3092\u5f62\u6210\u3057\u307e\u3059\u3002\u306a\u3093\u3068\u7f8e\u3057\u3044\uff01",
+            "\u5e74\u9f62\u6bd4\u7387\u306e\u7bc0\u76ee\uff1a{value}\uff01\u304a\u4e8c\u4eba\u306e\u6570\u5b57\u304c{date}\u306b\u8e0a\u3063\u3066\u3044\u307e\u3059\u3002",
+            "\u304a\u4e8c\u4eba\u306e\u5e74\u9f62\u304c{value}\u306e\u6bd4\u7387\u3067\u63c3\u3044\u307e\u3059\u2014\u2014{date}\u306e\u7f8e\u3057\u304f\u306f\u304b\u306a\u3044\u77ac\u9593\u3002",
+            "\u6bd4\u7387{value}\u306f\u304a\u4e8c\u4eba\u306e\u7d46\u3068\u540c\u3058\u304f\u3089\u3044\u7279\u5225\u3067\u3059\u3002",
+            "{date}\u3001\u304a\u4e00\u4eba\u304c\u3082\u3046\u304a\u4e00\u4eba\u306e\u3061\u3087\u3046\u3069{value}\u500d\u306b\u306a\u308a\u307e\u3059\u3002\u7d20\u6575\u3067\u3059\u306d\uff01"
+        ],
+        generic: [
+            "{name}\u3055\u3093\u304c\u3082\u3046\u3059\u3050{value}{unit}\u306b\uff01\u305d\u308c\u306f{why}\u3002\u304a\u795d\u3044\u306e\u6e96\u5099\u3092\u3057\u307e\u3057\u3087\u3046\uff01",
+            "\u3054\u5b58\u77e5\u3067\u3059\u304b\uff1f{name}\u3055\u3093\u306f{date}\u306b\u3061\u3087\u3046\u3069{value}{unit}\u306b\u306a\u308a\u307e\u3059\u3002\u7d20\u6574\u306a\u7bc0\u76ee\u3067\u3059\uff01",
+            "\u3053\u306e\u77ac\u9593\u3092\u899a\u3048\u3066\uff1a{name}\u3055\u3093\u306e{value}{unit}\u3001{date}\u3002\u7279\u5225\u306a\u6570\u5b57\u306f\u6ce8\u76ee\u306b\u5024\u3057\u307e\u3059\u3002",
+            "{name}\u3055\u3093\u306e{value}{unit}\u306e\u7bc0\u76ee\u304c\u8fd1\u3065\u3044\u3066\u3044\u307e\u3059\u2014\u2014\u305d\u306e\u6570\u5b57\u306f{why}\u3002{date}\u306b\u304a\u795d\u3044\uff01",
+            "\u8ab0\u3082\u304c{value}{unit}\u306b\u5230\u9054\u3067\u304d\u308b\u308f\u3051\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002{name}\u3055\u3093\u3001\u3042\u306a\u305f\u306f\u5e78\u904b\u3067\u3059\u3002",
+            "{name}\u3055\u3093\u306e{value}{unit}\u3002\u5206\u304b\u3061\u5408\u3044\u304a\u795d\u3044\u3059\u308b\u4fa1\u5024\u306e\u3042\u308b\u6570\u5b57\u3067\u3059\u3001{date}\u3002"
+        ]
+    },
+
+    // ======================================================================
+    // Spanish (es) \u2014 enthusiastic, warm
+    // ======================================================================
+    es: {
+        birthday: [
+            "\u00a1{name} cumplir\u00e1 {value} {unit} el {date}! Cada uno de ellos vale la pena celebrar.",
+            "\u00a1{value} {unit} de {name} iluminando el mundo \u2014 llega el {date}!",
+            "\u00bf\u00a1Sab\u00edas que {name} alcanzar\u00e1 exactamente {value} {unit} el {date}?! \u00a1Eso es {why}!",
+            "\u00a1Faltan solo {countdown} para que {name} cumpla {value} {unit}! \u00a1A celebrar!",
+            "{name}: a punto de cumplir {value} {unit}. Los mejores cap\u00edtulos a\u00fan est\u00e1n por escribirse.",
+            "El {date}, har\u00e1 exactamente {value} {unit} desde que {name} lleg\u00f3 al mundo. \u00a1Qu\u00e9 viaje!",
+            "{value} {unit} de risas, crecimiento y {name} siendo extraordinario/a \u2014 \u00a1llega el {date}!",
+            "\u00a1Prep\u00e1rate para celebrar a {name} por {value} {unit} de pura maravilla!"
+        ],
+        round: [
+            "\u00a1{name} va a llegar a {value} {unit}! Un n\u00famero redondo perfecto para una persona perfecta.",
+            "\u00a1{value} {unit} en camino! Muchos ceros y cero razones para no celebrar a {name}.",
+            "N\u00fameros redondos, aplausos redondos: \u00a1{name} con {value} {unit} el {date}!",
+            "\u00a1{name} alcanzar\u00e1 el gran {value} el {date}! En {unit}, \u00a1eso es much\u00edsima vida!",
+            "\u00a1Mira esos ceros preciosos! {name} marcar\u00e1 {value} {unit} el {date}.",
+            "{value} {unit} \u2014 el tipo de n\u00famero redondo que pide fiesta para {name}."
+        ],
+        repdigit: [
+            "\u00a1{name} alcanzar\u00e1 {value} {unit} el {date}! Todos los d\u00edgitos iguales \u2014 \u00a1eso es {why}!",
+            "Cuando cada d\u00edgito es el mismo, sabes que es especial. \u00a1{name} con {value} {unit} el {date}!",
+            "{value} {unit} \u2014 un n\u00famero hecho de ecos. Como el impacto de {name}. El {date}.",
+            "D\u00edgito repetido, alegr\u00eda repetida: \u00a1{name} con {value} {unit} el {date}!",
+            "\u00a1Todos los d\u00edgitos est\u00e1n de acuerdo: es hora de celebrar a {name} con {value} {unit} el {date}!",
+            "\u00a1{value} \u2014 el n\u00famero que tartamudea de emoci\u00f3n por {name}!"
+        ],
+        palindrome: [
+            "\u00a1{name} con {value} {unit} el {date} \u2014 un pal\u00edndromo! Se lee igual al derecho y al rev\u00e9s.",
+            "\u00a1Espejito, espejito: {value} {unit} de {name} ser\u00e1 un pal\u00edndromo el {date}!",
+            "{value} al derecho, {value} al rev\u00e9s. \u00a1El hito de {name} tendr\u00e1 simetr\u00eda perfecta!",
+            "\u00a1Alerta de pal\u00edndromo! {name} con {value} {unit} el {date} \u2014 \u00a1perfecto desde cualquier \u00e1ngulo!",
+            "Simetr\u00eda en los n\u00fameros, simetr\u00eda en la vida: {name} con {value} {unit} el {date}.",
+            "Del derecho o del rev\u00e9s, {name} con {value} {unit} es incre\u00edble."
+        ],
+        fibonacci: [
+            "\u00a1{name} con {value} {unit} el {date} \u2014 un hito Fibonacci! El n\u00famero de la naturaleza.",
+            "\u00a1La espiral dorada alcanza {value} para {name}! Celebraci\u00f3n Fibonacci el {date}.",
+            "{name}: {value} {unit} en la secuencia de Fibonacci. \u00a1Creciendo como la naturaleza quiso! {date}.",
+            "De girasoles a galaxias: {value} {unit} de {name} sigue el patr\u00f3n dorado. {date}.",
+            "La secuencia de Fibonacci le sonr\u00ede a {name}: {value} {unit} de crecimiento natural.",
+            "\u00a1La proporci\u00f3n \u00e1urea aprueba: {name} con {value} {unit} el {date}!"
+        ],
+        power_of_2: [
+            "\u00a1{name} con {value} {unit} el {date} \u2014 potencia de 2! El mundo digital te saluda.",
+            "\u00a1Perfecci\u00f3n binaria: {name} alcanzar\u00e1 {value} {unit}! \u00a12 elevado a la potencia de lo incre\u00edble!",
+            "{value} {unit} \u2014 un n\u00famero que hace cantar a las computadoras. \u00a1Prep\u00e1rate, {name}! {date}.",
+            "\u00a1Los bits se alinear\u00e1n: {value} {unit} de {name} ser\u00e1 una potencia de 2 perfecta el {date}!",
+            "\u00a1De 1 a 2 a 4 hasta... {value}! El crecimiento exponencial de {name} contin\u00faa el {date}.",
+            "\u00a1Hito digital! {name} con {value} {unit} \u2014 potencia de 2 el {date}."
+        ],
+        scientific: [
+            "\u00a1{name} con {value} {unit} el {date} \u2014 un n\u00famero relacionado con {why}! \u00a1La ciencia celebra!",
+            "\u00a1Hito cient\u00edficamente significativo: {name} con {value} {unit} el {date}! \u00a1{why}!",
+            "Donde la vida se encuentra con las constantes matem\u00e1ticas: {name} con {value} {unit} el {date}.",
+            "\u00a1Nerds de las matem\u00e1ticas, un\u00edos: {name} con {value} {unit} el {date} est\u00e1 conectado con {why}!",
+            "\u00a1Cuando las matem\u00e1ticas se encuentran con los hitos: {name} con {value} {unit} el {date}! \u00a1{why}!",
+            "\u00a1Einstein aprobar\u00eda: {name} con {value} {unit} el {date}! \u00a1{why}!"
+        ],
+        sequential: [
+            "\u00a1{name} con {value} {unit} el {date} \u2014 un n\u00famero secuencial! Los d\u00edgitos marchan en orden.",
+            "\u00a11, 2, 3... {value}! Los d\u00edgitos de {name} caminan en fila perfecta el {date}.",
+            "\u00a1Perfecci\u00f3n secuencial: {name} con {value} {unit} el {date}! \u00a1Paso a paso!",
+            "Como notas en una escala, los d\u00edgitos de {name} est\u00e1n en secuencia perfecta: {value} {unit}.",
+            "\u00a1Orden en los d\u00edgitos! {value} {unit} de {name} ser\u00e1 una celebraci\u00f3n secuencial el {date}.",
+            "Una escalera de d\u00edgitos: {name} con {value} {unit} el {date}."
+        ],
+        alternating: [
+            "\u00a1{name} con {value} {unit} el {date} \u2014 patr\u00f3n alternado! \u00a1Los d\u00edgitos est\u00e1n bailando!",
+            "De aqu\u00ed para all\u00e1, como latidos: \u00a1{value} {unit} de {name} alterna perfectamente el {date}!",
+            "{value} para {name}: \u00a1un n\u00famero con ritmo propio! {date}.",
+            "Como un p\u00e9ndulo, {value} {unit} de {name} se balancea entre d\u00edgitos.",
+            "El ritmo de {value} combina con el ritmo de {name}: constante y hermoso.",
+            "\u00a1Alternancia y celebraci\u00f3n: {name} con {value} {unit} el {date}!"
+        ],
+        combined: [
+            "\u00a1Juntos alcanzar\u00e1n {value} {unit} el {date}! Los hitos combinados son los mejores.",
+            "\u00a1{value} {unit} de vida combinada \u2014 muchos momentos compartidos el {date}!",
+            "Suma todos los {unit} y obtienes {value}. Suma todo el amor y obtienes infinito.",
+            "Total combinado: {value} {unit} de vida, risas y estar juntos el {date}.",
+            "\u00a1{value} {unit} entre todos ustedes! Eso es {why} \u2014 \u00a1vale la pena celebrar juntos el {date}!",
+            "\u00a1La suma de los viajes: {value} {unit} el {date}! \u00a1Mayor que las partes!"
+        ],
+        ratio: [
+            "\u00a1La proporci\u00f3n entre sus edades ser\u00e1 exactamente {value} el {date}! Un momento de armon\u00eda matem\u00e1tica.",
+            "\u00a1El {date}, sus edades formar\u00e1n la proporci\u00f3n {value}! \u00a1Qu\u00e9 satisfacci\u00f3n!",
+            "\u00a1Hito de proporci\u00f3n de edad: {value}! Los n\u00fameros entre ustedes bailan el {date}.",
+            "Sus edades se alinear\u00e1n en la proporci\u00f3n {value} \u2014 una hermosa proporci\u00f3n fugaz el {date}.",
+            "La proporci\u00f3n {value} es tan especial como el v\u00ednculo entre ustedes.",
+            "\u00a1El {date}, uno de ustedes ser\u00e1 exactamente {value} veces el otro! \u00a1Qu\u00e9 genial!"
+        ],
+        generic: [
+            "\u00a1{name} va a alcanzar {value} {unit}! Eso es {why}. \u00a1Hora de preparar la celebraci\u00f3n!",
+            "\u00bf\u00a1Sab\u00edas?! \u00a1{name} alcanzar\u00e1 exactamente {value} {unit} el {date}! \u00a1Qu\u00e9 hito!",
+            "Marca el momento: {name} con {value} {unit} el {date}. N\u00fameros as\u00ed merecen atenci\u00f3n.",
+            "\u00a1El hito de {value} {unit} de {name} se acerca \u2014 un n\u00famero que es {why}! \u00a1Celebra el {date}!",
+            "No todos llegan a {value} {unit}. {name}, t\u00fa eres de los afortunados.",
+            "{value} {unit} de {name}. Un n\u00famero que merece compartirse y celebrarse el {date}."
+        ]
+    }
+};
+
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { SHARE_MESSAGES };
+    module.exports = { SHARE_MESSAGES, SHARE_MESSAGES_I18N, APP_SHARE_LINK_I18N, SHARE_DATE_FALLBACK_I18N };
 }

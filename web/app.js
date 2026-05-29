@@ -2657,6 +2657,18 @@ function updateSharePreview() {
 
 function pickShareTemplate(category) {
     if (typeof SHARE_MESSAGES === 'undefined') return null;
+
+    // Try locale-specific messages first
+    const locale = getAppLocale().split('-')[0]; // 'pt-BR' -> 'pt'
+    if (locale !== 'en' && typeof SHARE_MESSAGES_I18N !== 'undefined' && SHARE_MESSAGES_I18N[locale]) {
+        const localeMessages = SHARE_MESSAGES_I18N[locale];
+        const templates = localeMessages[category] || localeMessages.generic || [];
+        if (templates.length > 0) {
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+    }
+
+    // Fall back to English
     const templates = SHARE_MESSAGES[category] || SHARE_MESSAGES.generic || [];
     if (templates.length === 0) return null;
     return templates[Math.floor(Math.random() * templates.length)];
@@ -2681,7 +2693,11 @@ function fillShareTemplate(template, m) {
     // Ensure the message communicates WHEN it will happen
     // If template doesn't mention date/countdown, append it
     if (!template.includes('{date}') && !template.includes('{countdown}')) {
-        filled += ` On ${dateStr} — ${countdown} from now!`;
+        const locale = getAppLocale().split('-')[0];
+        const fallbackTpl = (typeof SHARE_DATE_FALLBACK_I18N !== 'undefined' && SHARE_DATE_FALLBACK_I18N[locale])
+            ? SHARE_DATE_FALLBACK_I18N[locale]
+            : ' On {date} \u2014 {countdown} from now!';
+        filled += fallbackTpl.replace(/\{date\}/g, dateStr).replace(/\{countdown\}/g, countdown);
     }
 
     return filled;
@@ -2702,7 +2718,15 @@ function getShareCategory(m) {
     return typeMap[m.type] || 'generic';
 }
 
-const APP_SHARE_LINK = '\n\nDiscover your special numbers \u2192 happymoments.app';
+const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 happymoments.app';
+
+function getAppShareLink() {
+    const locale = getAppLocale().split('-')[0];
+    if (typeof APP_SHARE_LINK_I18N !== 'undefined' && APP_SHARE_LINK_I18N[locale]) {
+        return APP_SHARE_LINK_I18N[locale];
+    }
+    return APP_SHARE_LINK_DEFAULT;
+}
 
 function quickShare(idx) {
     const m = allMilestonesFlat[idx];
@@ -2764,7 +2788,7 @@ function generateShareMessage(m) {
             msg = `${m.eventName} will be ${val} ${m.unitName} old on ${dateStr} — just ${countdown} away!`;
         }
     }
-    return msg + APP_SHARE_LINK;
+    return msg + getAppShareLink();
 }
 
 function handleCopyShare() {
@@ -2873,7 +2897,7 @@ function generateCombinedShareMessage(m) {
 
     const description = m.comboDescription || m.description || `${m.value.toLocaleString()} ${m.unitName}`;
 
-    return `Hey! I discovered something amazing - ${description} on ${dateStr}! That's ${formatTimeDistance(m.timeUntil)} from now. Let's celebrate this special moment together!` + APP_SHARE_LINK;
+    return `Hey! I discovered something amazing - ${description} on ${dateStr}! That's ${formatTimeDistance(m.timeUntil)} from now. Let's celebrate this special moment together!` + getAppShareLink();
 }
 
 function handleCopyCombinedShare() {
