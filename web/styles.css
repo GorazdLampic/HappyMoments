@@ -1134,7 +1134,7 @@ body {
 
 .cm-unit {
     font-family: var(--font-serif);
-    font-size: 0.62rem;
+    font-size: 0.78rem;
     font-weight: 400;
     color: var(--text-muted);
     font-style: italic;
@@ -1143,7 +1143,7 @@ body {
 
 .cm-marker {
     color: var(--warning);
-    font-size: 0.55rem;
+    font-size: 0.68rem;
     font-weight: 700;
     vertical-align: super;
 }
@@ -1151,6 +1151,15 @@ body {
 .column-milestone.very-special .cm-num {
     color: var(--warning);
 }
+.column-milestone.big-milestone {
+    border-left: 3px solid var(--warning);
+}
+.quick-share-btn {
+    background: none; border: none; color: var(--text-muted); cursor: pointer;
+    font-size: 14px; padding: 2px 6px; margin-left: 4px; opacity: 0.5;
+    vertical-align: middle; line-height: 1;
+}
+.quick-share-btn:hover { opacity: 1; color: var(--accent); }
 
 .column-milestone.birthday-milestone .cm-num {
     font-family: var(--font-serif);
@@ -1166,7 +1175,7 @@ body {
 }
 
 .cm-alt-a, .cm-alt-b {
-    font-size: 0.70rem;
+    font-size: 0.82rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1207,7 +1216,7 @@ body {
 
 .cm-footnote {
     font-family: var(--font-serif);
-    font-size: 0.65rem;
+    font-size: 0.78rem;
     color: var(--text-muted);
     font-style: italic;
     line-height: 1.4;
@@ -2206,9 +2215,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .column-milestones { max-height: 350px; }
     /* Milestone fonts on phone */
     .cm-num { font-size: 0.82rem; }
-    .cm-unit { font-size: 0.58rem; }
-    .cm-marker { font-size: 0.50rem; }
-    .cm-alt-a, .cm-alt-b { font-size: 0.68rem; }
+    .cm-unit { font-size: 0.72rem; }
+    .cm-marker { font-size: 0.62rem; }
+    .cm-alt-a, .cm-alt-b { font-size: 0.75rem; }
     .column-milestone { padding: 6px 4px; }
     /* Better selection visibility */
     .column-milestone.selected-for-share { outline: 2px solid var(--accent); background: var(--bg-elevated); }
@@ -2466,6 +2475,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     max-width: 200px;
 }
 
+.team-views-hint {
+    text-align: center; font-size: var(--font-size-xs); color: var(--warning);
+    font-style: italic; padding: 8px 0; margin-top: 8px;
+}
 .premium-gate-overlay {
     text-align: center; padding: var(--space-xl) var(--space-lg);
     color: var(--text-secondary); font-style: italic;

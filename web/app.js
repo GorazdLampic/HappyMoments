@@ -340,7 +340,15 @@ function updateNotifPrefs() {
 }
 
 function loadDarkMode() {
-    const saved = localStorage.getItem('happymoments_theme') || 'dark';
+    let saved = localStorage.getItem('happymoments_theme');
+    if (!saved) {
+        // Auto-detect system preference for first-time users
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            saved = 'light';
+        } else {
+            saved = 'dark';
+        }
+    }
     setAppTheme(saved, true);
 }
 
@@ -1155,7 +1163,6 @@ function renderCombinedTab() {
 
     // Check team view limit for free users
     if (!checkTeamViewLimit()) {
-        const remaining = 0;
         combinedMilestonesContentEl.innerHTML = `
             <div class="premium-gate-overlay">
                 <p>You've used your ${FREE_TEAM_VIEWS} free Team views.</p>
@@ -1328,6 +1335,14 @@ function renderCombinedTab() {
 
     if (html === '') {
         html = '<p class="empty-text">No combined milestones found. Check connections in Settings.</p>';
+    }
+
+    // Show views remaining for free users
+    if (!isPremium()) {
+        const remaining = FREE_TEAM_VIEWS - getTeamViewCount();
+        if (remaining > 0 && remaining <= 3) {
+            html += `<p class="team-views-hint">${remaining} free view${remaining === 1 ? '' : 's'} remaining</p>`;
+        }
     }
 
     combinedMilestonesContentEl.innerHTML = html;
@@ -1921,6 +1936,17 @@ function renderMostSpecialMilestones() {
         allMilestonesFlat = allMilestonesFlat.concat(yearlyMilestones);
 
         const milestones = findAllUpcomingMilestones(e.date, 50, 730, appSettings); // Look further ahead
+
+        // Add "Big Milestones" (billion seconds, etc.) — always visible
+        if (typeof findBigMilestones === 'function') {
+            const bigOnes = findBigMilestones(e.date, appSettings);
+            bigOnes.forEach(bm => {
+                if (!milestones.some(m => m.value === bm.value && m.unit === bm.unit)) {
+                    milestones.push(bm);
+                }
+            });
+        }
+
         milestones.forEach(m => {
             m.eventName = e.name;
             m.eventId = e.id;
@@ -1928,7 +1954,7 @@ function renderMostSpecialMilestones() {
             m.fullDescription = getEventMilestoneDescription(e, m);
         });
         // Only add very special milestones
-        const verySpecial = milestones.filter(m => isVerySpecialNumber(m.value));
+        const verySpecial = milestones.filter(m => isVerySpecialNumber(m.value) || m.isBigMilestone);
         allMilestonesFlat = allMilestonesFlat.concat(verySpecial);
     });
 
@@ -2053,6 +2079,17 @@ function renderPersonColumns() {
         // Get special number milestones
         const milestones = findAllUpcomingMilestones(event.date, 20, 365, appSettings);
 
+        // Add "Big Milestones" (billion seconds, etc.) — no time horizon limit
+        if (typeof findBigMilestones === 'function') {
+            const bigOnes = findBigMilestones(event.date, appSettings);
+            bigOnes.forEach(bm => {
+                // Only add if not already in the list
+                if (!milestones.some(m => m.value === bm.value && m.unit === bm.unit)) {
+                    milestones.push(bm);
+                }
+            });
+        }
+
         // Score and sort by combined roundness + proximity
         milestones.forEach(m => {
             const rScore = roundnessScore(m.value);
@@ -2100,7 +2137,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone birthday-milestone ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.description}</span></div>
+                            <div class="cm-line1"><span class="cm-num">${m.description}</span><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
                             <div class="cm-line2"><span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span></div>
                         </div>
                     `;
@@ -2125,9 +2162,9 @@ function renderPersonColumns() {
                     }
 
                     html += `
-                        <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${hiddenClass} ${selected}"
+                        <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${m.isBigMilestone ? 'big-milestone' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${m.unitName}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}</div>
+                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${m.unitName}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}<button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
                                 ${showAlt ? `<span class="cm-alt-b">${showAlt}</span>` : ''}
@@ -2666,6 +2703,21 @@ function getShareCategory(m) {
 }
 
 const APP_SHARE_LINK = '\n\nDiscover your special numbers \u2192 happymoments.app';
+
+function quickShare(idx) {
+    const m = allMilestonesFlat[idx];
+    if (!m) return;
+    const message = generateShareMessage(m);
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Copied to clipboard!', 'success');
+        }).catch(() => {});
+    }
+    _track('quick_share', { value: m.value, unit: m.unit });
+    promptShareApp();
+}
 
 function shareAppLink() {
     const text = 'Discover when you turn 1 billion seconds old, 10,000 days, or hit a Fibonacci birthday. Track milestones for everyone you love!\n\nhappymoments.app';
@@ -3784,7 +3836,7 @@ function updateAccountUI(user) {
 // PREMIUM GATE
 // ============================================================
 
-const FREE_PEOPLE_LIMIT = 5;
+const FREE_PEOPLE_LIMIT = 8;
 const FREE_TEAM_VIEWS = 5;
 
 function isPremium() {

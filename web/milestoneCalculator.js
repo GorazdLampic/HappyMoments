@@ -126,6 +126,47 @@ function findAllUpcomingMilestones(startDate, maxResults, maxDaysAhead, settings
         .slice(0, maxResults);
 }
 
+// Find "Big Milestones" — next power of 10 for key units, no time horizon limit
+// These are the viral hooks: "1 billion seconds", "1 million minutes", "100,000 hours"
+function findBigMilestones(startDate, settings) {
+    settings = settings || DEFAULT_SETTINGS;
+    const now = new Date();
+    const milestones = [];
+    const bigUnits = ['seconds', 'minutes', 'hours', 'days'];
+    const powersOf10 = [1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000];
+
+    for (const unit of bigUnits) {
+        const unitConfig = TIME_UNITS[unit];
+        if (!unitConfig) continue;
+        const currentAge = calculateAge(startDate, now, unit);
+
+        for (const pow of powersOf10) {
+            if (pow <= currentAge) continue;
+            if (pow > unitConfig.maxReasonable) break;
+
+            const milestoneDate = calculateMilestoneDate(startDate, pow, unit);
+            if (milestoneDate <= now) continue;
+
+            const timeUntil = milestoneDate.getTime() - now.getTime();
+            const specialInfo = isSpecialNumber(pow, settings);
+
+            milestones.push({
+                value: pow,
+                unit: unit,
+                unitName: unitConfig.name,
+                date: milestoneDate,
+                type: specialInfo.type,
+                description: specialInfo.description,
+                timeUntil: timeUntil,
+                isBigMilestone: true
+            });
+            break; // Only the next power of 10 per unit
+        }
+    }
+
+    return milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
 // Find milestones for a fixed duration (between two dates)
 function findDurationMilestones(startDate, endDate, maxResults, settings) {
     maxResults = maxResults || 50;
