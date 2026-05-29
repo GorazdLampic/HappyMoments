@@ -133,7 +133,7 @@ fs.writeFileSync(path.join(DIST, 'index.html'), html);
 console.log(`  Processed: index.html (v=${VERSION})`);
 
 // Copy HTML pages
-['legal.html', 'landing.html'].forEach(f => {
+['legal.html', 'landing.html', 'admin.html'].forEach(f => {
     const src = path.join(SRC, f);
     if (fs.existsSync(src)) {
         fs.copyFileSync(src, path.join(DIST, f));

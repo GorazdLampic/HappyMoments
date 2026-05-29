@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #1a1a1a;
+    --bg-card: #222222;
+    --bg-elevated: #2a2a2a;
+    --bg-hover: #303030;
+    --accent: #d4b876;
+    --accent-dim: rgba(212, 184, 118, 0.15);
+    --accent-mid: rgba(212, 184, 118, 0.4);
+    --text: #e0e0e0;
+    --text-secondary: #aaaaaa;
+    --text-muted: #777777;
+    --border: #333333;
+    --success: #a0b8a0;
+    --danger: #c07070;
+    --font: 'Segoe UI', -apple-system, system-ui, sans-serif;
+    --mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    --radius: 10px;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* ---- Auth overlay ---- */
+#auth-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+}
+#auth-overlay.hidden { display: none; }
+
+.auth-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    width: 360px;
+    text-align: center;
+}
+.auth-box h1 {
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 6px;
+}
+.auth-box p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+.auth-box input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.auth-box input:focus { border-color: var(--accent); }
+.auth-box button {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px;
+    background: var(--accent);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.auth-box button:hover { opacity: 0.85; }
+.auth-error {
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 10px;
+    min-height: 18px;
+}
+
+/* ---- Dashboard layout ---- */
+#dashboard { display: none; }
+#dashboard.visible { display: block; }
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    position: sticky; top: 0; z-index: 100;
+}
+.topbar h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.topbar-right button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.topbar-right button:hover { border-color: var(--accent); color: var(--accent); }
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* ---- Tabs ---- */
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+}
+.tab {
+    padding: 10px 18px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+}
+.tab:hover { color: var(--text-secondary); }
+.tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ---- Stat cards ---- */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--accent-mid); }
+.stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.stat-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+.stat-card.accent .stat-value { color: var(--accent); }
+
+/* ---- Funnel ---- */
+.funnel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 28px;
+}
+.funnel h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.funnel-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+.funnel-label {
+    width: 160px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-family: var(--mono);
+    text-align: right;
+    flex-shrink: 0;
+}
+.funnel-bar-wrap {
+    flex: 1;
+    height: 32px;
+    background: var(--bg);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+.funnel-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-mid));
+    border-radius: 6px;
+    transition: width 0.6s ease;
+    min-width: 2px;
+}
+.funnel-count {
+    width: 70px;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    flex-shrink: 0;
+}
+.funnel-rate {
+    width: 60px;
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    text-align: right;
+}
+
+/* ---- Tables ---- */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+.section-header h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.filter-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+}
+.filter-select:focus { border-color: var(--accent); }
+
+.table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+thead th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+    position: sticky;
+    top: 0;
+}
+tbody td {
+    padding: 8px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+tbody tr:hover { background: var(--bg-hover); }
+tbody tr:last-child td { border-bottom: none; }
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+}
+.badge-premium { background: var(--accent-dim); color: var(--accent); }
+.badge-free { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+.badge-action {
+    background: rgba(160, 184, 160, 0.15);
+    color: var(--success);
+    font-family: var(--mono);
+    font-size: 11px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* ---- Loading ---- */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    color: var(--text-muted);
+    gap: 10px;
+}
+.spinner {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Status dot ---- */
+.status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+}
+.status-dot.live { background: var(--success); box-shadow: 0 0 6px var(--success); }
+.status-dot.error { background: var(--danger); }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .container { padding: 16px; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-value { font-size: 24px; }
+    .funnel-label { width: 100px; font-size: 11px; }
+    .topbar { padding: 12px 16px; }
+    .topbar h1 { font-size: 15px; }
+    .tabs { overflow-x: auto; }
+    .tab { padding: 8px 12px; font-size: 12px; white-space: nowrap; }
+    .table-wrap { overflow-x: auto; }
+    table { min-width: 640px; }
+}
+@media (max-width: 480px) {
+    .stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-card { padding: 14px; }
+    .stat-value { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Auth overlay -->
+<div id="auth-overlay">
+    <div class="auth-box">
+        <h1>HappyMoments Admin</h1>
+        <p>Enter the admin password to continue</p>
+        <input type="password" id="auth-password" placeholder="Password" autocomplete="off" autofocus>
+        <button onclick="authenticate()">Sign in</button>
+        <div class="auth-error" id="auth-error"></div>
+    </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+    <div class="topbar">
+        <h1><span style="font-size: 22px;">&#9733;</span> HappyMoments Admin</h1>
+        <div class="topbar-right">
+            <span id="status-indicator"><span class="status-dot"></span> Connecting...</span>
+            <span id="last-updated">--</span>
+            <button onclick="refreshAll()">Refresh</button>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="overview">Overview</button>
+            <button class="tab" data-tab="journey">User Journey</button>
+            <button class="tab" data-tab="events">Events</button>
+            <button class="tab" data-tab="users">Users</button>
+            <button class="tab" data-tab="campaigns">Campaigns</button>
+        </div>
+
+        <!-- Overview tab -->
+        <div class="tab-content active" id="tab-overview">
+            <div class="stat-grid" id="stat-cards">
+                <div class="loading"><div class="spinner"></div> Loading stats...</div>
+            </div>
+        </div>
+
+        <!-- Journey tab -->
+        <div class="tab-content" id="tab-journey">
+            <div id="funnel-container">
+                <div class="loading"><div class="spinner"></div> Loading funnel...</div>
+            </div>
+        </div>
+
+        <!-- Events tab -->
+        <div class="tab-content" id="tab-events">
+            <div class="section-header">
+                <h3>Recent Analytics Events</h3>
+                <select class="filter-select" id="event-filter" onchange="loadEvents()">
+                    <option value="">All actions</option>
+                </select>
+            </div>
+            <div class="table-wrap">
+                <div id="events-table">
+                    <div class="loading"><div class="spinner"></div> Loading events...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users tab -->
+        <div class="tab-content" id="tab-users">
+            <div class="section-header">
+                <h3>Registered Users</h3>
+                <span id="user-count" style="font-size: 12px; color: var(--text-muted);"></span>
+            </div>
+            <div class="table-wrap">
+                <div id="users-table">
+                    <div class="loading"><div class="spinner"></div> Loading users...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaigns tab -->
+        <div class="tab-content" id="tab-campaigns">
+            <div class="section-header">
+                <h3>UTM Campaign Performance</h3>
+            </div>
+            <div class="table-wrap">
+                <div id="campaigns-table">
+                    <div class="loading"><div class="spinner"></div> Loading campaigns...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+    'use strict';
+
+    const API_BASE = '/api/admin';
+    const REFRESH_INTERVAL = 60000;
+    const PASSWORD_KEY = 'hm_admin_token';
+
+    let token = '';
+    let refreshTimer = null;
+    let cachedData = {};
+
+    // ---- Auth ----
+
+    window.authenticate = function() {
+        const input = document.getElementById('auth-password');
+        const pw = input.value.trim();
+        if (!pw) return;
+
+        token = pw;
+        // Test the token by fetching stats
+        apiGet('stats').then(data => {
+            if (data.error) {
+                document.getElementById('auth-error').textContent = 'Invalid password';
+                token = '';
+                input.value = '';
+                input.focus();
+            } else {
+                sessionStorage.setItem(PASSWORD_KEY, pw);
+                document.getElementById('auth-overlay').classList.add('hidden');
+                document.getElementById('dashboard').classList.add('visible');
+                initDashboard(data);
+            }
+        }).catch(() => {
+            document.getElementById('auth-error').textContent = 'Connection error';
+            token = '';
+        });
+    };
+
+    window.logout = function() {
+        sessionStorage.removeItem(PASSWORD_KEY);
+        token = '';
+        if (refreshTimer) clearInterval(refreshTimer);
+        document.getElementById('auth-overlay').classList.remove('hidden');
+        document.getElementById('dashboard').classList.remove('visible');
+        document.getElementById('auth-password').value = '';
+        document.getElementById('auth-error').textContent = '';
+    };
+
+    // Check for saved session
+    const saved = sessionStorage.getItem(PASSWORD_KEY);
+    if (saved) {
+        token = saved;
+        apiGet('stats').then(data => {
+            if (!data.error) {
+                document.getElementById('auth-overlay').classList.add('hidden');
+                document.getElementById('dashboard').classList.add('visible');
+                initDashboard(data);
+            } else {
+                sessionStorage.removeItem(PASSWORD_KEY);
+                token = '';
+            }
+        }).catch(() => {});
+    }
+
+    // Enter key on password input
+    document.getElementById('auth-password').addEventListener('keydown', e => {
+        if (e.key === 'Enter') authenticate();
+    });
+
+    // ---- API ----
+
+    function apiGet(action, params = {}) {
+        const url = new URL(API_BASE, window.location.origin);
+        url.searchParams.set('action', action);
+        for (const [k, v] of Object.entries(params)) {
+            if (v) url.searchParams.set(k, v);
+        }
+        return fetch(url, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        }).then(r => r.json()).catch(err => ({ error: err.message }));
+    }
+
+    // ---- Dashboard init ----
+
+    function initDashboard(statsData) {
+        renderStats(statsData);
+        setStatus(true);
+        loadJourney();
+        loadEvents();
+        loadUsers();
+        loadCampaigns();
+
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = setInterval(refreshAll, REFRESH_INTERVAL);
+    }
+
+    window.refreshAll = function() {
+        apiGet('stats').then(data => {
+            if (!data.error) {
+                renderStats(data);
+                setStatus(true);
+            } else {
+                setStatus(false);
+            }
+        }).catch(() => setStatus(false));
+        loadJourney();
+        loadEvents();
+        loadUsers();
+        loadCampaigns();
+    };
+
+    function setStatus(ok) {
+        const el = document.getElementById('status-indicator');
+        const dot = el.querySelector('.status-dot');
+        if (ok) {
+            dot.className = 'status-dot live';
+            el.innerHTML = '';
+            el.appendChild(dot);
+            el.append(' Connected');
+        } else {
+            dot.className = 'status-dot error';
+            el.innerHTML = '';
+            el.appendChild(dot);
+            el.append(' Error');
+        }
+        document.getElementById('last-updated').textContent =
+            'Updated ' + new Date().toLocaleTimeString();
+    }
+
+    // ---- Tabs ----
+
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        });
+    });
+
+    // ---- Render stats cards ----
+
+    function renderStats(data) {
+        cachedData.stats = data;
+        const grid = document.getElementById('stat-cards');
+        grid.innerHTML = '';
+
+        const cards = [
+            { label: 'Total Users', value: fmt(data.total_users), sub: null, accent: true },
+            { label: 'Users Today', value: fmt(data.users_today), sub: 'This week: ' + fmt(data.users_this_week) },
+            { label: 'Total Events', value: fmt(data.total_events), sub: 'Today: ' + fmt(data.events_today) },
+            { label: 'Premium Users', value: fmt(data.premium_users), sub: null },
+            { label: 'Happy Clicks', value: fmt(data.happy_clicks), sub: null, accent: true },
+        ];
+
+        cards.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'stat-card' + (c.accent ? ' accent' : '');
+            div.innerHTML =
+                '<div class="stat-label">' + esc(c.label) + '</div>' +
+                '<div class="stat-value">' + esc(c.value) + '</div>' +
+                (c.sub ? '<div class="stat-sub">' + esc(c.sub) + '</div>' : '');
+            grid.appendChild(div);
+        });
+    }
+
+    // ---- Render funnel ----
+
+    function loadJourney() {
+        apiGet('journey').then(data => {
+            if (data.error) return;
+            cachedData.journey = data;
+            renderFunnel(data.funnel);
+        });
+    }
+
+    function renderFunnel(funnel) {
+        const container = document.getElementById('funnel-container');
+        if (!funnel || funnel.length === 0) {
+            container.innerHTML = '<div class="empty-state">No journey data yet</div>';
+            return;
+        }
+
+        const maxCount = Math.max(...funnel.map(f => f.count), 1);
+
+        let html = '<div class="funnel"><h3>User Journey Funnel</h3>';
+        funnel.forEach((step, i) => {
+            const pct = ((step.count / maxCount) * 100).toFixed(1);
+            let rate = '';
+            if (i > 0 && funnel[i - 1].count > 0) {
+                rate = ((step.count / funnel[i - 1].count) * 100).toFixed(1) + '%';
+            } else if (i === 0) {
+                rate = '100%';
+            } else {
+                rate = '--';
+            }
+
+            html +=
+                '<div class="funnel-step">' +
+                    '<div class="funnel-label">' + esc(step.action) + '</div>' +
+                    '<div class="funnel-bar-wrap"><div class="funnel-bar" style="width:' + pct + '%"></div></div>' +
+                    '<div class="funnel-count">' + fmt(step.count) + '</div>' +
+                    '<div class="funnel-rate">' + esc(rate) + '</div>' +
+                '</div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    // ---- Render events ----
+
+    window.loadEvents = function() {
+        const filter = document.getElementById('event-filter').value;
+        apiGet('events', { filter: filter || '' }).then(data => {
+            if (data.error) return;
+            cachedData.events = data;
+            renderEvents(data.events);
+            updateEventFilter(data.action_types);
+        });
+    };
+
+    function updateEventFilter(types) {
+        const sel = document.getElementById('event-filter');
+        const current = sel.value;
+        // Only rebuild if options changed
+        if (sel.dataset.count === String(types.length)) return;
+        sel.dataset.count = types.length;
+        sel.innerHTML = '<option value="">All actions</option>';
+        types.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            if (t === current) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    function renderEvents(events) {
+        const wrap = document.getElementById('events-table');
+        if (!events || events.length === 0) {
+            wrap.innerHTML = '<div class="empty-state">No events recorded yet</div>';
+            return;
+        }
+        let html = '<table><thead><tr>' +
+            '<th>Time</th><th>Action</th><th>Session</th><th>User</th><th>Country</th><th>Data</th>' +
+            '</tr></thead><tbody>';
+        events.forEach(e => {
+            const ts = e.created_at > 1e12
+                ? new Date(e.created_at).toLocaleString()
+                : new Date(e.created_at * 1000).toLocaleString();
+            const dataStr = truncate(typeof e.data === 'string' ? e.data : JSON.stringify(e.data || {}), 80);
+            html += '<tr>' +
+                '<td>' + esc(ts) + '</td>' +
+                '<td><span class="badge badge-action">' + esc(e.action) + '</span></td>' +
+                '<td style="font-family:var(--mono);font-size:11px;">' + esc(e.session_id || '--') + '</td>' +
+                '<td style="font-family:var(--mono);font-size:11px;">' + esc(truncate(e.user_id || '--', 12)) + '</td>' +
+                '<td>' + esc(e.country || '--') + '</td>' +
+                '<td title="' + escAttr(dataStr) + '" style="font-size:11px;color:var(--text-muted);">' + esc(dataStr) + '</td>' +
+                '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+    }
+
+    // ---- Render users ----
+
+    function loadUsers() {
+        apiGet('users').then(data => {
+            if (data.error) return;
+            cachedData.users = data;
+            renderUsers(data.users);
+        });
+    }
+
+    function renderUsers(users) {
+        document.getElementById('user-count').textContent = users.length + ' users';
+        const wrap = document.getElementById('users-table');
+        if (!users || users.length === 0) {
+            wrap.innerHTML = '<div class="empty-state">No registered users yet</div>';
+            return;
+        }
+        const now = Math.floor(Date.now() / 1000);
+        let html = '<table><thead><tr>' +
+            '<th>UID</th><th>Email</th><th>Name</th><th>Status</th><th>UTM Source</th><th>Campaign</th><th>Registered</th>' +
+            '</tr></thead><tbody>';
+        users.forEach(u => {
+            const isPremium = u.premium_until && u.premium_until > now;
+            const created = new Date(u.created_at * 1000).toLocaleDateString();
+            html += '<tr>' +
+                '<td style="font-family:var(--mono);font-size:11px;">' + esc(truncate(u.uid, 12)) + '</td>' +
+                '<td>' + esc(u.email || '--') + '</td>' +
+                '<td>' + esc(u.display_name || '--') + '</td>' +
+                '<td><span class="badge ' + (isPremium ? 'badge-premium' : 'badge-free') + '">' +
+                    (isPremium ? 'Premium' : 'Free') + '</span></td>' +
+                '<td>' + esc(u.utm_source || '--') + '</td>' +
+                '<td>' + esc(u.utm_campaign || '--') + '</td>' +
+                '<td>' + esc(created) + '</td>' +
+                '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+    }
+
+    // ---- Render campaigns ----
+
+    function loadCampaigns() {
+        apiGet('campaigns').then(data => {
+            if (data.error) return;
+            cachedData.campaigns = data;
+            renderCampaigns(data.campaigns);
+        });
+    }
+
+    function renderCampaigns(campaigns) {
+        const wrap = document.getElementById('campaigns-table');
+        if (!campaigns || campaigns.length === 0) {
+            wrap.innerHTML = '<div class="empty-state">No UTM campaign data yet</div>';
+            return;
+        }
+        let total = campaigns.reduce((s, c) => s + c.count, 0);
+        let html = '<table><thead><tr>' +
+            '<th>Source</th><th>Medium</th><th>Campaign</th><th>Users</th><th>Share</th>' +
+            '</tr></thead><tbody>';
+        campaigns.forEach(c => {
+            const share = total > 0 ? ((c.count / total) * 100).toFixed(1) + '%' : '--';
+            html += '<tr>' +
+                '<td>' + esc(c.utm_source || '(none)') + '</td>' +
+                '<td>' + esc(c.utm_medium || '(none)') + '</td>' +
+                '<td>' + esc(c.utm_campaign || '(none)') + '</td>' +
+                '<td style="font-weight:600;">' + fmt(c.count) + '</td>' +
+                '<td style="color:var(--text-muted);">' + esc(share) + '</td>' +
+                '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+    }
+
+    // ---- Helpers ----
+
+    function fmt(n) {
+        if (n === undefined || n === null) return '0';
+        return Number(n).toLocaleString();
+    }
+
+    function esc(s) {
+        if (s === null || s === undefined) return '';
+        const d = document.createElement('div');
+        d.textContent = String(s);
+        return d.innerHTML;
+    }
+
+    function escAttr(s) {
+        return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function truncate(s, len) {
+        if (!s) return '';
+        s = String(s);
+        return s.length > len ? s.slice(0, len) + '...' : s;
+    }
+})();
+</script>
+</body>
+</html>
