@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK & AAB
 
 on:
   push:
@@ -61,11 +61,22 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK artifact
+      - name: Build release AAB (for Play Store)
+        working-directory: android
+        run: ./gradlew bundleRelease
+
+      - name: Upload debug APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: happymoments-debug
+          name: happymoments-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 90
+
+      - name: Upload release AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: happymoments-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 90
 
       - name: Delete old release if exists
@@ -76,18 +87,22 @@ jobs:
       - name: Delete old tag if exists
         run: git push origin :refs/tags/latest 2>/dev/null || true
 
-      - name: Create GitHub Release with APK
+      - name: Create GitHub Release with APK & AAB
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: "HappyMoments - Download APK"
+          name: "HappyMoments v1.0 - Android Build"
           body: |
-            ## Install on Android
-            1. Download **app-debug.apk** below
-            2. Transfer to your phone (Viber, email, USB)
-            3. Open the APK on your phone and install
-            4. You may need to allow "Install from unknown sources"
-          files: android/app/build/outputs/apk/debug/app-debug.apk
+            ## Download Android App
+
+            **For direct install (testing):**
+            Download `app-debug.apk`, transfer to phone, install.
+
+            **For Google Play (Internal Testing):**
+            Download `app-release.aab`, upload to Play Console → Internal Testing track.
+          files: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/bundle/release/app-release.aab
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
