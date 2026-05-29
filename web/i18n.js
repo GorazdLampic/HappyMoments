@@ -4,9 +4,10 @@
  */
 
 const I18N = (() => {
-    const SUPPORTED_LOCALES = ['en', 'es', 'de', 'pt', 'it', 'fr', 'hr', 'sl', 'nl', 'pl', 'ru', 'zh', 'hi', 'ar', 'bn', 'ja', 'vi', 'id', 'th', 'ko'];
+    const SUPPORTED_LOCALES = ['en', 'es', 'de', 'pt', 'pt_BR', 'it', 'fr', 'hr', 'sl', 'nl', 'pl', 'ru', 'zh', 'hi', 'ar', 'bn', 'ja', 'vi', 'id', 'th', 'ko'];
     const LOCALE_NAMES = {
         en: 'English', es: 'Español', de: 'Deutsch', pt: 'Português',
+        pt_BR: 'Português (BR)',
         it: 'Italiano', fr: 'Français', hr: 'Hrvatski', sl: 'Slovenščina',
         nl: 'Nederlands', pl: 'Polski', ru: 'Русский',
         zh: '中文', hi: 'हिन्दी', ar: 'العربية', bn: 'বাংলা',
@@ -297,6 +298,60 @@ const I18N = (() => {
             alternating_label: 'Padrão alternado',
             lucky_label: 'Dígitos da sorte',
             custom_label: 'O seu número especial',
+            special_label: 'Número especial',
+            happy_moments_brand: 'HappyMoments',
+        },
+
+        pt_BR: {
+            tab_personal: 'Pessoal', tab_team: 'Equipe', tab_data: 'Dados', tab_settings: 'Configurações',
+            tagline: 'A poesia dos números na sua vida, revelada.',
+            welcome: 'Bem-vindo',
+            onboarding_text: 'Coloque uma data importante para você. Seu aniversário, uma data especial, o dia em que você conheceu alguém.',
+            what_is_this: 'Que momento é esse?', when_happened: 'Quando aconteceu?',
+            discover: 'Descobrir Meus Marcos', onboarding_hint: 'Você pode adicionar mais pessoas e datas depois.',
+            upcoming_milestones: 'Próximos Marcos', highlights: 'Destaques', refresh: 'Atualizar',
+            no_milestones: 'Nenhum marco encontrado.', beyond_horizon: 'além do horizonte...', closer_view: 'vista próxima',
+            share: 'Compartilhar', share_tap: 'Toque em um marco acima para compartilhar ou salvar no calendário.',
+            copy: 'Copiar', save_to_calendar: 'Salvar no calendário:',
+            create_card: 'Criar Cartão', card_desc: 'Gere um cartão de imagem compartilhável para esse marco.',
+            download_png: 'Baixar PNG', share_image: 'Compartilhar Imagem',
+            celebrate_gift: 'Celebre com um Presente', gift_desc: 'Transforme esse marco em algo especial.',
+            select_milestone_gift: 'Selecione um marco para ver opções de presente.',
+            order_now: 'Comprar Agora', cancel: 'Cancelar',
+            combined_milestones: 'Marcos da Equipe', combined_desc: 'Marcos combinados para todos no grupo.',
+            share_this_moment: 'Compartilhar Esse Momento', share_combined_desc: 'Compartilhe um marco combinado!',
+            dates_events: 'Datas e Eventos', data_desc: 'Adicione aniversários e qualquer data importante.',
+            add_date: 'Adicionar Data', groups: 'Grupos', groups_desc: 'Organize datas em grupos separados.',
+            backup: 'Backup', export_data: 'Exportar Dados', import_data: 'Importar Dados',
+            number_patterns: 'Padrões Numéricos', round_numbers: 'Números Redondos',
+            repdigits: 'Repdigitos', alternating: 'Alternados', palindromes: 'Palíndromos',
+            sequential: 'Sequenciais', scientific: 'Científicos', lucky_patterns: 'Meus Padrões da Sorte',
+            lucky_digits: 'Dígitos da Sorte', custom_numbers: 'Números Personalizados', quick_add: 'Adicionar rápido:',
+            appearance: 'Aparência', dark_mode: 'Modo Escuro', save_settings: 'Salvar Configurações', reset_all: 'Resetar Tudo',
+            type_birthday: 'Aniversário', type_event: 'Data / Evento', type_milestone: 'Marco',
+            unit_sec: 'seg', unit_min: 'min', unit_hrs: 'hrs', unit_d: 'd', unit_w: 'sem', unit_mo: 'mês', unit_y: 'ano',
+            edit_event: 'Editar Evento', save: 'Salvar', delete: 'Excluir',
+            name: 'Nome', type: 'Tipo', date: 'Data', notes: 'Notas', turns: 'Faz',
+            terms_privacy: 'Termos e Privacidade', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            consent_text: 'HappyMoments armazena seus dados localmente no seu dispositivo. Nenhum dado é enviado para servidores.',
+            consent_ok: 'Entendi', consent_read: 'Ler política completa',
+            // Milestone descriptions
+            turns_age: '{name} faz {value}!',
+            is_old: '{name} vai ter {value} {unit}',
+            since: '{value} {unit} desde {name}',
+            years_since: '{value} anos desde {name}!',
+            // Number classification
+            power_of_10: 'Potência de 10',
+            fibonacci_number: 'Número de Fibonacci',
+            round_number: 'Número redondo',
+            k_milestone: 'Marco de {value}k',
+            all_digits: 'Tudo {digit}',
+            palindrome_label: 'Palíndromo',
+            ascending_seq: 'Sequência ascendente',
+            descending_seq: 'Sequência descendente',
+            alternating_label: 'Padrão alternado',
+            lucky_label: 'Dígitos da sorte',
+            custom_label: 'Seu número especial',
             special_label: 'Número especial',
             happy_moments_brand: 'HappyMoments',
         },
@@ -1126,11 +1181,15 @@ const I18N = (() => {
         const saved = localStorage.getItem('happymoments_locale');
         if (saved && TRANSLATIONS[saved]) return saved;
 
-        // 2. Check browser language
-        const browserLang = (navigator.language || 'en').split('-')[0].toLowerCase();
+        // 2. Check full browser language tag (e.g. 'pt-BR')
+        const browserFull = (navigator.language || 'en').replace('-', '_');
+        if (TRANSLATIONS[browserFull]) return browserFull;
+
+        // 3. Check base language
+        const browserLang = browserFull.split('_')[0].toLowerCase();
         if (TRANSLATIONS[browserLang]) return browserLang;
 
-        // 3. Check variants
+        // 4. Check variants
         if (['sr', 'bs'].includes(browserLang)) return 'hr';
         if (browserLang === 'ms') return 'id'; // Malay → Indonesian
         if (['uk', 'be'].includes(browserLang)) return 'ru'; // Ukrainian/Belarusian → Russian

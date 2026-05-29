@@ -30,13 +30,11 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-    <!-- Firebase Auth SDK (compat, for vanilla JS) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Code+Pro:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -61,7 +59,8 @@
                 <button class="lang-option" onclick="selectLanguage('de')"><span class="lang-option-flag">🇩🇪</span><span>Deutsch</span></button>
                 <button class="lang-option" onclick="selectLanguage('fr')"><span class="lang-option-flag">🇫🇷</span><span>Français</span></button>
                 <button class="lang-option" onclick="selectLanguage('it')"><span class="lang-option-flag">🇮🇹</span><span>Italiano</span></button>
-                <button class="lang-option" onclick="selectLanguage('pt')"><span class="lang-option-flag">🇵🇹</span><span>Português</span></button>
+                <button class="lang-option" onclick="selectLanguage('pt_BR')"><span class="lang-option-flag">🇧🇷</span><span>Português (BR)</span></button>
+                <button class="lang-option" onclick="selectLanguage('pt')"><span class="lang-option-flag">🇵🇹</span><span>Português (PT)</span></button>
                 <button class="lang-option" onclick="selectLanguage('hr')"><span class="lang-option-flag">🇭🇷</span><span>Hrvatski</span></button>
                 <button class="lang-option" onclick="selectLanguage('sl')"><span class="lang-option-flag">🇸🇮</span><span>Slovenščina</span></button>
                 <button class="lang-option" onclick="selectLanguage('nl')"><span class="lang-option-flag">🇳🇱</span><span>Nederlands</span></button>
@@ -155,6 +154,7 @@
                     <button id="emailShareBtn" class="btn-secondary">Email</button>
                     <button id="copyShareBtn" class="btn-secondary">Copy</button>
                 </div>
+                <button class="btn-challenge" onclick="handleChallengeFriends()">Challenge Friends — #WhenIsYourBillion</button>
                 <div class="calendar-buttons">
                     <span class="calendar-label">Save to calendar:</span>
                     <button id="googleCalBtn" class="btn-calendar btn-gcal">Google</button>
@@ -574,6 +574,16 @@
     <script defer src="analytics.js"></script>
     <script defer src="auth.js"></script>
     <script defer src="app.js"></script>
+
+    <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
+    <script>
+        window.addEventListener('load', function() {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Code+Pro:wght@300;400;500&display=swap';
+            document.head.appendChild(link);
+        });
+    </script>
 
     <!-- Service Worker Registration for PWA -->
     <script>

@@ -2728,6 +2728,40 @@ function getAppShareLink() {
     return APP_SHARE_LINK_DEFAULT;
 }
 
+function generateChallengeMessage(m) {
+    if (!m) return null;
+    const val = m.value.toLocaleString();
+    const unit = m.unitName || '';
+    const dateStr = m.date.toLocaleDateString(getAppLocale(), { month: 'long', day: 'numeric', year: 'numeric' });
+    const name = m.eventName || '';
+
+    const link = 'happymoments.app/landing.html';
+    const templates = [
+        `I just found out ${name} will be ${val} ${unit} old on ${dateStr}! When's YOUR special number? Find out: ${link}\n\n#WhenIsYourBillion #HappyMoments #MilestoneChallenge`,
+        `${val} ${unit}. That's how old ${name} will be on ${dateStr}. Can you beat that? Check yours: ${link}\n\n#HappyMoments #NumberChallenge #BillionSeconds`,
+        `Challenge: ${name} turns ${val} ${unit} on ${dateStr}! Tag someone and find THEIR milestone: ${link}\n\n#HappyMoments #WhenIsYourBillion`,
+    ];
+    return templates[Math.floor(Math.random() * templates.length)];
+}
+
+function handleChallengeFriends() {
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    const m = allMilestonesFlat[idx];
+    if (!m) { showToast('Select a milestone first', 'info'); return; }
+
+    const message = generateChallengeMessage(m);
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoments Challenge', text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Challenge copied! Paste it on social media.', 'success');
+        }).catch(() => {
+            showToast(message, 'info', 8000);
+        });
+    }
+    _track('challenge_share', { value: m.value, unit: m.unit });
+}
+
 function quickShare(idx) {
     const m = allMilestonesFlat[idx];
     if (!m) return;
@@ -3906,9 +3940,22 @@ function checkTeamViewLimit() {
     return true;
 }
 
+// Upgrade text with i18n fallback
+const UPGRADE_TEXT = {
+    go_premium: { en: 'Go Premium', pt: 'Seja Premium', hi: 'प्रीमियम लें', zh: '升级高级版', ja: 'プレミアムへ', es: 'Hazte Premium', ko: '프리미엄', th: 'อัพเกรด' },
+    clean_experience: { en: 'clean cards, no banners', pt: 'sem anuncios, cartoes limpos', hi: 'विज्ञापन-मुक्त', zh: '无广告，干净卡片', ja: '広告なし', es: 'sin anuncios', ko: '광고 없음', th: 'ไม่มีโฆษณา' },
+    upgrade_now: { en: 'Upgrade Now', pt: 'Atualizar Agora', hi: 'अभी अपग्रेड करें', zh: '立即升级', ja: '今すぐアップグレード', es: 'Mejorar Ahora', ko: '지금 업그레이드', th: 'อัพเกรดเลย' },
+    maybe_later: { en: 'Maybe later', pt: 'Talvez depois', hi: 'बाद में', zh: '以后再说', ja: 'あとで', es: 'Quizas luego', ko: '나중에', th: 'ไว้ทีหลัง' },
+    unlimited: { en: 'Unlimited people & groups', pt: 'Pessoas e grupos ilimitados', hi: 'असीमित लोग और समूह', zh: '无限人数和群组', ja: '無制限の人数とグループ', es: 'Personas y grupos ilimitados', ko: '무제한 인원 및 그룹', th: 'ไม่จำกัดคนและกลุ่ม' },
+};
+function _ut(key) {
+    const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
+    const entry = UPGRADE_TEXT[key];
+    return (entry && entry[locale]) || (entry && entry.en) || key;
+}
+
 function showPremiumBanner() {
     if (isPremium()) return;
-    // Don't show if already dismissed this session
     if (sessionStorage.getItem('hm_banner_dismissed')) return;
 
     const banner = document.createElement('div');
@@ -3916,9 +3963,9 @@ function showPremiumBanner() {
     banner.id = 'premiumBanner';
     banner.innerHTML = `
         <span class="premium-banner-star">&#9733;</span>
-        <span class="premium-banner-text">Go Premium</span>
+        <span class="premium-banner-text">${_ut('go_premium')}</span>
         <span class="premium-banner-price">&euro;1.49/year</span>
-        <span class="premium-banner-text">&mdash; clean cards, no banners</span>
+        <span class="premium-banner-text">&mdash; ${_ut('clean_experience')}</span>
         <button class="premium-banner-dismiss" onclick="event.stopPropagation(); dismissPremiumBanner();">&times;</button>
     `;
     banner.onclick = () => {
@@ -4014,8 +4061,8 @@ function showUpgradePrompt(reason) {
                     <li>&#10003; Support an independent developer</li>
                 </ul>
             </div>
-            <button class="btn-primary" onclick="handleUpgrade()" style="width:100%;">Upgrade Now</button>
-            <button class="auth-skip" onclick="document.getElementById('upgradeModal').remove()">Maybe later</button>
+            <button class="btn-primary" onclick="handleUpgrade()" style="width:100%;">${_ut('upgrade_now')}</button>
+            <button class="auth-skip" onclick="document.getElementById('upgradeModal').remove()">${_ut('maybe_later')}</button>
         </div>
     `;
     document.body.appendChild(modal);

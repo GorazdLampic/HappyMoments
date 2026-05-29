@@ -1,6 +1,7 @@
 /* HappyMoments — Chalkboard Numerology */
 
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Code+Pro:wght@300;400;500&display=swap');
+/* Google Fonts loaded non-blocking at bottom of file (optional enhancement).
+   If blocked (e.g. China), fallback system fonts (Georgia, Consolas) are used seamlessly. */
 
 * {
     margin: 0;
@@ -9,8 +10,8 @@
 }
 
 :root {
-    --font-serif: 'EB Garamond', 'Georgia', 'Times New Roman', serif;
-    --font-mono: 'Source Code Pro', 'Courier New', monospace;
+    --font-serif: 'EB Garamond', 'Georgia', 'Cambria', 'Times New Roman', serif;
+    --font-mono: 'Source Code Pro', 'Menlo', 'Consolas', 'Monaco', monospace;
     --font-family: var(--font-serif);
 
     --primary: #c8c8c8;
@@ -1630,6 +1631,14 @@ body {
 
 .btn-viber:hover { background: #4a1f68 !important; }
 .btn-viber:active { opacity: 0.9 !important; }
+
+.btn-challenge {
+    width: 100%; padding: 10px 16px; margin-top: 8px;
+    background: none; border: 1px dashed var(--warning); border-radius: var(--radius-sm);
+    color: var(--warning); font-family: var(--font-family); font-size: var(--font-size-sm);
+    cursor: pointer; transition: background 0.2s;
+}
+.btn-challenge:hover { background: rgba(212,184,118,0.1); }
 
 .btn-native-share {
     background: var(--text-primary) !important;
