@@ -252,6 +252,12 @@ body {
     text-transform: uppercase;
 }
 
+/* Time toggle */
+.time-toggle-row { margin-top: 6px; }
+.time-toggle-link { font-size: var(--font-size-xs); color: var(--text-muted); text-decoration: none; }
+.time-toggle-link:hover { color: var(--text-secondary); }
+.time-fields { display: flex; align-items: center; gap: 0; margin-top: 6px; }
+
 /* Date fields — DD / MM / YYYY */
 .date-fields {
     display: flex;
@@ -2298,6 +2304,63 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 .premium-banner ~ .app-footer { padding-bottom: 60px; }
 
+/* ============================================================
+   HAPPINESS COUNTER
+   ============================================================ */
+
+.happy-counter {
+    text-align: center;
+    padding: var(--space-lg) 0 var(--space-sm);
+}
+
+.happy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border: 1px solid var(--warning);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--warning);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), transform 0.2s ease;
+}
+
+.happy-btn:hover:not(:disabled) {
+    background: rgba(212, 184, 118, 0.1);
+}
+
+.happy-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.happy-emoji {
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.happy-btn.happy-pulse {
+    animation: happyPulse 0.5s ease-out;
+}
+
+@keyframes happyPulse {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.12); }
+    60%  { transform: scale(0.96); }
+    100% { transform: scale(1); }
+}
+
+.happy-count {
+    margin-top: 6px;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-family: var(--font-serif);
+    font-style: italic;
+}
+
 /* Footer */
 .app-footer {
     text-align: center;
@@ -2402,6 +2465,22 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     flex: 1;
     max-width: 200px;
 }
+
+.premium-gate-overlay {
+    text-align: center; padding: var(--space-xl) var(--space-lg);
+    color: var(--text-secondary); font-style: italic;
+}
+.premium-gate-overlay p { margin-bottom: 8px; }
+
+.card-format-selector {
+    display: flex; gap: var(--space-xs); margin-top: var(--space-sm); justify-content: center;
+}
+.card-format-btn {
+    padding: 6px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--bg-elevated); color: var(--text-muted); cursor: pointer;
+    font-family: var(--font-family); font-size: var(--font-size-sm);
+}
+.card-format-btn.active { background: var(--accent); color: var(--bg-page); border-color: var(--accent); }
 
 /* Checkout Modal */
 .checkout-modal { max-width: 400px; }

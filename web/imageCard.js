@@ -6,6 +6,8 @@
 const CARD_CONFIG = {
     width: 1080,
     height: 1080,
+    storyWidth: 1080,
+    storyHeight: 1920,
     padding: 80,
     // Color themes
     themes: {
@@ -160,6 +162,160 @@ function generateMilestoneCard(milestone, options) {
     return canvas;
 }
 
+// Generate Instagram Story format card (1080x1920)
+function generateStoryCard(milestone, options) {
+    options = options || {};
+    const theme = CARD_CONFIG.themes[options.theme || 'dark'];
+    const W = CARD_CONFIG.storyWidth;
+    const H = CARD_CONFIG.storyHeight;
+    const P = 100;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Background gradient (vertical for story)
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, theme.bgGradient[0]);
+    grad.addColorStop(0.5, theme.bgGradient[1]);
+    grad.addColorStop(1, theme.bgGradient[0]);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    drawDecorations(ctx, W, H, theme);
+
+    const val = milestone.value.toLocaleString();
+    const unit = milestone.unitName || '';
+    const name = milestone.eventName || '';
+    const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
+    const countdown = typeof formatTimeDistance === 'function' ? formatTimeDistance(milestone.timeUntil) : '';
+    const why = milestone.description || '';
+
+    ctx.textAlign = 'center';
+
+    // Top section — app name
+    ctx.fillStyle = theme.muted;
+    ctx.font = 'italic 32px "EB Garamond", Georgia, serif';
+    ctx.fillText('HappyMoments', W / 2, P + 40);
+
+    // Thin line
+    ctx.strokeStyle = theme.muted + '40';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(P + 100, P + 70);
+    ctx.lineTo(W - P - 100, P + 70);
+    ctx.stroke();
+
+    // Person name — upper third
+    ctx.fillStyle = theme.highlight;
+    ctx.font = 'italic 52px "EB Garamond", Georgia, serif';
+    ctx.fillText(name, W / 2, H * 0.25);
+
+    // "will be" text
+    ctx.fillStyle = theme.muted;
+    ctx.font = 'italic 36px "EB Garamond", Georgia, serif';
+    ctx.fillText('will be', W / 2, H * 0.32);
+
+    // BIG NUMBER — center of story
+    ctx.fillStyle = theme.accent;
+    let fontSize = 180;
+    ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+    while (ctx.measureText(val).width > W - P * 2 - 40 && fontSize > 80) {
+        fontSize -= 10;
+        ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+    }
+    ctx.fillText(val, W / 2, H * 0.45);
+
+    // Unit
+    ctx.fillStyle = theme.text;
+    ctx.font = 'italic 56px "EB Garamond", Georgia, serif';
+    ctx.fillText(unit, W / 2, H * 0.52);
+
+    // Why it's special
+    if (why) {
+        ctx.fillStyle = theme.muted;
+        ctx.font = 'italic 34px "EB Garamond", Georgia, serif';
+        ctx.fillText(why, W / 2, H * 0.58);
+    }
+
+    // Date — lower section
+    ctx.fillStyle = theme.text;
+    ctx.font = '36px "Source Code Pro", "Courier New", monospace';
+    ctx.fillText(dateStr, W / 2, H * 0.68);
+
+    // Countdown
+    if (countdown) {
+        ctx.fillStyle = theme.accent;
+        ctx.font = 'italic 44px "EB Garamond", Georgia, serif';
+        ctx.fillText(countdown + ' from now', W / 2, H * 0.74);
+    }
+
+    // Call to action
+    ctx.fillStyle = theme.muted;
+    ctx.font = 'italic 30px "EB Garamond", Georgia, serif';
+    ctx.fillText('When is YOUR special number?', W / 2, H * 0.84);
+
+    // Bottom line
+    ctx.strokeStyle = theme.muted + '40';
+    ctx.beginPath();
+    ctx.moveTo(P + 100, H - P - 40);
+    ctx.lineTo(W - P - 100, H - P - 40);
+    ctx.stroke();
+
+    // Footer
+    ctx.fillStyle = theme.accent;
+    ctx.font = '28px "EB Garamond", Georgia, serif';
+    ctx.fillText('happymoments.app', W / 2, H - P);
+
+    // Watermark for free users
+    const _isPremium = typeof isPremium === 'function' && isPremium();
+    if (!_isPremium) {
+        ctx.save();
+        ctx.globalAlpha = 0.06;
+        ctx.fillStyle = theme.text;
+        ctx.font = 'italic 70px "EB Garamond", Georgia, serif';
+        ctx.translate(W / 2, H * 0.45);
+        ctx.rotate(-Math.PI / 6);
+        ctx.fillText('happymoments.app', 0, 0);
+        ctx.restore();
+    }
+
+    return canvas;
+}
+
+function downloadStoryCard(milestone, theme) {
+    const canvas = generateStoryCard(milestone, { theme: theme || 'dark' });
+    const link = document.createElement('a');
+    link.download = `happymoment-story-${milestone.value}-${milestone.unitName}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('Story card downloaded!', 'success');
+}
+
+async function shareStoryCard(milestone, theme) {
+    const canvas = generateStoryCard(milestone, { theme: theme || 'dark' });
+    if (navigator.share && navigator.canShare) {
+        try {
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const file = new File([blob], 'happymoment-story.png', { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    title: 'HappyMoment',
+                    text: typeof generateShareMessage === 'function' ? generateShareMessage(milestone) : '',
+                    files: [file]
+                });
+                return;
+            }
+        } catch (e) {
+            if (e.name === 'AbortError') return;
+        }
+    }
+    downloadStoryCard(milestone, theme);
+}
+
 function drawDecorations(ctx, W, H, theme) {
     ctx.save();
     ctx.globalAlpha = 0.03;
@@ -274,6 +430,14 @@ function renderCardPreview(milestone, containerId, theme) {
                  title="${t}">${t}</button>`
     ).join('');
 
+    // Format selector (Square / Story)
+    const formatSel = document.createElement('div');
+    formatSel.className = 'card-format-selector';
+    formatSel.innerHTML = `
+        <button class="card-format-btn active" onclick="renderCardPreview(allMilestonesFlat[selectedMilestone !== null ? selectedMilestone : 0], '${containerId}', '${theme || 'dark'}')">Square</button>
+        <button class="card-format-btn" onclick="renderStoryPreview(allMilestonesFlat[selectedMilestone !== null ? selectedMilestone : 0], '${containerId}', '${theme || 'dark'}')">Story</button>
+    `;
+
     // Action buttons
     const actions = document.createElement('div');
     actions.className = 'card-actions';
@@ -283,9 +447,58 @@ function renderCardPreview(milestone, containerId, theme) {
     `;
 
     container.appendChild(selector);
+    container.appendChild(formatSel);
+    container.appendChild(actions);
+}
+
+function renderStoryPreview(milestone, containerId, theme) {
+    const container = document.getElementById(containerId);
+    if (!container || !milestone) return;
+
+    const canvas = generateStoryCard(milestone, { theme: theme || 'dark' });
+    canvas.style.width = '50%';
+    canvas.style.margin = '0 auto';
+    canvas.style.display = 'block';
+    canvas.style.height = 'auto';
+    canvas.style.borderRadius = '8px';
+    canvas.style.cursor = 'pointer';
+    canvas.title = 'Click to download';
+    canvas.onclick = () => downloadStoryCard(milestone, theme);
+
+    container.innerHTML = '';
+    container.appendChild(canvas);
+
+    // Theme selector
+    const themes = Object.keys(CARD_CONFIG.themes);
+    const selector = document.createElement('div');
+    selector.className = 'card-theme-selector';
+    selector.innerHTML = themes.map(t =>
+        `<button class="card-theme-btn ${t === (theme || 'dark') ? 'active' : ''}"
+                 onclick="renderStoryPreview(allMilestonesFlat[selectedMilestone !== null ? selectedMilestone : 0], '${containerId}', '${t}')"
+                 style="background: ${CARD_CONFIG.themes[t].bgGradient[0]}; color: ${CARD_CONFIG.themes[t].accent};"
+                 title="${t}">${t}</button>`
+    ).join('');
+
+    // Format selector
+    const formatSel = document.createElement('div');
+    formatSel.className = 'card-format-selector';
+    formatSel.innerHTML = `
+        <button class="card-format-btn" onclick="renderCardPreview(allMilestonesFlat[selectedMilestone !== null ? selectedMilestone : 0], '${containerId}', '${theme || 'dark'}')">Square</button>
+        <button class="card-format-btn active" onclick="renderStoryPreview(allMilestonesFlat[selectedMilestone !== null ? selectedMilestone : 0], '${containerId}', '${theme || 'dark'}')">Story</button>
+    `;
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    actions.innerHTML = `
+        <button class="btn-secondary" onclick="downloadStoryCard(allMilestonesFlat[selectedMilestone !== null ? selectedMilestone : 0], '${theme || 'dark'}')">Download Story</button>
+        <button class="btn-primary" onclick="shareStoryCard(allMilestonesFlat[selectedMilestone !== null ? selectedMilestone : 0], '${theme || 'dark'}')">Share Story</button>
+    `;
+
+    container.appendChild(selector);
+    container.appendChild(formatSel);
     container.appendChild(actions);
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { generateMilestoneCard, downloadMilestoneCard };
+    module.exports = { generateMilestoneCard, generateStoryCard, downloadMilestoneCard, downloadStoryCard };
 }

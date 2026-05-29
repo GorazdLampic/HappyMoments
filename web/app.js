@@ -1009,11 +1009,24 @@ function handleAddEvent() {
 
     const date = parseLocalDate(dateStr);
 
+    // Optional: precise time
+    const hourEl = document.getElementById('newEventHour');
+    const minEl = document.getElementById('newEventMinute');
+    const hour = hourEl ? parseInt(hourEl.value) : NaN;
+    const minute = minEl ? parseInt(minEl.value) : NaN;
+    if (!isNaN(hour) && hour >= 0 && hour <= 23) {
+        date.setHours(hour);
+        if (!isNaN(minute) && minute >= 0 && minute <= 59) {
+            date.setMinutes(minute);
+        }
+    }
+
     const newEvent = {
         id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
         name: name,
         type: type,
-        date: date
+        date: date,
+        hasTime: !isNaN(hour)
     };
 
     appData.events.push(newEvent);
@@ -1137,6 +1150,18 @@ function renderCombinedTab() {
     try {
     if (appData.events.length < 2) {
         combinedMilestonesContentEl.innerHTML = '<p class="empty-text">Add at least 2 events to see combined milestones.</p>';
+        return;
+    }
+
+    // Check team view limit for free users
+    if (!checkTeamViewLimit()) {
+        const remaining = 0;
+        combinedMilestonesContentEl.innerHTML = `
+            <div class="premium-gate-overlay">
+                <p>You've used your ${FREE_TEAM_VIEWS} free Team views.</p>
+                <p>Upgrade to Premium for unlimited access.</p>
+                <button class="btn-primary" onclick="showUpgradePrompt('team')" style="margin-top: 12px;">Upgrade &mdash; &euro;1.49/year</button>
+            </div>`;
         return;
     }
 
@@ -3300,6 +3325,7 @@ function confirmRename(setId) {
 function handleSwitchSet() {
     const newSetId = currentSetSelect.value;
     if (newSetId === '__new__') {
+        if (!checkGroupLimit()) return;
         // Prompt for new group name
         const name = prompt('Name for the new group:');
         if (name && name.trim()) {
@@ -3350,6 +3376,7 @@ function switchToSet(setId) {
 }
 
 function handleAddSet() {
+    if (!checkGroupLimit()) return;
     const name = newSetNameInput.value.trim();
     if (!name) {
         showToast('Please enter a name for the new set', 'error');
@@ -3757,13 +3784,49 @@ function updateAccountUI(user) {
 // PREMIUM GATE
 // ============================================================
 
+const FREE_PEOPLE_LIMIT = 5;
+const FREE_TEAM_VIEWS = 5;
+
 function isPremium() {
     const until = localStorage.getItem('happymoments_premium_until');
     return until && parseInt(until) * 1000 > Date.now();
 }
 
+function getTeamViewCount() {
+    return parseInt(localStorage.getItem('hm_team_views') || '0');
+}
+
+function incrementTeamView() {
+    const count = getTeamViewCount() + 1;
+    localStorage.setItem('hm_team_views', String(count));
+    return count;
+}
+
 function checkEventLimit() {
-    // All features free — no event limit
+    if (isPremium()) return true;
+    if (appData.events.length >= FREE_PEOPLE_LIMIT) {
+        showUpgradePrompt('people');
+        return false;
+    }
+    return true;
+}
+
+function checkGroupLimit() {
+    if (isPremium()) return true;
+    if (allSets.length >= 1) {
+        showUpgradePrompt('groups');
+        return false;
+    }
+    return true;
+}
+
+function checkTeamViewLimit() {
+    if (isPremium()) return true;
+    const views = getTeamViewCount();
+    if (views >= FREE_TEAM_VIEWS) {
+        return false;
+    }
+    incrementTeamView();
     return true;
 }
 
@@ -3843,12 +3906,20 @@ function dismissPremiumBanner() {
     sessionStorage.setItem('hm_banner_dismissed', '1');
 }
 
-function showUpgradePrompt() {
+function showUpgradePrompt(reason) {
     if (typeof HM_AUTH !== 'undefined' && !HM_AUTH.isLoggedIn()) {
         openAuthModal();
         return;
     }
-    // Show upgrade modal
+
+    const reasons = {
+        people: `You've reached the free limit of ${FREE_PEOPLE_LIMIT} people.`,
+        groups: 'Free accounts include 1 group.',
+        team: `You've used your ${FREE_TEAM_VIEWS} free Team tab views.`,
+        default: 'Unlock the full HappyMoments experience.'
+    };
+    const subtitle = reasons[reason] || reasons.default;
+
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.id = 'upgradeModal';
@@ -3856,13 +3927,14 @@ function showUpgradePrompt() {
     modal.innerHTML = `
         <div class="modal-content auth-modal">
             <h3>HappyMoments Premium</h3>
-            <p class="auth-subtitle">Enjoy a cleaner, distraction-free experience.</p>
+            <p class="auth-subtitle">${subtitle}</p>
             <div style="margin: 16px 0; padding: 16px; background: var(--bg-elevated); border-radius: var(--radius-sm);">
                 <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 12px;">&euro;1.49<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> / year</span></div>
                 <ul style="text-align: left; font-size: var(--font-size-sm); color: var(--text-secondary); list-style: none; padding: 0;">
+                    <li>&#10003; Unlimited people &amp; groups</li>
+                    <li>&#10003; Unlimited Team tab views</li>
                     <li>&#10003; No gift banners &mdash; clean milestone view</li>
                     <li>&#10003; Clean image cards &mdash; no watermark</li>
-                    <li>&#10003; Calendar export (Google, Outlook, .ics)</li>
                     <li>&#10003; Support an independent developer</li>
                 </ul>
             </div>
@@ -3963,11 +4035,61 @@ function _track(action, data) {
 }
 
 // ============================================================
+// HAPPINESS BUTTON
+// ============================================================
+
+function handleHappyClick() {
+    // Limit to 1 click per session
+    if (sessionStorage.getItem('hm_happy_clicked')) return;
+    sessionStorage.setItem('hm_happy_clicked', '1');
+
+    // Track analytics event
+    _track('happy_click', {});
+
+    // Increment local counter
+    const count = parseInt(localStorage.getItem('hm_happy_count') || '0', 10) + 1;
+    localStorage.setItem('hm_happy_count', String(count));
+
+    // Update displayed count
+    updateHappyCounter();
+
+    // Pulse animation on button
+    const btn = document.getElementById('happyBtn');
+    if (btn) {
+        btn.classList.add('happy-pulse');
+        btn.disabled = true;
+    }
+
+    // Show toast
+    showToast('You made someone happy!', 'success', 2500);
+}
+
+function updateHappyCounter() {
+    const count = parseInt(localStorage.getItem('hm_happy_count') || '0', 10);
+    const el = document.getElementById('happyCount');
+    if (el) {
+        el.textContent = count > 0 ? count + ' happy moment' + (count !== 1 ? 's' : '') + ' shared' : '';
+    }
+
+    // Reflect session guard: disable button if already clicked this session
+    if (sessionStorage.getItem('hm_happy_clicked')) {
+        const btn = document.getElementById('happyBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.classList.add('happy-pulse');
+        }
+    }
+}
+
+// ============================================================
 // START APP
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
+
+    // Initialize happiness counter
+    updateHappyCounter();
 
     // Track page view (includes UTM data if present via analytics.js)
     _track('page_view', { page: 'app', referrer: document.referrer || null });

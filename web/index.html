@@ -245,6 +245,14 @@
                         </div>
                         <button id="addEventBtn" class="btn-add">+</button>
                     </div>
+                    <div class="time-toggle-row">
+                        <a href="#" class="time-toggle-link" onclick="document.getElementById('timeFields').classList.toggle('hidden'); return false;">+ Add exact time (optional)</a>
+                        <div id="timeFields" class="hidden time-fields">
+                            <input type="number" id="newEventHour" placeholder="HH" min="0" max="23" class="date-field date-dd">
+                            <span class="date-sep">:</span>
+                            <input type="number" id="newEventMinute" placeholder="MM" min="0" max="59" class="date-field date-dd">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -429,6 +437,15 @@
                 <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;" data-i18n="reset_all">Reset All Data</button>
             </div>
         </section>
+
+        <!-- Happiness Counter -->
+        <div class="happy-counter" id="happyCounter">
+            <button class="happy-btn" id="happyBtn" onclick="handleHappyClick()">
+                <span class="happy-emoji">&#128522;</span>
+                <span>This made me happy!</span>
+            </button>
+            <div class="happy-count" id="happyCount"></div>
+        </div>
 
         <!-- Footer -->
         <footer class="app-footer">
