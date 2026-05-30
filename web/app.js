@@ -273,6 +273,9 @@ function handleDeepLink() {
         return;
     }
 
+    // Track deep link open
+    _track('deeplink_opened', { name: name, lang: lang || null });
+
     // Show a "guest preview" with CTA to add themselves
     showDeepLinkPreview(name, date);
 
@@ -352,6 +355,7 @@ function acceptDeepLink(name, dateStr) {
         nameInput.focus();
     }
     showToast(`${name} added! Now enter YOUR birthday to see your milestones.`, 'info', 5000);
+    _track('deeplink_accepted', { name: name });
 
     // Refresh views
     renderEventsTab();
@@ -435,8 +439,10 @@ async function toggleNotifications(enabled) {
     if (typeof NOTIF === 'undefined') return;
     if (enabled) {
         await NOTIF.enable();
+        _track('notifications_enabled', {});
     } else {
         NOTIF.disable();
+        _track('notifications_disabled', {});
     }
     loadNotifUI();
 }
@@ -1286,6 +1292,7 @@ function renderCombinedTab() {
 
     // Check team view limit for free users
     if (!checkTeamViewLimit()) {
+        _track('premium_gate_hit', { reason: 'team_view_limit' });
         combinedMilestonesContentEl.innerHTML = `
             <div class="premium-gate-overlay">
                 <p>You've used your ${FREE_TEAM_VIEWS} free Team views.</p>
@@ -3048,6 +3055,7 @@ function handleWhatsAppShare() {
     const message = generateShareMessage(m);
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    _track('share_whatsapp', { value: m.value, unit: m.unitName });
     promptShareApp();
 }
 
@@ -3059,6 +3067,7 @@ function handleViberShare() {
     const message = generateShareMessage(m);
     const encoded = encodeURIComponent(message);
     window.open(`viber://forward?text=${encoded}`, '_blank');
+    _track('share_viber', { value: m.value, unit: m.unitName });
 }
 
 function handleEmailShare() {
@@ -3070,6 +3079,7 @@ function handleEmailShare() {
     const subject = encodeURIComponent('A special moment to celebrate!');
     const body = encodeURIComponent(message);
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+    _track('share_email', { value: m.value, unit: m.unitName });
 }
 
 // Combined milestone sharing
@@ -3140,6 +3150,7 @@ function handleWhatsAppCombinedShare() {
     const message = generateCombinedShareMessage(m);
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    _track('share_whatsapp', { type: 'combined', value: m.value, unit: m.unitName });
 }
 
 function handleViberCombinedShare() {
@@ -3150,6 +3161,7 @@ function handleViberCombinedShare() {
     const message = generateCombinedShareMessage(m);
     const encoded = encodeURIComponent(message);
     window.open(`viber://forward?text=${encoded}`, '_blank');
+    _track('share_viber', { type: 'combined', value: m.value, unit: m.unitName });
 }
 
 function handleEmailCombinedShare() {
@@ -3161,6 +3173,7 @@ function handleEmailCombinedShare() {
     const subject = encodeURIComponent('A special moment to celebrate!');
     const body = encodeURIComponent(message);
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+    _track('share_email', { type: 'combined', value: m.value, unit: m.unitName });
 }
 
 // ============================================================
@@ -3990,6 +4003,7 @@ async function handleDeleteAccount() {
         await user.delete();
         // Clear local premium status
         localStorage.removeItem('happymoments_premium_until');
+        _track('account_deleted', {});
         showToast('Account deleted.', 'success');
     } catch (error) {
         if (error.code === 'auth/requires-recent-login') {
@@ -4211,6 +4225,7 @@ function dismissPremiumBanner() {
 }
 
 function showUpgradePrompt(reason) {
+    _track('premium_gate_hit', { reason: reason });
     if (typeof HM_AUTH !== 'undefined' && !HM_AUTH.isLoggedIn()) {
         openAuthModal();
         return;
@@ -4258,8 +4273,7 @@ async function handleUpgrade() {
         return;
     }
 
-    const _t = typeof HM_ANALYTICS !== 'undefined' ? HM_ANALYTICS.track : () => {};
-    _t('checkout_started', { product: 'premium' });
+    _track('checkout_started', { product: 'premium' });
 
     try {
         const token = await HM_AUTH.getIdToken();
@@ -4319,12 +4333,14 @@ async function checkPremiumStatus() {
 function checkPremiumReturn() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('checkout') === 'premium_success') {
+        _track('payment_complete', { product: 'premium' });
         showToast('Welcome to Premium! Thank you!', 'success');
         // Re-check status from backend
         setTimeout(checkPremiumStatus, 2000);
         // Clean URL
         window.history.replaceState({}, '', window.location.pathname);
     } else if (params.get('checkout') === 'premium_cancelled') {
+        _track('payment_cancelled', { product: 'premium' });
         showToast('Upgrade cancelled.', 'info');
         window.history.replaceState({}, '', window.location.pathname);
     }

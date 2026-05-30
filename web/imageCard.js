@@ -292,6 +292,7 @@ function downloadStoryCard(milestone, theme) {
     link.download = `happymoment-story-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
+    if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'story', theme: theme || 'dark' });
     showToast('Story card downloaded!', 'success');
 }
 
@@ -307,6 +308,7 @@ async function shareStoryCard(milestone, theme) {
                     text: typeof generateShareMessage === 'function' ? generateShareMessage(milestone) : '',
                     files: [file]
                 });
+                if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_shared', { value: milestone.value, unit: milestone.unitName, format: 'story' });
                 return;
             }
         } catch (e) {
@@ -369,6 +371,7 @@ function downloadMilestoneCard(milestone, theme) {
     link.download = `happymoment-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
+    if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'square', theme: theme || 'dark' });
     showToast('Card downloaded!', 'success');
 }
 
@@ -388,6 +391,7 @@ async function shareMilestoneCard(milestone, theme) {
                     text: generateShareMessage(milestone),
                     files: [file]
                 });
+                if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_shared', { value: milestone.value, unit: milestone.unitName, format: 'square' });
                 return;
             }
         } catch (e) {

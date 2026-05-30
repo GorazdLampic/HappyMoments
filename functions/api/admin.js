@@ -96,11 +96,28 @@ async function getStats(db) {
 async function getJourney(db) {
     const funnelActions = [
         'page_view',
+        'deeplink_opened',
+        'deeplink_accepted',
         'onboard_complete',
         'event_added',
         'tab_switched',
         'auth_signed_in',
-        'checkout_started'
+        'notifications_enabled',
+        'quick_share',
+        'share_whatsapp',
+        'share_viber',
+        'share_email',
+        'challenge_share',
+        'group_challenge',
+        'card_downloaded',
+        'card_shared',
+        'share_app',
+        'premium_gate_hit',
+        'checkout_started',
+        'payment_complete',
+        'payment_cancelled',
+        'account_deleted',
+        'happy_click'
     ];
 
     const results = await Promise.all(

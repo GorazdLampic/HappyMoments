@@ -50,7 +50,7 @@ const HM_ANALYTICS = (() => {
 
         const eventData = data || {};
         // Attach UTM to first event (page_view) and conversion events
-        if (utmParams && (action === 'page_view' || action === 'auth_signed_in' || action === 'checkout_started')) {
+        if (utmParams && (action === 'page_view' || action === 'auth_signed_in' || action === 'checkout_started' || action === 'deeplink_opened' || action === 'payment_complete' || action === 'premium_gate_hit')) {
             eventData.utm = utmParams;
         }
 
