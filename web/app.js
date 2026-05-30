@@ -451,6 +451,10 @@ function updateNotifPrefs() {
     if (hourEl) prefs.hourBefore = hourEl.checked;
     if (onDayEl) prefs.onDay = onDayEl.checked;
     NOTIF.savePrefs(prefs);
+    // Re-schedule with updated preferences
+    if (NOTIF.isEnabled()) {
+        NOTIF.scheduleMilestoneNotifications();
+    }
 }
 
 function loadDarkMode() {
