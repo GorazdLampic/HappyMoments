@@ -243,6 +243,120 @@ function init() {
 
     // Check for Stripe checkout return
     if (typeof checkCheckoutResult === 'function') checkCheckoutResult();
+
+    // Handle deep links — show shared person's milestones
+    handleDeepLink();
+}
+
+function handleDeepLink() {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('n');
+    const dateStr = params.get('d');
+    const lang = params.get('hl');
+
+    if (!name || !dateStr) return;
+
+    // Set language if provided
+    if (lang && typeof I18N !== 'undefined') {
+        I18N.setLocale(lang);
+    }
+
+    // Parse date
+    const date = parseLocalDate(dateStr);
+    if (!date || isNaN(date.getTime())) return;
+
+    // Check if this person is already in the data
+    const existing = appData.events.find(e => e.name === name);
+    if (existing) {
+        // Already tracked — just show their milestones
+        window.history.replaceState({}, '', window.location.pathname);
+        return;
+    }
+
+    // Show a "guest preview" with CTA to add themselves
+    showDeepLinkPreview(name, date);
+
+    // Clean URL
+    window.history.replaceState({}, '', window.location.pathname);
+}
+
+function showDeepLinkPreview(name, date) {
+    // Calculate milestones for the shared person
+    const milestones = typeof findAllUpcomingMilestones === 'function'
+        ? findAllUpcomingMilestones(date, 10, 365, appSettings || {})
+        : [];
+
+    // Add big milestones
+    if (typeof findBigMilestones === 'function') {
+        const bigOnes = findBigMilestones(date, appSettings || {});
+        bigOnes.forEach(bm => {
+            if (!milestones.some(m => m.value === bm.value && m.unit === bm.unit)) {
+                milestones.push(bm);
+            }
+        });
+    }
+
+    milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    // Build preview HTML
+    let milestonesHtml = '';
+    milestones.slice(0, 6).forEach(m => {
+        const timeStr = typeof formatTimeDistance === 'function' ? formatTimeDistance(m.timeUntil) : '';
+        const dateStr = m.date.toLocaleDateString(typeof getAppLocale === 'function' ? getAppLocale() : 'en', { month: 'long', day: 'numeric', year: 'numeric' });
+        milestonesHtml += `
+            <div class="deeplink-milestone">
+                <span class="deeplink-value">${m.value.toLocaleString()}</span>
+                <span class="deeplink-unit">${m.unitName}</span>
+                <span class="deeplink-date">${dateStr} &middot; ${timeStr}</span>
+            </div>
+        `;
+    });
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'deepLinkModal';
+    modal.innerHTML = `
+        <div class="modal-content deeplink-modal">
+            <h3>${escapeHtml(name)}'s Milestones</h3>
+            <p class="auth-subtitle">Someone shared these special moments with you.</p>
+            <div class="deeplink-milestones">${milestonesHtml}</div>
+            <div class="deeplink-cta">
+                <p>When's <strong>YOUR</strong> special number?</p>
+                <button class="btn-primary" onclick="acceptDeepLink('${escapeHtml(name)}', '${date.toISOString().split('T')[0]}'); document.getElementById('deepLinkModal').remove();" style="width:100%;">Discover My Milestones</button>
+            </div>
+            <button class="auth-skip" onclick="document.getElementById('deepLinkModal').remove()">Just browsing</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function acceptDeepLink(name, dateStr) {
+    // Add the shared person to user's data
+    const date = parseLocalDate(dateStr);
+    if (date && !appData.events.find(e => e.name === name)) {
+        appData.events.push({
+            id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            name: name,
+            type: 'birthday',
+            date: date
+        });
+        saveData();
+    }
+
+    // Scroll to onboarding or focus the name input for THEIR birthday
+    const nameInput = document.getElementById('newEventName');
+    if (nameInput) {
+        nameInput.value = '';
+        nameInput.placeholder = 'Your name or another date...';
+        nameInput.scrollIntoView({ behavior: 'smooth' });
+        nameInput.focus();
+    }
+    showToast(`${name} added! Now enter YOUR birthday to see your milestones.`, 'info', 5000);
+
+    // Refresh views
+    renderEventsTab();
+    renderPersonFilter();
+    renderMilestonesTab();
 }
 
 // Consent banner
@@ -511,6 +625,11 @@ function saveData() {
     } else {
         try { localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj)); }
         catch (e) { showToast('Storage full — cannot save data.', 'error'); }
+    }
+
+    // Re-schedule notifications whenever data changes
+    if (typeof NOTIF !== 'undefined' && NOTIF.isEnabled()) {
+        NOTIF.scheduleMilestoneNotifications();
     }
 }
 
@@ -2720,12 +2839,42 @@ function getShareCategory(m) {
 
 const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 happymoments.app';
 
-function getAppShareLink() {
+function getAppShareLink(milestone) {
     const locale = getAppLocale().split('-')[0];
+    let linkText;
     if (typeof APP_SHARE_LINK_I18N !== 'undefined' && APP_SHARE_LINK_I18N[locale]) {
-        return APP_SHARE_LINK_I18N[locale];
+        linkText = APP_SHARE_LINK_I18N[locale];
+    } else {
+        linkText = APP_SHARE_LINK_DEFAULT;
     }
-    return APP_SHARE_LINK_DEFAULT;
+
+    // Generate personalized deep link if milestone has event info
+    if (milestone && milestone.eventName && milestone.eventId) {
+        const event = appData.events.find(e => e.id === milestone.eventId);
+        if (event && event.date) {
+            const dateStr = event.date instanceof Date
+                ? event.date.toISOString().split('T')[0]
+                : String(event.date).split('T')[0];
+            const params = new URLSearchParams({
+                n: event.name,
+                d: dateStr,
+                hl: locale
+            });
+            return linkText.replace('happymoments.app', `happymoments.app/?${params.toString()}`);
+        }
+    }
+    return linkText;
+}
+
+// Generate deep link URL for a specific event
+function getDeepLinkUrl(event) {
+    if (!event) return 'happymoments.app';
+    const dateStr = event.date instanceof Date
+        ? event.date.toISOString().split('T')[0]
+        : String(event.date).split('T')[0];
+    const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
+    const params = new URLSearchParams({ n: event.name, d: dateStr, hl: locale });
+    return `happymoments.app/?${params.toString()}`;
 }
 
 function generateChallengeMessage(m) {
@@ -2760,6 +2909,34 @@ function handleChallengeFriends() {
         });
     }
     _track('challenge_share', { value: m.value, unit: m.unit });
+}
+
+function handleChallengeGroup() {
+    // Get user's own milestone to use as social proof
+    const idx = selectedMilestone !== null ? selectedMilestone : 0;
+    const m = allMilestonesFlat[idx];
+
+    const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
+    const link = m ? getDeepLinkUrl(appData.events.find(e => e.id === m.eventId) || appData.events[0]) : 'happymoments.app';
+
+    const groupMessages = {
+        en: `Who's got the most interesting number milestone? I just found out mine — enter your birthday and see yours in 10 seconds!\n\n${link}\n\n#WhenIsYourBillion`,
+        pt: `Quem tem o marco numerico mais interessante? Acabei de descobrir o meu — coloque seu aniversario e veja o seu em 10 segundos!\n\n${link}\n\n#WhenIsYourBillion`,
+        hi: `किसका सबसे दिलचस्प नंबर माइलस्टोन है? मैंने अभी अपना खोजा — अपना जन्मदिन डालें और 10 सेकंड में देखें!\n\n${link}\n\n#WhenIsYourBillion`,
+        zh: `谁的数字里程碑最有趣？我刚发现了我的——输入你的生日，10秒就能看到！\n\n${link}\n\n#WhenIsYourBillion`,
+        es: `Quien tiene el hito numerico mas interesante? Acabo de descubrir el mio — pon tu cumpleanos y descubre el tuyo en 10 segundos!\n\n${link}\n\n#WhenIsYourBillion`,
+    };
+
+    const message = groupMessages[locale] || groupMessages.en;
+
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoments Challenge', text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Group challenge copied! Paste in your WhatsApp group.', 'success');
+        }).catch(() => {});
+    }
+    _track('group_challenge', { locale });
 }
 
 function quickShare(idx) {
@@ -2822,7 +2999,7 @@ function generateShareMessage(m) {
             msg = `${m.eventName} will be ${val} ${m.unitName} old on ${dateStr} — just ${countdown} away!`;
         }
     }
-    return msg + getAppShareLink();
+    return msg + getAppShareLink(m);
 }
 
 function handleCopyShare() {
@@ -2931,7 +3108,7 @@ function generateCombinedShareMessage(m) {
 
     const description = m.comboDescription || m.description || `${m.value.toLocaleString()} ${m.unitName}`;
 
-    return `Hey! I discovered something amazing - ${description} on ${dateStr}! That's ${formatTimeDistance(m.timeUntil)} from now. Let's celebrate this special moment together!` + getAppShareLink();
+    return `Hey! I discovered something amazing - ${description} on ${dateStr}! That's ${formatTimeDistance(m.timeUntil)} from now. Let's celebrate this special moment together!` + getAppShareLink(m);
 }
 
 function handleCopyCombinedShare() {

@@ -1632,8 +1632,9 @@ body {
 .btn-viber:hover { background: #4a1f68 !important; }
 .btn-viber:active { opacity: 0.9 !important; }
 
+.challenge-buttons { display: flex; gap: 8px; margin-top: 8px; }
 .btn-challenge {
-    width: 100%; padding: 10px 16px; margin-top: 8px;
+    flex: 1; padding: 10px 16px;
     background: none; border: 1px dashed var(--warning); border-radius: var(--radius-sm);
     color: var(--warning); font-family: var(--font-family); font-size: var(--font-size-sm);
     cursor: pointer; transition: background 0.2s;
@@ -2493,6 +2494,19 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     color: var(--text-secondary); font-style: italic;
 }
 .premium-gate-overlay p { margin-bottom: 8px; }
+
+/* Deep Link Preview Modal */
+.deeplink-modal { max-width: 420px; }
+.deeplink-milestones { margin: 16px 0; max-height: 280px; overflow-y: auto; }
+.deeplink-milestone {
+    display: flex; align-items: baseline; gap: 8px; padding: 8px 12px;
+    border-left: 2px solid var(--warning); margin-bottom: 6px;
+}
+.deeplink-value { font-family: var(--font-mono); font-size: var(--font-size-lg); color: var(--warning); font-weight: 500; }
+.deeplink-unit { font-family: var(--font-serif); font-size: var(--font-size-sm); color: var(--text-muted); font-style: italic; }
+.deeplink-date { font-size: var(--font-size-xs); color: var(--text-secondary); margin-left: auto; }
+.deeplink-cta { text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.deeplink-cta p { font-size: var(--font-size-lg); margin-bottom: 12px; color: var(--text-primary); }
 
 .card-format-selector {
     display: flex; gap: var(--space-xs); margin-top: var(--space-sm); justify-content: center;
