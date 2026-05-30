@@ -56,22 +56,29 @@
         <li>Group/set configurations</li>
     </ul>
 
-    <p><strong>2.2 Where data is stored.</strong> All personal data is stored exclusively in your browser's localStorage on your device. We do not have access to this data. No accounts, no cloud storage, no tracking.</p>
+    <p><strong>2.2 Where data is stored.</strong> Your milestone data (names, dates, settings) is stored locally in your browser's localStorage on your device, encrypted with AES-GCM. We do not have access to this data unless you choose to create an account.</p>
 
-    <p><strong>2.3 Data we do NOT collect.</strong></p>
+    <p><strong>2.3 Optional account and authentication.</strong> You may optionally sign in using Google, Apple, or email/password via Firebase Authentication (operated by Google). When you sign in:</p>
     <ul>
-        <li>No analytics or tracking cookies</li>
-        <li>No IP address logging</li>
-        <li>No advertising identifiers</li>
-        <li>No third-party analytics (no Google Analytics, no Facebook Pixel)</li>
-        <li>No user accounts or authentication data</li>
+        <li>Your email address and display name are stored in our database (Cloudflare D1) to manage your account and premium status</li>
+        <li>Firebase Authentication processes your sign-in credentials according to <a href="https://firebase.google.com/support/privacy" target="_blank">Google's Privacy Policy</a></li>
+        <li>You can delete your account and all associated data at any time from Settings</li>
     </ul>
 
-    <p><strong>2.4 Third-party services.</strong> When you use share or calendar features, data is sent to the respective service (WhatsApp, Google Calendar, Outlook, etc.) according to their privacy policies. We have no control over how these services handle the shared content.</p>
+    <p><strong>2.4 Anonymous usage analytics.</strong> We collect anonymous, cookie-free usage analytics to improve the app:</p>
+    <ul>
+        <li>Events tracked: page views, feature usage, sharing actions (no personal content is sent)</li>
+        <li>Session-based with random session IDs (not linked to your identity unless signed in)</li>
+        <li>Country-level location via Cloudflare headers (no IP addresses stored)</li>
+        <li>Respects Do Not Track (DNT) browser setting — if enabled, no analytics are collected</li>
+        <li>No cookies, no Google Analytics, no Facebook Pixel, no advertising identifiers</li>
+    </ul>
 
-    <p><strong>2.5 Gift store.</strong> If and when the gift store becomes active, placing an order will require sharing personal information (name, shipping address, payment details) with our payment processor (Stripe) and fulfillment partners. This data will be processed solely for order fulfillment and will be governed by Stripe's privacy policy and our partners' privacy policies. We will clearly inform you before any such data is collected.</p>
+    <p><strong>2.5 Third-party services.</strong> When you use share or calendar features, data is sent to the respective service (WhatsApp, Google Calendar, Outlook, etc.) according to their privacy policies. We have no control over how these services handle the shared content.</p>
 
-    <p><strong>2.6 Your rights (GDPR / CCPA).</strong> Since your data is stored locally on your device, you have full control:</p>
+    <p><strong>2.6 Gift store.</strong> If and when the gift store becomes active, placing an order will require sharing personal information (name, shipping address, payment details) with our payment processor (Stripe) and fulfillment partners. This data will be processed solely for order fulfillment and will be governed by Stripe's privacy policy and our partners' privacy policies. We will clearly inform you before any such data is collected.</p>
+
+    <p><strong>2.7 Your rights (GDPR / CCPA).</strong> Since your data is stored locally on your device, you have full control:</p>
     <ul>
         <li><strong>Access:</strong> View all your data in the Data tab</li>
         <li><strong>Export:</strong> Use the Export Data feature to download all your data as JSON</li>

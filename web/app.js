@@ -283,6 +283,18 @@ function handleDeepLink() {
     window.history.replaceState({}, '', window.location.pathname);
 }
 
+const DEEPLINK_TEXT = {
+    shared_with_you: { en: 'Someone shared these special moments with you.', pt: 'Alguem compartilhou esses momentos especiais com voce.', hi: 'किसी ने ये विशेष पल आपके साथ साझा किए।', zh: '有人与你分享了这些特别的时刻。', ja: '特別な瞬間があなたと共有されました。', es: 'Alguien compartio estos momentos especiales contigo.', de: 'Jemand hat diese besonderen Momente mit dir geteilt.', fr: 'Quelqu\'un a partage ces moments speciaux avec vous.', it: 'Qualcuno ha condiviso questi momenti speciali con te.', sl: 'Nekdo je s tabo delil te posebne trenutke.', ko: '누군가 특별한 순간을 공유했습니다.', th: 'มีคนแชร์ช่วงเวลาพิเศษเหล่านี้กับคุณ' },
+    whens_yours: { en: 'When\'s <strong>YOUR</strong> special number?', pt: 'Qual e o <strong>SEU</strong> numero especial?', hi: '<strong>आपका</strong> विशेष नंबर कब है?', zh: '<strong>你的</strong>特别数字是什么时候？', ja: '<strong>あなたの</strong>特別な数字は？', es: 'Cual es <strong>TU</strong> numero especial?', de: 'Wann ist <strong>DEINE</strong> besondere Zahl?', fr: 'Quel est <strong>VOTRE</strong> numero special?', it: 'Qual e il <strong>TUO</strong> numero speciale?', sl: 'Kdaj je <strong>TVOJA</strong> posebna stevilka?', ko: '<strong>당신의</strong> 특별한 숫자는?', th: 'ตัวเลขพิเศษของ<strong>คุณ</strong>คืออะไร?' },
+    discover_mine: { en: 'Discover My Milestones', pt: 'Descobrir Meus Marcos', hi: 'मेरे माइलस्टोन खोजें', zh: '发现我的里程碑', ja: '私のマイルストーンを発見', es: 'Descubrir Mis Hitos', de: 'Meine Meilensteine entdecken', fr: 'Decouvrir Mes Jalons', it: 'Scopri i Miei Traguardi', sl: 'Odkrij moje mejnike', ko: '내 마일스톤 발견', th: 'ค้นพบเหตุการณ์สำคัญของฉัน' },
+    just_browsing: { en: 'Just browsing', pt: 'So olhando', hi: 'बस देख रहा हूँ', zh: '随便看看', ja: 'ちょっと見てるだけ', es: 'Solo mirando', de: 'Nur schauen', fr: 'Je regarde', it: 'Sto solo guardando', sl: 'Samo gledam', ko: '그냥 구경', th: 'แค่ดูเฉยๆ' },
+};
+function _dlText(key) {
+    const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
+    const entry = DEEPLINK_TEXT[key];
+    return (entry && entry[locale]) || (entry && entry.en) || key;
+}
+
 function showDeepLinkPreview(name, date) {
     // Calculate milestones for the shared person
     const milestones = typeof findAllUpcomingMilestones === 'function'
@@ -320,14 +332,14 @@ function showDeepLinkPreview(name, date) {
     modal.id = 'deepLinkModal';
     modal.innerHTML = `
         <div class="modal-content deeplink-modal">
-            <h3>${escapeHtml(name)}'s Milestones</h3>
-            <p class="auth-subtitle">Someone shared these special moments with you.</p>
+            <h3>${escapeHtml(name)}</h3>
+            <p class="auth-subtitle">${_dlText('shared_with_you')}</p>
             <div class="deeplink-milestones">${milestonesHtml}</div>
             <div class="deeplink-cta">
-                <p>When's <strong>YOUR</strong> special number?</p>
-                <button class="btn-primary" onclick="acceptDeepLink('${escapeHtml(name)}', '${date.toISOString().split('T')[0]}'); document.getElementById('deepLinkModal').remove();" style="width:100%;">Discover My Milestones</button>
+                <p>${_dlText('whens_yours')}</p>
+                <button class="btn-primary" onclick="acceptDeepLink('${escapeHtml(name)}', '${date.toISOString().split('T')[0]}'); document.getElementById('deepLinkModal').remove();" style="width:100%;">${_dlText('discover_mine')}</button>
             </div>
-            <button class="auth-skip" onclick="document.getElementById('deepLinkModal').remove()">Just browsing</button>
+            <button class="auth-skip" onclick="document.getElementById('deepLinkModal').remove()">${_dlText('just_browsing')}</button>
         </div>
     `;
     document.body.appendChild(modal);
