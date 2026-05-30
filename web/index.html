@@ -230,13 +230,6 @@
                             <input type="text" id="newEventName" placeholder="e.g. Anna, Our Wedding, First Day at Work" autocomplete="off">
                         </div>
                         <div class="form-group" style="flex: 1;">
-                            <select id="newEventType">
-                                <option value="birthday">Birthday</option>
-                                <option value="beginning">Date / Event</option>
-                                <option value="milestone">Milestone</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
                             <div class="date-fields">
                                 <input type="number" id="newEventDay" placeholder="DD" min="1" max="31" class="date-field date-dd" oninput="autoAdvance(this, 'newEventMonth', 2)">
                                 <span class="date-sep">/</span>
@@ -247,6 +240,14 @@
                             <input type="hidden" id="newEventDate">
                         </div>
                         <button id="addEventBtn" class="btn-add">+</button>
+                    </div>
+                    <div class="event-type-row">
+                        <span class="event-type-label" data-i18n="type">Type:</span>
+                        <select id="newEventType" class="event-type-select">
+                            <option value="birthday">Birthday</option>
+                            <option value="beginning">Date / Event</option>
+                            <option value="milestone">Milestone</option>
+                        </select>
                     </div>
                     <div class="time-toggle-row">
                         <a href="#" class="time-toggle-link" onclick="document.getElementById('timeFields').classList.toggle('hidden'); return false;">+ Add exact time (optional)</a>

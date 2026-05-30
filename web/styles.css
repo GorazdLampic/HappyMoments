@@ -390,6 +390,17 @@ body {
 .add-event-form h3 {
     color: var(--accent) !important;
 }
+.event-type-row {
+    display: flex; align-items: center; gap: 8px; margin-top: 6px;
+}
+.event-type-label {
+    font-size: var(--font-size-xs); color: var(--text-muted); font-style: italic;
+}
+.event-type-select {
+    font-size: var(--font-size-xs); padding: 4px 8px; background: var(--bg-elevated);
+    color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-family: var(--font-family);
+}
 
 /* Notification options */
 .notif-options {
