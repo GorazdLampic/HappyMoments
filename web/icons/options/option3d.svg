@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- OPTION 3D: "8" with left half in dark (reads as 3), eyes in upper loop, red mouth in lower loop -->
+  <!-- Background 7 and 9 as happy characters -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1030"/>
+      <stop offset="100%" style="stop-color:#151525"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8e070"/>
+      <stop offset="100%" style="stop-color:#d09820"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!-- === BACKGROUND HAPPY "7" (top-left, subtle) === -->
+  <g transform="translate(55, 95)" opacity="0.15">
+    <text x="0" y="0" font-family="Georgia,serif" font-size="120" font-weight="700" fill="#d4b876" text-anchor="middle">7</text>
+    <!-- tiny smile on the 7 -->
+    <path d="M -15 -18 Q 0 -5 15 -18" fill="none" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+    <!-- tiny eyes -->
+    <circle cx="-8" cy="-42" r="4" fill="#d4b876"/>
+    <circle cx="12" cy="-50" r="4" fill="#d4b876"/>
+  </g>
+
+  <!-- === BACKGROUND HAPPY "9" (bottom-left, subtle) === -->
+  <g transform="translate(65, 430)" opacity="0.15">
+    <text x="0" y="0" font-family="Georgia,serif" font-size="110" font-weight="700" fill="#d4b876" text-anchor="middle">9</text>
+    <!-- tiny smile -->
+    <path d="M -12 -32 Q 2 -20 16 -32" fill="none" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+    <!-- tiny eyes -->
+    <path d="M -10 -60 Q -4 -68 2 -60" fill="none" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 14 -62 Q 20 -70 26 -62" fill="none" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!--
+    THE "8" STRUCTURE:
+    Upper loop center: y = 165, x = 290
+    Lower loop center: y = 345, x = 290
+    Waist (crossing): y = 255
+
+    Left half drawn in background color = makes it look like a "3"
+    Right half in gold = the visible curves
+  -->
+
+  <!-- Full "8" shape — RIGHT HALF in gold (visible) -->
+  <!-- Upper right curve -->
+  <path d="M 245 255 C 245 200, 245 95, 300 95 C 370 95, 400 130, 400 170
+           C 400 215, 370 255, 300 255"
+        fill="none" stroke="url(#gold)" stroke-width="32" stroke-linecap="round"/>
+
+  <!-- Lower right curve -->
+  <path d="M 300 255 C 380 255, 415 295, 415 345
+           C 415 400, 375 430, 300 430 C 245 430, 225 400, 225 370"
+        fill="none" stroke="url(#gold)" stroke-width="32" stroke-linecap="round"/>
+
+  <!-- Full "8" shape — LEFT HALF in blended/faded (makes it optional — see 3 or 8) -->
+  <!-- Upper left curve -->
+  <path d="M 300 95 C 230 95, 190 130, 190 170
+           C 190 215, 225 250, 255 255"
+        fill="none" stroke="#d4b876" stroke-width="28" stroke-linecap="round" opacity="0.18"/>
+
+  <!-- Lower left curve -->
+  <path d="M 225 370 C 225 400, 195 430, 175 430
+           C 155 430, 170 400, 170 345
+           C 170 295, 210 255, 260 255"
+        fill="none" stroke="#d4b876" stroke-width="28" stroke-linecap="round" opacity="0.18"/>
+
+  <!-- === EYES inside upper loop (centered y~155, x~290-360) === -->
+  <!-- Left eye — big happy squint -->
+  <path d="M 280 145 Q 298 115 316 145" fill="none" stroke="#1e1030" stroke-width="9" stroke-linecap="round"/>
+  <!-- Right eye — big happy squint -->
+  <path d="M 338 145 Q 356 115 374 145" fill="none" stroke="#1e1030" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- Rosy cheeks -->
+  <circle cx="282" cy="172" r="13" fill="#f08080" opacity="0.3"/>
+  <circle cx="376" cy="172" r="13" fill="#f08080" opacity="0.3"/>
+
+  <!-- === BIG RED MOUTH inside lower loop (centered y~340, x~290-390) === -->
+  <path d="M 280 330 Q 338 400 395 330" fill="#cc2020"/>
+  <!-- Tongue -->
+  <ellipse cx="338" cy="368" rx="24" ry="14" fill="#e84848" opacity="0.75"/>
+  <!-- Mouth outline -->
+  <path d="M 280 330 Q 338 400 395 330" fill="none" stroke="#1e1030" stroke-width="4" stroke-linecap="round"/>
+  <!-- Teeth hint -->
+  <line x1="315" y1="330" x2="315" y2="345" stroke="white" stroke-width="2" opacity="0.5"/>
+  <line x1="340" y1="330" x2="340" y2="345" stroke="white" stroke-width="2" opacity="0.5"/>
+  <line x1="362" y1="330" x2="358" y2="344" stroke="white" stroke-width="2" opacity="0.4"/>
+
+  <!-- === PARTY HAT on top of upper loop === -->
+  <polygon points="300,25 260,90 340,90" fill="#e83838" opacity="0.92"/>
+  <line x1="280" y1="55" x2="272" y2="82" stroke="#f8e060" stroke-width="3" opacity="0.65"/>
+  <line x1="300" y1="38" x2="300" y2="82" stroke="#f8e060" stroke-width="3" opacity="0.55"/>
+  <line x1="320" y1="55" x2="328" y2="82" stroke="#f8e060" stroke-width="3" opacity="0.65"/>
+  <circle cx="300" cy="22" r="13" fill="#f8e060"/>
+
+  <!-- === SPARKLES === -->
+  <g transform="translate(455,120)" opacity="0.7">
+    <line x1="0" y1="-16" x2="0" y2="16" stroke="#f0d060" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="-16" y1="0" x2="16" y2="0" stroke="#f0d060" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="-10" y1="-10" x2="10" y2="10" stroke="#f0d060" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="10" y1="-10" x2="-10" y2="10" stroke="#f0d060" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(450,380)" opacity="0.45">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- === MUSIC NOTES === -->
+  <g transform="translate(460,260)" opacity="0.45">
+    <ellipse cx="0" cy="0" rx="8" ry="5.5" fill="#d4b876" transform="rotate(-20)"/>
+    <line x1="7" y1="-2" x2="7" y2="-28" stroke="#d4b876" stroke-width="2.5"/>
+    <path d="M 7 -28 Q 18 -32 16 -22 Q 14 -16 7 -19" fill="#d4b876"/>
+  </g>
+
+  <!-- === CONFETTI === -->
+  <circle cx="140" cy="60" r="4.5" fill="#5aaad0" opacity="0.55"/>
+  <circle cx="460" cy="450" r="5" fill="#e078b0" opacity="0.5"/>
+  <circle cx="440" cy="48" r="4" fill="#70b870" opacity="0.45"/>
+  <circle cx="130" cy="470" r="4" fill="#e87848" opacity="0.4"/>
+
+  <!-- === BRAND === -->
+  <text x="256" y="492" font-family="Georgia,serif" font-size="34" fill="#d4b876" text-anchor="middle" opacity="0.55" font-style="italic">HappyMoments</text>
+</svg>

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- OPTION 3B: The "3" where eyes sit INSIDE the upper bump, smile INSIDE the lower bump -->
+  <defs>
+    <linearGradient id="bg3b" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1030"/>
+      <stop offset="100%" style="stop-color:#151525"/>
+    </linearGradient>
+    <linearGradient id="gold3b" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8e070"/>
+      <stop offset="100%" style="stop-color:#d09820"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg3b)"/>
+
+  <!-- THE "3" — three horizontal endpoints define the structure:
+       Top line:    y~85   (top of 3)
+       Middle line: y~245  (waist of 3)
+       Bottom line: y~405  (bottom of 3)
+
+       Upper bump: between y85 and y245 — eyes go here
+       Lower bump: between y245 and y405 — mouth goes here
+  -->
+
+  <!-- Top stroke of 3 -->
+  <path d="M 130 85 L 350 85"
+        fill="none" stroke="url(#gold3b)" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- Upper curve (right side bulge, y85 to y245) -->
+  <path d="M 350 85 C 440 85, 440 245, 270 245"
+        fill="none" stroke="url(#gold3b)" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- Middle stroke of 3 -->
+  <path d="M 270 245 L 200 245"
+        fill="none" stroke="url(#gold3b)" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- Lower curve (right side bulge, y245 to y405) -->
+  <path d="M 270 245 C 450 245, 450 405, 260 405"
+        fill="none" stroke="url(#gold3b)" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- Bottom stroke of 3 -->
+  <path d="M 260 405 L 130 405"
+        fill="none" stroke="url(#gold3b)" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- === EYES inside upper bump (centered around y~165, the middle of 85-245) === -->
+  <!-- Left eye — happy squint -->
+  <path d="M 250 150 Q 265 125 280 150" fill="none" stroke="#1e1030" stroke-width="8" stroke-linecap="round"/>
+  <!-- Right eye — happy squint -->
+  <path d="M 310 150 Q 325 125 340 150" fill="none" stroke="#1e1030" stroke-width="8" stroke-linecap="round"/>
+  <!-- Rosy cheeks -->
+  <circle cx="248" cy="170" r="12" fill="#f08080" opacity="0.25"/>
+  <circle cx="348" cy="170" r="12" fill="#f08080" opacity="0.25"/>
+
+  <!-- === BIG SMILE inside lower bump (centered around y~325, the middle of 245-405) === -->
+  <path d="M 260 310 Q 330 385 390 310" fill="none" stroke="#1e1030" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- === PARTY HAT on top === -->
+  <polygon points="240,15 200,80 280,80" fill="#e83838" opacity="0.9"/>
+  <line x1="220" y1="45" x2="212" y2="72" stroke="#f8e060" stroke-width="3" opacity="0.6"/>
+  <line x1="240" y1="28" x2="240" y2="72" stroke="#f8e060" stroke-width="3" opacity="0.5"/>
+  <line x1="260" y1="45" x2="268" y2="72" stroke="#f8e060" stroke-width="3" opacity="0.6"/>
+  <circle cx="240" cy="12" r="14" fill="#f8e060"/>
+
+  <!-- === SPARKLES === -->
+  <g transform="translate(68,180)" opacity="0.75">
+    <line x1="0" y1="-18" x2="0" y2="18" stroke="#f0d060" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-18" y1="0" x2="18" y2="0" stroke="#f0d060" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-12" y1="-12" x2="12" y2="12" stroke="#f0d060" stroke-width="3" stroke-linecap="round"/>
+    <line x1="12" y1="-12" x2="-12" y2="12" stroke="#f0d060" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(70,340)" opacity="0.5">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- === MUSIC NOTE === -->
+  <g transform="translate(90,280)" opacity="0.5">
+    <ellipse cx="0" cy="0" rx="9" ry="6" fill="#d4b876" transform="rotate(-20)"/>
+    <line x1="8" y1="-2" x2="8" y2="-32" stroke="#d4b876" stroke-width="2.5"/>
+    <path d="M 8 -32 Q 20 -36 18 -26 Q 16 -19 8 -22" fill="#d4b876"/>
+  </g>
+
+  <!-- === CONFETTI === -->
+  <circle cx="75" cy="100" r="5" fill="#5aaad0" opacity="0.6"/>
+  <circle cx="90" cy="430" r="5" fill="#e078b0" opacity="0.55"/>
+  <circle cx="60" cy="440" r="4" fill="#70b870" opacity="0.45"/>
+
+  <text x="256" y="485" font-family="Georgia,serif" font-size="36" fill="#d4b876" text-anchor="middle" opacity="0.6" font-style="italic">HappyMoments</text>
+</svg>

@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- HAPPY 1: Kawaii chunky "3" with big round eyes, huge smile, little arms waving -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1035"/>
+      <stop offset="100%" style="stop-color:#121228"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!-- Glow behind character -->
+  <circle cx="270" cy="260" r="170" fill="#f8e060" opacity="0.06"/>
+
+  <!-- CHUNKY "3" BODY — thick, bubbly, friendly -->
+  <!-- Upper bump -->
+  <ellipse cx="300" cy="165" rx="95" ry="85" fill="#f8d848"/>
+  <!-- Lower bump (slightly bigger) -->
+  <ellipse cx="305" cy="350" rx="105" ry="95" fill="#f8d848"/>
+  <!-- Overlap connector -->
+  <ellipse cx="302" cy="258" rx="70" ry="40" fill="#f8d848"/>
+  <!-- Cut out left side to make it a "3" shape -->
+  <rect x="100" y="80" width="175" height="130" fill="url(#bg)"/>
+  <rect x="100" y="250" width="175" height="10" fill="url(#bg)"/>
+  <rect x="100" y="300" width="175" height="150" fill="url(#bg)"/>
+  <!-- Clean up the left openings with curved masks -->
+  <path d="M 215 80 C 190 80, 190 170, 215 210 L 100 210 L 100 80 Z" fill="url(#bg)"/>
+  <path d="M 210 300 C 185 300, 175 400, 210 445 L 100 445 L 100 300 Z" fill="url(#bg)"/>
+
+  <!-- Darker outline to define shape -->
+  <!-- Top curve -->
+  <path d="M 195 105 C 195 65, 400 65, 400 160 C 400 220, 310 250, 260 255"
+        fill="none" stroke="#d4a020" stroke-width="5" opacity="0.4"/>
+  <!-- Bottom curve -->
+  <path d="M 260 260 C 320 260, 415 280, 415 350 C 415 430, 300 455, 215 440"
+        fill="none" stroke="#d4a020" stroke-width="5" opacity="0.4"/>
+
+  <!-- === BIG KAWAII EYES in upper bump === -->
+  <!-- Left eye -->
+  <ellipse cx="280" cy="155" rx="24" ry="26" fill="white"/>
+  <ellipse cx="284" cy="158" rx="15" ry="17" fill="#2a1a3a"/>
+  <circle cx="290" cy="148" r="7" fill="white"/>
+  <circle cx="278" cy="162" r="4" fill="white" opacity="0.5"/>
+  <!-- Right eye -->
+  <ellipse cx="355" cy="150" rx="22" ry="24" fill="white"/>
+  <ellipse cx="359" cy="153" rx="14" ry="16" fill="#2a1a3a"/>
+  <circle cx="364" cy="143" r="6.5" fill="white"/>
+  <circle cx="353" cy="157" r="3.5" fill="white" opacity="0.5"/>
+
+  <!-- Cute eyebrows -->
+  <path d="M 262 125 Q 280 115 298 125" fill="none" stroke="#c89020" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 340 120 Q 355 112 372 122" fill="none" stroke="#c89020" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Rosy cheeks -->
+  <ellipse cx="260" cy="185" rx="16" ry="11" fill="#ff8888" opacity="0.35"/>
+  <ellipse cx="378" cy="180" rx="16" ry="11" fill="#ff8888" opacity="0.35"/>
+
+  <!-- === HUGE HAPPY RED MOUTH in lower bump === -->
+  <path d="M 260 335 Q 320 410 385 335" fill="#dd2222"/>
+  <path d="M 260 335 Q 320 410 385 335" fill="none" stroke="#aa1515" stroke-width="3"/>
+  <!-- Tongue -->
+  <ellipse cx="322" cy="372" rx="28" ry="16" fill="#ff5555"/>
+  <!-- Teeth -->
+  <rect x="290" y="335" width="20" height="15" rx="3" fill="white" opacity="0.85"/>
+  <rect x="314" y="335" width="20" height="15" rx="3" fill="white" opacity="0.85"/>
+
+  <!-- === LITTLE ARMS WAVING === -->
+  <!-- Left arm -->
+  <path d="M 205 195 Q 150 155 130 120" stroke="#f8d848" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <circle cx="127" cy="115" r="12" fill="#f8d848"/>
+  <!-- Right arm -->
+  <path d="M 400 195 Q 435 150 450 115" stroke="#f8d848" stroke-width="14" stroke-linecap="round" fill="none"/>
+  <circle cx="453" cy="110" r="12" fill="#f8d848"/>
+
+  <!-- === PARTY HAT === -->
+  <polygon points="300,18 260,90 340,90" fill="#ee3333"/>
+  <line x1="280" y1="50" x2="272" y2="82" stroke="#f8e868" stroke-width="4" opacity="0.7"/>
+  <line x1="300" y1="32" x2="300" y2="82" stroke="#f8e868" stroke-width="4" opacity="0.6"/>
+  <line x1="320" y1="50" x2="328" y2="82" stroke="#f8e868" stroke-width="4" opacity="0.7"/>
+  <circle cx="300" cy="14" r="14" fill="#f8e868"/>
+  <!-- Hat brim dots -->
+  <circle cx="265" cy="90" r="4" fill="#f8e868" opacity="0.7"/>
+  <circle cx="280" cy="92" r="3" fill="#44cc44" opacity="0.7"/>
+  <circle cx="295" cy="90" r="4" fill="#5599ff" opacity="0.7"/>
+  <circle cx="310" cy="92" r="3" fill="#ff55aa" opacity="0.7"/>
+  <circle cx="325" cy="90" r="4" fill="#f8e868" opacity="0.7"/>
+
+  <!-- === SPARKLES === -->
+  <g transform="translate(100,100)" opacity="0.75">
+    <line x1="0" y1="-14" x2="0" y2="14" stroke="#f8e868" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-14" y1="0" x2="14" y2="0" stroke="#f8e868" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(460,280)" opacity="0.5">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- === HAPPY 7 background === -->
+  <g opacity="0.12">
+    <text x="72" y="290" font-family="Arial,sans-serif" font-size="90" font-weight="900" fill="#f8d848">7</text>
+    <path d="M 52 248 Q 62 238 72 248" fill="none" stroke="#f8d848" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 80 245 Q 90 235 100 245" fill="none" stroke="#f8d848" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 55 268 Q 75 280 95 268" fill="none" stroke="#f8d848" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- === HAPPY 9 background === -->
+  <g opacity="0.12">
+    <text x="75" y="440" font-family="Arial,sans-serif" font-size="80" font-weight="900" fill="#f8d848">9</text>
+    <path d="M 82 388 Q 90 380 98 388" fill="none" stroke="#f8d848" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 108 386 Q 116 378 124 386" fill="none" stroke="#f8d848" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 88 405 Q 105 415 122 405" fill="none" stroke="#f8d848" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- === CONFETTI === -->
+  <circle cx="140" cy="60" r="5" fill="#5599ff" opacity="0.65"/>
+  <circle cx="460" cy="400" r="6" fill="#ff55aa" opacity="0.55"/>
+  <circle cx="85" cy="370" r="4" fill="#44cc44" opacity="0.5"/>
+  <circle cx="450" cy="55" r="5" fill="#ff8844" opacity="0.5"/>
+
+  <!-- === MUSIC NOTES === -->
+  <g transform="translate(460,340)" opacity="0.4">
+    <ellipse cx="0" cy="0" rx="8" ry="5.5" fill="#d4b876" transform="rotate(-15)"/>
+    <line x1="7" y1="-2" x2="7" y2="-26" stroke="#d4b876" stroke-width="2.5"/>
+    <path d="M 7 -26 Q 17 -30 15 -21 Q 13 -15 7 -18" fill="#d4b876"/>
+  </g>
+
+  <!-- === BRAND === -->
+  <text x="256" y="497" font-family="Georgia,serif" font-size="33" fill="#d4b876" text-anchor="middle" opacity="0.5" font-style="italic">HappyMoments</text>
+</svg>

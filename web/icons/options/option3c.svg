@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- OPTION 3C: Balanced "3" — upper bump taller, mouth visible and red -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1030"/>
+      <stop offset="100%" style="stop-color:#151525"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8e070"/>
+      <stop offset="100%" style="stop-color:#d09820"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!--
+    THE "3" STRUCTURE:
+    Top line:      y = 70
+    Middle line:   y = 255  (upper bump is 185px tall — nice and roomy for eyes)
+    Bottom line:   y = 430  (lower bump is 175px tall — roomy for mouth)
+
+    Upper bump curves right between y70-y255
+    Lower bump curves right between y255-y430
+  -->
+
+  <!-- Top horizontal stroke -->
+  <path d="M 115 70 L 310 70"
+        fill="none" stroke="url(#gold)" stroke-width="30" stroke-linecap="round"/>
+
+  <!-- Upper curve (big right bulge from top to middle) -->
+  <path d="M 310 70 C 430 70, 430 255, 240 255"
+        fill="none" stroke="url(#gold)" stroke-width="30" stroke-linecap="round"/>
+
+  <!-- Middle horizontal stroke (shorter, the waist) -->
+  <path d="M 240 255 L 180 255"
+        fill="none" stroke="url(#gold)" stroke-width="30" stroke-linecap="round"/>
+
+  <!-- Lower curve (big right bulge from middle to bottom) -->
+  <path d="M 240 255 C 440 255, 440 430, 230 430"
+        fill="none" stroke="url(#gold)" stroke-width="30" stroke-linecap="round"/>
+
+  <!-- Bottom horizontal stroke -->
+  <path d="M 230 430 L 115 430"
+        fill="none" stroke="url(#gold)" stroke-width="30" stroke-linecap="round"/>
+
+  <!--
+    FACE PLACEMENT:
+    Upper bump center: y = (70+255)/2 = 162, x center of bulge ~330
+    Lower bump center: y = (255+430)/2 = 342, x center of bulge ~340
+  -->
+
+  <!-- === EYES in upper bump (y~140-175 area, x~270-370) === -->
+  <!-- Left eye — happy arc, big -->
+  <path d="M 270 148 Q 290 118 310 148" fill="none" stroke="#1e1030" stroke-width="9" stroke-linecap="round"/>
+  <!-- Right eye — happy arc, big -->
+  <path d="M 330 148 Q 350 118 370 148" fill="none" stroke="#1e1030" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- Rosy cheeks below eyes -->
+  <circle cx="275" cy="175" r="14" fill="#f08080" opacity="0.3"/>
+  <circle cx="365" cy="175" r="14" fill="#f08080" opacity="0.3"/>
+
+  <!-- === BIG RED SMILE in lower bump (y~310-370, x~270-400) === -->
+  <!-- Smile background (open mouth) -->
+  <path d="M 275 330 Q 340 400 400 330" fill="#cc2020" stroke="#1e1030" stroke-width="5" stroke-linecap="round"/>
+  <!-- Tongue -->
+  <ellipse cx="338" cy="365" rx="22" ry="12" fill="#e84040" opacity="0.7"/>
+  <!-- Smile outline on top -->
+  <path d="M 275 330 Q 340 400 400 330" fill="none" stroke="#1e1030" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- === PARTY HAT === -->
+  <polygon points="210,5 170,68 250,68" fill="#e83838" opacity="0.92"/>
+  <line x1="190" y1="34" x2="182" y2="60" stroke="#f8e060" stroke-width="3" opacity="0.65"/>
+  <line x1="210" y1="18" x2="210" y2="60" stroke="#f8e060" stroke-width="3" opacity="0.55"/>
+  <line x1="230" y1="34" x2="238" y2="60" stroke="#f8e060" stroke-width="3" opacity="0.65"/>
+  <circle cx="210" cy="3" r="13" fill="#f8e060"/>
+
+  <!-- === SPARKLES === -->
+  <!-- Big star left -->
+  <g transform="translate(62,170)" opacity="0.8">
+    <line x1="0" y1="-18" x2="0" y2="18" stroke="#f0d060" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-18" y1="0" x2="18" y2="0" stroke="#f0d060" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-12" y1="-12" x2="12" y2="12" stroke="#f0d060" stroke-width="3" stroke-linecap="round"/>
+    <line x1="12" y1="-12" x2="-12" y2="12" stroke="#f0d060" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <!-- Small star left lower -->
+  <g transform="translate(55,340)" opacity="0.45">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- === MUSIC NOTES === -->
+  <!-- Note left -->
+  <g transform="translate(72,275)" opacity="0.55">
+    <ellipse cx="0" cy="0" rx="9" ry="6" fill="#d4b876" transform="rotate(-20)"/>
+    <line x1="8" y1="-2" x2="8" y2="-32" stroke="#d4b876" stroke-width="2.5"/>
+    <path d="M 8 -32 Q 20 -36 18 -26 Q 16 -19 8 -22" fill="#d4b876"/>
+  </g>
+  <!-- Double note right -->
+  <g transform="translate(80,420)" opacity="0.4">
+    <ellipse cx="0" cy="0" rx="7" ry="5" fill="#d4b876" transform="rotate(-15)"/>
+    <line x1="6" y1="-2" x2="6" y2="-24" stroke="#d4b876" stroke-width="2"/>
+    <ellipse cx="18" cy="-3" rx="7" ry="5" fill="#d4b876" transform="rotate(-15)"/>
+    <line x1="24" y1="-5" x2="24" y2="-27" stroke="#d4b876" stroke-width="2"/>
+    <line x1="6" y1="-24" x2="24" y2="-27" stroke="#d4b876" stroke-width="2.5"/>
+  </g>
+
+  <!-- === CONFETTI === -->
+  <circle cx="68" cy="100" r="5" fill="#5aaad0" opacity="0.6"/>
+  <circle cx="55" cy="450" r="5" fill="#e078b0" opacity="0.5"/>
+  <circle cx="90" cy="460" r="4" fill="#70b870" opacity="0.4"/>
+
+  <!-- === BRAND === -->
+  <text x="256" y="490" font-family="Georgia,serif" font-size="35" fill="#d4b876" text-anchor="middle" opacity="0.6" font-style="italic">HappyMoments</text>
+</svg>
