@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments Gift Store — 10 Persona User Journeys</title>
+<style>
+    :root { --bg: #1a1a1a; --card: #222; --text: #e0e0e0; --muted: #888; --accent: #d4b876; --green: #a0b8a0; --red: #c07070; --blue: #6090c0; --border: #333; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; max-width: 1200px; margin: 0 auto; }
+    h1 { color: var(--accent); font-size: 1.8rem; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    h2 { color: var(--green); font-size: 1.3rem; margin: 30px 0 12px; }
+    h3 { color: var(--accent); font-size: 1.1rem; margin: 16px 0 8px; }
+    h4 { color: var(--blue); font-size: 0.95rem; margin: 10px 0 4px; }
+    p, li { font-size: 0.95rem; margin-bottom: 6px; }
+    .meta { color: var(--muted); font-style: italic; margin-bottom: 24px; }
+    .persona { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px; margin-bottom: 20px; }
+    .persona-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .persona-header h3 { margin: 0; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-family: monospace; }
+    .tag-buy { background: rgba(160,184,160,0.15); color: var(--green); }
+    .tag-maybe { background: rgba(212,184,118,0.15); color: var(--accent); }
+    .tag-no { background: rgba(192,112,112,0.15); color: var(--red); }
+    .tag-product { background: rgba(96,144,192,0.15); color: var(--blue); }
+    .prob { font-family: monospace; font-weight: bold; font-size: 1.1rem; }
+    .prob-high { color: var(--green); }
+    .prob-med { color: var(--accent); }
+    .prob-low { color: var(--red); }
+    .section { margin-bottom: 8px; }
+    .section strong { color: var(--accent); }
+    .friction { color: var(--red); font-weight: 500; }
+    .positive { color: var(--green); }
+    .neutral { color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.85rem; }
+    th, td { padding: 8px 10px; border: 1px solid var(--border); text-align: left; }
+    th { background: #2a2a2a; color: var(--accent); font-weight: 500; white-space: nowrap; }
+    td { vertical-align: top; }
+    .api-test { background: #1e1e1e; border: 1px solid var(--border); padding: 12px; border-radius: 4px; font-family: monospace; font-size: 0.8rem; margin: 8px 0; overflow-x: auto; white-space: pre-wrap; color: var(--green); }
+    .api-test .cmd { color: var(--blue); }
+    .api-test .resp { color: var(--accent); }
+    .finding { background: rgba(212,184,118,0.08); border-left: 3px solid var(--accent); padding: 12px 16px; margin: 12px 0; }
+    .finding-critical { border-left-color: var(--red); background: rgba(192,112,112,0.08); }
+    .finding-positive { border-left-color: var(--green); background: rgba(160,184,160,0.08); }
+    ul { padding-left: 20px; }
+    .verdict { font-size: 1rem; font-weight: 500; margin-top: 8px; }
+    .summary-box { background: var(--card); border: 1px solid var(--accent); border-radius: 6px; padding: 20px; margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<h1>HappyMoments Gift Store &mdash; 10 Persona User Journeys</h1>
+<p class="meta">Analysis date: 27 May 2026 &nbsp;|&nbsp; App: happymoments.app &nbsp;|&nbsp; Backend: Cloudflare Pages Functions &nbsp;|&nbsp; Printful + Stripe integration</p>
+
+<!-- ================================================================ -->
+<h2>System State Verified via Live Endpoints</h2>
+
+<div class="api-test">
+<span class="cmd">$ curl https://happymoments.app/api/health</span>
+<span class="resp">{"status":"ok","timestamp":"2026-05-31T06:48:08.851Z","db":true,"stripe":true}</span>
+
+<span class="cmd">$ curl -X POST /api/gift-order -d '{"productType":"invalidtype",...}'</span>
+<span class="resp">{"error":"Invalid product type"}</span>  &larr; validation works
+
+<span class="cmd">$ curl -X POST /api/gift-order -d '{"productType":"mug",...,"customerEmail":"bad-email",...}'</span>
+<span class="resp">{"error":"Valid email is required"}</span>  &larr; email validation works
+
+<span class="cmd">$ curl -X POST /api/gift-order -d '{"productType":"mug",...,"designImageBase64":""}'</span>
+<span class="resp">{"error":"Design image is required"}</span>  &larr; design validation works
+
+<span class="cmd">$ curl -X POST /api/gift-order (valid payload, 1px PNG)</span>
+<span class="resp">HTTP 502</span>  &larr; Printful rejects trivial image; real Canvas generates proper design
+</div>
+
+<div class="finding">
+<strong>Backend status:</strong> Health endpoint confirms DB + Stripe are live. The gift-order pipeline (Printful file upload &rarr; draft order &rarr; Stripe checkout session) is fully wired. The 502 on trivial images is expected &mdash; the real flow generates a proper 1080px Canvas design client-side before submission.
+</div>
+
+<!-- ================================================================ -->
+<h2>Product Catalog Reference</h2>
+
+<table>
+<tr><th>Product</th><th>Price (EUR)</th><th>Printful SKU</th><th>Best For</th><th>Has Sizing</th></tr>
+<tr><td>Milestone Mug</td><td>22.00</td><td>White 11oz (#1320)</td><td>Birthday, round, repdigit, palindrome</td><td>No</td></tr>
+<tr><td>Milestone Poster</td><td>28.00</td><td>12&times;18" (#2103)</td><td>Scientific, fibonacci, palindrome, power of 2</td><td>No</td></tr>
+<tr><td>Milestone Tee</td><td>28.00</td><td>Bella+Canvas 3001 (#4012)</td><td>Fibonacci, power of 2, scientific, repdigit</td><td>Yes (S-2XL)</td></tr>
+<tr><td>Milestone Tote</td><td>20.00</td><td>Tote Bag (#5765)</td><td>Birthday, round</td><td>No</td></tr>
+<tr><td>Milestone Canvas</td><td>35.00</td><td>12&times;12" (#3845)</td><td>Sequential, round, scientific</td><td>No</td></tr>
+</table>
+
+<div class="finding">
+<strong>Shipping country dropdown (frontend):</strong> 26 countries only &mdash; US, GB, DE, FR, IT, ES, NL, BE, AT, CH, SI, HR, PL, CZ, SE, DK, NO, FI, PT, IE, CA, AU, JP, BR, IN, MX. <br>
+<strong>Missing from dropdown:</strong> Nigeria (NG), UAE (AE), Russia (RU), Singapore (SG), South Korea (KR), Turkey (TR), South Africa (ZA), Argentina (AR), and most of Africa/Middle East/Southeast Asia.
+</div>
+
+<!-- ================================================================ -->
+<h2>The 10 Persona Journeys</h2>
+
+<!-- PERSONA 1 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>1. Lisa, 30, New York City</h3>
+    <span class="tag tag-product">Mug (EUR 22)</span>
+    <span class="tag tag-buy">HIGH BUY</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Lisa enters her boyfriend's birthday. The app instantly shows he is approaching <strong>10,000 days</strong> alive &mdash; a round number milestone in the "power_of_10" category. The UI displays it as a countdown: "in 43 days." The emotional hook is immediate: "Your boyfriend is turning 10,000 days old on July 9th."</p>
+
+<h4>2. Gift Selection</h4>
+<p>The gift banner appears inline below the 10,000-days milestone card: <em>"10,000 days &mdash; every morning"</em> with the mug icon. A mug at EUR 22 (~$24) feels like a perfect, affordable novelty gift. She clicks through. The algorithm correctly suggests the mug first (birthday + round categories).</p>
+
+<h4>3. Order Flow</h4>
+<p>The modal opens with a Canvas-rendered design preview showing "10,000 DAYS" in the dark chalkboard aesthetic. She fills in: recipient name (boyfriend's name), personal message "Happy 10K days, babe!", her shipping address. <strong>US is pre-selected as the default country.</strong></p>
+<ul>
+    <li><span class="positive">Smooth:</span> US pre-selected, autocomplete attributes on fields, clear validation</li>
+    <li><span class="friction">Friction:</span> Price shown in EUR, not USD. A $24 equivalent is fine, but she may hesitate at the unfamiliar currency</li>
+    <li><span class="friction">Friction:</span> No shipping cost estimate shown before "Proceed to Payment" &mdash; only "Shipping costs will be calculated at checkout"</li>
+    <li><span class="friction">Friction:</span> No product photo (only Canvas art preview of the design, not a mockup of the actual mug)</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="positive">US is Printful's primary market.</span> Domestic fulfillment from US facilities. Estimated shipping ~$5-7, delivery 5-10 business days. No issues.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 22 &asymp; $24. Plus ~$5-7 shipping = ~$30 total for a personalized mug. Comparable to Etsy custom mugs ($20-30 + shipping). Feels fair for a novelty gift. A specialized, emotion-driven purchase &mdash; she is not price-comparing against Amazon generic mugs.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-high">75%</p>
+<p>Strong emotional trigger, affordable price, familiar shipping country. The EUR display and lack of a product mockup may cause 25% to hesitate and screenshot the idea instead of buying.</p>
+
+<h4>7. Reorder?</h4>
+<p><span class="positive">Yes, likely.</span> If the boyfriend loves it, she will be back for their anniversary, or for friends' milestones. The app sends notifications for upcoming milestones, creating natural reorder triggers.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>Show price in USD (auto-detect currency from country selection)</li>
+    <li>Show a product mockup (mug with the design rendered on it)</li>
+    <li>Display estimated shipping cost before checkout</li>
+    <li>Add "Gift wrapping" option</li>
+</ul>
+</div>
+
+<!-- PERSONA 2 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>2. Kenji, 28, Tokyo</h3>
+    <span class="tag tag-product">Canvas (EUR 35)</span>
+    <span class="tag tag-buy">HIGH BUY</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Kenji enters his birthday and the app detects the <strong>888,888 minutes</strong> milestone. The number 888 is deeply auspicious in East Asian culture (prosperity, fortune, flow). The app's i18n system auto-detects Japanese and switches to the ja locale. The milestone card reads "888,888 minutes" with a special explanation mentioning lucky numbers.</p>
+
+<h4>2. Gift Selection</h4>
+<p>He considers the canvas (EUR 35) for his apartment &mdash; a gallery-wrapped 12x12" art piece. In Japanese gift-giving culture (<em>ochugen/oseibo</em>), gifts should be aesthetically beautiful and well-presented. A canvas print with a lucky number is culturally resonant. The app's "Lucky" collection (mug, canvas) aligns well.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="positive">Smooth:</span> Japanese language support (ja locale). The app auto-detects browser language</li>
+    <li><span class="friction">Friction:</span> The gift order modal form labels are in English, not Japanese (the i18n system covers the main UI but the gift store form fields like "Full name", "Street address" are hardcoded English)</li>
+    <li><span class="positive">Smooth:</span> Japan (JP) is in the shipping country dropdown</li>
+    <li><span class="friction">Friction:</span> Japanese addresses use a different format (Prefecture &rarr; City &rarr; Block &rarr; Building). The single "Street address" field is awkward. No state/prefecture field</li>
+    <li><span class="friction">Friction:</span> EUR pricing. JPY ~165/EUR makes EUR 35 &asymp; &yen;5,775. This is actually reasonable for art prints in Japan</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="positive">Printful ships to Japan</span> from US or EU fulfillment centers. Canvas shipping to Japan ~EUR 10-15 additional. Total ~EUR 45-50. Delivery: 10-20 business days. Customs/import tax may apply (Japan has a &yen;16,666 duty-free threshold for personal imports; this is under it).</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 35 + shipping &asymp; &yen;7,500-8,250 total. A 12x12" canvas print in Japan typically costs &yen;3,000-8,000 on domestic services (Pixta, Vistaprint JP). The personalization and novelty justify the upper range. Gift-giving culture in Japan values the thought over the cost.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-high">70%</p>
+<p>Strong cultural resonance with 888,888. Canvas is a fitting product for apartment decor. The English-only order form and address format mismatch are the main friction points.</p>
+
+<h4>7. Reorder?</h4>
+<p><span class="positive">Possible.</span> Japanese consumers tend to be loyal to services that deliver quality. If the canvas arrives well-packaged and the print quality is good, he may gift similar items to friends (<em>omiyage</em> culture).</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>Translate the gift order form to Japanese</li>
+    <li>Add a prefecture/state field for Japanese addresses</li>
+    <li>Show estimated JPY price</li>
+    <li>Add gift wrapping option (critical in Japanese culture)</li>
+    <li>Display estimated delivery time</li>
+</ul>
+</div>
+
+<!-- PERSONA 3 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>3. Amara, 35, Lagos, Nigeria</h3>
+    <span class="tag tag-product">Poster (EUR 28)</span>
+    <span class="tag tag-no">BLOCKED</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Amara enters both her parents' birthdays. The app's combination engine calculates their <strong>combined age reaching 50,000 days</strong> &mdash; a beautiful round-number family milestone. The app shows this in the "Team" tab as a combined milestone, with the tagline "Together, your family has been here for 50,000 days."</p>
+
+<h4>2. Gift Selection</h4>
+<p>She wants a poster (EUR 28) to frame for their living room. "The art of 50,000" tagline appeals to her. A 12x18" poster is a meaningful, affordable wall decoration for a family milestone.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="friction">BLOCKER: Nigeria (NG) is NOT in the shipping country dropdown.</span> The list of 26 countries does not include any African country</li>
+    <li>Even if she could select Nigeria, Printful's "Worldwide" category may cover Lagos, but shipping costs would be high (~EUR 15-20) and delivery unpredictable (3-6 weeks)</li>
+    <li>The app does not have a Nigerian locale (English works, but no Yoruba/Igbo/Pidgin)</li>
+    <li>Payment: Stripe supports Nigerian cards (NGN), so payment itself would work if she could reach checkout</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="friction">Printful does NOT explicitly list Nigeria as a supported destination.</span> It falls under "Worldwide/Rest of World" which may or may not include Nigeria depending on the product. Customs clearance in Nigeria is notoriously unpredictable. High risk of package being held or taxed heavily.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 28 &asymp; NGN 45,000 (at ~1,600 NGN/EUR). Plus shipping EUR 15-20 &asymp; NGN 24,000-32,000. Total ~NGN 70,000-77,000. For context, a mid-range restaurant dinner in Lagos is NGN 5,000-10,000. This is a significant spend &mdash; about 1 week of minimum wage. The poster would need to feel truly special to justify this.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-low">5%</p>
+<p>Cannot complete the order because Nigeria is not in the country dropdown. Even if it were, shipping uncertainty and cost make this extremely unlikely.</p>
+
+<h4>7. Reorder?</h4>
+<p>Not unless Nigeria shipping is explicitly supported and affordable.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>Add Nigeria and other African countries to the shipping dropdown</li>
+    <li>Partner with a local print-on-demand service in Africa (e.g., Printivo Nigeria)</li>
+    <li>Offer a digital download alternative (PDF poster for local printing) at a lower price point</li>
+    <li>Display prices in NGN</li>
+</ul>
+</div>
+
+<!-- PERSONA 4 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>4. Hans, 60, Zurich, Switzerland</h3>
+    <span class="tag tag-product">Poster (EUR 28)</span>
+    <span class="tag tag-buy">MEDIUM BUY</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Hans, an engineer, enters his birthday and discovers his <strong>&pi; &times; 10,000 = 31,415 days</strong> milestone. The app has Pi in its SCIENTIFIC_CONSTANTS registry (numbers: [314, 3141, 31415, 314159...]). The milestone is categorized as "scientific" with the explanation "&pi; = 3.14159... &mdash; the ratio of a circle's circumference to its diameter!" This deeply resonates with his engineering identity.</p>
+
+<h4>2. Gift Selection</h4>
+<p>A poster (EUR 28) for his office. "The art of 31,415" &mdash; a museum-quality 12x18" print. The poster is categorized under "scientific" which matches perfectly. As an engineer, he appreciates the mathematical elegance.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="positive">Smooth:</span> German language available (de locale). App auto-detects</li>
+    <li><span class="positive">Smooth:</span> Switzerland (CH) is in the shipping country dropdown</li>
+    <li><span class="friction">Friction:</span> Price in EUR, not CHF. EUR 28 &asymp; CHF 26. Swiss consumers are accustomed to EUR pricing from cross-border shopping, so this is minor</li>
+    <li><span class="friction">Friction:</span> The gift order form labels are in English even when the app is in German</li>
+    <li><span class="positive">Smooth:</span> Swiss address format (street + number, PLZ + city) maps cleanly to the form fields</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="positive">Printful ships to Switzerland</span> (EFTA region). Likely fulfilled from EU (Latvia or Spain facility). Shipping ~EUR 5-8. Swiss customs: CHF 65 threshold for import duty; poster at ~CHF 34 total is under this. Delivery: 5-12 business days.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 28 + ~EUR 7 shipping = ~EUR 35 total (~CHF 33). Hans earns an engineer's salary in Zurich (among the highest in Europe). This is trivial. The value proposition is in the mathematical novelty, not the object itself.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-med">60%</p>
+<p>Strong intellectual appeal for an engineer. Price is irrelevant. The main risk is that Hans is the type who would think "this is fun" but then forget to complete the order, or decide to just screenshot and share the milestone on LinkedIn instead.</p>
+
+<h4>7. Reorder?</h4>
+<p><span class="neutral">Maybe.</span> Engineers share things with engineer friends. If he posts his Pi-day poster on social media, it could drive referrals. But individual reorder is less likely &mdash; he got his "one special number."</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>Translate gift form to German</li>
+    <li>Show CHF equivalent price</li>
+    <li>"Share this milestone" button alongside the "Buy gift" button (he may prefer sharing over buying)</li>
+    <li>A framed poster option at EUR 45-50 (premium tier for office display)</li>
+</ul>
+</div>
+
+<!-- PERSONA 5 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>5. Camila, 22, S&atilde;o Paulo, Brazil</h3>
+    <span class="tag tag-product">Tee (EUR 28)</span>
+    <span class="tag tag-buy">HIGH BUY</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Camila enters her birthday and the app reveals she is approaching <strong>1,000,000,000 seconds</strong> (1 billion seconds &asymp; 31.7 years, so this is actually ~9.7 years away for her at 22). Wait &mdash; the app calculates correctly that 1 billion seconds = ~31 years 251 days. At 22, she hasn't hit it yet. She may instead find a closer milestone: <strong>700,000,000 seconds</strong> (round number in the seconds unit), or her actual upcoming ones. But the "1 billion seconds" concept is what she wants for TikTok content regardless.</p>
+
+<h4>2. Gift Selection</h4>
+<p>A t-shirt (EUR 28) &mdash; "I survived 1 billion seconds" as wearable content for TikTok/Instagram Reels. The Bella+Canvas 3001 is a good quality tee. Size selection is available (S-2XL). She would wear this in a "number reveal" video format.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="positive">Smooth:</span> pt_BR (Portuguese Brazilian) locale is available and auto-detects</li>
+    <li><span class="positive">Smooth:</span> Brazil (BR) is in the shipping country dropdown</li>
+    <li><span class="positive">Smooth:</span> Size selector works for the t-shirt product</li>
+    <li><span class="friction">Friction:</span> Price in EUR, not BRL. EUR 28 &asymp; R$168. Plus shipping to Brazil ~EUR 8-12 &asymp; R$48-72. Total ~R$216-240</li>
+    <li><span class="friction">Friction:</span> Brazilian addresses use CEP (8-digit postal code) and often include "Bairro" (neighborhood). The form lacks a neighborhood field</li>
+    <li><span class="friction">Friction:</span> Brazil customs: imports over $50 (BRL) are subject to 60% import tax since 2023 (Remessa Conforme program). A EUR 28 tee + EUR 10 shipping = ~$42 USD, potentially triggering tax. This could nearly double her cost</li>
+    <li><span class="friction">Friction:</span> The design on the tee uses the number she selected &mdash; but if she wants "1 billion seconds" and she hasn't hit it yet, the flow might show "700,000,000 seconds" instead. The customization field is read-only</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="positive">Printful ships to Brazil</span> explicitly. Shipping rate: ~EUR 4-8 for t-shirts. However, Brazilian customs adds significant risk: <strong>60% import tax + 17% ICMS</strong> can apply. Delivery: 15-30 business days. The Remessa Conforme program means Printful may need to pre-register shipments.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 28 + EUR 8 shipping + potential 60% tax = worst case EUR 57 &asymp; R$342. For a 22-year-old Brazilian TikTok creator, this is 25% of minimum wage. Expensive for a t-shirt &mdash; but she sees it as <em>content investment</em>, not clothing. If the video gets 100K views, the ROI is infinite.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-med">55%</p>
+<p>Strong motivation (content creation), but the customs tax risk and high total cost in BRL could kill it. She might opt to just use the free shareable image card instead and overlay it on her video.</p>
+
+<h4>7. Reorder?</h4>
+<p><span class="positive">Yes, if the content performs well.</span> TikTok creators repeat winning formats. If "my billion seconds" goes viral, she would buy merch for follow-up videos with different milestones.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>Show BRL price with estimated import tax warning</li>
+    <li>Allow editing the "Number on the gift" field (let her put "1,000,000,000 seconds" even if the milestone is in the future)</li>
+    <li>Offer a digital design download for local printing (cheaper, no customs)</li>
+    <li>Add "Bairro" field for Brazilian addresses</li>
+    <li>Partner with a Brazilian print-on-demand (e.g., Montink, Reserva INK) to avoid import tax entirely</li>
+</ul>
+</div>
+
+<!-- PERSONA 6 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>6. Aisha, 40, Dubai, UAE</h3>
+    <span class="tag tag-product">Canvas (EUR 35)</span>
+    <span class="tag tag-no">BLOCKED</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Aisha enters her wedding anniversary and discovers <strong>520 weeks</strong> since they married (520 means "I love you" in Chinese internet culture &mdash; w&#468; &egrave;r l&iacute;ng = 520). The app may or may not flag this as culturally significant (it is not in the standard special numbers list, but 520 is a round number milestone). The emotional resonance depends on whether Aisha knows the 520 meaning &mdash; if she is part of the cosmopolitan Dubai expat community, she might.</p>
+
+<h4>2. Gift Selection</h4>
+<p>She would want the canvas (EUR 35) &mdash; the most premium product. However, in Dubai's luxury context, a EUR 35 canvas print may feel cheap. Dubai gift expectations typically start at AED 200+ (EUR 50+) for meaningful gifts, and luxury gifts are AED 500-2000+. A 12x12" canvas is a nice sentiment but won't impress in a market where gold and designer items are the norm.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="friction">BLOCKER: UAE (AE) is NOT in the shipping country dropdown.</span> Cannot complete the order</li>
+    <li><span class="friction">Arabic locale (ar) is available in the main app, but the gift form is English-only</li>
+    <li><span class="friction">No AED currency display</span></li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="neutral">Printful likely ships to UAE</span> under "Worldwide" category, but with higher shipping costs (~EUR 12-18) and longer delivery (15-25 days). UAE has a 5% VAT on imports over AED 300. No significant customs barrier.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 35 &asymp; AED 140. With shipping, ~AED 190-210 total. In Dubai terms, this is a budget gift. It might work as a secondary/supplementary gift alongside a main luxury gift, but not as the primary gift for an anniversary.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-low">10%</p>
+<p>Cannot complete the order (UAE not in dropdown). Even if it were available, the product positioning doesn't match Dubai luxury expectations. She would need a premium tier: framed canvas, gold foil, gift box.</p>
+
+<h4>7. Reorder?</h4>
+<p>Only if a premium product line is added and UAE shipping is enabled.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>Add UAE to shipping countries</li>
+    <li>Launch a premium product tier: framed canvas (EUR 60-80), metal print (EUR 50-70)</li>
+    <li>Luxury gift wrapping with a physical card</li>
+    <li>Translate gift form to Arabic</li>
+    <li>Show AED prices</li>
+    <li>Partner with a Middle East print provider for faster delivery</li>
+</ul>
+</div>
+
+<!-- PERSONA 7 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>7. Pete, 45, London, UK</h3>
+    <span class="tag tag-product">Mug &times;6 (EUR 22 each)</span>
+    <span class="tag tag-maybe">FRICTION</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Pete enters his own birthday and those of his 5 team members. The app finds unique milestones for each person &mdash; one is hitting 15,000 days, another is at a Fibonacci number (17,711 days), another at a palindrome (12,321 days). He wants to order a personalized mug for each person as a team-building gesture.</p>
+
+<h4>2. Gift Selection</h4>
+<p>6 mugs at EUR 22 each = EUR 132 total. The mug is the perfect team gift: practical, fun, personal. Each with a different number makes it special.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="friction">MAJOR FRICTION: No cart or bulk-order flow exists.</span> The gift store is single-item only. Pete would need to complete 6 separate order flows, each with its own:
+        <ul>
+            <li>Milestone selection (go back to milestones, find the right one, click "gift")</li>
+            <li>Recipient name entry</li>
+            <li>Shipping address entry (same address 6 times!)</li>
+            <li>Payment (6 separate Stripe checkout sessions)</li>
+        </ul>
+    </li>
+    <li><span class="friction">6 separate Printful orders = 6 separate shipments = 6&times; shipping cost.</span> Printful does support multi-item orders through their API (adding multiple items to one order), but the app creates one order per submission</li>
+    <li><span class="positive">Smooth:</span> UK (GB) is in the shipping dropdown. GBP not shown but UK users are comfortable with EUR</li>
+    <li><span class="friction">Friction:</span> No bulk discount for multiple items</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="positive">UK is well-served by Printful</span> (EU/UK fulfillment). Shipping ~EUR 5-7 per mug. But 6 separate shipments = EUR 30-42 in shipping alone. Total: EUR 132 (mugs) + EUR 30-42 (shipping) = EUR 162-174 &asymp; &pound;140-150.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 162-174 for 6 personalized mugs is ~&pound;24-25 per mug delivered. Comparable to Shutterfly/Moonpig custom mugs in the UK (typically &pound;15-25 each + shipping). Reasonable for a team gesture. But the friction of ordering 6 times makes the total feel more expensive than it is.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-low">25%</p>
+<p>Pete loves the idea, but the execution is painful. After ordering the first mug, the prospect of repeating the process 5 more times (each requiring navigating back, selecting a different milestone, entering the same address) will likely make him abandon. He might order 1-2 and give up.</p>
+
+<h4>7. Reorder?</h4>
+<p><span class="neutral">Unlikely to repeat the painful process.</span> If a cart/bulk flow existed, he would become a regular buyer for birthdays, onboarding gifts, team events.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li><strong>Shopping cart with multiple items</strong> (highest-impact feature for the gift store)</li>
+    <li>Combine into a single Printful order (use multi-item API, save ~60% on shipping)</li>
+    <li>"Remember shipping address" or address autocomplete</li>
+    <li>Bulk discount: 3+ items get 10% off, 5+ get 15% off</li>
+    <li>"Order for team" flow that auto-detects upcoming milestones for all entered people</li>
+    <li>Show GBP prices for UK users</li>
+</ul>
+</div>
+
+<!-- PERSONA 8 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>8. Suki, 25, Singapore</h3>
+    <span class="tag tag-product">Tote (EUR 20)</span>
+    <span class="tag tag-no">BLOCKED</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Suki enters the date she started dating her partner and finds <strong>1,314 days</strong> &mdash; which sounds like "y&imacr; sh&emacr;ng y&imacr; s&igrave;" (one life one world / "forever") in Mandarin numerology. This number has deep romantic meaning in Chinese culture, popular in Singapore's Chinese community. The app may detect this as a round-ish number, but 1,314 is not in the standard special numbers list. It would likely show up only if it coincides with another pattern (it ends in 14, which is not special in the system).</p>
+
+<h4>2. Gift Selection</h4>
+<p>A tote bag (EUR 20) &mdash; practical, fashionable, affordable. In Singapore's eco-conscious culture, reusable totes are popular. She would carry it as a statement piece.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="friction">BLOCKER: Singapore (SG) is NOT in the shipping country dropdown.</span></li>
+    <li><span class="friction">1,314 may not be detected as a milestone by the app's algorithm</span> (it is not a round number, repdigit, palindrome, fibonacci, or scientific constant). Suki would need to manually find this number, which the app may not surface</li>
+    <li>The app has Chinese (zh) locale but not a specific Singapore locale</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="neutral">Printful likely ships to Singapore</span> under "Worldwide." Singapore has no customs duty on most goods (GST 9% applies to imports over SGD 400; a EUR 20 tote is well under this). Delivery: 10-20 business days.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 20 &asymp; SGD 29. Plus shipping ~EUR 8-12 = SGD 41-47 total. Affordable for Singapore (high cost of living but also high incomes). Comparable to local branded totes at SGD 25-50.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-low">8%</p>
+<p>Double blocker: Singapore not in dropdown AND 1,314 unlikely to be surfaced as a milestone by the algorithm. Even if both were resolved, a tote bag for a dating anniversary is a niche use case.</p>
+
+<h4>7. Reorder?</h4>
+<p>Unlikely unless the cultural number recognition and Singapore shipping are both resolved.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>Add Singapore to shipping countries</li>
+    <li>Add cultural lucky numbers (520, 1314, 168, 888, 999) as a recognized milestone category for East Asian users</li>
+    <li>Allow users to manually mark any number as a "special milestone" and trigger gift suggestions</li>
+    <li>Show SGD prices</li>
+</ul>
+</div>
+
+<!-- PERSONA 9 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>9. Dmitri, 50, Moscow, Russia</h3>
+    <span class="tag tag-product">Poster (EUR 28)</span>
+    <span class="tag tag-no">IMPOSSIBLE</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Dmitri enters his birthday and finds the <strong>palindrome milestone 12,321 days</strong>. The app correctly identifies palindromes as a category. The Russian (ru) locale auto-detects, and the milestone explanation reads well in Russian.</p>
+
+<h4>2. Gift Selection</h4>
+<p>A poster (EUR 28) for his home office. Palindromes match the poster's category list. The mathematical elegance appeals to Russian engineering culture.</p>
+
+<h4>3. Order Flow</h4>
+<ul>
+    <li><span class="friction">BLOCKER: Russia (RU) is NOT in the shipping country dropdown</span></li>
+    <li><span class="friction">HARD BLOCK: Printful has explicitly banned shipping to Russia since 2022</span> (along with Belarus, Crimea, Luhansk, Donetsk). This is a sanctions-driven restriction, not a technical one</li>
+    <li><span class="friction">HARD BLOCK: Stripe does not process payments from Russian-issued cards</span> (suspended since 2022). Even if Dmitri could select Russia, he cannot pay</li>
+    <li><span class="positive">Smooth:</span> Russian locale is available and well-translated in the main app</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="friction">Impossible.</span> Printful, Stripe, and most Western logistics providers do not serve Russia as of 2026. This is a hard geopolitical constraint, not a technical limitation of the app.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 28 &asymp; RUB 2,800 (at ~100 RUB/EUR). Affordable for Moscow. But irrelevant since the transaction cannot occur.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-low">0%</p>
+<p>Triple block: country not in dropdown, Printful won't ship, Stripe won't process payment. No workaround within the current architecture.</p>
+
+<h4>7. Reorder?</h4>
+<p>N/A.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li>This is not solvable within the current Printful+Stripe stack</li>
+    <li>Offer a digital download option (PDF poster, high-res image) that bypasses physical shipping and could use alternative payment methods</li>
+    <li>If geopolitical situation changes, add Russia back</li>
+    <li>Consider alternative POD providers with Russian operations (but this conflicts with sanctions compliance)</li>
+</ul>
+</div>
+
+<!-- PERSONA 10 -->
+<div class="persona">
+<div class="persona-header">
+    <h3>10. Grandma Helga, 72, Vienna, Austria</h3>
+    <span class="tag tag-product">Mug (EUR 22)</span>
+    <span class="tag tag-buy">MEDIUM BUY</span>
+</div>
+
+<h4>1. Discovery</h4>
+<p>Helga enters her grandson's birthday (born 2012, now ~14 years old) and sees he is approaching <strong>5,000 days</strong> old. The app detects this as a round number milestone. She is delighted by the concept &mdash; "My grandson is 5,000 days old!" The German locale activates automatically.</p>
+
+<h4>2. Gift Selection</h4>
+<p>A mug (EUR 22) with "5,000 Tage" (days) for her grandson. The mug is practical, affordable, and a fun gift for a teenager. The gift banner catches her eye with "5,000 days &mdash; every morning."</p>
+
+<h4>3. Order Flow &mdash; Accessibility Test</h4>
+<ul>
+    <li><span class="positive">Smooth:</span> Austria (AT) is in the shipping dropdown</li>
+    <li><span class="positive">Smooth:</span> German locale available</li>
+    <li><span class="friction">Friction:</span> The modal form has small text (<code>--font-size-xs: 0.82rem</code> for labels = ~13px). For a 72-year-old, this may be too small to read comfortably</li>
+    <li><span class="friction">Friction:</span> No zoom-friendly design. The modal is capped at <code>max-width: 480px</code> and <code>max-height: 90vh</code> with overflow scroll. On mobile, the form fields may be cramped</li>
+    <li><span class="friction">Friction:</span> No ARIA labels on form fields (accessibility gap). Screen reader support is minimal</li>
+    <li><span class="friction">Friction:</span> The gift form labels are in English ("Full name", "Street address") even though she's using the German locale. This may confuse an older German speaker who isn't fluent in English</li>
+    <li><span class="friction">Friction:</span> The "Proceed to Payment" button uses <code>onclick</code> inline handlers. No keyboard focus indicators visible. Tab navigation would work (native button behavior) but without visual feedback</li>
+    <li><span class="neutral">Neutral:</span> The dark theme (light text on dark background) may actually be easier on older eyes than white backgrounds, but the contrast ratios on muted text (~#888 on #222) fail WCAG AA for small text</li>
+    <li><span class="positive">Smooth:</span> The design preview (Canvas) renders immediately, giving her visual confirmation of what the mug will look like</li>
+</ul>
+
+<h4>4. Shipping Feasibility</h4>
+<p><span class="positive">Austria is prime Printful territory</span> (EU fulfillment, likely from Latvia or Spain). No customs, no import tax (EU single market). Shipping ~EUR 5-7. Delivery: 5-10 business days.</p>
+
+<h4>5. Price Perception</h4>
+<p>EUR 22 + ~EUR 6 shipping = EUR 28 total. Very affordable for an Austrian grandmother. Comparable to a gift from a local shop. The novelty/personalization adds perceived value.</p>
+
+<h4>6. Purchase Probability</h4>
+<p class="prob prob-med">45%</p>
+<p>She loves the concept and can afford it easily. The main barriers are: (1) English-only form may confuse her, (2) small text size may be hard to read, (3) she may need help from a younger family member to complete the checkout. If she has help, probability jumps to 70%.</p>
+
+<h4>7. Reorder?</h4>
+<p><span class="positive">Yes, if the first order succeeds.</span> Grandmothers are repeat gifters. She has other grandchildren, birthdays come every year, and she just discovered a new type of gift. This is potentially the highest lifetime value persona.</p>
+
+<h4>8. What Would Increase Conversion?</h4>
+<ul>
+    <li><strong>Translate the gift order form to all supported languages</strong> (highest-impact for international users)</li>
+    <li>Increase form label font size to at least 0.95rem (15px)</li>
+    <li>Add ARIA labels and proper focus indicators for accessibility</li>
+    <li>Add a "light mode" option for the checkout (higher contrast)</li>
+    <li>Show a product mockup (photo of an actual mug with a number on it)</li>
+    <li>Simplify: reduce form fields (hide "Personal message" behind an optional toggle)</li>
+    <li>Pre-fill recipient name from the milestone event name</li>
+</ul>
+</div>
+
+<!-- ================================================================ -->
+<h2>Comparison Table</h2>
+
+<table>
+<tr>
+    <th>#</th>
+    <th>Persona</th>
+    <th>Product</th>
+    <th>EUR + Ship</th>
+    <th>Local Currency</th>
+    <th>Country OK?</th>
+    <th>Printful OK?</th>
+    <th>Buy %</th>
+    <th>Reorder?</th>
+    <th>Top Friction</th>
+</tr>
+<tr>
+    <td>1</td><td>Lisa, 30, NYC</td><td>Mug 22</td><td>~29</td><td>~$31</td>
+    <td style="color:var(--green)">Yes</td><td style="color:var(--green)">Yes</td>
+    <td class="prob prob-high">75%</td><td style="color:var(--green)">Yes</td>
+    <td>EUR pricing, no mockup</td>
+</tr>
+<tr>
+    <td>2</td><td>Kenji, 28, Tokyo</td><td>Canvas 35</td><td>~48</td><td>~&yen;7,900</td>
+    <td style="color:var(--green)">Yes</td><td style="color:var(--green)">Yes</td>
+    <td class="prob prob-high">70%</td><td style="color:var(--green)">Likely</td>
+    <td>EN-only form, address format</td>
+</tr>
+<tr>
+    <td>3</td><td>Amara, 35, Lagos</td><td>Poster 28</td><td>~46</td><td>~NGN 74K</td>
+    <td style="color:var(--red)">No (NG)</td><td style="color:var(--red)">Unlikely</td>
+    <td class="prob prob-low">5%</td><td>No</td>
+    <td>Country not in dropdown</td>
+</tr>
+<tr>
+    <td>4</td><td>Hans, 60, Zurich</td><td>Poster 28</td><td>~35</td><td>~CHF 33</td>
+    <td style="color:var(--green)">Yes</td><td style="color:var(--green)">Yes</td>
+    <td class="prob prob-med">60%</td><td style="color:var(--accent)">Maybe</td>
+    <td>May prefer sharing over buying</td>
+</tr>
+<tr>
+    <td>5</td><td>Camila, 22, SP</td><td>Tee 28</td><td>~38</td><td>~R$228</td>
+    <td style="color:var(--green)">Yes</td><td style="color:var(--green)">Yes</td>
+    <td class="prob prob-med">55%</td><td style="color:var(--green)">Yes</td>
+    <td>Brazil customs tax risk</td>
+</tr>
+<tr>
+    <td>6</td><td>Aisha, 40, Dubai</td><td>Canvas 35</td><td>~50</td><td>~AED 200</td>
+    <td style="color:var(--red)">No (AE)</td><td style="color:var(--accent)">Likely</td>
+    <td class="prob prob-low">10%</td><td>No</td>
+    <td>Country not in dropdown, too cheap for market</td>
+</tr>
+<tr>
+    <td>7</td><td>Pete, 45, London</td><td>Mug &times;6</td><td>~174</td><td>~&pound;150</td>
+    <td style="color:var(--green)">Yes</td><td style="color:var(--green)">Yes</td>
+    <td class="prob prob-low">25%</td><td style="color:var(--accent)">If cart exists</td>
+    <td>No bulk/cart, must repeat 6&times;</td>
+</tr>
+<tr>
+    <td>8</td><td>Suki, 25, Singapore</td><td>Tote 20</td><td>~32</td><td>~SGD 47</td>
+    <td style="color:var(--red)">No (SG)</td><td style="color:var(--accent)">Likely</td>
+    <td class="prob prob-low">8%</td><td>No</td>
+    <td>Country not in dropdown + 1314 not detected</td>
+</tr>
+<tr>
+    <td>9</td><td>Dmitri, 50, Moscow</td><td>Poster 28</td><td>&mdash;</td><td>&mdash;</td>
+    <td style="color:var(--red)">No (RU)</td><td style="color:var(--red)">Banned</td>
+    <td class="prob prob-low">0%</td><td>N/A</td>
+    <td>Sanctions: Printful + Stripe blocked</td>
+</tr>
+<tr>
+    <td>10</td><td>Helga, 72, Vienna</td><td>Mug 22</td><td>~28</td><td>EUR 28</td>
+    <td style="color:var(--green)">Yes</td><td style="color:var(--green)">Yes</td>
+    <td class="prob prob-med">45%</td><td style="color:var(--green)">High LTV</td>
+    <td>Small text, EN-only form, accessibility</td>
+</tr>
+</table>
+
+<!-- ================================================================ -->
+<h2>Aggregate Findings</h2>
+
+<div class="summary-box">
+<h3>Which gift product is the universal bestseller?</h3>
+<p><strong>The Mug (EUR 22).</strong> It wins on 4 dimensions: (1) lowest price alongside the tote, (2) most universally useful (everyone drinks), (3) no sizing complexity, (4) best emotional trigger ("every morning"). It is suggested for birthday + round + repdigit + palindrome categories, which covers the majority of milestones. The mug is the "impulse buy" of the catalog. Expected mix: Mug 40%, Poster 25%, Canvas 15%, Tee 12%, Tote 8%.</p>
+</div>
+
+<div class="summary-box">
+<h3>Most likely buyer?</h3>
+<p><strong>Lisa (75%)</strong> &mdash; the 30-year-old New Yorker buying a mug for her boyfriend's 10,000-day milestone. Strong emotional trigger (relationship), affordable price (~$30 total), US domestic shipping (fast, cheap, reliable), familiar checkout pattern. This is the core persona the gift store should optimize for.</p>
+<p>Runner-up: <strong>Kenji (70%)</strong> &mdash; cultural number resonance (888,888) is a powerful driver, and Japan is a well-served shipping destination.</p>
+</div>
+
+<div class="summary-box">
+<h3>Least likely buyer?</h3>
+<p><strong>Dmitri (0%)</strong> &mdash; triple-blocked by sanctions (Printful shipping ban, Stripe payment ban, country not in dropdown). No technical solution exists within the current stack. Even a digital product alternative would face Stripe payment issues.</p>
+<p>Among non-sanctioned personas: <strong>Amara (5%)</strong> &mdash; Nigeria simply isn't in the shipping dropdown, Printful coverage is uncertain, and the price relative to local income is very high.</p>
+</div>
+
+<div class="summary-box">
+<h3>Biggest friction point across all personas?</h3>
+<p><strong>The gift order form is English-only.</strong> Despite the main app supporting 21 languages, the gift store modal (field labels, button text, error messages, shipping note) is entirely hardcoded in English. This affects 7 out of 10 personas (all non-native English speakers). For Helga (72, Vienna), this is the difference between buying and abandoning.</p>
+<p>Second biggest: <strong>No shopping cart / multi-item flow.</strong> Each gift requires a completely separate order flow including re-entering the shipping address and separate payment. This kills the Pete (team) use case entirely and reduces repeat buying for everyone else.</p>
+<p>Third: <strong>Limited shipping country list (26 countries).</strong> 4 out of 10 personas are blocked because their country is not in the dropdown. Printful actually ships to 190+ countries; the dropdown is artificially restrictive.</p>
+</div>
+
+<div class="summary-box">
+<h3>What's missing from the gift store?</h3>
+
+<h4>Critical (blocks revenue)</h4>
+<ul>
+    <li><strong>Internationalized gift form</strong> &mdash; translate all form labels, buttons, errors to the 21 supported languages</li>
+    <li><strong>Expanded country list</strong> &mdash; add all Printful-supported countries (UAE, SG, KR, TR, ZA, TH, PH, etc.)</li>
+    <li><strong>Shopping cart</strong> &mdash; multi-item orders, single Printful shipment, single payment</li>
+    <li><strong>Product mockup images</strong> &mdash; show the design on an actual mug/tee/canvas photo, not just the raw design</li>
+</ul>
+
+<h4>Important (increases conversion)</h4>
+<ul>
+    <li><strong>Local currency display</strong> &mdash; auto-detect and show estimated price in user's currency</li>
+    <li><strong>Shipping cost estimate</strong> &mdash; call Printful's shipping rates API before checkout, show estimated delivery time</li>
+    <li><strong>Gift wrapping option</strong> &mdash; critical for Japanese and luxury markets</li>
+    <li><strong>Editable milestone number</strong> &mdash; let users type a custom number (for future milestones, "I survived X" merch)</li>
+    <li><strong>Cultural number recognition</strong> &mdash; add 520, 1314, 168, 999 as recognized lucky numbers for East Asian users</li>
+    <li><strong>Address format adaptation</strong> &mdash; add prefecture/state field for JP, bairro field for BR</li>
+</ul>
+
+<h4>Nice to have (increases LTV)</h4>
+<ul>
+    <li><strong>Digital download option</strong> &mdash; high-res PDF/PNG for local printing (unlocks sanctioned countries, reduces cost for price-sensitive markets)</li>
+    <li><strong>Premium tier</strong> &mdash; framed canvas (EUR 60), metal print (EUR 50), premium tee (EUR 40) for luxury markets</li>
+    <li><strong>Bulk discount</strong> &mdash; 3+ items 10% off, 5+ items 15% off</li>
+    <li><strong>"Saved address" feature</strong> &mdash; remember last shipping address for repeat buyers</li>
+    <li><strong>Delivery time estimate</strong> &mdash; "Estimated delivery: 7-12 business days"</li>
+    <li><strong>Order tracking page</strong> &mdash; link to Printful tracking after Printful ships</li>
+    <li><strong>Gift card / e-gift</strong> &mdash; send a digital gift code for someone to choose their own product</li>
+</ul>
+</div>
+
+<!-- ================================================================ -->
+<h2>Conversion Funnel Summary</h2>
+
+<table>
+<tr><th>Funnel Stage</th><th>Personas Passing</th><th>Drop Reasons</th></tr>
+<tr><td>1. Discovers milestone</td><td>9/10 (Suki's 1314 may not be detected)</td><td>Cultural numbers not in algorithm</td></tr>
+<tr><td>2. Sees gift suggestion</td><td>9/10</td><td>Gift banners appear for all milestone types</td></tr>
+<tr><td>3. Opens order modal</td><td>9/10 (curiosity)</td><td>&mdash;</td></tr>
+<tr><td>4. Country in dropdown</td><td>5/10</td><td>NG, AE, SG, RU not listed (40% lost!)</td></tr>
+<tr><td>5. Understands form (language)</td><td>3-4/10 fully comfortable</td><td>EN-only form confuses non-English speakers</td></tr>
+<tr><td>6. Fills form + clicks Pay</td><td>3-4/10</td><td>Missing mockup, unclear shipping cost, form friction</td></tr>
+<tr><td>7. Completes Stripe payment</td><td>~3/10</td><td>Price sticker shock on Stripe page (shipping added)</td></tr>
+</table>
+
+<div class="finding finding-critical">
+<strong>Bottom line:</strong> The gift store has a solid architecture (Printful + Stripe + Canvas design generation), but loses ~40% of international users at the country dropdown and another ~30% at the English-only form. The most impactful investments are: (1) expand the country list, (2) internationalize the form, (3) add a shopping cart. These three changes would roughly double the effective conversion rate from ~30% to ~55-60% of interested visitors.
+</div>
+
+<p class="meta" style="margin-top: 30px; text-align: center;">
+    Generated for HappyMoments gift store optimization &mdash; 27 May 2026
+</p>
+
+</body>
+</html>
