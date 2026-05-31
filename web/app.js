@@ -2564,28 +2564,20 @@ function formatDateWithTime(date) {
     const now = new Date();
     const daysDiff = Math.floor((date.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
 
-    // For dates within a week, show day name
+    // Always show year for clarity
     if (daysDiff <= 7) {
         return date.toLocaleDateString(getAppLocale(), {
             weekday: 'short',
             month: 'short',
-            day: 'numeric'
+            day: 'numeric',
+            year: 'numeric'
         });
     }
 
-    // For dates within a year, show month and day
-    if (date.getFullYear() === now.getFullYear()) {
-        return date.toLocaleDateString(getAppLocale(), {
-            month: 'short',
-            day: 'numeric'
-        });
-    }
-
-    // For future years, include year
     return date.toLocaleDateString(getAppLocale(), {
         month: 'short',
         day: 'numeric',
-        year: '2-digit'
+        year: 'numeric'
     });
 }
 
