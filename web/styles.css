@@ -342,6 +342,21 @@ body {
     font-weight: 500;
 }
 
+.today-history {
+    display: flex; flex-direction: column; gap: 4px;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(212,184,118,0.15);
+}
+.today-history-badge {
+    font-size: var(--font-size-xs); color: var(--warning); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+}
+.today-history-event {
+    font-size: var(--font-size-sm); color: var(--text-primary); font-weight: 500;
+}
+.today-history-number {
+    font-size: var(--font-size-xs); color: var(--text-muted); font-style: italic;
+}
+
 /* Add person button on milestones tab */
 .btn-add-person {
     display: block;

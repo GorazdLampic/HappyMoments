@@ -2197,14 +2197,35 @@ function renderMilestonesTab() {
 
     allMilestonesFlat = [];
 
-    // Show "Today" highlight if anything special
+    // Show "Today" highlight — personal milestones + history facts
     const todayBox = document.getElementById('todayHighlight');
     if (todayBox) {
         const today = getTodayHighlight();
+        let todayHtml = '';
+
+        // Personal milestones today
         if (today.length > 0) {
-            todayBox.innerHTML = today.map(t =>
-                `<span class="today-item">${t.name}: <strong>${t.value.toLocaleString()}</strong> ${t.unit} (${t.why})</span>`
+            todayHtml += today.map(t =>
+                `<span class="today-item">${escapeHtml(t.name)}: <strong>${t.value.toLocaleString()}</strong> ${escapeHtml(t.unit)} (${escapeHtml(t.why)})</span>`
             ).join(' · ');
+        }
+
+        // History fact of the day
+        if (typeof getTodayHistoryFacts === 'function') {
+            const facts = getTodayHistoryFacts();
+            if (facts.length > 0) {
+                const fact = facts[0];
+                const historyHtml = `<div class="today-history">
+                    <span class="today-history-badge">${fact.yearsAgo} years ago today</span>
+                    <span class="today-history-event">${escapeHtml(fact.event)}</span>
+                    <span class="today-history-number">${escapeHtml(fact.numberFact)}</span>
+                </div>`;
+                todayHtml += historyHtml;
+            }
+        }
+
+        if (todayHtml) {
+            todayBox.innerHTML = todayHtml;
             todayBox.style.display = 'block';
         } else {
             todayBox.style.display = 'none';
