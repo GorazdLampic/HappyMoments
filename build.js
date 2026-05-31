@@ -49,6 +49,7 @@ staticDirs.forEach(d => {
 const jsFiles = [
     'notifications.js',
     'i18n.js',
+    'historyFacts.js',
     'specialNumbers.js',
     'milestoneCalculator.js',
     'combinations.js',
