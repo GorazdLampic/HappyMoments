@@ -4,6 +4,53 @@
  * Each product features the customer's milestone number as the design.
  */
 
+// ============================================================
+// GIFT COLLECTIONS — curated product bundles by milestone personality
+// ============================================================
+
+const GIFT_COLLECTIONS = {
+    'Number Nerd': {
+        tagline: 'For minds that love the math behind the moment',
+        products: ['poster', 'canvas'],
+        icon: '&#129504;'  // brain emoji
+    },
+    'Celebrator': {
+        tagline: 'Toast to life\'s perfectly round moments',
+        products: ['mug', 'tshirt'],
+        icon: '&#127881;'  // party popper
+    },
+    'Romantic': {
+        tagline: 'Love written in numbers',
+        products: ['canvas', 'poster'],
+        icon: '&#10084;'   // heart
+    },
+    'Family': {
+        tagline: 'Numbers that bring everyone together',
+        products: ['tote', 'mug'],
+        icon: '&#128106;'  // family
+    },
+    'Achiever': {
+        tagline: 'Epic milestones deserve epic keepsakes',
+        products: ['tshirt', 'poster'],
+        icon: '&#127942;'  // trophy
+    },
+    'Lucky': {
+        tagline: 'Prosperity, fortune, and auspicious vibes',
+        products: ['mug', 'canvas'],
+        icon: '&#127882;'  // red gift
+    },
+    'Minimalist': {
+        tagline: 'Elegant numbers, clean design',
+        products: ['poster'],
+        icon: '&#9674;'    // diamond
+    },
+    'Adventurer': {
+        tagline: 'For those who see patterns everywhere',
+        products: ['tote', 'tshirt'],
+        icon: '&#127757;'  // globe
+    }
+};
+
 const GIFT_CATALOG = [
     {
         id: 'mug',
@@ -107,20 +154,123 @@ function getGiftSuggestions(milestone, maxItems) {
     maxItems = maxItems || 4;
     if (!milestone) return [];
 
-    const category = getGiftCategory(milestone);
+    const collection = getGiftCollection(milestone);
+    const collectionDef = GIFT_COLLECTIONS[collection.name];
+    const collectionProductIds = collectionDef ? collectionDef.products : [];
 
-    // Score products by category match
+    // Score products: collection products first, then category match, then generic
+    const category = getGiftCategory(milestone);
     const scored = GIFT_CATALOG.map(product => {
         let score = 0;
+        // Collection match is the strongest signal
+        if (collectionProductIds.includes(product.id)) score += 20;
+        // Category match from the original system still contributes
         if (product.categories.includes(category)) score += 10;
         if (product.categories.includes('generic')) score += 2;
-        // Add some randomness for variety
-        score += Math.random() * 3;
-        return { product, score };
+        // Add slight randomness for variety among equally scored items
+        score += Math.random() * 1.5;
+        return { product, score, collection: collection.name };
     });
 
     scored.sort((a, b) => b.score - a.score);
-    return scored.slice(0, maxItems).map(s => s.product);
+    return scored.slice(0, maxItems).map(s => {
+        // Attach collection context to each returned product
+        const p = Object.assign({}, s.product);
+        p._collectionName = s.collection;
+        return p;
+    });
+}
+
+/**
+ * Determine the gift collection for a milestone based on its characteristics.
+ * Returns { name: string, reason: string }.
+ */
+function getGiftCollection(milestone) {
+    if (!milestone) return { name: 'Celebrator', reason: 'Default collection' };
+
+    const type = milestone.type || '';
+    const value = milestone.value || 0;
+    const eventId = milestone.eventId || '';
+    const description = (milestone.description || '').toLowerCase();
+    const isCombined = eventId === 'combined_sum' || eventId === 'combined_ratio' ||
+                       eventId === 'combined_duration' || eventId === 'combined';
+
+    // --- Romantic: couple/love milestones ---
+    // 520 = "I love you", 1314 = "forever", 5201314 = "I love you forever"
+    const romanticValues = [520, 521, 1314, 1688, 5201314];
+    if (romanticValues.includes(value)) {
+        return { name: 'Romantic', reason: 'Love number (' + value + ')' };
+    }
+    // Combined ratio milestones (age ratios) are inherently relational
+    if (eventId === 'combined_ratio') {
+        return { name: 'Romantic', reason: 'Relationship ratio milestone' };
+    }
+
+    // --- Achiever: big milestones ---
+    if (milestone.isBigMilestone) {
+        return { name: 'Achiever', reason: 'Big milestone' };
+    }
+    // Billion seconds (value >= 1,000,000,000 in seconds)
+    if (value >= 1000000000 && (milestone.unitName === 'sec' || milestone.unit === 'seconds')) {
+        return { name: 'Achiever', reason: 'Billion seconds milestone' };
+    }
+    // 10K+ days
+    if (value >= 10000 && (milestone.unitName === 'd' || milestone.unit === 'days')) {
+        return { name: 'Achiever', reason: value.toLocaleString() + ' days milestone' };
+    }
+
+    // --- Family: team/combined sum milestones ---
+    if (eventId === 'combined_sum' || eventId === 'combined_duration' || eventId === 'combined') {
+        return { name: 'Family', reason: 'Combined milestone' };
+    }
+
+    // --- Lucky: Asian auspicious numbers ---
+    if (type === 'asian_lucky') {
+        return { name: 'Lucky', reason: 'Auspicious number' };
+    }
+    const luckyValues = [88, 99, 168, 188, 288, 388, 888, 999, 1088, 1188,
+                         1888, 2888, 3888, 6666, 8888, 9999, 88888, 99999];
+    if (luckyValues.includes(value)) {
+        return { name: 'Lucky', reason: 'Lucky number (' + value + ')' };
+    }
+
+    // --- Number Nerd: scientific/fibonacci/power milestones ---
+    if (type === 'fibonacci') {
+        return { name: 'Number Nerd', reason: 'Fibonacci number' };
+    }
+    if (type === 'power_of_2') {
+        return { name: 'Number Nerd', reason: 'Power of 2' };
+    }
+    if (type === 'scientific') {
+        return { name: 'Number Nerd', reason: 'Scientific constant' };
+    }
+
+    // --- Minimalist: palindromes ---
+    if (type === 'palindrome') {
+        return { name: 'Minimalist', reason: 'Palindrome number' };
+    }
+
+    // --- Adventurer: sequential/alternating patterns ---
+    if (type === 'sequential') {
+        return { name: 'Adventurer', reason: 'Sequential pattern' };
+    }
+    if (type === 'alternating') {
+        return { name: 'Adventurer', reason: 'Alternating pattern' };
+    }
+
+    // --- Celebrator: birthdays and round numbers ---
+    if (milestone.isBirthday) {
+        return { name: 'Celebrator', reason: 'Birthday milestone' };
+    }
+    if (type === 'round' || type === 'power_of_10') {
+        return { name: 'Celebrator', reason: 'Round number milestone' };
+    }
+    if (type === 'repdigit') {
+        return { name: 'Celebrator', reason: 'Repeating digit milestone' };
+    }
+
+    // --- Default ---
+    return { name: 'Celebrator', reason: 'General milestone' };
 }
 
 function getGiftCategory(milestone) {
@@ -130,7 +280,7 @@ function getGiftCategory(milestone) {
         'repdigit': 'repdigit', 'palindrome': 'palindrome',
         'fibonacci': 'fibonacci', 'power_of_2': 'power_of_2',
         'scientific': 'scientific', 'sequential': 'sequential',
-        'alternating': 'generic'
+        'alternating': 'generic', 'asian_lucky': 'generic'
     };
     return typeMap[milestone.type] || 'generic';
 }
@@ -153,8 +303,15 @@ function renderGiftSuggestions(milestone) {
     const name = _esc(milestone.eventName || '');
 
     const suggestions = getGiftSuggestions(milestone);
+    const collection = getGiftCollection(milestone);
+    const collectionDef = GIFT_COLLECTIONS[collection.name];
+    const collectionTagline = collectionDef ? collectionDef.tagline : '';
+    const collectionIcon = collectionDef ? collectionDef.icon : '';
 
-    preview.innerHTML = `<p class="gift-intro">Celebrate <strong>${val} ${unit}</strong> with a personalized gift for ${name}.</p>`;
+    preview.innerHTML = `
+        <p class="gift-intro">Celebrate <strong>${val} ${unit}</strong> with a personalized gift for ${name}.</p>
+        ${collectionDef ? `<p class="gift-collection-label">${collectionIcon} <strong>The ${_esc(collection.name)}</strong> &mdash; ${_esc(collectionTagline)}</p>` : ''}
+    `;
 
     products.innerHTML = suggestions.map(p => {
         const tagline = p.tagline
@@ -511,17 +668,24 @@ function generateGiftBanner(milestone) {
 
     const escapedName = (milestone.eventName || '').replace(/'/g, "\\'");
 
+    // Show collection context in the CTA line
+    const collection = getGiftCollection(milestone);
+    const collectionDef = GIFT_COLLECTIONS[collection.name];
+    const collectionLabel = collectionDef
+        ? `The ${collection.name} collection &mdash; `
+        : '';
+
     return `
         <div class="gift-banner" onclick="openGiftOrder('${p.id}', ${milestone.value}, '${milestone.unitName}', '${escapedName}')">
             <span class="gift-banner-icon">${p.icon}</span>
             <div class="gift-banner-text">
                 <span class="gift-banner-tagline">${tagline}</span>
-                <span class="gift-banner-cta">${p.name} &middot; EUR ${p.price.toFixed(2)} &rarr;</span>
+                <span class="gift-banner-cta">${collectionLabel}${p.name} &middot; EUR ${p.price.toFixed(2)} &rarr;</span>
             </div>
         </div>
     `;
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { GIFT_CATALOG, getGiftSuggestions, renderGiftSuggestions, generateGiftBanner };
+    module.exports = { GIFT_CATALOG, GIFT_COLLECTIONS, getGiftSuggestions, getGiftCollection, getGiftCategory, renderGiftSuggestions, generateGiftBanner };
 }
