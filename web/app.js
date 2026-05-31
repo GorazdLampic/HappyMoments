@@ -2035,10 +2035,163 @@ function getTodayHighlight() {
     return highlights.slice(0, 3);
 }
 
+function findHeroMilestone() {
+    // Gather candidates from all relevant events
+    const events = _mostSpecialMode
+        ? appData.events
+        : appData.events.filter(e => selectedPersonIds.includes(e.id));
+    if (events.length === 0) return null;
+
+    let candidates = [];
+    const now = new Date();
+
+    events.forEach(e => {
+        // Yearly milestones (birthdays/anniversaries within 60 days)
+        const yearly = getUpcomingYearlyMilestones(e, 60);
+        yearly.forEach(m => {
+            m.eventName = m.eventName || e.name;
+            m.eventId = m.eventId || e.id;
+            m.eventType = m.eventType || e.type || 'birthday';
+            m.fullDescription = m.fullDescription || getEventMilestoneDescription(e, m);
+        });
+        candidates = candidates.concat(yearly);
+
+        // Special number milestones — look further ahead for hero
+        const milestones = findAllUpcomingMilestones(e.date, 50, 730, appSettings);
+
+        // Big milestones (billion seconds, etc.)
+        if (typeof findBigMilestones === 'function') {
+            const bigOnes = findBigMilestones(e.date, appSettings);
+            bigOnes.forEach(bm => {
+                if (!milestones.some(m => m.value === bm.value && m.unit === bm.unit)) {
+                    milestones.push(bm);
+                }
+            });
+        }
+
+        milestones.forEach(m => {
+            m.eventName = e.name;
+            m.eventId = e.id;
+            m.eventType = e.type || 'birthday';
+            m.fullDescription = getEventMilestoneDescription(e, m);
+        });
+        candidates = candidates.concat(milestones);
+    });
+
+    if (candidates.length === 0) return null;
+
+    // Score each candidate for "hero-worthiness"
+    candidates.forEach(m => {
+        const daysAway = m.timeUntil / (24 * 60 * 60 * 1000);
+
+        // Roundness component (0-200+)
+        let rScore = m.isBirthday ? 40 : roundnessScore(m.value);
+
+        // Big milestone bonus
+        if (m.isBigMilestone) rScore += 80;
+
+        // Very special bonus
+        if (!m.isBirthday && isVerySpecialNumber(m.value)) rScore += 30;
+
+        // Proximity bonus: within 30 days = max bonus, decays over 365 days
+        let pScore;
+        if (daysAway <= 30) {
+            pScore = 100 - daysAway * 1.5; // 100 at 0 days, 55 at 30 days
+        } else if (daysAway <= 365) {
+            pScore = 55 * Math.max(0, 1 - (daysAway - 30) / 335);
+        } else {
+            pScore = 0;
+        }
+
+        // Birthday proximity super-bonus (imminent birthdays are exciting)
+        if (m.isBirthday && daysAway <= 14) {
+            pScore += 50;
+        }
+
+        m._heroScore = rScore * 0.6 + pScore * 0.4;
+    });
+
+    // Pick the winner
+    candidates.sort((a, b) => b._heroScore - a._heroScore);
+    return candidates[0];
+}
+
+function renderHeroMilestone() {
+    const heroEl = document.getElementById('heroMilestone');
+    if (!heroEl) return;
+
+    const hero = findHeroMilestone();
+    if (!hero) {
+        heroEl.style.display = 'none';
+        return;
+    }
+
+    const daysAway = Math.ceil(hero.timeUntil / (24 * 60 * 60 * 1000));
+    const dateStr = formatDateWithTime(hero.date);
+    const timeUntilStr = formatTimeDistance(hero.timeUntil);
+
+    // Build the display value
+    let displayValue, displayUnit;
+    if (hero.isBirthday) {
+        displayValue = hero.description; // e.g. "Turns 30"
+        displayUnit = hero.unitName;     // "birthday" or "anniversary"
+    } else {
+        displayValue = hero.value.toLocaleString();
+        displayUnit = hero.unitName;
+    }
+
+    // Build a human-readable sentence
+    let sentence;
+    if (hero.isBirthday) {
+        sentence = `${hero.eventName} ${hero.description.toLowerCase()}`;
+    } else {
+        sentence = `${hero.eventName} will be ${displayValue} ${displayUnit} old`;
+    }
+
+    heroEl.innerHTML = `
+        <div class="hero-milestone-inner">
+            <div class="hero-value-row">
+                <span class="hero-value">${hero.isBirthday ? hero.description : displayValue}</span>
+                ${!hero.isBirthday ? `<span class="hero-unit">${displayUnit}</span>` : ''}
+            </div>
+            <div class="hero-details">
+                <span class="hero-person">${escapeHtml(hero.eventName)}</span>
+                <span class="hero-separator">&mdash;</span>
+                <span class="hero-date">${dateStr}</span>
+                <span class="hero-separator">&mdash;</span>
+                <span class="hero-countdown">${timeUntilStr}</span>
+            </div>
+            <button class="hero-share-btn" onclick="heroShare()" title="Share this milestone">Share &#8599;</button>
+        </div>
+    `;
+    heroEl.style.display = 'block';
+
+    // Store reference for sharing
+    heroEl._heroMilestone = hero;
+}
+
+function heroShare() {
+    const heroEl = document.getElementById('heroMilestone');
+    if (!heroEl || !heroEl._heroMilestone) return;
+    const m = heroEl._heroMilestone;
+    const message = generateShareMessage(m);
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Copied to clipboard!', 'success');
+        }).catch(() => {});
+    }
+    _track('hero_share', { value: m.value, unit: m.unit });
+    promptShareApp();
+}
+
 function renderMilestonesTab() {
     if (appData.events.length === 0) {
         milestonesColumnsEl.innerHTML = '<p class="empty-text">Add events first.</p>';
         personFilterEl.classList.add('hidden');
+        const heroEl = document.getElementById('heroMilestone');
+        if (heroEl) heroEl.style.display = 'none';
         return;
     }
 
@@ -2057,6 +2210,9 @@ function renderMilestonesTab() {
             todayBox.style.display = 'none';
         }
     }
+
+    // Render hero milestone card above the list
+    renderHeroMilestone();
 
     if (_mostSpecialMode) {
         renderMostSpecialMilestones();
