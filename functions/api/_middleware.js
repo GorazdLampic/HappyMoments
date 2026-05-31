@@ -27,9 +27,15 @@ export async function onRequest(context) {
         return new Response(null, { status: 204, headers: corsHeaders(context.request) });
     }
 
-    // Reject oversized bodies (10KB max)
+    // Reject oversized bodies
+    // Gift orders carry base64 design images, so allow up to 10MB for /api/gift-order
+    // All other routes: 10KB max
+    const url = new URL(context.request.url);
+    const isGiftOrder = url.pathname === '/api/gift-order';
+    const maxSize = isGiftOrder ? 10 * 1024 * 1024 : 10240;
+
     const contentLength = context.request.headers.get('Content-Length');
-    if (contentLength && parseInt(contentLength) > 10240) {
+    if (contentLength && parseInt(contentLength) > maxSize) {
         return new Response(JSON.stringify({ error: 'Request too large' }), {
             status: 413,
             headers: { 'Content-Type': 'application/json', ...corsHeaders(context.request) }

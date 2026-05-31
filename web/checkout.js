@@ -1,20 +1,23 @@
 /**
  * HappyMoments — Checkout & Payment Integration
- * Uses Stripe Checkout for gift store payments.
+ * Uses Stripe Checkout for premium subscriptions and gift store payments.
  *
  * SETUP REQUIRED:
  * 1. Create a Stripe account at https://stripe.com
  * 2. Replace STRIPE_PUBLIC_KEY with your publishable key
- * 3. Deploy the server-side endpoint (see checkout-server.js)
- * 4. Update CHECKOUT_API_URL to your server URL
+ * 3. Set STRIPE_SECRET_KEY in Cloudflare Pages environment
+ * 4. Set PRINTFUL_API_TOKEN in Cloudflare Pages environment for gifts
  */
 
 const CHECKOUT_CONFIG = {
     // Replace with your Stripe publishable key
     STRIPE_PUBLIC_KEY: 'pk_test_PLACEHOLDER_replace_with_real_key',
 
-    // Server endpoint that creates Stripe Checkout Sessions
+    // Server endpoint for premium subscription checkout
     CHECKOUT_API_URL: '/api/create-checkout-session',
+
+    // Server endpoint for gift orders (Printful + Stripe)
+    GIFT_ORDER_API_URL: '/api/gift-order',
 
     // Currency
     CURRENCY: 'eur',
@@ -22,20 +25,6 @@ const CHECKOUT_CONFIG = {
     // Success/cancel URLs (relative to app origin)
     SUCCESS_URL: '/index.html?checkout=success',
     CANCEL_URL: '/index.html?checkout=cancelled',
-};
-
-// Product price mapping (cents) — replace with Stripe Price IDs in production
-const PRODUCT_PRICES = {
-    wine:      { amount: 3500, stripe_price_id: 'price_PLACEHOLDER_wine' },
-    mug:       { amount: 1800, stripe_price_id: 'price_PLACEHOLDER_mug' },
-    poster:    { amount: 2500, stripe_price_id: 'price_PLACEHOLDER_poster' },
-    chocolate: { amount: 2200, stripe_price_id: 'price_PLACEHOLDER_chocolate' },
-    tshirt:    { amount: 2600, stripe_price_id: 'price_PLACEHOLDER_tshirt' },
-    candle:    { amount: 2000, stripe_price_id: 'price_PLACEHOLDER_candle' },
-    notebook:  { amount: 2500, stripe_price_id: 'price_PLACEHOLDER_notebook' },
-    keychain:  { amount: 1400, stripe_price_id: 'price_PLACEHOLDER_keychain' },
-    puzzle:    { amount: 3000, stripe_price_id: 'price_PLACEHOLDER_puzzle' },
-    bottle:    { amount: 2400, stripe_price_id: 'price_PLACEHOLDER_bottle' },
 };
 
 // Load Stripe.js dynamically
@@ -56,7 +45,7 @@ function getStripe() {
     return stripePromise;
 }
 
-// Create a checkout session and redirect
+// Create a checkout session and redirect (for premium subscription)
 async function startCheckout(order) {
     const isLive = !CHECKOUT_CONFIG.STRIPE_PUBLIC_KEY.includes('PLACEHOLDER');
 
@@ -84,6 +73,14 @@ async function startCheckout(order) {
         if (!response.ok) throw new Error('Checkout session creation failed');
 
         const session = await response.json();
+
+        // If backend returns a direct URL (gift-order style), redirect there
+        if (session.url || session.checkoutUrl) {
+            window.location.href = session.url || session.checkoutUrl;
+            return;
+        }
+
+        // Otherwise use Stripe.js redirect
         const stripe = await getStripe();
         const result = await stripe.redirectToCheckout({ sessionId: session.id });
 
@@ -98,12 +95,13 @@ async function startCheckout(order) {
 
 // Show order preview (demo mode or pre-checkout confirmation)
 function showOrderPreview(order) {
-    const product = GIFT_CATALOG.find(p => p.id === order.productId);
+    const product = typeof GIFT_CATALOG !== 'undefined'
+        ? GIFT_CATALOG.find(p => p.id === order.productId)
+        : null;
     if (!product) return;
 
     const _esc = typeof escapeHtml === 'function' ? escapeHtml : (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    const price = PRODUCT_PRICES[order.productId];
-    const formattedPrice = price ? (price.amount / 100).toFixed(2) : product.priceRange;
+    const formattedPrice = product.price ? product.price.toFixed(2) : '—';
 
     const modal = document.createElement('div');
     modal.className = 'modal';
@@ -144,7 +142,9 @@ function closeCheckoutModal() {
 function handleNotifyMe() {
     const email = document.getElementById('notifyEmail');
     if (email && email.value && email.value.includes('@')) {
-        // In production, this would POST to a mailing list API
+        if (typeof HM_ANALYTICS !== 'undefined') {
+            HM_ANALYTICS.track('gift_notify_signup', { source: 'checkout_preview' });
+        }
         showToast('Thanks! We\'ll let you know when the store launches.', 'success');
         closeCheckoutModal();
     } else {
@@ -155,16 +155,27 @@ function handleNotifyMe() {
 // Check for checkout result on page load
 function checkCheckoutResult() {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('checkout') === 'success') {
+    const checkoutResult = params.get('checkout');
+
+    if (checkoutResult === 'success' || checkoutResult === 'premium_success') {
         showToast('Order placed successfully! You\'ll receive a confirmation email.', 'success', 5000);
-        // Clean URL
         window.history.replaceState({}, '', window.location.pathname);
-    } else if (params.get('checkout') === 'cancelled') {
+    } else if (checkoutResult === 'gift_success') {
+        const orderId = params.get('order');
+        showToast('Gift order confirmed! You\'ll receive tracking information via email.', 'success', 6000);
+        if (typeof HM_ANALYTICS !== 'undefined') {
+            HM_ANALYTICS.track('gift_payment_success', { orderId: orderId || 'unknown' });
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+    } else if (checkoutResult === 'cancelled' || checkoutResult === 'premium_cancelled') {
         showToast('Checkout cancelled.', 'info');
+        window.history.replaceState({}, '', window.location.pathname);
+    } else if (checkoutResult === 'gift_cancelled') {
+        showToast('Gift order cancelled. Your design is saved if you want to try again.', 'info');
         window.history.replaceState({}, '', window.location.pathname);
     }
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { CHECKOUT_CONFIG, PRODUCT_PRICES, startCheckout };
+    module.exports = { CHECKOUT_CONFIG, startCheckout, checkCheckoutResult };
 }

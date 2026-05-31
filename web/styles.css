@@ -2568,6 +2568,86 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     color: var(--text-primary);
 }
 
+/* Gift Order Modal — Printful integration */
+.gift-order-modal {
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.gift-design-preview {
+    margin: var(--space-md) 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-elevated);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gift-design-preview canvas {
+    display: block;
+}
+
+.gift-design-loading {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: var(--font-size-xs);
+    padding: var(--space-md);
+    text-align: center;
+}
+
+.gift-order-form {
+    text-align: left;
+}
+
+.gift-form-section {
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+}
+
+.gift-form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.gift-form-section-title {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--warning);
+    margin-bottom: var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gift-order-form .form-group {
+    margin-bottom: var(--space-sm);
+}
+
+.gift-order-form .form-group label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    font-family: var(--font-serif);
+}
+
+.gift-order-form select.checkout-email-input {
+    appearance: auto;
+    cursor: pointer;
+}
+
+.gift-shipping-note {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    margin: var(--space-xs) 0 var(--space-sm);
+}
+
 /* Light mode overrides */
 [data-theme="light"] .header h1 { color: var(--text-primary); }
 [data-theme="light"] .btn-primary { background: var(--text-primary); color: var(--bg-page); }

@@ -503,6 +503,239 @@ function renderStoryPreview(milestone, containerId, theme) {
     container.appendChild(actions);
 }
 
+// ============================================================
+// Gift Product Design Generator
+// Creates print-ready designs for Printful products
+// ============================================================
+
+const GIFT_DESIGN_SIZES = {
+    mug:    { width: 2700, height: 1100 },  // Printful mug print area
+    poster: { width: 3600, height: 5400 },  // 12x18" at 300dpi
+    tshirt: { width: 4500, height: 5400 },  // Front print area
+    tote:   { width: 3600, height: 3600 },
+    canvas: { width: 4500, height: 4500 }
+};
+
+/**
+ * Generate a print-ready design image for a Printful product.
+ * @param {Object} milestone - { value, unitName, eventName }
+ * @param {string} productType - 'mug' | 'poster' | 'tshirt' | 'tote' | 'canvas'
+ * @param {Object} [options] - { theme, message }
+ * @returns {HTMLCanvasElement} - Canvas with the design rendered
+ */
+function generateGiftDesign(milestone, productType, options) {
+    options = options || {};
+    const theme = CARD_CONFIG.themes[options.theme || 'dark'];
+    const dims = GIFT_DESIGN_SIZES[productType] || GIFT_DESIGN_SIZES.poster;
+    const W = dims.width;
+    const H = dims.height;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, theme.bgGradient[0]);
+    grad.addColorStop(1, theme.bgGradient[1]);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Scale factor relative to the 1080px base
+    const S = Math.min(W, H) / 1080;
+
+    // Decorative corner accents (scaled)
+    ctx.save();
+    ctx.globalAlpha = 0.08;
+    ctx.strokeStyle = theme.accent;
+    ctx.lineWidth = 3 * S;
+    const cornerLen = 60 * S;
+    const cornerInset = 40 * S;
+
+    // Top-left
+    ctx.beginPath();
+    ctx.moveTo(cornerInset, cornerInset + cornerLen);
+    ctx.lineTo(cornerInset, cornerInset);
+    ctx.lineTo(cornerInset + cornerLen, cornerInset);
+    ctx.stroke();
+    // Top-right
+    ctx.beginPath();
+    ctx.moveTo(W - cornerInset - cornerLen, cornerInset);
+    ctx.lineTo(W - cornerInset, cornerInset);
+    ctx.lineTo(W - cornerInset, cornerInset + cornerLen);
+    ctx.stroke();
+    // Bottom-left
+    ctx.beginPath();
+    ctx.moveTo(cornerInset, H - cornerInset - cornerLen);
+    ctx.lineTo(cornerInset, H - cornerInset);
+    ctx.lineTo(cornerInset + cornerLen, H - cornerInset);
+    ctx.stroke();
+    // Bottom-right
+    ctx.beginPath();
+    ctx.moveTo(W - cornerInset - cornerLen, H - cornerInset);
+    ctx.lineTo(W - cornerInset, H - cornerInset);
+    ctx.lineTo(W - cornerInset, H - cornerInset - cornerLen);
+    ctx.stroke();
+    ctx.restore();
+
+    // Layout depends on aspect ratio
+    const isWide = W > H; // mug is wide
+    const val = milestone.value.toLocaleString();
+    const unit = milestone.unitName || '';
+    const name = milestone.eventName || '';
+    const message = options.message || '';
+
+    ctx.textAlign = 'center';
+
+    if (isWide) {
+        // === MUG layout: horizontal, number centered ===
+        const P = 80 * S;
+        const centerX = W / 2;
+        const centerY = H / 2;
+
+        // Person name top
+        if (name) {
+            ctx.fillStyle = theme.highlight;
+            ctx.font = `italic ${Math.round(48 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.fillText(name, centerX, P + 60 * S);
+        }
+
+        // Thin line
+        ctx.strokeStyle = theme.muted + '40';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.25, P + 80 * S);
+        ctx.lineTo(W * 0.75, P + 80 * S);
+        ctx.stroke();
+
+        // BIG number
+        ctx.fillStyle = theme.accent;
+        let fontSize = Math.round(200 * S);
+        ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        while (ctx.measureText(val).width > W - P * 2 - 100 * S && fontSize > 60 * S) {
+            fontSize -= Math.round(10 * S);
+            ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        }
+        ctx.fillText(val, centerX, centerY + 30 * S);
+
+        // Unit below
+        ctx.fillStyle = theme.text;
+        ctx.font = `italic ${Math.round(56 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText(unit, centerX, centerY + 100 * S);
+
+        // Personal message
+        if (message) {
+            ctx.fillStyle = theme.muted;
+            ctx.font = `italic ${Math.round(32 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.fillText(message, centerX, H - P - 60 * S);
+        }
+
+        // Bottom branding
+        ctx.fillStyle = theme.muted + '80';
+        ctx.font = `${Math.round(22 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText('happymoments.app', centerX, H - P);
+
+    } else {
+        // === PORTRAIT / SQUARE layout: poster, tshirt, tote, canvas ===
+        const P = 100 * S;
+        const centerX = W / 2;
+
+        // Top: HappyMoments branding
+        ctx.fillStyle = theme.muted;
+        ctx.font = `italic ${Math.round(36 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText('HappyMoments', centerX, P + 40 * S);
+
+        // Thin line
+        ctx.strokeStyle = theme.muted + '40';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(P + 100 * S, P + 70 * S);
+        ctx.lineTo(W - P - 100 * S, P + 70 * S);
+        ctx.stroke();
+
+        // Person name
+        if (name) {
+            ctx.fillStyle = theme.highlight;
+            ctx.font = `italic ${Math.round(60 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.fillText(name, centerX, H * 0.22);
+        }
+
+        // "celebrates" text
+        ctx.fillStyle = theme.muted;
+        ctx.font = `italic ${Math.round(36 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText('celebrates', centerX, H * 0.28);
+
+        // BIG NUMBER — the hero
+        ctx.fillStyle = theme.accent;
+        let fontSize = Math.round(220 * S);
+        ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        while (ctx.measureText(val).width > W - P * 2 - 40 * S && fontSize > 80 * S) {
+            fontSize -= Math.round(10 * S);
+            ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        }
+        ctx.fillText(val, centerX, H * 0.45);
+
+        // Unit
+        ctx.fillStyle = theme.text;
+        ctx.font = `italic ${Math.round(64 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText(unit, centerX, H * 0.52);
+
+        // Personal message
+        if (message) {
+            ctx.fillStyle = theme.muted;
+            ctx.font = `italic ${Math.round(40 * S)}px "EB Garamond", Georgia, serif`;
+            // Word-wrap long messages
+            const maxWidth = W - P * 2;
+            const words = message.split(' ');
+            let line = '';
+            let y = H * 0.60;
+            for (const word of words) {
+                const test = line + (line ? ' ' : '') + word;
+                if (ctx.measureText(test).width > maxWidth) {
+                    ctx.fillText(line, centerX, y);
+                    line = word;
+                    y += 50 * S;
+                } else {
+                    line = test;
+                }
+            }
+            if (line) ctx.fillText(line, centerX, y);
+        }
+
+        // Bottom thin line
+        ctx.strokeStyle = theme.muted + '40';
+        ctx.beginPath();
+        ctx.moveTo(P + 100 * S, H - P - 60 * S);
+        ctx.lineTo(W - P - 100 * S, H - P - 60 * S);
+        ctx.stroke();
+
+        // Bottom branding
+        ctx.fillStyle = theme.muted + '80';
+        ctx.font = `${Math.round(28 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText('happymoments.app', centerX, H - P - 10 * S);
+    }
+
+    return canvas;
+}
+
+/**
+ * Generate a gift design and return as base64 PNG data URL.
+ * @param {Object} milestone - { value, unitName, eventName }
+ * @param {string} productType - 'mug' | 'poster' | 'tshirt' | 'tote' | 'canvas'
+ * @param {Object} [options] - { theme, message }
+ * @returns {string} - Base64 data URL (image/png)
+ */
+function generateGiftDesignBase64(milestone, productType, options) {
+    const canvas = generateGiftDesign(milestone, productType, options);
+    return canvas.toDataURL('image/png');
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { generateMilestoneCard, generateStoryCard, downloadMilestoneCard, downloadStoryCard };
+    module.exports = {
+        generateMilestoneCard, generateStoryCard,
+        downloadMilestoneCard, downloadStoryCard,
+        generateGiftDesign, generateGiftDesignBase64,
+        GIFT_DESIGN_SIZES
+    };
 }
