@@ -196,25 +196,27 @@ function isNiceNumber(n) {
     if (n >= 31415926 && n <= 31415927) return { type: 'pi', desc: 'Pi × 10M', score: 75, diversity: 7 };
     if (n >= 314159265 && n <= 314159266) return { type: 'pi', desc: 'Pi × 100M', score: 85, diversity: 7 };
 
-    // Round — ONLY truly impressive round numbers (single leading digit × power of 10)
-    // e.g. 5,000,000 yes, 3,851,100 no
+    // Round — ONLY truly clean round numbers
+    // Must look like: 5,000,000 or 2,000,000 or 500,000 or 1,500,000
+    // NOT: 1,941,750 or 3,851,100
     if (n >= 100000) {
+        // Exact single digit × power of 10: 1M, 2M, 5M, 10M, 100M, 1B
         const log = Math.floor(Math.log10(n));
         const leadingPower = Math.pow(10, log);
         const leadingDigit = Math.floor(n / leadingPower);
         if (n === leadingDigit * leadingPower) {
-            // Single leading digit × exact power: 1M, 2M, 5M, 10M, etc.
             if (n >= 1000000000) return { type: 'round', desc: (n/1e9) + ' billion', score: 95, diversity: 9 };
             if (n >= 100000000) return { type: 'round', desc: (n/1e6) + ' million', score: 80, diversity: 8 };
             if (n >= 10000000) return { type: 'round', desc: (n/1e6) + ' million', score: 68, diversity: 8 };
             if (n >= 1000000) return { type: 'round', desc: (n/1e6) + ' million', score: 58, diversity: 8 };
             if (n >= 100000) return { type: 'round', desc: (n/1e3) + 'K', score: 45, diversity: 8 };
         }
-        // Also allow quarter/half millions: 250K, 500K, 750K, 1.5M, 2.5M
-        if (n >= 1000000 && n % 500000 === 0 && (n/500000) <= 20)
-            return { type: 'round', desc: (n/1e6) + 'M', score: 50, diversity: 8 };
-        if (n >= 100000 && n % 250000 === 0)
-            return { type: 'round', desc: (n/1e3) + 'K', score: 40, diversity: 8 };
+        // Clean half values: 500K, 1.5M, 2.5M
+        const cleanHalves = [500000, 1500000, 2500000, 3500000, 4500000, 5500000, 7500000, 15000000, 25000000, 50000000, 75000000, 150000000, 250000000, 500000000, 750000000, 1500000000];
+        if (cleanHalves.includes(n)) {
+            if (n >= 1000000) return { type: 'round', desc: (n/1e6) + ' million', score: 50, diversity: 8 };
+            return { type: 'round', desc: (n/1e3) + 'K', score: 42, diversity: 8 };
+        }
     }
 
     return null;
@@ -227,6 +229,52 @@ const units = [
     { name: 'days', ms: 86400000 },
     { name: 'weeks', ms: 604800000 },
 ];
+
+// === THEMATIC BONUS ===
+// Extra score when number type matches event category
+function getThematicBonus(niceType, category, event) {
+    const evLower = event.toLowerCase();
+
+    // Power of 2 + technology/computing = perfect
+    if (niceType === 'power_of_2' && (category === 'technology' || category === 'invention'))
+        return { bonus: 30, reason: 'binary number for tech event' };
+    if (niceType === 'power_of_2' && evLower.match(/computer|ibm|internet|digital|byte|bit|code|program|software/))
+        return { bonus: 35, reason: 'binary number for computing event' };
+
+    // Pi + science/math = perfect
+    if (niceType === 'pi' && (category === 'science' || evLower.match(/math|physics|einstein|newton|copernicus|galileo/)))
+        return { bonus: 30, reason: 'Pi for science event' };
+
+    // Fibonacci + nature/biology = perfect
+    if (niceType === 'fibonacci' && (category === 'nature' || evLower.match(/darwin|dna|genome|species|biology|life|flower|beagle/)))
+        return { bonus: 30, reason: 'Fibonacci for nature/biology event' };
+
+    // Lucky numbers + culture/love events
+    if (niceType === 'lucky' && (category === 'culture' || evLower.match(/love|wedding|valentine|romance|heart/)))
+        return { bonus: 25, reason: 'lucky number for cultural event' };
+
+    // Sacred + human rights/spiritual
+    if (niceType === 'sacred' && (category === 'human_rights' || evLower.match(/peace|rights|freedom|independence|gandhi|mandela|nobel/)))
+        return { bonus: 25, reason: 'sacred number for human rights event' };
+
+    // Round millions + space (millions of km)
+    if (niceType === 'round' && category === 'space')
+        return { bonus: 20, reason: 'round millions for space event' };
+
+    // Sequential + exploration/progress
+    if (niceType === 'sequential' && (category === 'exploration' || evLower.match(/first|pioneer|discover|invent|summit|record/)))
+        return { bonus: 20, reason: 'sequential for progress/exploration' };
+
+    // Repdigit + sports (jersey numbers, records)
+    if (niceType === 'repdigit' && category === 'sports')
+        return { bonus: 15, reason: 'repdigit for sports event' };
+
+    // Power of 10 + anything = always great
+    if (niceType === 'power_of_10')
+        return { bonus: 10, reason: 'power of 10 is universally impressive' };
+
+    return { bonus: 0, reason: null };
+}
 
 // Flatten positive events only
 const allEvents = [];
@@ -273,6 +321,9 @@ for (let dd = new Date(2026, 5, 1); dd <= new Date(2026, 11, 31); dd.setDate(dd.
                 }
             }
 
+            // Check thematic bonus
+            const thematic = getThematicBonus(nice.type, ev.category, ev.event);
+
             candidates.push({
                 date: dateStr,
                 event: ev.event,
@@ -282,7 +333,10 @@ for (let dd = new Date(2026, 5, 1); dd <= new Date(2026, 11, 31); dd.setDate(dd.
                 unit: u.name,
                 niceType: nice.type,
                 niceDesc: nice.desc,
-                score: nice.score,
+                score: nice.score + thematic.bonus,
+                baseScore: nice.score,
+                thematicBonus: thematic.bonus,
+                thematicReason: thematic.reason,
                 diversity: nice.diversity,
                 exactTime,
                 isCombined: false,
@@ -393,6 +447,7 @@ tr:hover{background:#252525}
 .mhdr td{background:#2a2233;color:#d4b876;font-weight:bold;font-size:16px;border-bottom:2px solid #d4b876;padding:12px 6px}
 .phrase{font-size:13px;color:#e0d8c8;font-style:italic;max-width:400px}
 .comb-tag{font-size:10px;padding:1px 5px;border-radius:6px;background:#1a2d4a;color:#6ab0f3;margin-left:4px}
+.theme-tag{font-size:10px;padding:1px 5px;border-radius:6px;background:#2d4a1a;color:#b0f36a;margin-left:4px}
 </style></head><body>
 <h1>Daily Nice Numbers v2</h1>
 <p class="sub">Every day: a historical event + nice number. No negatives, no repeats within 7 days, combined events supported.</p>
@@ -417,6 +472,7 @@ results.forEach(r => {
     if (mm.isCombined) cls += ' comb';
 
     const combTag = mm.isCombined ? '<span class="comb-tag">combined</span>' : '';
+    const thematicTag = mm.thematicBonus > 0 ? `<span class="theme-tag" title="${mm.thematicReason}">+${mm.thematicBonus} thematic</span>` : '';
     const timeNote = mm.exactTime ? `<div class="time">at ${mm.exactTime} UTC</div>` : '';
 
     // User-facing phrase
@@ -429,12 +485,13 @@ results.forEach(r => {
     } else {
         phrase = `${valStr} ${mm.unit} since ${mm.event} (${mm.eventYear}) — ${mm.niceDesc}!`;
     }
+    if (mm.thematicReason) phrase += ` [${mm.thematicReason}]`;
 
     html += `<tr class="${cls}">
         <td>${r.date}</td>
         <td class="num">${valStr}${timeNote}</td>
         <td class="unit">${mm.unit}</td>
-        <td><span class="badge t-${mm.niceType}">${mm.niceDesc}</span>${combTag}</td>
+        <td><span class="badge t-${mm.niceType}">${mm.niceDesc}</span>${combTag}${thematicTag}</td>
         <td class="sc">${mm.score}</td>
         <td class="ev">${mm.event} <span class="evyr">(${mm.eventYear})</span></td>
         <td class="phrase">${phrase}</td>
