@@ -126,7 +126,7 @@ function findAllUpcomingMilestones(startDate, maxResults, maxDaysAhead, settings
         .slice(0, maxResults);
 }
 
-// Find "Big Milestones" — next power of 10 for key units, no time horizon limit
+// Find "Big Milestones" — next power of 10 for key units, max 30 years ahead
 // These are the viral hooks: "1 billion seconds", "1 million minutes", "100,000 hours"
 function findBigMilestones(startDate, settings) {
     settings = settings || DEFAULT_SETTINGS;
@@ -134,6 +134,7 @@ function findBigMilestones(startDate, settings) {
     const milestones = [];
     const bigUnits = ['seconds', 'minutes', 'hours', 'days'];
     const powersOf10 = [1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000];
+    const maxMs = 30 * 365.25 * 24 * 60 * 60 * 1000; // 30 years max
 
     for (const unit of bigUnits) {
         const unitConfig = TIME_UNITS[unit];
@@ -148,6 +149,8 @@ function findBigMilestones(startDate, settings) {
             if (milestoneDate <= now) continue;
 
             const timeUntil = milestoneDate.getTime() - now.getTime();
+            // Skip if more than 30 years away
+            if (timeUntil > maxMs) continue;
             const specialInfo = isSpecialNumber(pow, settings);
 
             milestones.push({

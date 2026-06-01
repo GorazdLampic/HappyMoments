@@ -2121,7 +2121,8 @@ function renderHeroMilestone() {
     if (!heroEl) return;
 
     const hero = findHeroMilestone();
-    if (!hero) {
+    // Only show hero if it's genuinely impressive (not weak alternating patterns etc.)
+    if (!hero || !isVerySpecialNumber(hero.value)) {
         heroEl.style.display = 'none';
         return;
     }

@@ -727,11 +727,11 @@ const HISTORY_FACTS = {
 
     "06-01": [
         {
-            year: 2009,
-            event: "General Motors files for bankruptcy --- largest industrial bankruptcy in US history",
-            funFact: "GM had been the world's largest company by revenue for 77 consecutive years before this",
-            numberFact: "{yearsAgo} years since GM's bankruptcy --- the $50 billion bailout was the largest ever for a company",
-            category: "politics"
+            year: 1967,
+            event: "The Beatles release Sgt. Pepper's Lonely Hearts Club Band",
+            funFact: "Took 129 days and 700 hours of studio time --- revolutionized the album as an art form",
+            numberFact: "Released {daysAgo} days ago --- the album that changed music has been inspiring artists for {yearsAgo} years",
+            category: "culture"
         }
     ],
     "06-03": [
@@ -1859,10 +1859,18 @@ const HISTORY_FACTS = {
 };
 
 // Get today's history facts with calculated days/years ago
+const _NEGATIVE_WORDS = ['bankrupt','bomb','atomic','hiroshima','nagasaki','earthquake','tsunami','hurricane','devastat','kills','killed','death','dies','died','assassinat','murder','war begin','invades','attack','terror','crash','disaster','sank','sinking','plague','pandemic','famine','genocide','massacre','nuclear test','breaks apart','erupts','forced to recant','concentration camp','perished'];
+
 function getTodayHistoryFacts() {
     const now = new Date();
     const key = String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-    const facts = HISTORY_FACTS[key] || [];
+    const allFacts = HISTORY_FACTS[key] || [];
+
+    // Filter out negative events
+    const facts = allFacts.filter(f => {
+        const lower = (f.event + ' ' + f.numberFact).toLowerCase();
+        return !_NEGATIVE_WORDS.some(w => lower.includes(w));
+    });
 
     return facts.map(f => {
         const yearsAgo = now.getFullYear() - f.year;
