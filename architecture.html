@@ -478,6 +478,130 @@
   .revenue-highlight .rev-value{font-size:1.1rem;font-weight:700;color:#d4b876}
   .revenue-highlight .rev-calc{font-size:.85rem;color:#777;margin-top:.15rem}
 
+  /* GitHub Ecosystem */
+  .github-section{
+    background:linear-gradient(135deg,#1a2e1e,#182a1c);
+    border:1px solid #2a6a3a;
+  }
+  .github-section::before{background:linear-gradient(90deg,#238636,#3fb950)}
+  .github-section .new-section-title{color:#3fb950}
+  .github-section .new-section-title .icon{background:#238636;color:#fff}
+
+  .github-pipeline{
+    display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;
+    justify-content:center;margin-top:.8rem;padding:.8rem;
+    background:rgba(35,134,54,.06);border:1px solid rgba(35,134,54,.2);
+    border-radius:8px;
+  }
+  .gh-pipe-node{
+    background:rgba(255,255,255,.06);padding:.35rem .65rem;
+    border-radius:5px;font-size:.9rem;color:#e0e0e0;
+    white-space:nowrap;
+  }
+  .gh-pipe-node.gh-node{border-left:2px solid #3fb950}
+  .gh-pipe-node.cf-node{border-left:2px solid #a855f7}
+  .gh-pipe-node.web-node{border-left:2px solid #60a5fa}
+  .gh-pipe-node.android-node{border-left:2px solid #4ade80}
+  .gh-pipe-arrow{color:#3fb950;font-size:1.1rem;flex-shrink:0}
+
+  .github-grid{
+    display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;margin-top:.8rem;
+  }
+  .gh-card{
+    background:rgba(0,0,0,.2);border:1px solid rgba(63,185,80,.15);
+    border-radius:8px;padding:1rem;
+  }
+  .gh-card-title{font-weight:700;font-size:.98rem;color:#3fb950;margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem}
+  .gh-card-desc{font-size:.9rem;color:#bbb;line-height:1.45}
+  .gh-card-file{font-family:'Cascadia Code','Fira Code',monospace;font-size:.85rem;color:#666;margin-top:.3rem}
+
+  /* Marketing / Distribution Channels */
+  .marketing-section{
+    background:linear-gradient(135deg,#2a1a28,#281a24);
+    border:1px solid #6a2a5a;
+  }
+  .marketing-section::before{background:linear-gradient(90deg,#E1306C,#f56fa1)}
+  .marketing-section .new-section-title{color:#f56fa1}
+  .marketing-section .new-section-title .icon{background:#E1306C;color:#fff}
+
+  .marketing-table{
+    width:100%;border-collapse:collapse;font-size:.92rem;margin-top:.5rem;
+  }
+  .marketing-table thead th{
+    text-align:left;padding:.55rem .7rem;
+    background:rgba(225,48,108,.1);color:#f56fa1;
+    font-weight:700;font-size:.88rem;letter-spacing:.06em;
+    text-transform:uppercase;border-bottom:2px solid rgba(225,48,108,.2);
+    white-space:nowrap;
+  }
+  .marketing-table tbody td{
+    padding:.5rem .7rem;color:#bbb;
+    border-bottom:1px solid rgba(255,255,255,.04);
+    font-size:.9rem;vertical-align:top;
+  }
+  .marketing-table tbody tr:hover{background:rgba(225,48,108,.04)}
+  .marketing-table .channel-primary{color:#f56fa1;font-weight:600}
+  .marketing-table .channel-viral{color:#22d3ee;font-weight:600}
+  .marketing-table .channel-passive{color:#888}
+
+  .content-pipeline{
+    margin-top:1rem;padding:1rem;
+    background:rgba(225,48,108,.04);border:1px solid rgba(225,48,108,.2);
+    border-radius:8px;
+  }
+  .content-pipeline-title{font-weight:700;font-size:.95rem;color:#f56fa1;margin-bottom:.6rem}
+  .pipeline-flow{
+    display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;
+    justify-content:center;
+  }
+  .pipe-node{
+    background:rgba(255,255,255,.06);padding:.35rem .65rem;
+    border-radius:5px;font-size:.88rem;color:#e0e0e0;
+    white-space:nowrap;
+  }
+  .pipe-node.source-node{border-left:2px solid #f56fa1}
+  .pipe-node.ai-node{border-left:2px solid #c084fc}
+  .pipe-node.social-node{border-left:2px solid #E1306C}
+  .pipe-node.user-node{border-left:2px solid #60a5fa}
+  .pipe-node.viral-node{border-left:2px solid #22d3ee}
+  .pipe-arrow{color:#f56fa1;font-size:1.1rem;flex-shrink:0}
+
+  /* Feedback Loop */
+  .feedback-section{
+    background:linear-gradient(135deg,#1e1e2a,#1a1a24);
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .feedback-section::before{background:linear-gradient(90deg,#f97316,#fb923c)}
+  .feedback-section .new-section-title{color:#fb923c}
+  .feedback-section .new-section-title .icon{background:#f97316;color:#fff}
+
+  .feedback-loops{
+    display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:.5rem;
+  }
+  .feedback-loop-card{
+    padding:1rem;border-radius:8px;position:relative;overflow:hidden;
+  }
+  .feedback-loop-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    border-radius:8px 8px 0 0;
+  }
+  .loop-title{font-weight:700;font-size:.98rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+  .loop-flow{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}
+  .loop-node{
+    background:rgba(255,255,255,.06);padding:.3rem .55rem;
+    border-radius:4px;font-size:.85rem;color:#e0e0e0;
+    white-space:nowrap;
+  }
+  .loop-arrow{font-size:1rem;flex-shrink:0}
+
+  @media(max-width:1100px){
+    .github-grid{grid-template-columns:1fr 1fr}
+    .feedback-loops{grid-template-columns:1fr}
+  }
+  @media(max-width:700px){
+    .github-grid{grid-template-columns:1fr}
+  }
+
   /* Legend */
   .legend{
     max-width:1400px;margin:2rem auto 0;
@@ -539,7 +663,7 @@
   <div class="data-flows-title" style="margin-bottom:1rem">
     <span class="icon">&#x21C6;</span> Architecture Overview &amp; Data Flows
   </div>
-  <svg class="arch-flow-svg" viewBox="0 0 1200 740" xmlns="http://www.w3.org/2000/svg">
+  <svg class="arch-flow-svg" viewBox="0 0 1200 940" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
         <path d="M0,0 L8,3 L0,6" fill="#f97316" opacity=".8"/>
@@ -561,6 +685,12 @@
       </marker>
       <marker id="arrowPink" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
         <path d="M0,0 L8,3 L0,6" fill="#fb7185" opacity=".8"/>
+      </marker>
+      <marker id="arrowGitHub" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="#3fb950" opacity=".8"/>
+      </marker>
+      <marker id="arrowMarketing" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="#f56fa1" opacity=".8"/>
       </marker>
       <filter id="glow">
         <feGaussianBlur stdDeviation="2" result="blur"/>
@@ -780,6 +910,65 @@
     <rect x="30" y="686" width="1140" height="46" rx="6" fill="rgba(244,63,94,.04)" stroke="#fb7185" stroke-width="1" opacity=".5"/>
     <text x="600" y="704" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">NEW IN v1.1: Hero Milestone Card &middot; This Day in History (197 events) &middot; Daily Nice Numbers (thematic matching) &middot; Gift Store LIVE (Printful + Stripe)</text>
     <text x="600" y="722" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">8 Gift Collections &middot; Gift Design Generator &middot; Pretty Palindrome Filter &middot; Thematic Bonus Scoring &middot; Form UX Improvements &middot; Year Always Shown</text>
+
+    <!-- ============ GITHUB ECOSYSTEM BAR ============ -->
+    <rect x="30" y="748" width="540" height="82" rx="8" fill="rgba(35,134,54,.04)" stroke="#238636" stroke-width="1.2" opacity=".7"/>
+    <text x="300" y="770" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700" letter-spacing=".8">GITHUB ECOSYSTEM</text>
+    <text x="45" y="790" fill="#aaa" font-size="11">GorazdLampic/HappyMoments</text>
+    <text x="45" y="806" fill="#888" font-size="10">Push to main &rarr; CF Pages auto-deploy &rarr; happymoments.app (live)</text>
+    <text x="45" y="820" fill="#888" font-size="10">Push to main &rarr; GitHub Actions &rarr; Android APK + AAB &rarr; GitHub Releases</text>
+
+    <!-- ============ MARKETING CHANNELS BAR ============ -->
+    <rect x="590" y="748" width="580" height="82" rx="8" fill="rgba(225,48,108,.04)" stroke="#E1306C" stroke-width="1.2" opacity=".7"/>
+    <text x="880" y="770" text-anchor="middle" fill="#f56fa1" font-size="13" font-weight="700" letter-spacing=".8">MARKETING / DISTRIBUTION</text>
+    <text x="605" y="790" fill="#f56fa1" font-size="11">Instagram &middot; TikTok &middot; X</text>
+    <text x="800" y="790" fill="#22d3ee" font-size="11">WhatsApp &middot; Viber Groups</text>
+    <text x="1000" y="790" fill="#888" font-size="11">Facebook</text>
+    <text x="605" y="808" fill="#888" font-size="10">historyFacts.js (197) &rarr; AI batch (Sunday) &rarr; Review &rarr; Post &rarr; Users &rarr; App &rarr; Share &rarr; Repeat</text>
+    <text x="605" y="822" fill="#666" font-size="10">#WhenIsYourBillion challenges &middot; Story cards &middot; Milestone reveals &middot; Daily facts</text>
+
+    <!-- ============ FEEDBACK LOOP BAR ============ -->
+    <rect x="30" y="845" width="1140" height="85" rx="8" fill="rgba(249,115,22,.04)" stroke="#f97316" stroke-width="1.2" opacity=".6"/>
+    <text x="600" y="868" text-anchor="middle" fill="#fb923c" font-size="13" font-weight="700" letter-spacing=".8">FULL BUSINESS FEEDBACK LOOPS</text>
+
+    <!-- Code loop -->
+    <text x="45" y="890" fill="#3fb950" font-size="11" font-weight="600">Code Loop:</text>
+    <text x="120" y="890" fill="#aaa" font-size="10">Code (GitHub)</text>
+    <text x="210" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="222" y="890" fill="#c084fc" font-size="10">Deploy (Cloudflare)</text>
+    <text x="340" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="352" y="890" fill="#60a5fa" font-size="10">App (happymoments.app)</text>
+    <text x="490" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="502" y="890" fill="#aaa" font-size="10">Users</text>
+    <text x="540" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="552" y="890" fill="#c084fc" font-size="10">Analytics (D1)</text>
+    <text x="650" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="662" y="890" fill="#aaa" font-size="10">Admin Dashboard</text>
+    <text x="770" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="782" y="890" fill="#d4b876" font-size="10">Insights</text>
+    <text x="830" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="842" y="890" fill="#3fb950" font-size="10">Code improvements</text>
+    <text x="960" y="890" fill="#666" font-size="10">&rarr;</text>
+    <text x="972" y="890" fill="#3fb950" font-size="10">GitHub &#x21BA;</text>
+
+    <!-- Content loop -->
+    <text x="45" y="918" fill="#f56fa1" font-size="11" font-weight="600">Content Loop:</text>
+    <text x="140" y="918" fill="#aaa" font-size="10">historyFacts + AI</text>
+    <text x="250" y="918" fill="#666" font-size="10">&rarr;</text>
+    <text x="262" y="918" fill="#f56fa1" font-size="10">Social Media</text>
+    <text x="345" y="918" fill="#666" font-size="10">&rarr;</text>
+    <text x="357" y="918" fill="#60a5fa" font-size="10">New Users</text>
+    <text x="420" y="918" fill="#666" font-size="10">&rarr;</text>
+    <text x="432" y="918" fill="#60a5fa" font-size="10">App</text>
+    <text x="458" y="918" fill="#666" font-size="10">&rarr;</text>
+    <text x="470" y="918" fill="#22d3ee" font-size="10">Share in Groups</text>
+    <text x="565" y="918" fill="#666" font-size="10">&rarr;</text>
+    <text x="577" y="918" fill="#22d3ee" font-size="10">More Users &#x21BA;</text>
+
+    <!-- Connection: GitHub bar to CF Pages -->
+    <line x1="300" y1="748" x2="655" y2="260" stroke="#3fb950" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowGitHub)" opacity=".35"/>
+    <!-- Connection: Marketing bar to User -->
+    <line x1="700" y1="748" x2="90" y2="103" stroke="#f56fa1" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowMarketing)" opacity=".3"/>
   </svg>
 </div>
 
@@ -1595,6 +1784,177 @@
 
   </div>
 
+  <!-- ====== 4. GITHUB ECOSYSTEM ====== -->
+  <div class="new-section github-section">
+    <div class="new-section-title">
+      <span class="icon">&#x2699;</span> GitHub Ecosystem &mdash; Code-to-Production Pipeline
+    </div>
+
+    <div class="github-grid">
+      <div class="gh-card">
+        <div class="gh-card-title">&#x1F4C1; Repository</div>
+        <div class="gh-card-desc">GorazdLampic/HappyMoments &mdash; private repo, main branch is production</div>
+        <div class="gh-card-file">github.com/GorazdLampic/HappyMoments</div>
+      </div>
+      <div class="gh-card">
+        <div class="gh-card-title">&#x2699; GitHub Actions</div>
+        <div class="gh-card-desc">CI/CD pipeline builds Android APK (debug, direct install) + AAB (release, Play Store) on every push to main</div>
+        <div class="gh-card-file">.github/workflows/android.yml</div>
+      </div>
+      <div class="gh-card">
+        <div class="gh-card-title">&#x1F4E6; GitHub Releases</div>
+        <div class="gh-card-desc">Latest APK + AAB downloadable from Releases page. Debug APK for testers, release AAB for Play Store upload.</div>
+        <div class="gh-card-file">Releases &rarr; latest tag</div>
+      </div>
+      <div class="gh-card">
+        <div class="gh-card-title">&#x1F680; Auto-Deploy Trigger</div>
+        <div class="gh-card-desc">Push to main &rarr; Cloudflare Pages detects &rarr; builds static site &rarr; deploys to happymoments.app (live in ~30s)</div>
+        <div class="gh-card-file">CF Pages &larr; GitHub webhook</div>
+      </div>
+    </div>
+
+    <div class="github-pipeline">
+      <span style="font-size:.9rem;font-weight:600;color:#3fb950;margin-right:.6rem">Pipeline:</span>
+      <span class="gh-pipe-node gh-node">Code (local)</span>
+      <span class="gh-pipe-arrow">&rarr;</span>
+      <span class="gh-pipe-node gh-node">git push (GitHub)</span>
+      <span class="gh-pipe-arrow">&rarr;</span>
+      <span class="gh-pipe-node cf-node">Cloudflare Pages build</span>
+      <span class="gh-pipe-arrow">&rarr;</span>
+      <span class="gh-pipe-node web-node">happymoments.app (web)</span>
+      <span style="color:#666;margin:0 .3rem">+</span>
+      <span class="gh-pipe-node gh-node">GitHub Actions build</span>
+      <span class="gh-pipe-arrow">&rarr;</span>
+      <span class="gh-pipe-node android-node">Android APK + AAB</span>
+      <span class="gh-pipe-arrow">&rarr;</span>
+      <span class="gh-pipe-node gh-node">GitHub Releases</span>
+    </div>
+  </div>
+
+  <!-- ====== 5. MARKETING / DISTRIBUTION CHANNELS ====== -->
+  <div class="new-section marketing-section">
+    <div class="new-section-title">
+      <span class="icon">&#x1F4E2;</span> Marketing / Distribution Channels
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="marketing-table">
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>Type</th>
+            <th>Content</th>
+            <th>Frequency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="channel-primary">Instagram</td>
+            <td class="channel-primary">Primary</td>
+            <td>Story cards, milestone reveals, daily facts</td>
+            <td>Daily</td>
+          </tr>
+          <tr>
+            <td class="channel-primary">TikTok</td>
+            <td class="channel-primary">Primary</td>
+            <td>Number reveals, "When's your billion?" challenges</td>
+            <td>3-5x/week</td>
+          </tr>
+          <tr>
+            <td class="channel-primary">X (Twitter)</td>
+            <td class="channel-primary">Primary</td>
+            <td>Quick hooks, threads, reply-bait</td>
+            <td>Daily</td>
+          </tr>
+          <tr>
+            <td class="channel-passive">Facebook</td>
+            <td class="channel-passive">Passive</td>
+            <td>Cross-posts from Instagram</td>
+            <td>Auto</td>
+          </tr>
+          <tr>
+            <td class="channel-viral">WhatsApp Groups</td>
+            <td class="channel-viral">Viral engine</td>
+            <td>Group challenges, milestone shares</td>
+            <td>User-driven</td>
+          </tr>
+          <tr>
+            <td class="channel-viral">Viber Groups</td>
+            <td class="channel-viral">Viral engine</td>
+            <td>Same as WhatsApp</td>
+            <td>User-driven</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="content-pipeline">
+      <div class="content-pipeline-title">Content Pipeline Flow</div>
+      <div class="pipeline-flow">
+        <span class="pipe-node source-node">historyFacts.js (197 events)</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-node ai-node">AI generates daily posts (Sunday batch)</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-node source-node">Gorazd reviews (15 min)</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-node social-node">Posts to Instagram / TikTok / X</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-node user-node">Users see &rarr; install &rarr; use</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-node viral-node">Share in groups</span>
+        <span class="pipe-arrow">&rarr;</span>
+        <span class="pipe-node viral-node">Friends install &rarr; cycle repeats &#x21BA;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 6. FEEDBACK LOOPS ====== -->
+  <div class="new-section feedback-section">
+    <div class="new-section-title">
+      <span class="icon">&#x21BA;</span> Full Business Feedback Loops
+    </div>
+
+    <div class="feedback-loops">
+      <div class="feedback-loop-card" style="background:rgba(35,134,54,.04);border:1px solid rgba(35,134,54,.2)">
+        <div class="loop-title" style="color:#3fb950">&#x2699; Code / Product Loop</div>
+        <div class="loop-flow">
+          <span class="loop-node" style="border-left:2px solid #3fb950">Code (GitHub)</span>
+          <span class="loop-arrow" style="color:#3fb950">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #a855f7">Deploy (Cloudflare)</span>
+          <span class="loop-arrow" style="color:#a855f7">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #60a5fa">App (happymoments.app)</span>
+          <span class="loop-arrow" style="color:#60a5fa">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #60a5fa">Users</span>
+          <span class="loop-arrow" style="color:#c084fc">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #c084fc">Analytics (D1)</span>
+          <span class="loop-arrow" style="color:#c084fc">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #d4b876">Admin Dashboard</span>
+          <span class="loop-arrow" style="color:#d4b876">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #d4b876">Insights</span>
+          <span class="loop-arrow" style="color:#3fb950">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #3fb950">Code improvements &#x21BA;</span>
+        </div>
+      </div>
+
+      <div class="feedback-loop-card" style="background:rgba(225,48,108,.04);border:1px solid rgba(225,48,108,.2)">
+        <div class="loop-title" style="color:#f56fa1">&#x1F4E2; Content / Growth Loop</div>
+        <div class="loop-flow">
+          <span class="loop-node" style="border-left:2px solid #f56fa1">Content (historyFacts + AI)</span>
+          <span class="loop-arrow" style="color:#f56fa1">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #E1306C">Social Media</span>
+          <span class="loop-arrow" style="color:#E1306C">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #60a5fa">New Users</span>
+          <span class="loop-arrow" style="color:#60a5fa">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #60a5fa">App</span>
+          <span class="loop-arrow" style="color:#22d3ee">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #22d3ee">Share in Groups</span>
+          <span class="loop-arrow" style="color:#22d3ee">&rarr;</span>
+          <span class="loop-node" style="border-left:2px solid #22d3ee">More Users &#x21BA;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Legend -->
@@ -1619,6 +1979,12 @@
   </div>
   <div class="legend-item">
     <span class="legend-dot" style="background:#ef4444"></span> App Store Status
+  </div>
+  <div class="legend-item">
+    <span class="legend-dot" style="background:#238636"></span> GitHub Ecosystem
+  </div>
+  <div class="legend-item">
+    <span class="legend-dot" style="background:#E1306C"></span> Marketing / Distribution
   </div>
   <div class="legend-item">
     <span class="legend-dot" style="background:#f97316"></span> Data Flows / China
