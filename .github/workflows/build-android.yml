@@ -55,16 +55,33 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Generate upload keystore
+      - name: Setup upload keystore
         working-directory: android/app
         run: |
-          keytool -genkeypair -v \
-            -keystore upload-keystore.jks \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -alias upload \
-            -storepass happymoments2026 \
-            -keypass happymoments2026 \
-            -dname "CN=HappyMoments, OU=Mobile, O=Quantum Wave Ltd, L=Ljubljana, ST=Ljubljana, C=SI"
+          if [ -n "${{ secrets.UPLOAD_KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.UPLOAD_KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
+            echo "Using stored keystore from secrets"
+          else
+            keytool -genkeypair -v \
+              -keystore upload-keystore.jks \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -alias upload \
+              -storepass happymoments2026 \
+              -keypass happymoments2026 \
+              -dname "CN=HappyMoments, OU=Mobile, O=Quantum Wave Ltd, L=Ljubljana, ST=Ljubljana, C=SI"
+            echo "Generated new keystore (save base64 to GitHub secrets for persistence)"
+            base64 -w 0 upload-keystore.jks > keystore-base64.txt
+            echo "::warning::New keystore generated. Save the base64 from the artifact to GitHub secrets as UPLOAD_KEYSTORE_BASE64"
+          fi
+
+      - name: Upload keystore backup (if newly generated)
+        if: ${{ !env.HAS_KEYSTORE_SECRET }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: keystore-backup
+          path: android/app/keystore-base64.txt
+          retention-days: 30
+        continue-on-error: true
 
       - name: Build debug APK
         working-directory: android
@@ -75,8 +92,8 @@ jobs:
       - name: Build signed release AAB (for Play Store)
         working-directory: android
         env:
-          KEYSTORE_PASSWORD: happymoments2026
-          KEY_PASSWORD: happymoments2026
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'happymoments2026' }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'happymoments2026' }}
         run: ./gradlew bundleRelease
 
       - name: Upload debug APK artifact
