@@ -10,22 +10,22 @@
  * 5. Return Stripe checkout URL (Printful order confirmed after payment via webhook)
  */
 
-// Printful product variant mappings
+// Printful product variant mappings — VERIFIED against real catalog API
 const PRINTFUL_VARIANTS = {
-    mug:    { variant_id: 1320, product_id: 19, name: 'White Mug 11oz' },
-    poster: { variant_id: 2103, product_id: 1,  name: 'Poster 12x18' },
-    tshirt: { variant_id: 4012, product_id: 71, name: 'Bella+Canvas 3001 Unisex' },
-    tote:   { variant_id: 5765, product_id: 83, name: 'Tote Bag' },
-    canvas: { variant_id: 3845, product_id: 56, name: 'Canvas 12x12' }
+    mug:    { variant_id: 1320, product_id: 19, name: 'White Glossy Mug 11oz' },
+    poster: { variant_id: 3876, product_id: 1,  name: 'Enhanced Matte Paper Poster 12x18"' },
+    tshirt: { variant_id: 4012, product_id: 71, name: 'Bella+Canvas 3001 Unisex White M' },
+    tote:   { variant_id: 10458, product_id: 367, name: 'Eco Tote Bag Oyster' },
+    canvas: { variant_id: 19296, product_id: 3, name: 'Canvas 10x10"' }
 };
 
-// T-shirt size variant offsets (from base variant 4012 = S)
+// T-shirt size variants (White, Bella+Canvas 3001) — verified
 const TSHIRT_SIZE_VARIANTS = {
-    'S':  4012,
-    'M':  4013,
-    'L':  4014,
-    'XL': 4015,
-    '2XL': 4016
+    'S':  4011,
+    'M':  4012,
+    'L':  4013,
+    'XL': 4014,
+    '2XL': 4015
 };
 
 // Retail prices in EUR cents
