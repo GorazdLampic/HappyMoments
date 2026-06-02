@@ -2162,7 +2162,11 @@ body {
     border-bottom: 1px solid var(--separator);
 }
 
-.event-set-item.current { background: var(--bg-elevated); }
+.event-set-item.current {
+    background: var(--bg-elevated);
+    border-left: 3px solid var(--warning);
+}
+.event-set-item.current .event-set-info strong { font-weight: 600; }
 .event-set-info { display: flex; flex-direction: column; gap: 2px; }
 .event-set-info strong { color: var(--text-primary); font-size: var(--font-size-base); font-weight: 400; }
 .event-set-count { font-size: var(--font-size-xs); color: var(--text-muted); font-family: var(--font-mono); }
@@ -2374,6 +2378,28 @@ body::after {
     font-style: italic;
 }
 .celebrate-icon { font-size: 20px; flex-shrink: 0; }
+
+.surprise-box {
+    background: rgba(212,184,118,0.1);
+    border: 1px solid rgba(212,184,118,0.25);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+.surprise-text {
+    text-align: center;
+    color: var(--warning);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+}
+
+.group-hint {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: var(--space-sm);
+}
 
 /* ============================================================
    HAPPINESS COUNTER
@@ -2867,3 +2893,43 @@ body::after {
 .toast-success { background: var(--bg-card); border-color: var(--accent); color: var(--accent); }
 .toast-error { background: var(--bg-card); border-color: var(--danger); color: var(--danger); }
 .toast-info { background: var(--bg-card); border-color: var(--text-muted); color: var(--text-primary); }
+
+/* ============================================================
+   TAB HINT BANNERS (first-visit)
+   ============================================================ */
+
+.tab-hint-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-family: var(--font-serif);
+    line-height: 1.4;
+    opacity: 0.9;
+}
+
+.tab-hint-text {
+    flex: 1;
+}
+
+.tab-hint-dismiss {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.tab-hint-dismiss:hover {
+    color: var(--text-primary);
+}

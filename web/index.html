@@ -95,7 +95,7 @@
         <!-- Onboarding Section -->
         <section id="onboarding" class="card onboarding-card">
             <h2 data-i18n="welcome">Welcome</h2>
-            <p data-i18n="onboarding_text">Enter a date that matters to you or your friends. A birthday, an anniversary, the day you met someone special. I'll help you find reasons to celebrate.</p>
+            <p data-i18n="onboarding_text">Enter a date that matters to you or your friends. I'll help you find reasons to celebrate.</p>
 
             <div class="form-group">
                 <label for="birthName" data-i18n="what_is_this">What is this moment?</label>
@@ -148,22 +148,21 @@
             <!-- Share & Celebrate Section -->
             <div class="card share-card share-card-priority">
                 <h3 data-i18n="share">Share &amp; Celebrate</h3>
-                <p class="card-description">A milestone is a reason to celebrate! Share it, plan something, or surprise someone.</p>
+                <p class="card-description" id="shareHint">A milestone is a reason to celebrate! Share it, plan something, or surprise someone.</p>
                 <div id="sharePreview" class="share-preview"></div>
-                <div class="celebrate-hint" id="celebrateHint">
-                    <span class="celebrate-icon">&#127881;</span>
-                    <span>This could be the perfect excuse to grab a coffee, plan a dinner, or reconnect with someone special.</span>
-                </div>
-                <div class="share-buttons">
-                    <button id="nativeShareBtn" class="btn-primary btn-native-share hidden">Share...</button>
-                    <button id="whatsappShareBtn" class="btn-primary btn-whatsapp">WhatsApp</button>
-                    <button id="viberShareBtn" class="btn-primary btn-viber">Viber</button>
-                    <button id="emailShareBtn" class="btn-secondary">Email</button>
-                    <button id="copyShareBtn" class="btn-secondary">Copy</button>
+                <div class="surprise-box" id="surpriseBox">
+                    <div class="surprise-text">Surprise someone with this milestone!</div>
+                    <div class="share-buttons">
+                        <button id="nativeShareBtn" class="btn-primary btn-native-share hidden">Share...</button>
+                        <button id="whatsappShareBtn" class="btn-primary btn-whatsapp">WhatsApp</button>
+                        <button id="viberShareBtn" class="btn-primary btn-viber">Viber</button>
+                        <button id="emailShareBtn" class="btn-secondary">Email</button>
+                        <button id="copyShareBtn" class="btn-secondary">Copy</button>
+                    </div>
                 </div>
                 <div class="challenge-buttons">
-                    <button class="btn-challenge" onclick="handleChallengeFriends()">Challenge Friends</button>
-                    <button class="btn-challenge btn-challenge-group" onclick="handleChallengeGroup()">Challenge Your Group</button>
+                    <button class="btn-challenge" onclick="handleChallengeFriends()">Share with Friends</button>
+                    <button class="btn-challenge btn-challenge-group" onclick="handleChallengeGroup()">Share with Your Group</button>
                 </div>
                 <div class="calendar-buttons">
                     <span class="calendar-label">Save to calendar:</span>
@@ -266,6 +265,7 @@
             <div class="card">
                 <h3>Groups</h3>
                 <p class="card-description">Organize dates into separate groups. Each group has its own milestones.</p>
+                <p class="group-hint" id="groupHint">People added above will be added to the active group.</p>
                 <div id="eventSetsList2" class="event-sets-list"></div>
                 <div class="add-set-form">
                     <div class="form-row">

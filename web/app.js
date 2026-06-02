@@ -246,6 +246,12 @@ function init() {
 
     // Handle deep links — show shared person's milestones
     handleDeepLink();
+
+    // Enable pinch zoom on Android WebView
+    if (document.querySelector('meta[name="viewport"]')) {
+        document.querySelector('meta[name="viewport"]').content =
+            'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes';
+    }
 }
 
 function handleDeepLink() {
@@ -803,6 +809,44 @@ function switchTab(tabName) {
     else if (tabName === 'settings') {
         loadSettingsUI();
     }
+
+    // Show first-visit tab hint
+    showTabHint(tabName);
+}
+
+const TAB_HINTS = {
+    milestones: "Here are the special number milestones for your people. Tap any to share it!",
+    combined: "Combined milestones show when your group's ages add up to something special.",
+    events: "Add birthdays, anniversaries, and special dates for the people you care about.",
+    settings: "Customize which number patterns to show, manage notifications, and more."
+};
+
+function showTabHint(tabName) {
+    const storageKey = `hm_tab_seen_${tabName}`;
+    if (localStorage.getItem(storageKey)) return;
+
+    const hint = TAB_HINTS[tabName];
+    if (!hint) return;
+
+    // Find the tab content section
+    const tabMap = { milestones: milestonesTab, combined: combinedTab, events: eventsTab, settings: settingsTab };
+    const tabEl = tabMap[tabName];
+    if (!tabEl) return;
+
+    // Remove any existing hint in this tab
+    const existing = tabEl.querySelector('.tab-hint-banner');
+    if (existing) existing.remove();
+
+    const banner = document.createElement('div');
+    banner.className = 'tab-hint-banner';
+    banner.innerHTML = `
+        <span class="tab-hint-text">${hint}</span>
+        <button class="tab-hint-dismiss" onclick="this.parentElement.remove()">&times;</button>
+    `;
+    tabEl.insertBefore(banner, tabEl.firstChild);
+
+    // Mark as seen
+    localStorage.setItem(storageKey, '1');
 }
 
 // ============================================================
@@ -1807,17 +1851,19 @@ function getConnectionKey(id1, id2) {
 }
 
 // Parse connection key to extract event IDs
-// Key format: "event_123456789_event_987654321"
+// Key format: "event_{ts}_{rand}_event_{ts}_{rand}" (full IDs joined with _)
 function parseConnectionKey(key) {
-    const eventIdPattern = /event_\d+/g;
+    // Event IDs have the format: event_{timestamp}_{random_alphanum}
+    // Match full event IDs including the random alphanumeric suffix
+    const eventIdPattern = /event_\d+_[a-z0-9]+/g;
     const matches = key.match(eventIdPattern);
     if (matches && matches.length === 2) {
         return matches;
     }
-    // Fallback: try splitting and reconstructing
-    const parts = key.split('_');
-    if (parts.length === 4 && parts[0] === 'event' && parts[2] === 'event') {
-        return [`event_${parts[1]}`, `event_${parts[3]}`];
+    // Fallback: try the known event IDs to find which two are in this key
+    if (typeof appData !== 'undefined' && appData.events) {
+        const ids = appData.events.map(e => e.id).filter(id => key.includes(id));
+        if (ids.length === 2) return ids;
     }
     return null;
 }
@@ -2294,7 +2340,6 @@ function renderMostSpecialMilestones() {
     if (allMilestonesFlat.length === 0) {
         html += '<p class="empty-text">No special milestones found in the next 2 years.</p>';
     } else {
-        const showBanners = !isPremium() && typeof generateGiftBanner === 'function';
         allMilestonesFlat.slice(0, 30).forEach((m, idx) => {
             const timeUntilStr = formatTimeDistance(m.timeUntil);
             const dateStr = formatDateWithTime(m.date);
@@ -2313,10 +2358,6 @@ function renderMostSpecialMilestones() {
                     </div>
                 </div>
             `;
-            // Gift banner every 4th milestone
-            if (showBanners && idx > 0 && (idx + 1) % 4 === 0) {
-                html += generateGiftBanner(m);
-            }
         });
     }
 
@@ -2394,7 +2435,6 @@ function renderPersonColumns() {
     const DEFAULT_SHOW = 7;
 
     // Build columns for each selected person
-    const showBanners = !isPremium() && typeof generateGiftBanner === 'function';
     let html = '<div class="columns-container">';
 
     let globalIdx = 0;
@@ -2498,10 +2538,6 @@ function renderPersonColumns() {
                             </div>
                         </div>
                     `;
-                }
-                // Gift banner every 4th item in column
-                if (showBanners && i > 0 && (i + 1) % 4 === 0 && i < DEFAULT_SHOW) {
-                    html += generateGiftBanner(m);
                 }
             });
 
@@ -2939,6 +2975,11 @@ function isCombinedSpecialNumber(num, unit) {
 
 function selectMilestoneForShare(idx) {
     selectedMilestone = idx;
+
+    // Increment share hint counter (hint shown until 3 selections)
+    const hintCount = parseInt(localStorage.getItem('hm_share_hint_count') || '0');
+    localStorage.setItem('hm_share_hint_count', String(hintCount + 1));
+
     updateSharePreview();
     const m = allMilestonesFlat[idx];
     // Update gift suggestions and card preview
@@ -2966,12 +3007,25 @@ function updateSharePreview() {
     }
 
     const message = generateShareMessage(m);
+    // Make happymoments.app URLs clickable in the preview
+    const messageHtml = message.replace(
+        /(happymoments\.app\/?[^\s]*)/g,
+        '<a href="https://$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">$1</a>'
+    );
+    const hintCount = parseInt(localStorage.getItem('hm_share_hint_count') || '0');
+    const hintHtml = hintCount < 3 ? '<p class="share-hint">Click any milestone above to select it for sharing</p>' : '';
     sharePreviewEl.innerHTML = `
         <div class="share-message-preview">
-            <p>${message}</p>
+            <p>${messageHtml}</p>
         </div>
-        <p class="share-hint">Click any milestone above to select it for sharing</p>
+        ${hintHtml}
     `;
+
+    // Also show/hide the static share hint in the card
+    const shareHintEl = document.getElementById('shareHint');
+    if (shareHintEl) {
+        shareHintEl.style.display = hintCount < 3 ? '' : 'none';
+    }
 }
 
 function pickShareTemplate(category) {
@@ -3084,11 +3138,11 @@ function generateChallengeMessage(m) {
     const dateStr = m.date.toLocaleDateString(getAppLocale(), { month: 'long', day: 'numeric', year: 'numeric' });
     const name = m.eventName || '';
 
-    const link = 'happymoments.app/landing.html';
+    const link = 'happymoments.app';
     const templates = [
-        `I just found out ${name} will be ${val} ${unit} old on ${dateStr}! When's YOUR special number? Find out: ${link}\n\n#WhenIsYourBillion #HappyMoments #MilestoneChallenge`,
-        `${val} ${unit}. That's how old ${name} will be on ${dateStr}. Can you beat that? Check yours: ${link}\n\n#HappyMoments #NumberChallenge #BillionSeconds`,
-        `Challenge: ${name} turns ${val} ${unit} on ${dateStr}! Tag someone and find THEIR milestone: ${link}\n\n#HappyMoments #WhenIsYourBillion`,
+        `I just discovered something fun — ${name} will be ${val} ${unit} old on ${dateStr}! Have you checked YOUR special numbers? ${link}`,
+        `Fun fact: ${name} hits ${val} ${unit} on ${dateStr}! Want to find your own special number milestones? ${link}`,
+        `${val} ${unit} — that's ${name}'s next milestone on ${dateStr}! Curious about yours? ${link}`,
     ];
     return templates[Math.floor(Math.random() * templates.length)];
 }
@@ -3100,10 +3154,10 @@ function handleChallengeFriends() {
 
     const message = generateChallengeMessage(m);
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoments Challenge', text: message }).catch(() => {});
+        navigator.share({ title: 'HappyMoments', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
-            showToast('Challenge copied! Paste it on social media.', 'success');
+            showToast('Copied! Share it with your friends.', 'success');
         }).catch(() => {
             showToast(message, 'info', 8000);
         });
@@ -3119,21 +3173,22 @@ function handleChallengeGroup() {
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
     const link = m ? getDeepLinkUrl(appData.events.find(e => e.id === m.eventId) || appData.events[0]) : 'happymoments.app';
 
-    const groupMessages = {
-        en: `Who's got the most interesting number milestone? I just found out mine — enter your birthday and see yours in 10 seconds!\n\n${link}\n\n#WhenIsYourBillion`,
-        pt: `Quem tem o marco numerico mais interessante? Acabei de descobrir o meu — coloque seu aniversario e veja o seu em 10 segundos!\n\n${link}\n\n#WhenIsYourBillion`,
-        hi: `किसका सबसे दिलचस्प नंबर माइलस्टोन है? मैंने अभी अपना खोजा — अपना जन्मदिन डालें और 10 सेकंड में देखें!\n\n${link}\n\n#WhenIsYourBillion`,
-        zh: `谁的数字里程碑最有趣？我刚发现了我的——输入你的生日，10秒就能看到！\n\n${link}\n\n#WhenIsYourBillion`,
-        es: `Quien tiene el hito numerico mas interesante? Acabo de descubrir el mio — pon tu cumpleanos y descubre el tuyo en 10 segundos!\n\n${link}\n\n#WhenIsYourBillion`,
-    };
-
-    const message = groupMessages[locale] || groupMessages.en;
+    let message;
+    if (m) {
+        const val = m.value.toLocaleString();
+        const unit = m.unitName || '';
+        const name = m.eventName || '';
+        const dateStr = m.date.toLocaleDateString(getAppLocale(), { month: 'long', day: 'numeric', year: 'numeric' });
+        message = `Fun discovery: ${name} will be ${val} ${unit} on ${dateStr}! Who else wants to find their special numbers? ${link}`;
+    } else {
+        message = `I just found some fun number milestones — want to discover yours? Enter your birthday and see what comes up! ${link}`;
+    }
 
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoments Challenge', text: message }).catch(() => {});
+        navigator.share({ title: 'HappyMoments', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
-            showToast('Group challenge copied! Paste in your WhatsApp group.', 'success');
+            showToast('Copied! Share it with your group.', 'success');
         }).catch(() => {});
     }
     _track('group_challenge', { locale });
@@ -3293,9 +3348,14 @@ function updateCombinedSharePreview() {
     }
 
     const message = generateCombinedShareMessage(m);
+    // Make happymoments.app URLs clickable in the preview
+    const messageHtml = message.replace(
+        /(happymoments\.app\/?[^\s]*)/g,
+        '<a href="https://$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">$1</a>'
+    );
     combinedSharePreviewEl.innerHTML = `
         <div class="share-message-preview">
-            <p>${message}</p>
+            <p>${messageHtml}</p>
         </div>
         <p class="share-hint">Click any combined milestone above to select it for sharing</p>
     `;
@@ -3872,6 +3932,13 @@ function switchToSet(setId) {
     renderCombinedTab();
     renderConnectionMatrix();
     loadComboTypesUI();
+    renderEventSetsList();
+
+    // Show toast with group name
+    const set = allSets.find(s => s.id === setId);
+    if (set) {
+        showToast(`Switched to group: ${set.name}`, 'info');
+    }
 }
 
 function handleAddSet() {
@@ -4284,8 +4351,8 @@ function updateAccountUI(user) {
 // PREMIUM GATE
 // ============================================================
 
-const FREE_PEOPLE_LIMIT = 8;
-const FREE_TEAM_VIEWS = 5;
+const FREE_PEOPLE_LIMIT = 100;
+const FREE_TEAM_VIEWS = 100;
 
 function isPremium() {
     const until = localStorage.getItem('happymoments_premium_until');
