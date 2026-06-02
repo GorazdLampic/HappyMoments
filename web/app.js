@@ -4423,7 +4423,6 @@ function showPremiumBanner() {
         <span class="premium-banner-text">${_ut('go_premium')}</span>
         <span class="premium-banner-price">&euro;1.49/year</span>
         <span class="premium-banner-text">&mdash; ${_ut('clean_experience')}</span>
-        <button class="premium-banner-dismiss" onclick="event.stopPropagation(); dismissPremiumBanner();">&times;</button>
     `;
     banner.onclick = () => {
         if (typeof HM_AUTH !== 'undefined' && !HM_AUTH.isLoggedIn()) {
