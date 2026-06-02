@@ -2443,6 +2443,7 @@ body::after {
 }
 .app-footer a { color: var(--text-secondary); text-decoration: none; }
 .app-footer a:hover { color: var(--text-primary); }
+.app-version { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; opacity: 0.6; font-family: var(--font-mono); }
 .footer-sep { margin: 0 8px; }
 .footer-copy { color: var(--text-muted); }
 

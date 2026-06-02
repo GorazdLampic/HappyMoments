@@ -130,8 +130,15 @@ let html = fs.readFileSync(htmlSrc, 'utf8');
 // Add cache-busting version to script/css tags
 html = html.replace(/(\.js)(")/g, `$1?v=${VERSION}$2`);
 html = html.replace(/(styles\.css)(")/g, `$1?v=${VERSION}$2`);
+
+// Inject build version and timestamp into footer
+const buildTime = new Date().toISOString().replace('T', ' ').substring(0, 16);
+const versionCode = '7'; // Keep in sync with android/app/build.gradle versionCode
+const versionInfo = `v${versionCode} &middot; ${buildTime} UTC`;
+html = html.replace('id="appVersion">', `id="appVersion">Build: ${versionInfo}`);
+
 fs.writeFileSync(path.join(DIST, 'index.html'), html);
-console.log(`  Processed: index.html (v=${VERSION})`);
+console.log(`  Processed: index.html (v=${VERSION}, build=${buildTime})`);
 
 // Copy HTML pages
 ['legal.html', 'landing.html', 'admin.html'].forEach(f => {
