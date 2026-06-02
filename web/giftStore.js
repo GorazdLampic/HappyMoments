@@ -533,27 +533,7 @@ async function submitGiftOrder(productId, value, unit) {
     if (errorEl) errorEl.classList.add('hidden');
 
     try {
-        // Generate the design image
-        let designBase64 = '';
-        if (typeof generateGiftDesignBase64 === 'function') {
-            const milestone = {
-                value: value,
-                unitName: unit,
-                eventName: recipientName || (_currentGiftMilestone ? _currentGiftMilestone.eventName : '')
-            };
-            designBase64 = generateGiftDesignBase64(milestone, product.designType, {
-                theme: 'dark',
-                message: personalMessage
-            });
-        }
-
-        if (!designBase64) {
-            showError('Failed to generate design image. Please try again.');
-            if (orderBtn) { orderBtn.disabled = false; orderBtn.textContent = 'Proceed to Payment'; }
-            return;
-        }
-
-        // Submit to backend
+        // Submit to backend (Stripe checkout, Printful fulfilled separately)
         const response = await fetch('/api/gift-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -571,8 +551,7 @@ async function submitGiftOrder(productId, value, unit) {
                     country_code: shipCountry,
                     zip: shipZip
                 },
-                size: size,
-                designImageBase64: designBase64
+                size: size
             })
         });
 
