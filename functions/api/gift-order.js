@@ -116,15 +116,15 @@ export async function onRequestPost(context) {
                     body: JSON.stringify(orderBody)
                 });
 
-                if (orderResponse.ok) {
-                    const orderResult = await orderResponse.json();
-                    if (orderResult.code === 200) {
-                        printfulOrderId = orderResult.result.id;
-                    }
+                const orderResult = await orderResponse.json();
+                if (orderResponse.ok && orderResult.code === 200) {
+                    printfulOrderId = orderResult.result.id;
+                } else {
+                    // Store error for debugging (temporary)
+                    printfulOrderId = 'ERROR: ' + JSON.stringify(orderResult).substring(0, 200);
                 }
             } catch (pfErr) {
-                // Printful failed — continue with Stripe-only checkout
-                console.error('Printful error (non-blocking):', pfErr.message);
+                printfulOrderId = 'EXCEPTION: ' + pfErr.message;
             }
         }
 
