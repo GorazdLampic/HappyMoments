@@ -78,7 +78,7 @@ export async function onRequestPost(context) {
             message: personalMessage || '',
             type: productType
         });
-        const designUrl = `${appUrl}/api/gift-design?${designParams.toString()}`;
+        const designUrl = `${appUrl}/api/gift-order?${designParams.toString()}`;
 
         // Create Printful order if token available
         let printfulOrderId = null;
@@ -176,4 +176,44 @@ export async function onRequestPost(context) {
     } catch (err) {
         return Response.json({ error: 'Order failed', detail: err.message }, { status: 500 });
     }
+}
+
+/**
+ * GET /api/gift-order?value=10000&unit=days&name=Anna&type=mug
+ * Serves the design SVG image for Printful to download.
+ */
+export async function onRequestGet(context) {
+    const url = new URL(context.request.url);
+    const value = url.searchParams.get('value') || '10000';
+    const unit = url.searchParams.get('unit') || 'days';
+    const name = url.searchParams.get('name') || '';
+    const message = url.searchParams.get('message') || '';
+    const type = url.searchParams.get('type') || 'mug';
+
+    const sizes = {
+        mug: { w: 2700, h: 1100 }, poster: { w: 3600, h: 5400 },
+        tshirt: { w: 4500, h: 5400 }, tote: { w: 3600, h: 3600 }, canvas: { w: 3000, h: 3000 }
+    };
+    const dims = sizes[type] || sizes.mug;
+    const W = dims.w, H = dims.h;
+    const esc = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const val = Number(value) ? Number(value).toLocaleString('en-US') : value;
+    const numLen = val.replace(/,/g,'').length;
+    const fontSize = numLen > 9 ? Math.floor(H*0.12) : numLen > 6 ? Math.floor(H*0.16) : Math.floor(H*0.22);
+
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+<rect width="${W}" height="${H}" fill="#1a1a1a"/>
+<rect x="30" y="30" width="${W-60}" height="${H-60}" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.2" rx="8"/>
+<text x="${W/2}" y="${Math.floor(H*0.12)}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.035)}" fill="#888" font-style="italic">HappyMoments</text>
+${name ? `<text x="${W/2}" y="${type==='mug'?'30%':'28%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.05)}" fill="#a0b8a0" font-style="italic">${esc(name)}</text>` : ''}
+<text x="${W/2}" y="${type==='mug'?'55%':'50%'}" text-anchor="middle" font-family="Courier New,monospace" font-size="${fontSize}" fill="#d4b876" font-weight="300">${esc(val)}</text>
+<text x="${W/2}" y="${type==='mug'?'70%':'60%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.06)}" fill="#e0e0e0" font-style="italic">${esc(unit)}</text>
+${message ? `<text x="${W/2}" y="${type==='mug'?'82%':'72%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.04)}" fill="#888" font-style="italic">${esc(message)}</text>` : ''}
+<text x="${W/2}" y="${type==='mug'?'95%':'92%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.025)}" fill="#888">happymoments.app</text>
+</svg>`;
+
+    return new Response(svg, {
+        headers: { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'public, max-age=86400', 'Access-Control-Allow-Origin': '*' }
+    });
 }
