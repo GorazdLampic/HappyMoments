@@ -41,13 +41,12 @@ export async function onRequestPost(context) {
     const PRINTFUL_TOKEN = context.env.PRINTFUL_API_TOKEN;
     const STRIPE_KEY = context.env.STRIPE_SECRET_KEY;
 
-    // Graceful degradation if not configured
-    if (!PRINTFUL_TOKEN || !STRIPE_KEY) {
-        return Response.json({
-            error: 'Gift store coming soon',
-            message: 'The gift store is being set up. Please check back later.'
-        }, { status: 503 });
-    }
+    // Gift store not yet fully configured — show coming soon
+    // TODO: Verify Printful variant IDs against real catalog before enabling
+    return Response.json({
+        error: 'Gift store coming soon',
+        message: 'The gift store is being set up. Leave your email to be notified when ordering becomes available.'
+    }, { status: 503 });
 
     let body;
     try {

@@ -183,7 +183,7 @@ body {
     background: var(--bg-page);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
-    touch-action: manipulation;
+    touch-action: auto;
 }
 
 #app {
@@ -1154,7 +1154,7 @@ body {
 
 .cm-num {
     font-family: var(--font-mono);
-    font-size: 0.88rem;
+    font-size: 1.05rem;
     font-weight: 500;
     color: var(--text-primary);
 }
@@ -2260,8 +2260,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .milestone-column { min-width: 120px; }
     .column-milestones { max-height: 350px; }
     /* Milestone fonts on phone */
-    .cm-num { font-size: 0.82rem; }
-    .cm-unit { font-size: 0.72rem; }
+    .cm-num { font-size: 0.95rem; }
+    .cm-unit { font-size: 0.78rem; }
     .cm-marker { font-size: 0.62rem; }
     .cm-alt-a, .cm-alt-b { font-size: 0.75rem; }
     .column-milestone { padding: 6px 4px; }
@@ -2327,7 +2327,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* Premium bottom banner */
 .premium-banner {
     position: fixed;
-    bottom: 48px;
+    bottom: 80px;
     left: 0;
     right: 0;
     background: var(--bg-card);
@@ -2357,7 +2357,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     cursor: pointer;
     padding: 4px 8px;
 }
-.premium-banner ~ .app-footer { padding-bottom: 110px; }
+.premium-banner ~ .app-footer { padding-bottom: 140px; }
+
+/* Safe zone at bottom of screen — prevent accidental taps near phone nav buttons */
+body::after {
+    content: '';
+    display: block;
+    height: 80px;
+}
 
 .celebrate-hint {
     display: flex; align-items: center; gap: 10px;
@@ -2442,7 +2449,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* Consent Banner */
 .consent-banner {
     position: fixed;
-    bottom: 48px;
+    bottom: 80px;
     left: 0;
     right: 0;
     background: var(--bg-card);
