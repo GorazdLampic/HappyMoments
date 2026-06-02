@@ -1083,12 +1083,12 @@ const SHARE_MESSAGES = {
 // ---------------------------------------------------------------------------
 
 const APP_SHARE_LINK_I18N = {
-    en: '\n\nDiscover your special numbers \u2192 happymoments.app',
-    pt: '\n\nDescubra seus n\u00fameros especiais \u2192 happymoments.app',
-    hi: '\n\n\u0905\u092a\u0928\u0947 \u0935\u093f\u0936\u0947\u0937 \u0928\u0902\u092c\u0930 \u0916\u094b\u091c\u0947\u0902 \u2192 happymoments.app',
-    zh: '\n\n\u53d1\u73b0\u4f60\u7684\u7279\u522b\u6570\u5b57 \u2192 happymoments.app',
-    ja: '\n\n\u3042\u306a\u305f\u306e\u7279\u5225\u306a\u6570\u5b57\u3092\u767a\u898b \u2192 happymoments.app',
-    es: '\n\nDescubre tus n\u00fameros especiales \u2192 happymoments.app'
+    en: '\n\nDiscover your special numbers \u2192 https://happymoments.app',
+    pt: '\n\nDescubra seus n\u00fameros especiais \u2192 https://happymoments.app',
+    hi: '\n\n\u0905\u092a\u0928\u0947 \u0935\u093f\u0936\u0947\u0937 \u0928\u0902\u092c\u0930 \u0916\u094b\u091c\u0947\u0902 \u2192 https://happymoments.app',
+    zh: '\n\n\u53d1\u73b0\u4f60\u7684\u7279\u522b\u6570\u5b57 \u2192 https://happymoments.app',
+    ja: '\n\n\u3042\u306a\u305f\u306e\u7279\u5225\u306a\u6570\u5b57\u3092\u767a\u898b \u2192 https://happymoments.app',
+    es: '\n\nDescubre tus n\u00fameros especiales \u2192 https://happymoments.app'
 };
 
 // Fallback text appended when a template has no {date}/{countdown} placeholder

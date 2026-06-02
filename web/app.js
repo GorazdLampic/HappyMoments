@@ -3091,7 +3091,7 @@ function getShareCategory(m) {
     return typeMap[m.type] || 'generic';
 }
 
-const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 happymoments.app';
+const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 https://happymoments.app';
 
 function getAppShareLink(milestone) {
     const locale = getAppLocale().split('-')[0];
@@ -3114,7 +3114,7 @@ function getAppShareLink(milestone) {
                 d: dateStr,
                 hl: locale
             });
-            return linkText.replace('happymoments.app', `happymoments.app/?${params.toString()}`);
+            return linkText.replace('https://happymoments.app', `https://happymoments.app/?${params.toString()}`);
         }
     }
     return linkText;
@@ -3122,13 +3122,13 @@ function getAppShareLink(milestone) {
 
 // Generate deep link URL for a specific event
 function getDeepLinkUrl(event) {
-    if (!event) return 'happymoments.app';
+    if (!event) return 'https://happymoments.app';
     const dateStr = event.date instanceof Date
         ? event.date.toISOString().split('T')[0]
         : String(event.date).split('T')[0];
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
     const params = new URLSearchParams({ n: event.name, d: dateStr, hl: locale });
-    return `happymoments.app/?${params.toString()}`;
+    return `https://happymoments.app/?${params.toString()}`;
 }
 
 function generateChallengeMessage(m) {
@@ -3138,7 +3138,7 @@ function generateChallengeMessage(m) {
     const dateStr = m.date.toLocaleDateString(getAppLocale(), { month: 'long', day: 'numeric', year: 'numeric' });
     const name = m.eventName || '';
 
-    const link = 'happymoments.app';
+    const link = 'https://happymoments.app';
     const templates = [
         `I just discovered something fun — ${name} will be ${val} ${unit} old on ${dateStr}! Have you checked YOUR special numbers? ${link}`,
         `Fun fact: ${name} hits ${val} ${unit} on ${dateStr}! Want to find your own special number milestones? ${link}`,
@@ -3171,7 +3171,7 @@ function handleChallengeGroup() {
     const m = allMilestonesFlat[idx];
 
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
-    const link = m ? getDeepLinkUrl(appData.events.find(e => e.id === m.eventId) || appData.events[0]) : 'happymoments.app';
+    const link = m ? getDeepLinkUrl(appData.events.find(e => e.id === m.eventId) || appData.events[0]) : 'https://happymoments.app';
 
     let message;
     if (m) {
@@ -3210,14 +3210,14 @@ function quickShare(idx) {
 }
 
 function shareAppLink() {
-    const text = 'Discover when you turn 1 billion seconds old, 10,000 days, or hit a Fibonacci birthday. Track milestones for everyone you love!\n\nhappymoments.app';
+    const text = 'Discover when you turn 1 billion seconds old, 10,000 days, or hit a Fibonacci birthday. Track milestones for everyone you love!\n\nhttps://happymoments.app';
     if (navigator.share) {
         navigator.share({ title: 'HappyMoments', text }).catch(() => {});
     } else {
         navigator.clipboard.writeText(text).then(() => {
             showToast('Link copied! Share it with your friends.', 'success');
         }).catch(() => {
-            showToast('Share this link: happymoments.app', 'info', 5000);
+            showToast('Share this link: https://happymoments.app', 'info', 5000);
         });
     }
     _track('share_app', { source: 'settings' });
