@@ -85,8 +85,9 @@ export async function onRequestPost(context) {
         if (PRINTFUL_TOKEN) {
             try {
 
-                // Create draft order — design will be added via Printful dashboard
-                // (Cloudflare Pages doesn't reliably serve GET endpoints for new function files)
+                // Create draft order with placeholder design
+                // The placeholder SVG is a static file served by Cloudflare Pages
+                const placeholderUrl = `${appUrl}/gift-placeholder.svg`;
                 const orderBody = {
                     external_id: orderId,
                     recipient: {
@@ -103,7 +104,8 @@ export async function onRequestPost(context) {
                         name: `HappyMoments ${variant.name} — ${milestoneValue} ${milestoneUnit}` +
                               (milestoneName ? ` for ${milestoneName}` : '') +
                               (personalMessage ? ` "${personalMessage}"` : ''),
-                        retail_price: (priceInCents / 100).toFixed(2)
+                        retail_price: (priceInCents / 100).toFixed(2),
+                        files: [{ type: 'default', url: placeholderUrl }]
                     }]
                 };
 
