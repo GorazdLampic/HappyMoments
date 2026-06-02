@@ -85,7 +85,8 @@ export async function onRequestPost(context) {
         if (PRINTFUL_TOKEN) {
             try {
 
-                // Create draft order with public design URL
+                // Create draft order — design will be added via Printful dashboard
+                // (Cloudflare Pages doesn't reliably serve GET endpoints for new function files)
                 const orderBody = {
                     external_id: orderId,
                     recipient: {
@@ -99,9 +100,10 @@ export async function onRequestPost(context) {
                     items: [{
                         variant_id: variantId,
                         quantity: 1,
-                        name: `HappyMoments ${variant.name} — ${milestoneValue} ${milestoneUnit}`,
-                        retail_price: (priceInCents / 100).toFixed(2),
-                        files: [{ type: 'default', url: designUrl }]
+                        name: `HappyMoments ${variant.name} — ${milestoneValue} ${milestoneUnit}` +
+                              (milestoneName ? ` for ${milestoneName}` : '') +
+                              (personalMessage ? ` "${personalMessage}"` : ''),
+                        retail_price: (priceInCents / 100).toFixed(2)
                     }]
                 };
 
