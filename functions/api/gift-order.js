@@ -129,7 +129,6 @@ export async function onRequestPost(context) {
         }
 
         // Create Stripe Checkout Session
-        const appUrl = context.env.APP_URL || 'https://happymoments.app';
         const description = `Personalized: ${milestoneValue} ${milestoneUnit}` +
             (milestoneName ? ` for ${milestoneName}` : '') +
             (personalMessage ? ` — "${personalMessage}"` : '') +
