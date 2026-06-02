@@ -87,7 +87,7 @@ export async function onRequestPost(context) {
 
                 // Create draft order with placeholder design
                 // The placeholder SVG is a static file served by Cloudflare Pages
-                const placeholderUrl = `${appUrl}/gift-placeholder.svg`;
+                const placeholderUrl = `${appUrl}/gift-placeholder.png`;
                 const orderBody = {
                     external_id: orderId,
                     recipient: {
