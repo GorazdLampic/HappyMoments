@@ -1203,7 +1203,14 @@ function handleAddEvent() {
         const el = document.getElementById(id); if (el) el.value = '';
     });
 
+    // Auto-activate the new person in the Personal tab filter
+    if (!selectedPersonIds.includes(newEvent.id)) {
+        selectedPersonIds.push(newEvent.id);
+    }
+
     renderEventsTab();
+    renderPersonFilter();
+    renderMilestonesTab();
     renderConnectionMatrix();
     showToast(`${name} added!`, 'success');
     _track('event_added', { event_count: appData.events.length });
@@ -3823,10 +3830,16 @@ function handleSwitchSet() {
                 comboTypes: { sum: true, ratio: true, duration: true }
             };
             allSets.push(newSet);
+            // Switch to the new group FIRST, then save
+            currentSetId = newSet.id;
+            loadCurrentSet();
             saveData();
-            switchToSet(newSet.id);
             updateSetSwitcher();
-            showToast('Group "' + name.trim() + '" created', 'success');
+            selectedPersonIds = [];
+            renderEventsTab();
+            renderPersonFilter();
+            renderMilestonesTab();
+            showToast('Group "' + name.trim() + '" created. Add people to this group.', 'success');
         } else {
             // Reset dropdown to current
             currentSetSelect.value = currentSetId;

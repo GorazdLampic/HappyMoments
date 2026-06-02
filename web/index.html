@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>HappyMoments - Celebrate Life's Special Numbers</title>
 
     <!-- PWA Meta Tags -->
@@ -145,11 +145,15 @@
                 <div id="milestonesColumns" class="milestones-columns"></div>
             </div>
 
-            <!-- Share Section - PRIORITY -->
+            <!-- Share & Celebrate Section -->
             <div class="card share-card share-card-priority">
-                <h3 data-i18n="share">Share</h3>
-                <p class="card-description">Tap a milestone above, then share or save to calendar.</p>
+                <h3 data-i18n="share">Share &amp; Celebrate</h3>
+                <p class="card-description">A milestone is a reason to celebrate! Share it, plan something, or surprise someone.</p>
                 <div id="sharePreview" class="share-preview"></div>
+                <div class="celebrate-hint" id="celebrateHint">
+                    <span class="celebrate-icon">&#127881;</span>
+                    <span>This could be the perfect excuse to grab a coffee, plan a dinner, or reconnect with someone special.</span>
+                </div>
                 <div class="share-buttons">
                     <button id="nativeShareBtn" class="btn-primary btn-native-share hidden">Share...</button>
                     <button id="whatsappShareBtn" class="btn-primary btn-whatsapp">WhatsApp</button>
@@ -169,22 +173,18 @@
                 </div>
             </div>
 
-            <!-- Image Card -->
-            <div class="card share-card">
-                <h3 data-i18n="create_card">Create a Card</h3>
-                <p class="card-description">Generate a shareable image card for this milestone.</p>
-                <div id="cardPreview" class="card-preview-container"></div>
-            </div>
-
-            <!-- Gift Store Section -->
+            <!-- Gift Ideas (below share, only for special milestones) -->
             <div class="card gift-card" id="giftSection">
-                <h3 data-i18n="celebrate_gift">Celebrate with a Gift</h3>
-                <p class="card-description">Turn this milestone into something tangible. Select a milestone above to see personalized gift ideas.</p>
+                <h3>Gift Idea</h3>
+                <p class="card-description">Make this milestone unforgettable with a personalized gift.</p>
                 <div id="giftPreview" class="gift-preview">
-                    <p class="empty-text">Select a milestone to see gift options.</p>
+                    <p class="empty-text">Select a special milestone to see gift ideas.</p>
                 </div>
                 <div id="giftProducts" class="gift-products"></div>
             </div>
+
+            <!-- Hidden card preview container (used by image generation) -->
+            <div id="cardPreview" class="card-preview-container" style="display:none;"></div>
 
         </section>
 

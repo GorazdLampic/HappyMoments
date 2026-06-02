@@ -2327,7 +2327,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* Premium bottom banner */
 .premium-banner {
     position: fixed;
-    bottom: 0;
+    bottom: 48px;
     left: 0;
     right: 0;
     background: var(--bg-card);
@@ -2357,7 +2357,16 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     cursor: pointer;
     padding: 4px 8px;
 }
-.premium-banner ~ .app-footer { padding-bottom: 60px; }
+.premium-banner ~ .app-footer { padding-bottom: 110px; }
+
+.celebrate-hint {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; margin-bottom: 12px;
+    background: rgba(212,184,118,0.08); border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm); color: var(--text-secondary);
+    font-style: italic;
+}
+.celebrate-icon { font-size: 20px; flex-shrink: 0; }
 
 /* ============================================================
    HAPPINESS COUNTER
@@ -2433,7 +2442,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* Consent Banner */
 .consent-banner {
     position: fixed;
-    bottom: 0;
+    bottom: 48px;
     left: 0;
     right: 0;
     background: var(--bg-card);

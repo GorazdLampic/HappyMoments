@@ -134,7 +134,7 @@ function findBigMilestones(startDate, settings) {
     const milestones = [];
     const bigUnits = ['seconds', 'minutes', 'hours', 'days'];
     const powersOf10 = [1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000];
-    const maxMs = 30 * 365.25 * 24 * 60 * 60 * 1000; // 30 years max
+    const maxMs = 1.5 * 365.25 * 24 * 60 * 60 * 1000; // 1.5 years max
 
     for (const unit of bigUnits) {
         const unitConfig = TIME_UNITS[unit];

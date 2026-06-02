@@ -292,10 +292,19 @@ function renderGiftSuggestions(milestone) {
     if (!section || !preview || !products) return;
 
     if (!milestone) {
-        preview.innerHTML = '<p class="empty-text">Select a milestone to see gift options.</p>';
-        products.innerHTML = '';
+        section.style.display = 'none';
         return;
     }
+
+    // Only show gifts for genuinely impressive milestones
+    const isSpecialEnough = (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(milestone.value))
+        || milestone.isBigMilestone
+        || milestone.isBirthday;
+    if (!isSpecialEnough) {
+        section.style.display = 'none';
+        return;
+    }
+    section.style.display = '';
 
     const _esc = typeof escapeHtml === 'function' ? escapeHtml : (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     const val = milestone.value.toLocaleString();
