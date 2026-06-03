@@ -1106,6 +1106,43 @@ function wizardNext(step) {
     }
 }
 
+/**
+ * Animate a number counting up from 0 to targetValue over duration ms.
+ * Uses requestAnimationFrame for smooth 60fps and ease-out timing.
+ * Formats with locale separators throughout the animation.
+ * @param {HTMLElement} element - DOM element to update textContent
+ * @param {number} targetValue - Final number to reach
+ * @param {number} duration - Animation duration in ms
+ * @param {Function} [onComplete] - Callback when counting finishes
+ */
+function animateCounter(element, targetValue, duration, onComplete) {
+    const startTime = performance.now();
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
+
+    function tick(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = easeOutCubic(progress);
+        const currentValue = Math.round(easedProgress * targetValue);
+
+        element.textContent = currentValue.toLocaleString(locale);
+
+        if (progress < 1) {
+            requestAnimationFrame(tick);
+        } else {
+            // Ensure final value is exact
+            element.textContent = targetValue.toLocaleString(locale);
+            if (typeof onComplete === 'function') onComplete();
+        }
+    }
+
+    requestAnimationFrame(tick);
+}
+
 function wizardDiscover() {
     const name = document.getElementById('birthName')?.value?.trim();
     const dateStr = buildDateFromFields('birth');
@@ -1163,9 +1200,13 @@ function wizardDiscover() {
         });
         const countdown = typeof formatTimeDistance === 'function' ? formatTimeDistance(m.timeUntil) : '';
 
+        // Build reveal HTML with sparkle wrapper and stagger container
         revealEl.innerHTML = `
             <div class="wizard-reveal-name">${escapeHtml(m.eventName || name)}</div>
-            <div class="wizard-reveal-number">${m.value.toLocaleString()}</div>
+            <div class="wizard-reveal-number-wrap">
+                <div class="wizard-reveal-sparkle"></div>
+                <div class="wizard-reveal-number" id="revealNumber">0</div>
+            </div>
             <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
             <div class="wizard-reveal-date">${dateDisplay}</div>
             <div class="wizard-reveal-countdown">${countdown} from now</div>
@@ -1173,6 +1214,30 @@ function wizardDiscover() {
 
         // Store for sharing
         window._wizardMilestone = m;
+
+        // Apply stagger class to hide supporting elements initially
+        const step4 = document.getElementById('wizardStep4');
+        if (step4) {
+            step4.classList.add('reveal-stagger', 'reveal-counting');
+            step4.classList.remove('reveal-done');
+        }
+
+        // Start counter animation after a brief pause for the step transition
+        const numberEl = document.getElementById('revealNumber');
+        if (numberEl) {
+            const targetValue = m.value;
+            // Larger numbers get a longer count for dramatic effect
+            const duration = targetValue >= 1000000 ? 2000 : targetValue >= 10000 ? 1700 : 1500;
+            setTimeout(() => {
+                animateCounter(numberEl, targetValue, duration, () => {
+                    // Counter finished — trigger stagger reveals and glow
+                    if (step4) {
+                        step4.classList.remove('reveal-counting');
+                        step4.classList.add('reveal-done');
+                    }
+                });
+            }, 300);
+        }
     }
 
     // Show reveal step (step 4) — hide the dashboard temporarily
@@ -3137,6 +3202,18 @@ function selectMilestoneForShare(idx) {
     if (typeof renderGiftSuggestions === 'function') renderGiftSuggestions(m);
     if (typeof renderCardPreview === 'function') renderCardPreview(m, 'cardPreview');
     renderMilestonesTab();
+
+    // Add selection pulse animation to the newly selected element
+    requestAnimationFrame(() => {
+        const selectedEl = document.querySelector('.column-milestone.selected-for-share');
+        if (selectedEl) {
+            selectedEl.classList.remove('selected-for-share-anim');
+            // Force reflow to restart animation
+            void selectedEl.offsetWidth;
+            selectedEl.classList.add('selected-for-share-anim');
+        }
+    });
+
     // Auto-scroll to share section
     const shareCard = document.querySelector('.share-card-priority');
     if (shareCard) setTimeout(() => shareCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
