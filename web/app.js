@@ -1084,7 +1084,7 @@ function validateDateFields(dateStr) {
 }
 
 // ============================================================
-// ONBOARDING WIZARD (step-by-step)
+// ONBOARDING WIZARD (8-screen flow)
 // ============================================================
 
 function wizardNext(step) {
@@ -1099,40 +1099,48 @@ function wizardNext(step) {
     }
 }
 
-// Run the demo animation on the welcome screen
-function wizardRunDemo() {
-    const demo = document.getElementById('wizardDemo');
-    if (!demo) return;
+// wizardRunDemo is no longer needed — screen 1 is a static hook
+function wizardRunDemo() { /* no-op for backward compatibility */ }
 
-    // Pick a compelling example
-    const examples = [
-        { name: 'You', value: 1000000000, unit: 'seconds', fact: 'Everyone has a billion-second birthday' },
-        { name: 'A child', value: 10000, unit: 'days', fact: '10,000 days is about 27 years' },
-        { name: 'A couple', value: 888, unit: 'weeks together', fact: '888 — triple fortune in Chinese culture' },
-        { name: 'Your mom', value: 22222, unit: 'days', fact: 'A beautiful repeating number' },
-    ];
-    const ex = examples[Math.floor(Math.random() * examples.length)];
+// --- Screen 2: Preference selection ---
+function wizardSelectPreference(btn) {
+    // Deselect all, select this one (radio-style)
+    document.querySelectorAll('#wizardPreferenceOptions .wizard-option').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+}
 
-    demo.innerHTML = `
-        <div class="wizard-reveal-name" style="animation:staggerIn 0.5s ease forwards 0.2s;opacity:0;">${escapeHtml(ex.name)}</div>
-        <div class="wizard-reveal-number-wrap">
-            <div class="wizard-reveal-sparkle"></div>
-            <div class="wizard-reveal-number" id="demoCounter">0</div>
-        </div>
-        <div class="wizard-reveal-unit" style="animation:staggerIn 0.5s ease forwards 0.5s;opacity:0;">${escapeHtml(ex.unit)}</div>
-        <div class="wizard-reveal-countdown" style="animation:staggerIn 0.5s ease forwards 1.0s;opacity:0;">${escapeHtml(ex.fact)}</div>
-    `;
+function wizardSavePreference() {
+    const selected = document.querySelector('#wizardPreferenceOptions .wizard-option.selected');
+    const pref = selected ? selected.dataset.pref : 'all';
+    try { localStorage.setItem('hm_preferred_patterns', pref); } catch(e) {}
+}
 
-    // Start counter after a brief pause
-    setTimeout(() => {
-        const counterEl = document.getElementById('demoCounter');
-        if (counterEl && typeof animateCounter === 'function') {
-            animateCounter(counterEl, ex.value, 2000, () => {
-                // Add glow after counting
-                counterEl.closest('.wizard-step')?.classList.add('reveal-done');
-            });
-        }
-    }, 500);
+// --- Screen 3: Who first? ---
+function wizardChooseWho(type) {
+    const nameInput = document.getElementById('birthName');
+    if (type === 'self') {
+        if (nameInput) nameInput.value = 'My Birthday';
+        document.getElementById('wizardNameTitle').textContent = "What's your name?";
+    } else {
+        if (nameInput) nameInput.value = '';
+        document.getElementById('wizardNameTitle').textContent = "What's their name?";
+    }
+    wizardNext(4);
+}
+
+// --- Screen 4: Name next ---
+function wizardNameNext() {
+    const name = document.getElementById('birthName')?.value?.trim();
+    if (!name) {
+        showToast('Please enter a name', 'error');
+        return;
+    }
+    // Update date screen title with the name
+    const dateTitle = document.getElementById('wizardDateTitle');
+    if (dateTitle) {
+        dateTitle.textContent = "When is " + name + "'s birthday?";
+    }
+    wizardNext(5);
 }
 
 /**
@@ -1172,19 +1180,12 @@ function animateCounter(element, targetValue, duration, onComplete) {
     requestAnimationFrame(tick);
 }
 
-function wizardDiscover() {
-    const name = document.getElementById('birthName')?.value?.trim();
-    const dateStr = buildDateFromFields('birth');
-
-    if (!name || !dateStr) {
-        showToast('Please enter a name and date', 'error');
-        return;
-    }
-    if (!validateDateFields(dateStr)) return;
-
+// --- Shared helper: create event, calculate milestones, render reveal ---
+function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
+    if (!validateDateFields(dateStr)) return false;
     const date = parseLocalDate(dateStr);
 
-    // Create the event directly (don't call handleStart which also shows dashboard)
+    // Create default set if none exists
     if (allSets.length === 0) {
         allSets.push({
             id: 'set_default', name: 'My Dates', events: [],
@@ -1216,10 +1217,8 @@ function wizardDiscover() {
     milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
     allMilestonesFlat = milestones;
 
-    _track('onboard_complete', { event_count: appData.events.length });
-
     // Find the best milestone for the reveal
-    const revealEl = document.getElementById('wizardReveal');
+    const revealEl = document.getElementById(revealElId);
     if (revealEl && allMilestonesFlat.length > 0) {
         const hero = typeof findHeroMilestone === 'function' ? findHeroMilestone() : allMilestonesFlat[0];
         const m = hero || allMilestonesFlat[0];
@@ -1234,51 +1233,109 @@ function wizardDiscover() {
             <div class="wizard-reveal-name">${escapeHtml(m.eventName || name)}</div>
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-sparkle"></div>
-                <div class="wizard-reveal-number" id="revealNumber">0</div>
+                <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
             </div>
             <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
             <div class="wizard-reveal-date">${dateDisplay}</div>
             <div class="wizard-reveal-countdown">${countdown} from now</div>
         `;
 
-        // Store for sharing
-        window._wizardMilestone = m;
+        // Store for sharing (keyed so we can have both user and friend)
+        if (revealElId === 'wizardReveal') {
+            window._wizardMilestone = m;
+        } else {
+            window._wizardFriendMilestone = m;
+            window._wizardFriendName = name;
+        }
 
         // Apply stagger class to hide supporting elements initially
-        const step4 = document.getElementById('wizardStep3');
-        if (step4) {
-            step4.classList.add('reveal-stagger', 'reveal-counting');
-            step4.classList.remove('reveal-done');
+        const step = document.getElementById(revealStepId);
+        if (step) {
+            step.classList.add('reveal-stagger', 'reveal-counting');
+            step.classList.remove('reveal-done');
         }
 
         // Start counter animation after a brief pause for the step transition
-        const numberEl = document.getElementById('revealNumber');
+        const numberEl = document.getElementById(revealElId + 'Number');
         if (numberEl) {
             const targetValue = m.value;
-            // Larger numbers get a longer count for dramatic effect
             const duration = targetValue >= 1000000 ? 2000 : targetValue >= 10000 ? 1700 : 1500;
             setTimeout(() => {
                 animateCounter(numberEl, targetValue, duration, () => {
-                    // Counter finished — trigger stagger reveals and glow
-                    if (step4) {
-                        step4.classList.remove('reveal-counting');
-                        step4.classList.add('reveal-done');
+                    if (step) {
+                        step.classList.remove('reveal-counting');
+                        step.classList.add('reveal-done');
                     }
                 });
             }, 300);
         }
     }
+    return true;
+}
 
-    // Show reveal step (step 4) — hide the dashboard temporarily
+// --- Screen 5: Discover (user's own milestone) ---
+function wizardDiscover() {
+    const name = document.getElementById('birthName')?.value?.trim();
+    const dateStr = buildDateFromFields('birth');
+
+    if (!name || !dateStr) {
+        showToast('Please enter a name and date', 'error');
+        return;
+    }
+
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardReveal', 'wizardStep6');
+    if (!ok) return;
+
+    _track('onboard_complete', { event_count: appData.events.length });
+
+    // Show reveal step (screen 6)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep3')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
 
-    // Hide the dashboard tabs that handleStart showed
+    // Ensure wizard is visible, dashboard hidden
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
 }
 
+// --- Screen 7 → 8: Discover friend's milestone ---
+function wizardDiscoverFriend() {
+    const name = document.getElementById('friendName')?.value?.trim();
+    const dateStr = buildDateFromFields('friend');
+
+    if (!name || !dateStr) {
+        showToast('Please enter a name and date', 'error');
+        return;
+    }
+
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep8');
+    if (!ok) return;
+
+    // Add share title above the reveal content
+    const friendRevealEl = document.getElementById('wizardFriendReveal');
+    if (friendRevealEl) {
+        const shareTitle = document.createElement('div');
+        shareTitle.className = 'wizard-share-title';
+        shareTitle.textContent = 'Share this with ' + name + '!';
+        friendRevealEl.insertBefore(shareTitle, friendRevealEl.firstChild);
+    }
+
+    // Update share button text
+    const shareBtn = document.getElementById('wizardShareFriendBtn');
+    if (shareBtn) shareBtn.textContent = 'Share with ' + name + ' \u2192';
+
+    _track('wizard_friend_added', { event_count: appData.events.length });
+
+    // Show friend reveal step (screen 8)
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
+
+    onboardingSection.classList.remove('hidden');
+    tabNav.classList.add('hidden');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+}
+
+// --- Screen 6: Share own milestone (kept for backward compat) ---
 function wizardShare() {
     const m = window._wizardMilestone;
     if (m) {
@@ -1294,13 +1351,30 @@ function wizardShare() {
     }
 }
 
+// --- Screen 8: Share friend's milestone ---
+function wizardShareFriend() {
+    const m = window._wizardFriendMilestone;
+    if (m) {
+        const friendName = window._wizardFriendName || 'your friend';
+        const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
+        if (navigator.share) {
+            navigator.share({ title: 'HappyMoment for ' + friendName, text: message }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast('Copied! Send it to ' + friendName + '.', 'success');
+            }).catch(() => {});
+        }
+        _track('wizard_share_friend', { value: m.value, unit: m.unit });
+    }
+}
+
 function wizardAddAnother() {
-    // Go back to step 2 for another person
+    // Go back to screen 4 for another person
     document.getElementById('birthName').value = '';
     ['birthDay', 'birthMonth', 'birthYear'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
     });
-    wizardNext(2);
+    wizardNext(4);
 }
 
 function wizardFinish() {
@@ -3905,7 +3979,7 @@ function handleReset() {
     };
     appSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
 
-    birthNameInput.value = 'My Birthday';
+    birthNameInput.value = '';
     birthDateInput.value = '';
     ['birthDay', 'birthMonth', 'birthYear'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
@@ -3918,6 +3992,10 @@ function handleReset() {
     milestonesTab.classList.add('hidden');
     if (settingsTab) settingsTab.classList.add('hidden');
     onboardingSection.classList.remove('hidden');
+
+    // Reset wizard to screen 1
+    localStorage.removeItem('hm_onboarded');
+    wizardNext(1);
 
     loadSettingsUI();
 }
@@ -4231,6 +4309,7 @@ function handleAddSet() {
         combinedTab.classList.add('hidden');
         eventsTab.classList.add('hidden');
         if (settingsTab) settingsTab.classList.add('hidden');
+        wizardNext(1);
     }
 
     renderEventSetsList();
@@ -4928,10 +5007,7 @@ function updateHappyCounter() {
 document.addEventListener('DOMContentLoaded', () => {
     init();
 
-    // Run demo animation if in onboarding mode
-    if (appData.events.length === 0 && typeof wizardRunDemo === 'function') {
-        setTimeout(wizardRunDemo, 500);
-    }
+    // Screen 1 is now a static hook — no demo animation needed
 
     // Initialize happiness counter
     updateHappyCounter();
