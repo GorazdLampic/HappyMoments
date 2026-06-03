@@ -2434,6 +2434,20 @@ body {
 }
 
 /* --- Skip link --- */
+.wizard-back {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    z-index: 2;
+}
+.wizard-back:hover { color: var(--text-primary); }
+
 .wizard-skip {
     display: block;
     margin-top: var(--space-md);

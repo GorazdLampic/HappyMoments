@@ -1104,15 +1104,18 @@ function wizardRunDemo() { /* no-op for backward compatibility */ }
 
 // --- Screen 2: Preference selection ---
 function wizardSelectPreference(btn) {
-    // Deselect all, select this one (radio-style)
     document.querySelectorAll('#wizardPreferenceOptions .wizard-option').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
 }
 
+function wizardTogglePreference(btn) {
+    btn.classList.toggle('selected');
+}
+
 function wizardSavePreference() {
-    const selected = document.querySelector('#wizardPreferenceOptions .wizard-option.selected');
-    const pref = selected ? selected.dataset.pref : 'all';
-    try { localStorage.setItem('hm_preferred_patterns', pref); } catch(e) {}
+    const selected = document.querySelectorAll('#wizardPreferenceOptions .wizard-option.selected');
+    const prefs = Array.from(selected).map(b => b.dataset.pref);
+    try { localStorage.setItem('hm_preferred_patterns', JSON.stringify(prefs.length > 0 ? prefs : ['math','palindromes','round','lucky'])); } catch(e) {}
 }
 
 // --- Screen 3: Who first? ---
@@ -1217,11 +1220,21 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
     milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
     allMilestonesFlat = milestones;
 
-    // Find the best milestone for the reveal
+    // Find the best milestone for the reveal — from THIS person's milestones only
     const revealEl = document.getElementById(revealElId);
-    if (revealEl && allMilestonesFlat.length > 0) {
-        const hero = typeof findHeroMilestone === 'function' ? findHeroMilestone() : allMilestonesFlat[0];
-        const m = hero || allMilestonesFlat[0];
+    if (revealEl && milestones.length > 0) {
+        // Score milestones: prefer impressive + near-term
+        let best = milestones[0];
+        let bestScore = 0;
+        milestones.forEach(m => {
+            let score = typeof roundnessScore === 'function' ? roundnessScore(m.value) : 0;
+            if (m.isBigMilestone) score += 80;
+            if (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(m.value)) score += 30;
+            const daysAway = m.timeUntil / (24*60*60*1000);
+            score += Math.max(0, 100 - daysAway * 0.27);
+            if (score > bestScore) { bestScore = score; best = m; }
+        });
+        const m = best;
 
         const dateDisplay = m.date.toLocaleDateString(getAppLocale(), {
             weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'

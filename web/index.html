@@ -98,8 +98,8 @@
             <!-- Screen 1: Hook -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content">
-                    <h1 class="wizard-hook-title">Every person alive has a billion-second birthday</h1>
-                    <p class="wizard-hook-subtitle">When's yours?</p>
+                    <h1 class="wizard-hook-title">Your life is full of hidden milestones worth celebrating</h1>
+                    <p class="wizard-hook-subtitle">Let's find them together</p>
                 </div>
                 <button class="wizard-btn" onclick="wizardNext(2)">Let's find out &rarr;</button>
                 <div class="wizard-progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
@@ -110,25 +110,21 @@
                 <div class="wizard-content">
                     <h2 class="wizard-question">What kind of numbers excite you?</h2>
                     <div class="wizard-options" id="wizardPreferenceOptions">
-                        <button class="wizard-option" data-pref="math" onclick="wizardSelectPreference(this)">
+                        <button class="wizard-option selected" data-pref="math" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-label">Math wonders</span>
                             <span class="wizard-option-example">Pi, Fibonacci, powers of 2</span>
                         </button>
-                        <button class="wizard-option" data-pref="palindromes" onclick="wizardSelectPreference(this)">
+                        <button class="wizard-option selected" data-pref="palindromes" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-label">Palindromes</span>
                             <span class="wizard-option-example">12321, 45654</span>
                         </button>
-                        <button class="wizard-option" data-pref="round" onclick="wizardSelectPreference(this)">
+                        <button class="wizard-option selected" data-pref="round" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-label">Round milestones</span>
                             <span class="wizard-option-example">10,000 days, 1 million minutes</span>
                         </button>
-                        <button class="wizard-option" data-pref="lucky" onclick="wizardSelectPreference(this)">
+                        <button class="wizard-option selected" data-pref="lucky" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-label">Lucky numbers</span>
                             <span class="wizard-option-example">888, 520 &mdash; I love you</span>
-                        </button>
-                        <button class="wizard-option selected" data-pref="all" onclick="wizardSelectPreference(this)">
-                            <span class="wizard-option-label">All of them!</span>
-                            <span class="wizard-option-example">Every pattern, every surprise</span>
                         </button>
                     </div>
                 </div>
@@ -138,6 +134,7 @@
 
             <!-- Screen 3: Who first? -->
             <div class="wizard-step" id="wizardStep3">
+                <button class="wizard-back" onclick="wizardNext(2)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Let's start with...</h2>
                     <div class="wizard-choices">
@@ -150,6 +147,7 @@
 
             <!-- Screen 4: Name -->
             <div class="wizard-step" id="wizardStep4">
+                <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question" id="wizardNameTitle">What's the name?</h2>
                     <input type="text" id="birthName" class="wizard-input" placeholder="e.g. Anna, Mom, My partner" autocomplete="off">
@@ -161,6 +159,7 @@
 
             <!-- Screen 5: Date -->
             <div class="wizard-step" id="wizardStep5">
+                <button class="wizard-back" onclick="wizardNext(4)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question" id="wizardDateTitle">When is their birthday?</h2>
                     <div class="wizard-date-fields">
@@ -189,6 +188,7 @@
 
             <!-- Screen 7: Friend entry -->
             <div class="wizard-step" id="wizardStep7">
+                <button class="wizard-back" onclick="wizardNext(6)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Who would you like to surprise?</h2>
                     <p class="wizard-subtitle">Enter their name and birthday to find their special number</p>
