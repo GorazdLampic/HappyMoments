@@ -106,8 +106,8 @@
             <!-- Step 2: Who -->
             <div class="wizard-step" id="wizardStep2">
                 <div class="wizard-content">
-                    <h2 class="wizard-question">Who do you want to celebrate?</h2>
-                    <input type="text" id="birthName" class="wizard-input" value="My Birthday" placeholder="e.g. Anna, Mom, My partner" autocomplete="off">
+                    <h2 class="wizard-question">Enter a name and a date</h2>
+                    <input type="text" id="birthName" class="wizard-input" value="My Birthday" placeholder="e.g. Anna, Mom, Our Anniversary" autocomplete="off">
                 </div>
                 <button class="wizard-btn" onclick="wizardNext(3)">Next</button>
                 <input type="hidden" id="birthDate">
@@ -116,7 +116,7 @@
             <!-- Step 3: When -->
             <div class="wizard-step" id="wizardStep3">
                 <div class="wizard-content">
-                    <h2 class="wizard-question">When is <span id="wizardNameDisplay">their</span> special date?</h2>
+                    <h2 class="wizard-question">When is <span id="wizardNameDisplay">the</span> birthday or event?</h2>
                     <div class="wizard-date-fields">
                         <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'birthMonth', 2)">
                         <span class="wizard-date-sep">/</span>

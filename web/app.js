@@ -671,7 +671,7 @@ function saveSettings() {
 // ============================================================
 
 function setupEventListeners() {
-    startBtn.addEventListener('click', handleStart);
+    // startBtn now handled by wizard onclick="wizardDiscover()" — don't add duplicate listener
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -1100,9 +1100,12 @@ function wizardNext(step) {
 
     // Update name display in step 3
     if (step === 3) {
-        const nameVal = document.getElementById('birthName')?.value?.trim() || 'their';
+        const nameVal = document.getElementById('birthName')?.value?.trim() || '';
         const display = document.getElementById('wizardNameDisplay');
-        if (display) display.textContent = nameVal === 'My Birthday' ? 'your' : nameVal + "'s";
+        if (display) {
+            if (!nameVal || nameVal === 'My Birthday') display.textContent = 'your';
+            else display.textContent = nameVal + "'s";
+        }
     }
 }
 
