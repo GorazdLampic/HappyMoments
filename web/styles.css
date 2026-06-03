@@ -2191,6 +2191,12 @@ body {
     color: var(--text-muted);
     font-style: italic;
     line-height: 1.6;
+    margin-bottom: var(--space-md);
+}
+
+.wizard-demo {
+    text-align: center;
+    padding: var(--space-md) 0;
     max-width: 320px;
 }
 

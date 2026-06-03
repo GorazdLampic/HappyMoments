@@ -1093,20 +1093,46 @@ function wizardNext(step) {
     const nextStep = document.getElementById('wizardStep' + step);
     if (nextStep) {
         nextStep.classList.add('wizard-step-active');
-        // Focus input if present
+        // Focus first input if present
         const input = nextStep.querySelector('input:not([type="hidden"])');
-        if (input) setTimeout(() => input.focus(), 300);
+        if (input) setTimeout(() => { input.focus(); input.select(); }, 300);
     }
+}
 
-    // Update name display in step 3
-    if (step === 3) {
-        const nameVal = document.getElementById('birthName')?.value?.trim() || '';
-        const display = document.getElementById('wizardNameDisplay');
-        if (display) {
-            if (!nameVal || nameVal === 'My Birthday') display.textContent = 'your';
-            else display.textContent = nameVal + "'s";
+// Run the demo animation on the welcome screen
+function wizardRunDemo() {
+    const demo = document.getElementById('wizardDemo');
+    if (!demo) return;
+
+    // Pick a compelling example
+    const examples = [
+        { name: 'You', value: 1000000000, unit: 'seconds', fact: 'Everyone has a billion-second birthday' },
+        { name: 'A child', value: 10000, unit: 'days', fact: '10,000 days is about 27 years' },
+        { name: 'A couple', value: 888, unit: 'weeks together', fact: '888 — triple fortune in Chinese culture' },
+        { name: 'Your mom', value: 22222, unit: 'days', fact: 'A beautiful repeating number' },
+    ];
+    const ex = examples[Math.floor(Math.random() * examples.length)];
+
+    demo.innerHTML = `
+        <div class="wizard-reveal-name" style="animation:staggerIn 0.5s ease forwards 0.2s;opacity:0;">${escapeHtml(ex.name)}</div>
+        <div class="wizard-reveal-number-wrap">
+            <div class="wizard-reveal-sparkle"></div>
+            <div class="wizard-reveal-number" id="demoCounter">0</div>
+        </div>
+        <div class="wizard-reveal-unit" style="animation:staggerIn 0.5s ease forwards 0.5s;opacity:0;">${escapeHtml(ex.unit)}</div>
+        <div class="wizard-reveal-countdown" style="animation:staggerIn 0.5s ease forwards 1.0s;opacity:0;">${escapeHtml(ex.fact)}</div>
+    `;
+
+    // Start counter after a brief pause
+    setTimeout(() => {
+        const counterEl = document.getElementById('demoCounter');
+        if (counterEl && typeof animateCounter === 'function') {
+            animateCounter(counterEl, ex.value, 2000, () => {
+                // Add glow after counting
+                counterEl.closest('.wizard-step')?.classList.add('reveal-done');
+            });
         }
-    }
+    }, 500);
 }
 
 /**
@@ -1219,7 +1245,7 @@ function wizardDiscover() {
         window._wizardMilestone = m;
 
         // Apply stagger class to hide supporting elements initially
-        const step4 = document.getElementById('wizardStep4');
+        const step4 = document.getElementById('wizardStep3');
         if (step4) {
             step4.classList.add('reveal-stagger', 'reveal-counting');
             step4.classList.remove('reveal-done');
@@ -1245,7 +1271,7 @@ function wizardDiscover() {
 
     // Show reveal step (step 4) — hide the dashboard temporarily
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep4')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep3')?.classList.add('wizard-step-active');
 
     // Hide the dashboard tabs that handleStart showed
     onboardingSection.classList.remove('hidden');
@@ -4901,6 +4927,11 @@ function updateHappyCounter() {
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
+
+    // Run demo animation if in onboarding mode
+    if (appData.events.length === 0 && typeof wizardRunDemo === 'function') {
+        setTimeout(wizardRunDemo, 500);
+    }
 
     // Initialize happiness counter
     updateHappyCounter();

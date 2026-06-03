@@ -94,49 +94,43 @@
 
         <!-- Step-by-Step Onboarding Wizard -->
         <section id="onboarding" class="onboarding-wizard">
-            <!-- Step 1: Welcome -->
+            <!-- Step 1: Demo — show what the app does -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content">
                     <h1 class="wizard-title">HappyMoments</h1>
-                    <p class="wizard-subtitle">Discover every reason to celebrate with people you care about</p>
+                    <p class="wizard-subtitle">Did you know?</p>
+                    <div class="wizard-demo" id="wizardDemo">
+                        <!-- Animated demo populated by JS -->
+                    </div>
                 </div>
-                <button class="wizard-btn" onclick="wizardNext(2)">Get Started</button>
+                <button class="wizard-btn" onclick="wizardNext(2)">Find yours</button>
             </div>
 
-            <!-- Step 2: Who -->
+            <!-- Step 2: Enter name + date (combined, simpler) -->
             <div class="wizard-step" id="wizardStep2">
                 <div class="wizard-content">
                     <h2 class="wizard-question">Enter a name and a date</h2>
                     <input type="text" id="birthName" class="wizard-input" value="My Birthday" placeholder="e.g. Anna, Mom, Our Anniversary" autocomplete="off">
-                </div>
-                <button class="wizard-btn" onclick="wizardNext(3)">Next</button>
-                <input type="hidden" id="birthDate">
-            </div>
-
-            <!-- Step 3: When -->
-            <div class="wizard-step" id="wizardStep3">
-                <div class="wizard-content">
-                    <h2 class="wizard-question">When is <span id="wizardNameDisplay">the</span> birthday or event?</h2>
-                    <div class="wizard-date-fields">
+                    <div class="wizard-date-fields" style="margin-top: 20px;">
                         <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'birthMonth', 2)">
                         <span class="wizard-date-sep">/</span>
                         <input type="number" id="birthMonth" placeholder="MM" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'birthYear', 2)">
                         <span class="wizard-date-sep">/</span>
                         <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" class="wizard-date-field" oninput="syncDateFields(this)">
                     </div>
+                    <input type="hidden" id="birthDate">
                 </div>
                 <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscover()">Discover</button>
             </div>
 
-            <!-- Step 4: The Reveal (generated dynamically by JS) -->
-            <div class="wizard-step" id="wizardStep4">
+            <!-- Step 3: The Reveal (user's real data) -->
+            <div class="wizard-step" id="wizardStep3">
                 <div class="wizard-content" id="wizardReveal">
                     <!-- Populated by wizardDiscover() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShare()">Share this!</button>
-                    <button class="wizard-btn-secondary" onclick="wizardAddAnother()">Add someone else</button>
-                    <button class="wizard-btn-tertiary" onclick="wizardFinish()">Explore all milestones</button>
+                    <button class="wizard-btn" onclick="wizardFinish()">Explore all milestones</button>
+                    <button class="wizard-btn-secondary" onclick="wizardShare()">Share this</button>
                 </div>
             </div>
         </section>
