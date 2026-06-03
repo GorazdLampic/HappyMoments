@@ -1116,13 +1116,45 @@ function wizardDiscover() {
     }
     if (!validateDateFields(dateStr)) return;
 
-    // Call the existing handleStart to create the event and show dashboard
-    handleStart();
+    const date = parseLocalDate(dateStr);
 
-    // Now find the best milestone for the reveal
+    // Create the event directly (don't call handleStart which also shows dashboard)
+    if (allSets.length === 0) {
+        allSets.push({
+            id: 'set_default', name: 'My Dates', events: [],
+            connections: {}, comboTypes: { sum: true, ratio: true, duration: true }
+        });
+        currentSetId = 'set_default';
+        loadCurrentSet();
+    }
+
+    // Only add if not already there (prevent duplicates)
+    if (!appData.events.some(e => e.name === name && e.date.getTime() === date.getTime())) {
+        appData.events.push({
+            id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            name: name, type: 'birthday', date: date
+        });
+        saveData();
+    }
+
+    // Calculate milestones for the reveal
+    selectedPersonIds = appData.events.map(e => e.id);
+    allMilestonesFlat = [];
+    const milestones = typeof findAllUpcomingMilestones === 'function'
+        ? findAllUpcomingMilestones(date, 20, 365, appSettings || {}) : [];
+    if (typeof findBigMilestones === 'function') {
+        const big = findBigMilestones(date, appSettings || {});
+        big.forEach(b => { if (!milestones.some(m => m.value === b.value && m.unit === b.unit)) milestones.push(b); });
+    }
+    milestones.forEach(m => { m.eventName = name; m.eventId = appData.events[appData.events.length - 1].id; });
+    milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
+    allMilestonesFlat = milestones;
+
+    _track('onboard_complete', { event_count: appData.events.length });
+
+    // Find the best milestone for the reveal
     const revealEl = document.getElementById('wizardReveal');
     if (revealEl && allMilestonesFlat.length > 0) {
-        // Pick the hero milestone (most impressive)
         const hero = typeof findHeroMilestone === 'function' ? findHeroMilestone() : allMilestonesFlat[0];
         const m = hero || allMilestonesFlat[0];
 
@@ -1181,6 +1213,10 @@ function wizardFinish() {
     // Dismiss wizard, show the normal dashboard
     onboardingSection.classList.add('hidden');
     tabNav.classList.remove('hidden');
+    updateSetSwitcher();
+    selectedPersonIds = appData.events.map(e => e.id);
+    renderPersonFilter();
+    renderMilestonesTab();
     switchTab('milestones');
     localStorage.setItem('hm_onboarded', '1');
 }
@@ -2366,15 +2402,28 @@ function renderMilestonesTab() {
             ).join(' · ');
         }
 
-        // History fact of the day
+        // History fact of the day — only show if years/days ago is a "nice" number
         if (typeof getTodayHistoryFacts === 'function') {
             const facts = getTodayHistoryFacts();
-            if (facts.length > 0) {
-                const fact = facts[0];
+            // Filter to only show facts where yearsAgo or daysAgo is special
+            const niceFact = facts.find(f => {
+                const y = f.yearsAgo;
+                const d = f.daysAgo;
+                // Nice years: multiples of 25, or round decade
+                if (y > 0 && (y % 25 === 0 || y % 50 === 0 || y % 100 === 0)) return true;
+                // Nice days: repdigit, palindrome, round, power of 10
+                const ds = String(d);
+                if (d >= 10000 && d % 10000 === 0) return true;
+                if (ds.length >= 4 && new Set(ds).size === 1) return true;
+                if (ds.length >= 5 && ds === ds.split('').reverse().join('')) return true;
+                if (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(d)) return true;
+                return false;
+            });
+            if (niceFact) {
                 const historyHtml = `<div class="today-history">
-                    <span class="today-history-badge">${fact.yearsAgo} years ago today</span>
-                    <span class="today-history-event">${escapeHtml(fact.event)}</span>
-                    <span class="today-history-number">${escapeHtml(fact.numberFact)}</span>
+                    <span class="today-history-badge">${niceFact.yearsAgo} years ago today</span>
+                    <span class="today-history-event">${escapeHtml(niceFact.event)}</span>
+                    <span class="today-history-number">${escapeHtml(niceFact.numberFact)}</span>
                 </div>`;
                 todayHtml += historyHtml;
             }
@@ -4516,6 +4565,8 @@ function _ut(key) {
 function showPremiumBanner() {
     if (isPremium()) return;
     if (sessionStorage.getItem('hm_banner_dismissed')) return;
+    // Don't show during onboarding
+    if (appData.events.length === 0) return;
 
     const banner = document.createElement('div');
     banner.className = 'premium-banner';
