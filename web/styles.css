@@ -1154,14 +1154,14 @@ body {
 
 .cm-num {
     font-family: var(--font-mono);
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     font-weight: 500;
     color: var(--text-primary);
 }
 
 .cm-unit {
     font-family: var(--font-serif);
-    font-size: 0.78rem;
+    font-size: 0.95rem;
     font-weight: 400;
     color: var(--text-muted);
     font-style: italic;
@@ -1183,7 +1183,7 @@ body {
 }
 .quick-share-btn {
     background: none; border: none; color: var(--text-muted); cursor: pointer;
-    font-size: 14px; padding: 2px 6px; margin-left: 4px; opacity: 0.5;
+    font-size: 20px; padding: 4px 8px; margin-left: 4px; opacity: 0.5;
     vertical-align: middle; line-height: 1;
 }
 .quick-share-btn:hover { opacity: 1; color: var(--accent); }
@@ -1202,7 +1202,7 @@ body {
 }
 
 .cm-alt-a, .cm-alt-b {
-    font-size: 0.82rem;
+    font-size: 1.0rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2127,22 +2127,240 @@ body {
    ONBOARDING
    ============================================================ */
 
+/* Legacy onboarding (kept for backward compatibility) */
 .onboarding-card { text-align: center; padding: var(--space-2xl) var(--space-xl); }
-
-.onboarding-card h2 {
-    font-size: var(--font-size-2xl);
-    font-weight: 400;
-    font-style: italic;
-    margin-bottom: var(--space-sm);
-    color: var(--text-primary);
-    background: none;
-    -webkit-background-clip: unset;
-    -webkit-text-fill-color: unset;
-}
-
-.onboarding-card p { color: var(--text-muted); margin-bottom: var(--space-xl); font-size: var(--font-size-base); font-style: italic; }
+.onboarding-card h2 { font-size: var(--font-size-2xl); font-weight: 400; font-style: italic; margin-bottom: var(--space-sm); }
+.onboarding-card p { color: var(--text-muted); margin-bottom: var(--space-xl); font-style: italic; }
 .onboarding-card .form-group { text-align: left; }
 .onboarding-hint { margin-top: var(--space-md); font-size: var(--font-size-xs); color: var(--text-muted); font-style: italic; }
+
+/* ============================================================
+   ONBOARDING WIZARD (Duolingo-style step-by-step)
+   ============================================================ */
+
+.onboarding-wizard {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.wizard-step {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    min-height: 70vh;
+    animation: wizardFadeIn 0.4s ease;
+}
+
+.wizard-step-active {
+    display: flex;
+}
+
+@keyframes wizardFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.wizard-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.wizard-title {
+    font-family: var(--font-serif);
+    font-size: 2.8rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    letter-spacing: 0.02em;
+}
+
+.wizard-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 320px;
+}
+
+.wizard-question {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xl);
+    line-height: 1.4;
+}
+
+.wizard-input {
+    width: 100%;
+    max-width: 320px;
+    padding: 16px 20px;
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    text-align: center;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: border-color 0.2s;
+}
+.wizard-input:focus { border-color: var(--warning); }
+
+.wizard-date-fields {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.wizard-date-field {
+    width: 72px;
+    padding: 16px 8px;
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    text-align: center;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: none;
+    -moz-appearance: textfield;
+}
+.wizard-date-field::-webkit-inner-spin-button,
+.wizard-date-field::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.wizard-date-field:focus { border-color: var(--warning); }
+
+.wizard-date-sep {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    color: var(--text-muted);
+    padding: 0 2px;
+}
+
+.wizard-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 16px 32px;
+    margin-top: var(--space-xl);
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--bg-page);
+    background: var(--warning);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.wizard-btn:hover { opacity: 0.9; }
+.wizard-btn:active { opacity: 0.8; }
+
+.wizard-btn-discover {
+    background: var(--warning);
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+}
+
+.wizard-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    max-width: 320px;
+}
+
+.wizard-btn-secondary {
+    width: 100%;
+    padding: 14px 24px;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+}
+.wizard-btn-secondary:hover { background: var(--bg-elevated); }
+
+.wizard-btn-tertiary {
+    padding: 10px 16px;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Reveal animation */
+.wizard-reveal-number {
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--warning);
+    margin: var(--space-lg) 0 var(--space-sm);
+    animation: revealPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.wizard-reveal-unit {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    font-style: italic;
+    margin-bottom: var(--space-md);
+}
+
+.wizard-reveal-name {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-style: italic;
+    margin-bottom: var(--space-xl);
+}
+
+.wizard-reveal-date {
+    font-family: var(--font-mono);
+    font-size: 1.0rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.wizard-reveal-countdown {
+    font-family: var(--font-serif);
+    font-size: 1.0rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+@keyframes revealPop {
+    0% { opacity: 0; transform: scale(0.5); }
+    60% { opacity: 1; transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 480px) {
+    .wizard-title { font-size: 2.2rem; }
+    .wizard-subtitle { font-size: 1.05rem; }
+    .wizard-question { font-size: 1.3rem; }
+    .wizard-input { font-size: 1.1rem; padding: 14px 16px; }
+    .wizard-date-field { width: 62px; font-size: 1.2rem; padding: 14px 6px; }
+    .wizard-reveal-number { font-size: 2.4rem; }
+}
 
 /* ============================================================
    EVENT SETS
@@ -2264,8 +2482,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .milestone-column { min-width: 120px; }
     .column-milestones { max-height: 350px; }
     /* Milestone fonts on phone */
-    .cm-num { font-size: 0.95rem; }
-    .cm-unit { font-size: 0.78rem; }
+    .cm-num { font-size: 1.1rem; }
+    .cm-unit { font-size: 0.88rem; }
     .cm-marker { font-size: 0.62rem; }
     .cm-alt-a, .cm-alt-b { font-size: 0.75rem; }
     .column-milestone { padding: 6px 4px; }

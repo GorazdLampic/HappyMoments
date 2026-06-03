@@ -1083,6 +1083,108 @@ function validateDateFields(dateStr) {
     return true;
 }
 
+// ============================================================
+// ONBOARDING WIZARD (step-by-step)
+// ============================================================
+
+function wizardNext(step) {
+    // Hide all steps
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    const nextStep = document.getElementById('wizardStep' + step);
+    if (nextStep) {
+        nextStep.classList.add('wizard-step-active');
+        // Focus input if present
+        const input = nextStep.querySelector('input:not([type="hidden"])');
+        if (input) setTimeout(() => input.focus(), 300);
+    }
+
+    // Update name display in step 3
+    if (step === 3) {
+        const nameVal = document.getElementById('birthName')?.value?.trim() || 'their';
+        const display = document.getElementById('wizardNameDisplay');
+        if (display) display.textContent = nameVal === 'My Birthday' ? 'your' : nameVal + "'s";
+    }
+}
+
+function wizardDiscover() {
+    const name = document.getElementById('birthName')?.value?.trim();
+    const dateStr = buildDateFromFields('birth');
+
+    if (!name || !dateStr) {
+        showToast('Please enter a name and date', 'error');
+        return;
+    }
+    if (!validateDateFields(dateStr)) return;
+
+    // Call the existing handleStart to create the event and show dashboard
+    handleStart();
+
+    // Now find the best milestone for the reveal
+    const revealEl = document.getElementById('wizardReveal');
+    if (revealEl && allMilestonesFlat.length > 0) {
+        // Pick the hero milestone (most impressive)
+        const hero = typeof findHeroMilestone === 'function' ? findHeroMilestone() : allMilestonesFlat[0];
+        const m = hero || allMilestonesFlat[0];
+
+        const dateDisplay = m.date.toLocaleDateString(getAppLocale(), {
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+        });
+        const countdown = typeof formatTimeDistance === 'function' ? formatTimeDistance(m.timeUntil) : '';
+
+        revealEl.innerHTML = `
+            <div class="wizard-reveal-name">${escapeHtml(m.eventName || name)}</div>
+            <div class="wizard-reveal-number">${m.value.toLocaleString()}</div>
+            <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
+            <div class="wizard-reveal-date">${dateDisplay}</div>
+            <div class="wizard-reveal-countdown">${countdown} from now</div>
+        `;
+
+        // Store for sharing
+        window._wizardMilestone = m;
+    }
+
+    // Show reveal step (step 4) — hide the dashboard temporarily
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep4')?.classList.add('wizard-step-active');
+
+    // Hide the dashboard tabs that handleStart showed
+    onboardingSection.classList.remove('hidden');
+    tabNav.classList.add('hidden');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+}
+
+function wizardShare() {
+    const m = window._wizardMilestone;
+    if (m) {
+        const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
+        if (navigator.share) {
+            navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast('Copied! Share it with your friends.', 'success');
+            }).catch(() => {});
+        }
+        _track('wizard_share', { value: m.value, unit: m.unit });
+    }
+}
+
+function wizardAddAnother() {
+    // Go back to step 2 for another person
+    document.getElementById('birthName').value = '';
+    ['birthDay', 'birthMonth', 'birthYear'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
+    wizardNext(2);
+}
+
+function wizardFinish() {
+    // Dismiss wizard, show the normal dashboard
+    onboardingSection.classList.add('hidden');
+    tabNav.classList.remove('hidden');
+    switchTab('milestones');
+    localStorage.setItem('hm_onboarded', '1');
+}
+
 function handleStart() {
     const name = birthNameInput.value.trim();
     const dateStr = birthDateInput.value || buildDateFromFields('birth');
