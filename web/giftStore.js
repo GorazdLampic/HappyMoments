@@ -296,10 +296,12 @@ function renderGiftSuggestions(milestone) {
         return;
     }
 
-    // Only show gifts for genuinely impressive milestones
-    const isSpecialEnough = (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(milestone.value))
+    // Show gifts for any moderately special milestone
+    const isSpecialEnough = milestone.isBirthday
         || milestone.isBigMilestone
-        || milestone.isBirthday;
+        || (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(milestone.value))
+        || (milestone.value >= 1000 && milestone.value % 1000 === 0)
+        || (milestone.type && milestone.type !== 'special');
     if (!isSpecialEnough) {
         section.style.display = 'none';
         return;

@@ -1577,6 +1577,15 @@ function handleAddEvent() {
     renderConnectionMatrix();
     showToast(`${name} added!`, 'success');
     _track('event_added', { event_count: appData.events.length });
+
+    // After adding 2nd person, suggest Team tab (one-time)
+    if (appData.events.length === 2 && !localStorage.getItem('hm_team_hint_shown')) {
+        localStorage.setItem('hm_team_hint_shown', '1');
+        setTimeout(() => {
+            showToast('You have 2 people now! Check the Team tab to see combined milestones.', 'info', 5000);
+        }, 1500);
+    }
+
     // Focus name input for adding next person
     if (newEventNameInput) newEventNameInput.focus();
     _addingEvent = false;
@@ -4729,7 +4738,7 @@ function checkEventLimit() {
 
 function checkGroupLimit() {
     if (isPremium()) return true;
-    if (allSets.length >= 1) {
+    if (allSets.length >= 3) {
         showUpgradePrompt('groups');
         return false;
     }

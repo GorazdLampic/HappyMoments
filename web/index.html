@@ -94,6 +94,9 @@
 
         <!-- Step-by-Step Onboarding Wizard (8 screens) -->
         <section id="onboarding" class="onboarding-wizard">
+            <div class="wizard-header" id="wizardHeader">
+                <span class="wizard-header-title">HappyMoments</span>
+            </div>
 
             <!-- Screen 1: Hook -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
@@ -111,22 +114,27 @@
                     <h2 class="wizard-question">What kind of numbers excite you?</h2>
                     <div class="wizard-options" id="wizardPreferenceOptions">
                         <button class="wizard-option selected" data-pref="math" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-label">Math wonders</span>
-                            <span class="wizard-option-example">Pi, Fibonacci, powers of 2</span>
+                            <span class="wizard-option-check">&#10003;</span>
+                            <span class="wizard-option-text"><span class="wizard-option-label">Math wonders</span><span class="wizard-option-example">Pi, Fibonacci, powers of 2</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="palindromes" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-label">Palindromes</span>
-                            <span class="wizard-option-example">12321, 45654</span>
+                            <span class="wizard-option-check">&#10003;</span>
+                            <span class="wizard-option-text"><span class="wizard-option-label">Palindromes</span><span class="wizard-option-example">12321, 45654</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="round" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-label">Round milestones</span>
-                            <span class="wizard-option-example">10,000 days, 1 million minutes</span>
+                            <span class="wizard-option-check">&#10003;</span>
+                            <span class="wizard-option-text"><span class="wizard-option-label">Round milestones</span><span class="wizard-option-example">10,000 days, 1 million minutes</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="lucky" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-label">Lucky numbers</span>
-                            <span class="wizard-option-example">888, 520 &mdash; I love you</span>
+                            <span class="wizard-option-check">&#10003;</span>
+                            <span class="wizard-option-text"><span class="wizard-option-label">Lucky numbers</span><span class="wizard-option-example">888, 520 &mdash; I love you</span></span>
+                        </button>
+                        <button class="wizard-option selected" data-pref="sacred" onclick="wizardTogglePreference(this)">
+                            <span class="wizard-option-check">&#10003;</span>
+                            <span class="wizard-option-text"><span class="wizard-option-label">Sacred &amp; spiritual</span><span class="wizard-option-example">7, 12, 33, 40, 108, 786</span></span>
                         </button>
                     </div>
+                    <p class="wizard-pref-hint">We recommend keeping all active. You can adjust later in Settings.</p>
                 </div>
                 <button class="wizard-btn" onclick="wizardSavePreference(); wizardNext(3)">Next &rarr;</button>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>

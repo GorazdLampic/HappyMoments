@@ -701,15 +701,24 @@ function _classifyAsianLucky(num, strNum) {
     // 108 = sacred in Hinduism (prayer beads, cosmic wholeness)
     // 786 = sacred in Islam (Bismillah numerology)
     // 1008 = sacred Hindu (1008 names of deity)
-    const indianSacred = {
-        108: 'Sacred 108 (Hindu cosmic wholeness)',
-        786: 'Sacred 786 (Bismillah)',
+    const sacredNumbers = {
+        // Hindu
+        108: 'Sacred 108 (cosmic wholeness)',
         1008: 'Sacred 1008 (divine names)',
-        1080: 'Sacred number (10 x 108)',
-        10008: 'Auspicious (Hindu prayer count)',
+        1080: 'Sacred 1080 (10 × 108)',
+        10008: 'Sacred (prayer count)',
+        // Islamic
+        786: 'Sacred 786 (Bismillah)',
+        // Biblical / Christian
+        7: 'Sacred 7 (completeness)',
+        12: 'Sacred 12 (tribes & apostles)',
+        33: 'Sacred 33 (age of Christ)',
+        40: 'Sacred 40 (days of trial)',
+        // Universal spiritual
+        3: 'Sacred 3 (Trinity, balance)',
     };
-    if (indianSacred[num]) {
-        return { type: 'asian_lucky', description: indianSacred[num] };
+    if (sacredNumbers[num]) {
+        return { type: 'sacred', description: sacredNumbers[num] };
     }
     return null;
 }

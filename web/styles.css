@@ -2349,8 +2349,9 @@ body {
 
 .wizard-option {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
     padding: 14px 18px;
     background: var(--bg-elevated);
     border: 2px solid var(--border);
@@ -2367,15 +2368,45 @@ body {
     border-color: var(--warning);
     background: rgba(212,184,118,0.08);
 }
+.wizard-pref-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: var(--space-md);
+    text-align: center;
+}
+.wizard-option-check {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: transparent;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+.wizard-option.selected .wizard-option-check {
+    background: var(--warning);
+    border-color: var(--warning);
+    color: var(--bg-page);
+}
+.wizard-option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
 .wizard-option-label {
     font-family: var(--font-serif);
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
     font-weight: 500;
 }
 .wizard-option-example {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     margin-top: 2px;
 }
@@ -2434,6 +2465,18 @@ body {
 }
 
 /* --- Skip link --- */
+.wizard-header {
+    text-align: center;
+    padding: 12px 0 0;
+}
+.wizard-header-title {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+    letter-spacing: 0.02em;
+}
+
 .wizard-back {
     position: absolute;
     top: 16px;
