@@ -1,62 +1,56 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1e1030"/>
-      <stop offset="100%" style="stop-color:#151525"/>
+      <stop offset="0%" style="stop-color:#1e1035"/>
+      <stop offset="100%" style="stop-color:#121228"/>
     </linearGradient>
-    <linearGradient id="numGold" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#e8d5a0"/>
-      <stop offset="50%" style="stop-color:#d4b876"/>
-      <stop offset="100%" style="stop-color:#b89a50"/>
+    <linearGradient id="body" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffe858"/>
+      <stop offset="40%" style="stop-color:#ffcc22"/>
+      <stop offset="100%" style="stop-color:#ee9900"/>
     </linearGradient>
   </defs>
 
-  <!-- Background — dark, warm -->
+  <!-- Background -->
   <rect width="512" height="512" rx="110" fill="url(#bg)"/>
 
-  <!-- The "8" shape — thick, friendly, warm gold -->
-  <!-- Upper loop -->
-  <path d="M 165 150 C 165 80, 220 50, 270 50
-           C 320 50, 375 80, 375 150
-           C 375 200, 330 230, 270 235"
-        fill="none" stroke="url(#numGold)" stroke-width="36" stroke-linecap="round"/>
-  <!-- Lower loop (larger) -->
-  <path d="M 270 235 C 335 240, 395 280, 395 345
-           C 395 420, 335 460, 270 460
-           C 205 460, 145 420, 145 345
-           C 145 280, 205 240, 270 235"
-        fill="none" stroke="url(#numGold)" stroke-width="36" stroke-linecap="round"/>
+  <!-- Bold "8" with open left side suggesting "3" -->
+  <text x="268" y="390"
+        font-family="Arial Black, Impact, Arial, sans-serif"
+        font-size="340" font-weight="900"
+        fill="url(#body)" stroke="#222" stroke-width="7"
+        text-anchor="middle" paint-order="stroke">8</text>
 
-  <!-- Subtle opening on left — hints at "3" -->
-  <path d="M 175 148 C 175 115, 195 82, 220 65"
-        fill="none" stroke="#1e1030" stroke-width="42" stroke-linecap="round"/>
-  <path d="M 155 348 C 155 390, 178 430, 215 450"
-        fill="none" stroke="#1e1030" stroke-width="42" stroke-linecap="round"/>
+  <!-- Open left side to hint at "3" — mask part of the 8 -->
+  <path d="M 128 155 C 128 125, 148 95, 178 78" fill="none" stroke="#1e1035" stroke-width="30" stroke-linecap="round"/>
+  <path d="M 118 365 C 118 395, 142 425, 175 442" fill="none" stroke="#1e1035" stroke-width="30" stroke-linecap="round"/>
 
-  <!-- Happy eyes — refined, on the upper curve -->
-  <!-- Left eye — gentle arc (happy squint) -->
-  <path d="M 225 135 Q 243 108 261 135" fill="none" stroke="#1e1030" stroke-width="7" stroke-linecap="round"/>
-  <!-- Right eye -->
-  <path d="M 295 132 Q 313 105 331 132" fill="none" stroke="#1e1030" stroke-width="7" stroke-linecap="round"/>
+  <!-- Eyes — happy arcs inside upper curve -->
+  <path d="M 218 160 Q 238 130 258 160" fill="none" stroke="#222" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 288 155 Q 308 125 328 155" fill="none" stroke="#222" stroke-width="8" stroke-linecap="round"/>
 
-  <!-- Gentle smile — on the lower curve, subtle -->
-  <path d="M 240 365 Q 270 395 300 365" fill="none" stroke="#1e1030" stroke-width="6" stroke-linecap="round"/>
+  <!-- Eyebrows -->
+  <path d="M 212 135 Q 238 118 264 135" fill="none" stroke="#222" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 282 130 Q 308 114 335 132" fill="none" stroke="#222" stroke-width="6" stroke-linecap="round"/>
 
-  <!-- Soft blush — warm, not vivid -->
-  <circle cx="218" cy="160" r="14" fill="#c8a080" opacity="0.15"/>
-  <circle cx="338" cy="157" r="14" fill="#c8a080" opacity="0.15"/>
+  <!-- Warm smile — not too big, no teeth -->
+  <path d="M 215 335 Q 270 385 330 335" fill="none" stroke="#222" stroke-width="7" stroke-linecap="round"/>
 
-  <!-- Two subtle sparkle accents -->
-  <g transform="translate(95,250)" opacity="0.5">
-    <line x1="0" y1="-12" x2="0" y2="12" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
-    <line x1="-12" y1="0" x2="12" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
-  </g>
-  <g transform="translate(430,110)" opacity="0.4">
-    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Blush — soft warm tone -->
+  <circle cx="205" cy="175" r="16" fill="#e8a060" opacity="0.25"/>
+  <circle cx="335" cy="172" r="16" fill="#e8a060" opacity="0.25"/>
+
+  <!-- Sparkle — one, elegant -->
+  <g transform="translate(130,275)" opacity="0.75">
+    <line x1="0" y1="-16" x2="0" y2="16" stroke="#ffe855" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="-16" y1="0" x2="16" y2="0" stroke="#ffe855" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe855" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="10" y1="-10" x2="-10" y2="10" stroke="#ffe855" stroke-width="3.5" stroke-linecap="round"/>
   </g>
 
-  <!-- Corner accents — premium touch -->
-  <path d="M 48 78 L 48 48 L 78 48" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.12"/>
-  <path d="M 434 48 L 464 48 L 464 78" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.12"/>
+  <!-- Small sparkle -->
+  <g transform="translate(420,120)" opacity="0.55">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+  </g>
 </svg>
