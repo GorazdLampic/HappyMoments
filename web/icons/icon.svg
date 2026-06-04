@@ -1,61 +1,62 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1a1a1a"/>
-      <stop offset="100%" style="stop-color:#252030"/>
+      <stop offset="0%" style="stop-color:#1e1030"/>
+      <stop offset="100%" style="stop-color:#151525"/>
     </linearGradient>
     <linearGradient id="numGold" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" style="stop-color:#e8d5a0"/>
       <stop offset="50%" style="stop-color:#d4b876"/>
       <stop offset="100%" style="stop-color:#b89a50"/>
     </linearGradient>
-    <linearGradient id="accentGlow" x1="50%" y1="0%" x2="50%" y2="100%">
-      <stop offset="0%" style="stop-color:#d4b876;stop-opacity:0.15"/>
-      <stop offset="100%" style="stop-color:#d4b876;stop-opacity:0"/>
-    </linearGradient>
   </defs>
 
-  <!-- Background — dark, premium -->
-  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <!-- Background — dark, warm -->
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
 
-  <!-- Subtle glow behind the number -->
-  <ellipse cx="256" cy="256" rx="160" ry="200" fill="url(#accentGlow)"/>
+  <!-- The "8" shape — thick, friendly, warm gold -->
+  <!-- Upper loop -->
+  <path d="M 165 150 C 165 80, 220 50, 270 50
+           C 320 50, 375 80, 375 150
+           C 375 200, 330 230, 270 235"
+        fill="none" stroke="url(#numGold)" stroke-width="36" stroke-linecap="round"/>
+  <!-- Lower loop (larger) -->
+  <path d="M 270 235 C 335 240, 395 280, 395 345
+           C 395 420, 335 460, 270 460
+           C 205 460, 145 420, 145 345
+           C 145 280, 205 240, 270 235"
+        fill="none" stroke="url(#numGold)" stroke-width="36" stroke-linecap="round"/>
 
-  <!-- The "8" — elegant, serif-inspired, contains implied "3" in its curves -->
-  <!-- Upper loop of 8 (smaller, like the top of a 3) -->
-  <path d="M 256 48
-           C 340 48, 380 100, 380 148
-           C 380 196, 340 232, 256 232
-           C 172 232, 132 196, 132 148
-           C 132 100, 172 48, 256 48 Z"
-        fill="none" stroke="url(#numGold)" stroke-width="28"
-        stroke-linejoin="round"/>
+  <!-- Subtle opening on left — hints at "3" -->
+  <path d="M 175 148 C 175 115, 195 82, 220 65"
+        fill="none" stroke="#1e1030" stroke-width="42" stroke-linecap="round"/>
+  <path d="M 155 348 C 155 390, 178 430, 215 450"
+        fill="none" stroke="#1e1030" stroke-width="42" stroke-linecap="round"/>
 
-  <!-- Lower loop of 8 (larger, elegant) -->
-  <path d="M 256 232
-           C 355 232, 400 295, 400 348
-           C 400 410, 355 464, 256 464
-           C 157 464, 112 410, 112 348
-           C 112 295, 157 232, 256 232 Z"
-        fill="none" stroke="url(#numGold)" stroke-width="28"
-        stroke-linejoin="round"/>
+  <!-- Happy eyes — refined, on the upper curve -->
+  <!-- Left eye — gentle arc (happy squint) -->
+  <path d="M 225 135 Q 243 108 261 135" fill="none" stroke="#1e1030" stroke-width="7" stroke-linecap="round"/>
+  <!-- Right eye -->
+  <path d="M 295 132 Q 313 105 331 132" fill="none" stroke="#1e1030" stroke-width="7" stroke-linecap="round"/>
 
-  <!-- Subtle "3" suggestion — a small opening on the left side of the 8 -->
-  <!-- This makes the left side slightly open, hinting at a 3 -->
-  <path d="M 142 148 C 142 120, 160 90, 190 72"
-        fill="none" stroke="#1a1a1a" stroke-width="32"
-        stroke-linecap="round"/>
-  <path d="M 122 348 C 122 380, 140 420, 175 445"
-        fill="none" stroke="#1a1a1a" stroke-width="32"
-        stroke-linecap="round"/>
+  <!-- Gentle smile — on the lower curve, subtle -->
+  <path d="M 240 365 Q 270 395 300 365" fill="none" stroke="#1e1030" stroke-width="6" stroke-linecap="round"/>
 
-  <!-- Tiny sparkle dot — top right, elegant accent -->
-  <circle cx="390" cy="90" r="4" fill="#d4b876" opacity="0.7"/>
-  <circle cx="400" cy="82" r="2.5" fill="#d4b876" opacity="0.5"/>
+  <!-- Soft blush — warm, not vivid -->
+  <circle cx="218" cy="160" r="14" fill="#c8a080" opacity="0.15"/>
+  <circle cx="338" cy="157" r="14" fill="#c8a080" opacity="0.15"/>
 
-  <!-- Subtle corner accents — premium feel -->
-  <path d="M 50 80 L 50 50 L 80 50" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.15"/>
-  <path d="M 432 50 L 462 50 L 462 80" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.15"/>
-  <path d="M 50 432 L 50 462 L 80 462" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.15"/>
-  <path d="M 432 462 L 462 462 L 462 432" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.15"/>
+  <!-- Two subtle sparkle accents -->
+  <g transform="translate(95,250)" opacity="0.5">
+    <line x1="0" y1="-12" x2="0" y2="12" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+    <line x1="-12" y1="0" x2="12" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(430,110)" opacity="0.4">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Corner accents — premium touch -->
+  <path d="M 48 78 L 48 48 L 78 48" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.12"/>
+  <path d="M 434 48 L 464 48 L 464 78" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.12"/>
 </svg>
