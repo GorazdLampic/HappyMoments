@@ -5041,7 +5041,7 @@ function showUpgradePrompt(reason) {
 
     const reasons = {
         people: `You've reached the free limit of ${FREE_PEOPLE_LIMIT} people.`,
-        groups: 'Free accounts include 1 group.',
+        groups: 'Free accounts include 3 groups.',
         team: `You've used your ${FREE_TEAM_VIEWS} free Team tab views.`,
         default: 'Unlock the full HappyMoments experience.'
     };

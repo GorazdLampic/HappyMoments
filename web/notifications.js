@@ -241,6 +241,17 @@ const NOTIF = (() => {
                     });
                 }
 
+                // Also add cosmic milestones (planetary returns)
+                if (typeof findCosmicMilestones === 'function') {
+                    const cosmicOnes = findCosmicMilestones(eventDate);
+                    cosmicOnes.forEach(cm => {
+                        const daysAway = cm.timeUntil / (24 * 60 * 60 * 1000);
+                        if (daysAway <= SCHEDULE_HORIZON_DAYS && !milestones.some(m => m.value === cm.value && m.unit === cm.unit)) {
+                            milestones.push(cm);
+                        }
+                    });
+                }
+
                 // Filter to "very special" numbers to avoid noise
                 const special = milestones.filter(m => {
                     if (typeof isVerySpecialNumber === 'function') return isVerySpecialNumber(m.value);

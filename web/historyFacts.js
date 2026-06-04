@@ -743,6 +743,15 @@ const HISTORY_FACTS = {
             category: "space"
         }
     ],
+    "06-04": [
+        {
+            year: 1783,
+            event: "Montgolfier brothers publicly demonstrate the first hot air balloon flight",
+            funFact: "The unmanned balloon rose 2,000 meters and flew for 10 minutes over Annonay, France",
+            numberFact: "{yearsAgo} years since humans first conquered the skies --- the balloon rose 2,000 meters in just 10 minutes",
+            category: "science"
+        }
+    ],
     "06-05": [
         {
             year: 1981,
