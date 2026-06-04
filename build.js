@@ -26,7 +26,7 @@ if (fs.existsSync(DIST)) {
 fs.mkdirSync(DIST, { recursive: true });
 
 // Copy static assets
-const staticFiles = ['manifest.json', '_redirects', 'gift-placeholder.svg', 'gift-placeholder.png'];
+const staticFiles = ['manifest.json', '_redirects', 'gift-placeholder.svg', 'gift-placeholder.png', 'og-image.png'];
 const staticDirs = ['icons'];
 
 staticFiles.forEach(f => {
@@ -141,7 +141,7 @@ fs.writeFileSync(path.join(DIST, 'index.html'), html);
 console.log(`  Processed: index.html (v=${VERSION}, build=${buildTime})`);
 
 // Copy HTML pages
-['legal.html', 'landing.html', 'admin.html'].forEach(f => {
+['legal.html', 'landing.html', 'admin.html', 'og-image.html'].forEach(f => {
     const src = path.join(SRC, f);
     if (fs.existsSync(src)) {
         fs.copyFileSync(src, path.join(DIST, f));
