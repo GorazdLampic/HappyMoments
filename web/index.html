@@ -101,46 +101,46 @@
             <!-- Screen 1: Hook -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content">
-                    <h1 class="wizard-hook-title">Your life is full of hidden milestones worth celebrating</h1>
-                    <p class="wizard-hook-subtitle">Let's find them together</p>
+                    <h1 class="wizard-hook-title" data-i18n="wizard_hook_title">Your life is full of hidden milestones worth celebrating</h1>
+                    <p class="wizard-hook-subtitle" data-i18n="wizard_hook_subtitle">Let's find them together</p>
                 </div>
-                <button class="wizard-btn" onclick="wizardNext(2)">Let's find out &rarr;</button>
+                <button class="wizard-btn" onclick="wizardNext(2)" data-i18n="wizard_hook_btn">Let's find out &rarr;</button>
                 <div class="wizard-progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
 
             <!-- Screen 2: Preferences -->
             <div class="wizard-step" id="wizardStep2">
                 <div class="wizard-content">
-                    <h2 class="wizard-question">What kind of numbers excite you?</h2>
+                    <h2 class="wizard-question" data-i18n="wizard_pref_title">What kind of numbers excite you?</h2>
                     <div class="wizard-options" id="wizardPreferenceOptions">
                         <button class="wizard-option selected" data-pref="math" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label">Math wonders</span><span class="wizard-option-example">Pi, Fibonacci, powers of 2</span></span>
+                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_math">Math wonders</span><span class="wizard-option-example" data-i18n="wizard_pref_math_ex">Pi, Fibonacci, powers of 2</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="palindromes" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label">Palindromes</span><span class="wizard-option-example">12321, 45654</span></span>
+                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_palindromes">Palindromes</span><span class="wizard-option-example" data-i18n="wizard_pref_palindromes_ex">12321, 45654</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="round" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label">Round milestones</span><span class="wizard-option-example">10,000 days, 1 million minutes</span></span>
+                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_round">Round milestones</span><span class="wizard-option-example" data-i18n="wizard_pref_round_ex">10,000 days, 1 million minutes</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="lucky" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label">Lucky numbers</span><span class="wizard-option-example">888, 520 &mdash; I love you</span></span>
+                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_lucky">Lucky numbers</span><span class="wizard-option-example" data-i18n="wizard_pref_lucky_ex">888, 520 &mdash; I love you</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="sacred" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label">Sacred &amp; spiritual</span><span class="wizard-option-example">7, 12, 33, 40, 108, 786</span></span>
+                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_sacred">Sacred &amp; spiritual</span><span class="wizard-option-example" data-i18n="wizard_pref_sacred_ex">7, 12, 33, 40, 108, 786</span></span>
                         </button>
                         <button class="wizard-option selected" data-pref="cosmic" onclick="wizardTogglePreference(this)">
                             <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label">Cosmic cycles</span><span class="wizard-option-example">Saturn return, Jupiter return, lunar cycles</span></span>
+                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_cosmic">Cosmic cycles</span><span class="wizard-option-example" data-i18n="wizard_pref_cosmic_ex">Saturn return, Jupiter return, lunar cycles</span></span>
                         </button>
                     </div>
-                    <p class="wizard-pref-hint">We recommend keeping all active. You can adjust later in Settings.</p>
+                    <p class="wizard-pref-hint" data-i18n="wizard_pref_hint">We recommend keeping all active. You can adjust later in Settings.</p>
                 </div>
-                <button class="wizard-btn" onclick="wizardSavePreference(); wizardNext(3)">Next &rarr;</button>
+                <button class="wizard-btn" onclick="wizardSavePreference(); wizardNext(3)" data-i18n="wizard_next">Next &rarr;</button>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
 
@@ -148,10 +148,10 @@
             <div class="wizard-step" id="wizardStep3">
                 <button class="wizard-back" onclick="wizardNext(2)">&larr;</button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question">Let's start with...</h2>
+                    <h2 class="wizard-question" data-i18n="wizard_who_title">Let's start with...</h2>
                     <div class="wizard-choices">
-                        <button class="wizard-choice-btn" onclick="wizardChooseWho('self')">My own birthday &#127874;</button>
-                        <button class="wizard-choice-btn" onclick="wizardChooseWho('other')">Someone I care about &#128157;</button>
+                        <button class="wizard-choice-btn" onclick="wizardChooseWho('self')"><span data-i18n="wizard_who_self">My own birthday</span> &#127874;</button>
+                        <button class="wizard-choice-btn" onclick="wizardChooseWho('other')"><span data-i18n="wizard_who_other">Someone I care about</span> &#128157;</button>
                     </div>
                 </div>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
@@ -161,11 +161,11 @@
             <div class="wizard-step" id="wizardStep4">
                 <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question" id="wizardNameTitle">What's the name?</h2>
-                    <input type="text" id="birthName" class="wizard-input" placeholder="e.g. Anna, Mom, My partner" autocomplete="off">
+                    <h2 class="wizard-question" id="wizardNameTitle" data-i18n="wizard_name_title">What's the name?</h2>
+                    <input type="text" id="birthName" class="wizard-input" data-i18n-placeholder="wizard_name_placeholder" placeholder="e.g. Anna, Mom, My partner" autocomplete="off">
                     <input type="hidden" id="birthDate">
                 </div>
-                <button class="wizard-btn" onclick="wizardNameNext()">Next &rarr;</button>
+                <button class="wizard-btn" onclick="wizardNameNext()" data-i18n="wizard_next">Next &rarr;</button>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
 
@@ -173,7 +173,7 @@
             <div class="wizard-step" id="wizardStep5">
                 <button class="wizard-back" onclick="wizardNext(4)">&larr;</button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question" id="wizardDateTitle">When is their birthday?</h2>
+                    <h2 class="wizard-question" id="wizardDateTitle" data-i18n="wizard_date_title">When is their birthday?</h2>
                     <div class="wizard-date-fields">
                         <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'birthMonth', 2)">
                         <span class="wizard-date-sep">/</span>
@@ -182,7 +182,7 @@
                         <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" class="wizard-date-field" oninput="syncDateFields(this)">
                     </div>
                 </div>
-                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscover()">Discover &rarr;</button>
+                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscover()" data-i18n="wizard_discover_btn">Discover &rarr;</button>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
             </div>
 
@@ -192,8 +192,8 @@
                     <!-- Populated by wizardDiscover() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShare()">Share this milestone</button>
-                    <button class="wizard-btn-secondary" onclick="wizardFinish()">Explore all milestones</button>
+                    <button class="wizard-btn" onclick="wizardShare()" data-i18n="wizard_share_btn">Share this milestone</button>
+                    <button class="wizard-btn-secondary" onclick="wizardFinish()" data-i18n="wizard_explore_btn">Explore all milestones</button>
                 </div>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
             </div>
@@ -202,9 +202,9 @@
             <div class="wizard-step" id="wizardStep7">
                 <button class="wizard-back" onclick="wizardNext(6)">&larr;</button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question">Who would you like to surprise?</h2>
-                    <p class="wizard-subtitle">Enter their name and birthday to find their special number</p>
-                    <input type="text" id="friendName" class="wizard-input" placeholder="e.g. Anna, Dad, Best friend" autocomplete="off" style="margin-bottom: 16px;">
+                    <h2 class="wizard-question" data-i18n="wizard_friend_title">Who would you like to surprise?</h2>
+                    <p class="wizard-subtitle" data-i18n="wizard_friend_subtitle">Enter their name and birthday to find their special number</p>
+                    <input type="text" id="friendName" class="wizard-input" data-i18n-placeholder="wizard_friend_placeholder" placeholder="e.g. Anna, Dad, Best friend" autocomplete="off" style="margin-bottom: 16px;">
                     <div class="wizard-date-fields">
                         <input type="number" id="friendDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'friendMonth', 2)">
                         <span class="wizard-date-sep">/</span>
@@ -214,8 +214,8 @@
                     </div>
                     <input type="hidden" id="friendDate">
                 </div>
-                <button class="wizard-btn" onclick="wizardDiscoverFriend()">Discover theirs &rarr;</button>
-                <button class="wizard-skip" onclick="wizardFinish()">Skip for now</button>
+                <button class="wizard-btn" onclick="wizardDiscoverFriend()" data-i18n="wizard_friend_discover">Discover theirs &rarr;</button>
+                <button class="wizard-skip" onclick="wizardFinish()" data-i18n="wizard_friend_skip">Skip for now</button>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
             </div>
 
@@ -225,8 +225,8 @@
                     <!-- Populated by wizardDiscoverFriend() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Share &rarr;</button>
-                    <button class="wizard-btn-secondary" onclick="wizardFinish()">Explore all milestones</button>
+                    <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()" data-i18n="wizard_friend_share">Share &rarr;</button>
+                    <button class="wizard-btn-secondary" onclick="wizardFinish()" data-i18n="wizard_explore_btn">Explore all milestones</button>
                 </div>
                 <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
             </div>
@@ -269,11 +269,11 @@
                         <button id="whatsappShareBtn" class="btn-primary btn-whatsapp">WhatsApp</button>
                         <button id="viberShareBtn" class="btn-primary btn-viber">Viber</button>
                         <button id="emailShareBtn" class="btn-secondary">Email</button>
-                        <button id="copyShareBtn" class="btn-secondary">Copy</button>
+                        <button id="copyShareBtn" class="btn-secondary" data-i18n="copy">Copy</button>
                 </div>
-                <button class="btn-challenge" onclick="handleChallengeGroup()" style="width:100%; margin-top:8px;">Share with your group</button>
+                <button class="btn-challenge" onclick="handleChallengeGroup()" style="width:100%; margin-top:8px;" data-i18n="share_with_group">Share with your group</button>
                 <div class="calendar-buttons">
-                    <span class="calendar-label">Save to calendar:</span>
+                    <span class="calendar-label" data-i18n="save_to_calendar">Save to calendar:</span>
                     <button id="googleCalBtn" class="btn-calendar btn-gcal">Google</button>
                     <button id="outlookCalBtn" class="btn-calendar btn-outlook">Outlook</button>
                     <button id="icsCalBtn" class="btn-calendar btn-ics">.ics</button>
@@ -282,10 +282,10 @@
 
             <!-- Gift Ideas (below share, only for special milestones) -->
             <div class="card gift-card" id="giftSection">
-                <h3>Gift Idea</h3>
-                <p class="card-description">Make this milestone unforgettable with a personalized gift.</p>
+                <h3 data-i18n="gift_idea">Gift Idea</h3>
+                <p class="card-description" data-i18n="gift_idea_desc">Make this milestone unforgettable with a personalized gift.</p>
                 <div id="giftPreview" class="gift-preview">
-                    <p class="empty-text">Select a special milestone to see gift ideas.</p>
+                    <p class="empty-text" data-i18n="gift_idea_empty">Select a special milestone to see gift ideas.</p>
                 </div>
                 <div id="giftProducts" class="gift-products"></div>
             </div>
@@ -302,24 +302,24 @@
                     <h2 data-i18n="combined_milestones">Combined Milestones</h2>
                     <button id="refreshCombinedBtn" class="btn-small" data-i18n="refresh">Refresh</button>
                 </div>
-                <p class="card-description">Combined milestones for everyone in the group — when your ages, time together, or ratios reach special numbers.</p>
+                <p class="card-description" data-i18n="combined_desc">Combined milestones for everyone in the group — when your ages, time together, or ratios reach special numbers.</p>
                 <div id="combinedMilestonesContent" class="combined-milestones"></div>
             </div>
 
             <!-- Combined Share Section -->
             <div class="card share-card" id="combinedShareCard">
-                <h3>Share This Moment</h3>
-                <p class="card-description">Share a combined milestone with those involved!</p>
+                <h3 data-i18n="share_this_moment">Share This Moment</h3>
+                <p class="card-description" data-i18n="share_combined_desc">Share a combined milestone with those involved!</p>
                 <div id="combinedSharePreview" class="share-preview"></div>
                 <div class="share-buttons">
                     <button id="nativeCombinedShareBtn" class="btn-primary btn-native-share hidden">Share...</button>
                     <button id="whatsappCombinedShareBtn" class="btn-primary btn-whatsapp">WhatsApp</button>
                     <button id="viberCombinedShareBtn" class="btn-primary btn-viber">Viber</button>
                     <button id="emailCombinedShareBtn" class="btn-secondary">Email</button>
-                    <button id="copyCombinedShareBtn" class="btn-secondary">Copy</button>
+                    <button id="copyCombinedShareBtn" class="btn-secondary" data-i18n="copy">Copy</button>
                 </div>
                 <div class="calendar-buttons">
-                    <span class="calendar-label">Save to calendar:</span>
+                    <span class="calendar-label" data-i18n="save_to_calendar">Save to calendar:</span>
                     <button id="googleCalCombinedBtn" class="btn-calendar btn-gcal">Google</button>
                     <button id="outlookCalCombinedBtn" class="btn-calendar btn-outlook">Outlook</button>
                     <button id="icsCalCombinedBtn" class="btn-calendar btn-ics">.ics</button>
@@ -331,7 +331,7 @@
         <section id="eventsTab" class="tab-content hidden">
             <div class="card">
                 <h2 data-i18n="dates_events">Dates &amp; Events</h2>
-                <p class="card-description">Add birthdays, anniversaries, and any meaningful date to track.</p>
+                <p class="card-description" data-i18n="data_desc">Add birthdays, anniversaries, and any meaningful date to track.</p>
                 <div id="eventsList" class="events-list"></div>
                 <div class="add-event-form">
                     <h3 data-i18n="add_date">Add a Date</h3>
@@ -354,9 +354,9 @@
                     <div class="event-type-row">
                         <span class="event-type-label" data-i18n="type">Type:</span>
                         <select id="newEventType" class="event-type-select">
-                            <option value="birthday">Birthday</option>
-                            <option value="beginning">Date / Event</option>
-                            <option value="milestone">Milestone</option>
+                            <option value="birthday" data-i18n="type_birthday">Birthday</option>
+                            <option value="beginning" data-i18n="type_event">Date / Event</option>
+                            <option value="milestone" data-i18n="type_milestone">Milestone</option>
                         </select>
                     </div>
                     <div class="time-toggle-row">
@@ -371,8 +371,8 @@
             </div>
 
             <div class="card">
-                <h3>Groups</h3>
-                <p class="card-description">Organize dates into separate groups. Each group has its own milestones.</p>
+                <h3 data-i18n="groups">Groups</h3>
+                <p class="card-description" data-i18n="groups_desc">Organize dates into separate groups. Each group has its own milestones.</p>
                 <p class="group-hint" id="groupHint">People added above will be added to the active group.</p>
                 <div id="eventSetsList2" class="event-sets-list"></div>
                 <div class="add-set-form">
@@ -388,9 +388,9 @@
             <div class="card">
                 <h3 data-i18n="backup">Backup</h3>
                 <div class="backup-buttons">
-                    <button id="exportDataBtn" class="btn-secondary">Export Data</button>
+                    <button id="exportDataBtn" class="btn-secondary" data-i18n="export_data">Export Data</button>
                     <label class="btn-secondary import-btn">
-                        Import Data
+                        <span data-i18n="import_data">Import Data</span>
                         <input type="file" id="importDataInput" accept=".json" hidden>
                     </label>
                 </div>
@@ -398,16 +398,16 @@
 
             <div id="editModal" class="modal hidden">
                 <div class="modal-content">
-                    <h3>Edit Event</h3>
-                    <div class="form-group"><label>Name</label><input type="text" id="editEventName"></div>
-                    <div class="form-group"><label>Type</label>
+                    <h3 data-i18n="edit_event">Edit Event</h3>
+                    <div class="form-group"><label data-i18n="name">Name</label><input type="text" id="editEventName"></div>
+                    <div class="form-group"><label data-i18n="type">Type</label>
                         <select id="editEventType">
-                            <option value="birthday">Birthday</option>
-                            <option value="beginning">Beginning</option>
-                            <option value="milestone">Milestone</option>
+                            <option value="birthday" data-i18n="type_birthday">Birthday</option>
+                            <option value="beginning" data-i18n="type_event">Beginning</option>
+                            <option value="milestone" data-i18n="type_milestone">Milestone</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>Date</label>
+                    <div class="form-group"><label data-i18n="date">Date</label>
                         <div class="date-fields">
                             <input type="number" id="editEventDay" placeholder="DD" min="1" max="31" class="date-field date-dd" oninput="autoAdvance(this, 'editEventMonth', 2)">
                             <span class="date-sep">/</span>
@@ -417,11 +417,11 @@
                         </div>
                         <input type="hidden" id="editEventDate">
                     </div>
-                    <div class="form-group"><label>Notes</label><textarea id="editEventNotes" placeholder="Add a note..." rows="2"></textarea></div>
+                    <div class="form-group"><label data-i18n="notes">Notes</label><textarea id="editEventNotes" placeholder="Add a note..." rows="2"></textarea></div>
                     <div class="modal-buttons">
-                        <button id="saveEditBtn" class="btn-primary">Save</button>
-                        <button id="cancelEditBtn" class="btn-secondary">Cancel</button>
-                        <button id="deleteEditBtn" class="btn-danger">Delete</button>
+                        <button id="saveEditBtn" class="btn-primary" data-i18n="save">Save</button>
+                        <button id="cancelEditBtn" class="btn-secondary" data-i18n="cancel">Cancel</button>
+                        <button id="deleteEditBtn" class="btn-danger" data-i18n="delete">Delete</button>
                     </div>
                 </div>
             </div>
@@ -432,12 +432,12 @@
             <!-- Account Card -->
             <div class="card" id="accountCard">
                 <div id="accountLoggedOut">
-                    <h2>Account</h2>
-                    <p class="card-description">Sign in to save your data, sync across devices, and unlock premium features.</p>
-                    <button class="btn-primary" onclick="openAuthModal()" style="margin-top: 8px;">Sign In / Create Account</button>
+                    <h2 data-i18n="account">Account</h2>
+                    <p class="card-description" data-i18n="account_desc">Sign in to save your data, sync across devices, and unlock premium features.</p>
+                    <button class="btn-primary" onclick="openAuthModal()" style="margin-top: 8px;" data-i18n="sign_in_btn">Sign In / Create Account</button>
                 </div>
                 <div id="accountLoggedIn" class="hidden">
-                    <h2>Account</h2>
+                    <h2 data-i18n="account">Account</h2>
                     <div class="account-info">
                         <div class="account-name" id="accountDisplayName"></div>
                         <div class="account-email" id="accountEmailDisplay"></div>
@@ -447,8 +447,8 @@
                         <div class="account-status" id="accountPremiumStatus"></div>
                     </div>
                     <div style="margin-top: 12px; display: flex; gap: 10px; align-items: center;">
-                        <button class="btn-secondary" onclick="handleSignOut()">Sign Out</button>
-                        <button class="btn-danger-text" onclick="handleDeleteAccount()">Delete Account</button>
+                        <button class="btn-secondary" onclick="handleSignOut()" data-i18n="sign_out">Sign Out</button>
+                        <button class="btn-danger-text" onclick="handleDeleteAccount()" data-i18n="delete_account">Delete Account</button>
                     </div>
                 </div>
             </div>
@@ -456,15 +456,15 @@
             <div class="card">
                 <h2 data-i18n="number_patterns">Number Patterns</h2>
                 <div class="pattern-options">
-                    <label class="pattern-option"><input type="checkbox" data-pattern="powers" checked><span>Round Numbers (1000, 5000...)</span></label>
-                    <label class="pattern-option"><input type="checkbox" data-pattern="repdigits" checked><span>Repdigits (111, 2222...)</span></label>
-                    <label class="pattern-option"><input type="checkbox" data-pattern="alternating" checked><span>Alternating (1212, 737373...)</span></label>
-                    <label class="pattern-option"><input type="checkbox" data-pattern="palindromes" checked><span>Palindromes (12321...)</span></label>
-                    <label class="pattern-option"><input type="checkbox" data-pattern="sequential" checked><span>Sequential (123, 4321...)</span></label>
-                    <label class="pattern-option"><input type="checkbox" data-pattern="scientific" checked><span>Scientific (Pi, e, Phi)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="powers" checked><span data-i18n="round_numbers">Round Numbers (1000, 5000...)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="repdigits" checked><span data-i18n="repdigits">Repdigits (111, 2222...)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="alternating" checked><span data-i18n="alternating">Alternating (1212, 737373...)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="palindromes" checked><span data-i18n="palindromes">Palindromes (12321...)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="sequential" checked><span data-i18n="sequential">Sequential (123, 4321...)</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="scientific" checked><span data-i18n="scientific">Scientific (Pi, e, Phi)</span></label>
                     <label class="pattern-option"><input type="checkbox" data-pattern="fibonacci" checked><span>Fibonacci (5, 8, 13, 21, 34, 55, 89...)</span></label>
                     <label class="pattern-option"><input type="checkbox" data-pattern="powers2" checked><span>Powers of 2 (256, 1024, 4096, 65536...)</span></label>
-                    <label class="pattern-option"><input type="checkbox" data-pattern="lucky"><span>My Lucky Digit Patterns</span></label>
+                    <label class="pattern-option"><input type="checkbox" data-pattern="lucky"><span data-i18n="lucky_patterns">My Lucky Digit Patterns</span></label>
                 </div>
             </div>
 
@@ -527,24 +527,24 @@
 
             <!-- Notifications -->
             <div class="card">
-                <h2>Reminders</h2>
-                <p class="card-description">Get notified before birthdays and special number milestones.</p>
+                <h2 data-i18n="reminders">Reminders</h2>
+                <p class="card-description" data-i18n="reminders_desc">Get notified before birthdays and special number milestones.</p>
                 <label class="toggle-option">
                     <input type="checkbox" id="notifToggle" onchange="toggleNotifications(this.checked)">
-                    <span>Enable reminders</span>
+                    <span data-i18n="enable_reminders">Enable reminders</span>
                 </label>
                 <div id="notifOptions" class="notif-options" style="display:none;">
-                    <label class="toggle-option"><input type="checkbox" id="notifDay" checked onchange="updateNotifPrefs()"><span>1 day before</span></label>
-                    <label class="toggle-option"><input type="checkbox" id="notifHour" checked onchange="updateNotifPrefs()"><span>1 hour before</span></label>
-                    <label class="toggle-option"><input type="checkbox" id="notifOnDay" checked onchange="updateNotifPrefs()"><span>On the day</span></label>
+                    <label class="toggle-option"><input type="checkbox" id="notifDay" checked onchange="updateNotifPrefs()"><span data-i18n="day_before">1 day before</span></label>
+                    <label class="toggle-option"><input type="checkbox" id="notifHour" checked onchange="updateNotifPrefs()"><span data-i18n="hour_before">1 hour before</span></label>
+                    <label class="toggle-option"><input type="checkbox" id="notifOnDay" checked onchange="updateNotifPrefs()"><span data-i18n="on_the_day">On the day</span></label>
                 </div>
             </div>
 
             <!-- Invite Friends -->
             <div class="card">
-                <h2>Invite Friends</h2>
-                <p class="card-description">Know someone who'd love to discover their special numbers?</p>
-                <button class="btn-primary" onclick="shareAppLink()" style="margin-top: 8px;">Share HappyMoments</button>
+                <h2 data-i18n="invite_friends">Invite Friends</h2>
+                <p class="card-description" data-i18n="invite_desc">Know someone who'd love to discover their special numbers?</p>
+                <button class="btn-primary" onclick="shareAppLink()" style="margin-top: 8px;" data-i18n="share_app">Share HappyMoments</button>
             </div>
 
             <!-- Feedback -->
@@ -677,10 +677,10 @@
 
         <!-- Consent Banner (first run) -->
         <div id="consentBanner" class="consent-banner hidden">
-            <p>HappyMoments stores your dates and preferences locally on your device. No data is sent to any server.</p>
+            <p data-i18n="consent_text">HappyMoments stores your dates and preferences locally on your device. No data is sent to any server.</p>
             <div class="consent-actions">
-                <button onclick="acceptConsent()" class="btn-primary btn-consent">OK, got it</button>
-                <a href="legal.html" target="_blank" class="consent-link">Read full policy</a>
+                <button onclick="acceptConsent()" class="btn-primary btn-consent" data-i18n="consent_ok">OK, got it</button>
+                <a href="legal.html" target="_blank" class="consent-link" data-i18n="consent_read">Read full policy</a>
             </div>
         </div>
     </div>
