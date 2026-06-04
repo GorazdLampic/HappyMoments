@@ -14,43 +14,67 @@
   <!-- Background -->
   <rect width="512" height="512" rx="110" fill="url(#bg)"/>
 
-  <!-- Bold "8" with open left side suggesting "3" -->
-  <text x="268" y="390"
+  <!-- === BOLD "3" centered === -->
+  <text x="265" y="385"
         font-family="Arial Black, Impact, Arial, sans-serif"
-        font-size="340" font-weight="900"
-        fill="url(#body)" stroke="#222" stroke-width="7"
-        text-anchor="middle" paint-order="stroke">8</text>
+        font-size="350" font-weight="900"
+        fill="url(#body)" stroke="#222" stroke-width="8"
+        text-anchor="middle" paint-order="stroke">3</text>
 
-  <!-- Open left side to hint at "3" — mask part of the 8 -->
-  <path d="M 128 155 C 128 125, 148 95, 178 78" fill="none" stroke="#1e1035" stroke-width="30" stroke-linecap="round"/>
-  <path d="M 118 365 C 118 395, 142 425, 175 442" fill="none" stroke="#1e1035" stroke-width="30" stroke-linecap="round"/>
+  <!-- === EYES — bigger, shifted left, inside upper curve === -->
+  <!-- Left eye -->
+  <circle cx="215" cy="165" r="30" fill="white" stroke="#222" stroke-width="6"/>
+  <circle cx="222" cy="168" r="15" fill="#222"/>
+  <circle cx="229" cy="158" r="7" fill="white"/>
+  <!-- Right eye -->
+  <circle cx="305" cy="158" r="28" fill="white" stroke="#222" stroke-width="6"/>
+  <circle cx="311" cy="161" r="14" fill="#222"/>
+  <circle cx="318" cy="151" r="6.5" fill="white"/>
 
-  <!-- Eyes — happy arcs inside upper curve -->
-  <path d="M 218 160 Q 238 130 258 160" fill="none" stroke="#222" stroke-width="8" stroke-linecap="round"/>
-  <path d="M 288 155 Q 308 125 328 155" fill="none" stroke="#222" stroke-width="8" stroke-linecap="round"/>
+  <!-- Eyebrows — thicker, shifted left, clearly visible -->
+  <path d="M 188 128 Q 215 108 242 128" fill="none" stroke="#222" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 280 122 Q 305 104 333 124" fill="none" stroke="#222" stroke-width="8" stroke-linecap="round"/>
 
-  <!-- Eyebrows -->
-  <path d="M 212 135 Q 238 118 264 135" fill="none" stroke="#222" stroke-width="6" stroke-linecap="round"/>
-  <path d="M 282 130 Q 308 114 335 132" fill="none" stroke="#222" stroke-width="6" stroke-linecap="round"/>
+  <!-- === BIG RED HAPPY MOUTH — shifted left, wide open === -->
+  <path d="M 190 330 Q 270 420 345 330" fill="#dd1111" stroke="#222" stroke-width="6" stroke-linecap="round"/>
+  <!-- Teeth -->
+  <rect x="228" y="330" width="24" height="18" rx="4" fill="white" stroke="#eee" stroke-width="1"/>
+  <rect x="256" y="330" width="24" height="18" rx="4" fill="white" stroke="#eee" stroke-width="1"/>
+  <rect x="284" y="330" width="24" height="18" rx="4" fill="white" stroke="#eee" stroke-width="1"/>
+  <!-- Tongue -->
+  <ellipse cx="268" cy="372" rx="28" ry="18" fill="#ff4444"/>
 
-  <!-- Warm smile — not too big, no teeth -->
-  <path d="M 215 335 Q 270 385 330 335" fill="none" stroke="#222" stroke-width="7" stroke-linecap="round"/>
+  <!-- === PARTY HAT — shifted left with eyes === -->
+  <polygon points="245,68 215,132 275,132" fill="#ee2222" stroke="#222" stroke-width="5"/>
+  <line x1="230" y1="96" x2="225" y2="124" stroke="#ffee44" stroke-width="3.5" opacity="0.7"/>
+  <line x1="245" y1="78" x2="245" y2="124" stroke="#ffee44" stroke-width="3.5" opacity="0.6"/>
+  <line x1="260" y1="96" x2="265" y2="124" stroke="#ffee44" stroke-width="3.5" opacity="0.7"/>
+  <circle cx="245" cy="64" r="11" fill="#ffee44" stroke="#222" stroke-width="3"/>
 
-  <!-- Blush — soft warm tone -->
-  <circle cx="205" cy="175" r="16" fill="#e8a060" opacity="0.25"/>
-  <circle cx="335" cy="172" r="16" fill="#e8a060" opacity="0.25"/>
-
-  <!-- Sparkle — one, elegant -->
-  <g transform="translate(130,275)" opacity="0.75">
-    <line x1="0" y1="-16" x2="0" y2="16" stroke="#ffe855" stroke-width="4.5" stroke-linecap="round"/>
-    <line x1="-16" y1="0" x2="16" y2="0" stroke="#ffe855" stroke-width="4.5" stroke-linecap="round"/>
-    <line x1="-10" y1="-10" x2="10" y2="10" stroke="#ffe855" stroke-width="3.5" stroke-linecap="round"/>
-    <line x1="10" y1="-10" x2="-10" y2="10" stroke="#ffe855" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- === ONE STAR — bigger, visible at small size === -->
+  <g transform="translate(140,260)" opacity="0.85">
+    <line x1="0" y1="-18" x2="0" y2="18" stroke="#ffee55" stroke-width="5" stroke-linecap="round"/>
+    <line x1="-18" y1="0" x2="18" y2="0" stroke="#ffee55" stroke-width="5" stroke-linecap="round"/>
+    <line x1="-12" y1="-12" x2="12" y2="12" stroke="#ffee55" stroke-width="4" stroke-linecap="round"/>
+    <line x1="12" y1="-12" x2="-12" y2="12" stroke="#ffee55" stroke-width="4" stroke-linecap="round"/>
   </g>
 
-  <!-- Small sparkle -->
-  <g transform="translate(420,120)" opacity="0.55">
-    <line x1="0" y1="-10" x2="0" y2="10" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
-    <line x1="-10" y1="0" x2="10" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/>
+  <!-- === ONE MUSIC NOTE — bigger === -->
+  <g transform="translate(395,300)" opacity="0.7">
+    <ellipse cx="0" cy="0" rx="14" ry="9" fill="#d4b876" transform="rotate(-20)"/>
+    <line x1="12" y1="-4" x2="12" y2="-42" stroke="#d4b876" stroke-width="4"/>
+    <path d="M 12 -42 Q 28 -48 25 -34 Q 22 -24 12 -28" fill="#d4b876"/>
+  </g>
+
+  <!-- === ONE FLOWER === -->
+  <g transform="translate(150,400)" opacity="0.7">
+    <!-- Petals -->
+    <circle cx="0" cy="-10" r="7" fill="#ff77aa"/>
+    <circle cx="9" cy="-3" r="7" fill="#ff77aa"/>
+    <circle cx="6" cy="8" r="7" fill="#ff77aa"/>
+    <circle cx="-6" cy="8" r="7" fill="#ff77aa"/>
+    <circle cx="-9" cy="-3" r="7" fill="#ff77aa"/>
+    <!-- Center -->
+    <circle cx="0" cy="0" r="5" fill="#ffdd44"/>
   </g>
 </svg>
