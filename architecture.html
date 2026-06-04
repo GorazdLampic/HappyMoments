@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HappyMoments — System Architecture v1.1</title>
+<title>HappyMoments — System Architecture v1.3.1</title>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{font-size:17px;scroll-behavior:smooth}
@@ -653,7 +653,7 @@
 <!-- Header -->
 <header class="header">
   <h1><span>HappyMoments</span> &mdash; System Architecture</h1>
-  <p class="subtitle">Celebrate Every Moment Worth Sharing &middot; 21 Languages &middot; Cloudflare Edge &middot; Firebase Auth &middot; Stripe + Printful &middot; Gift Store Live</p>
+  <p class="subtitle">Celebrate Every Moment Worth Sharing &middot; 21 Languages &middot; Cosmic Cycles &middot; Sacred Numbers &middot; Cloudflare Edge &middot; Firebase Auth &middot; Stripe + Printful &middot; Gift Store Live &middot; v15 (1.3.1)</p>
 </header>
 
 <!-- ====================================================================== -->
@@ -712,7 +712,7 @@
     <text x="185" y="57" fill="#aaa" font-size="12">app.js</text>
     <text x="238" y="57" fill="#888" font-size="11">(~4634 lines, 173KB)</text>
     <text x="185" y="74" fill="#aaa" font-size="12">auth.js &middot; analytics.js &middot; checkout.js</text>
-    <text x="185" y="91" fill="#aaa" font-size="12">i18n.js &middot; specialNumbers.js</text>
+    <text x="185" y="91" fill="#aaa" font-size="12">i18n.js &middot; specialNumbers.js (Cosmic+Sacred)</text>
     <text x="185" y="108" fill="#aaa" font-size="12">giftStore.js</text>
     <text x="268" y="108" fill="#fb7185" font-size="11">(28KB, 5 products, 8 collections)</text>
     <text x="185" y="125" fill="#aaa" font-size="12">imageCard.js &middot; sw.js</text>
@@ -780,15 +780,15 @@
     <text x="915" y="205" fill="#888" font-size="11">Quantum Wave Ltd sandbox</text>
     <text x="915" y="222" fill="#888" font-size="10">checkout.session.completed</text>
     <text x="915" y="236" fill="#888" font-size="10">customer.subscription.deleted</text>
-    <text x="915" y="252" fill="#fb7185" font-size="10">+ Gift order checkout (Printful products)</text>
+    <text x="915" y="252" fill="#4ade80" font-size="10">+ Gift order checkout (Printful fully connected)</text>
 
     <!-- Printful Box (NEW) -->
     <rect x="900" y="280" width="210" height="85" rx="10" fill="rgba(244,63,94,.06)" stroke="#fb7185" stroke-width="1.5" opacity=".8"/>
-    <text x="1005" y="303" text-anchor="middle" fill="#fb7185" font-size="14" font-weight="700" letter-spacing="1">PRINTFUL</text>
-    <text x="915" y="321" fill="#aaa" font-size="12">Print-on-demand fulfillment</text>
+    <text x="1005" y="303" text-anchor="middle" fill="#fb7185" font-size="14" font-weight="700" letter-spacing="1">PRINTFUL (FULLY CONNECTED)</text>
+    <text x="915" y="321" fill="#4ade80" font-size="12">Orders confirmed (order ID returned)</text>
     <text x="915" y="337" fill="#888" font-size="11">5 products, 8 themed collections</text>
-    <text x="915" y="353" fill="#666" font-size="10">PRINTFUL_API_TOKEN env var</text>
-    <text x="915" y="363" fill="#666" font-size="10">Order via /api/gift-order.js</text>
+    <text x="915" y="353" fill="#888" font-size="10">Draft orders visible in Printful dashboard</text>
+    <text x="915" y="363" fill="#666" font-size="10">Placeholder PNG design &middot; PRINTFUL_API_TOKEN</text>
 
     <!-- GitHub Box -->
     <rect x="900" y="380" width="210" height="90" rx="10" fill="rgba(212,184,118,.06)" stroke="#d4b876" stroke-width="1.5" opacity=".8"/>
@@ -812,12 +812,14 @@
     <text x="90" y="316" text-anchor="middle" fill="#666" font-size="10">.happymoments</text>
 
     <!-- Celebration Engine box (replaces Viral Mechanics) -->
-    <rect x="25" y="345" width="130" height="75" rx="8" fill="rgba(6,182,212,.06)" stroke="#06b6d4" stroke-width="1.5" opacity=".8"/>
-    <text x="90" y="365" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="700" letter-spacing=".5">CELEBRATE</text>
-    <text x="90" y="380" text-anchor="middle" fill="#888" font-size="10">Share + watermark</text>
-    <text x="90" y="393" text-anchor="middle" fill="#888" font-size="10">Hero milestone card</text>
-    <text x="90" y="406" text-anchor="middle" fill="#888" font-size="10">This Day in History</text>
-    <text x="90" y="416" text-anchor="middle" fill="#666" font-size="9">Nice numbers + palindromes</text>
+    <rect x="25" y="345" width="130" height="95" rx="8" fill="rgba(6,182,212,.06)" stroke="#06b6d4" stroke-width="1.5" opacity=".8"/>
+    <text x="90" y="362" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="700" letter-spacing=".5">CELEBRATE</text>
+    <text x="90" y="376" text-anchor="middle" fill="#888" font-size="10">Share + watermark</text>
+    <text x="90" y="389" text-anchor="middle" fill="#888" font-size="10">Hero milestone card</text>
+    <text x="90" y="402" text-anchor="middle" fill="#888" font-size="10">This Day in History</text>
+    <text x="90" y="415" text-anchor="middle" fill="#fb7185" font-size="10">Cosmic Cycles (7 planets)</text>
+    <text x="90" y="428" text-anchor="middle" fill="#fb7185" font-size="10">Sacred numbers (108, 786...)</text>
+    <text x="90" y="438" text-anchor="middle" fill="#666" font-size="9">Nice numbers + palindromes</text>
 
     <!-- ============ CONNECTION LINES ============ -->
 
@@ -886,11 +888,11 @@
     <line x1="560" y1="515" x2="560" y2="630" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
 
     <!-- Gift Store LIVE -->
-    <text x="700" y="525" text-anchor="middle" fill="#fb7185" font-size="13" font-weight="600">Gift Store (LIVE)</text>
-    <text x="700" y="543" text-anchor="middle" fill="#888" font-size="11">5 products via Printful</text>
-    <text x="700" y="558" text-anchor="middle" fill="#888" font-size="11">8 themed collections</text>
+    <text x="700" y="525" text-anchor="middle" fill="#fb7185" font-size="13" font-weight="600">Gift Store (LIVE - Printful Connected)</text>
+    <text x="700" y="543" text-anchor="middle" fill="#888" font-size="11">5 products via Printful (orders confirmed)</text>
+    <text x="700" y="558" text-anchor="middle" fill="#888" font-size="11">8 themed collections matched to milestones</text>
     <text x="700" y="573" text-anchor="middle" fill="#888" font-size="11">Stripe checkout + Printful fulfillment</text>
-    <text x="700" y="588" text-anchor="middle" fill="#888" font-size="11">Print-ready Canvas designs</text>
+    <text x="700" y="588" text-anchor="middle" fill="#888" font-size="11">Placeholder PNG design, draft orders in dashboard</text>
     <text x="700" y="603" text-anchor="middle" fill="#888" font-size="11">EUR 22-35 per product</text>
 
     <!-- Divider -->
@@ -904,12 +906,12 @@
 
     <!-- Celebration bar -->
     <rect x="30" y="650" width="1140" height="28" rx="6" fill="rgba(6,182,212,.04)" stroke="#06b6d4" stroke-width="1" opacity=".5"/>
-    <text x="600" y="669" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="600" letter-spacing=".5">CELEBRATE: Hero Milestone &middot; This Day in History (197 events) &middot; Nice Numbers &middot; Palindromes &middot; Share in 6 langs &middot; Image cards &middot; Gift store</text>
+    <text x="600" y="669" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="600" letter-spacing=".5">CELEBRATE: Hero Milestone &middot; Cosmic Cycles &middot; Sacred Numbers &middot; This Day in History (197 events) &middot; Nice Numbers &middot; Palindromes &middot; Share in 6 langs &middot; Gift store</text>
 
     <!-- New Features callout -->
     <rect x="30" y="686" width="1140" height="46" rx="6" fill="rgba(244,63,94,.04)" stroke="#fb7185" stroke-width="1" opacity=".5"/>
-    <text x="600" y="704" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">NEW IN v1.1: Hero Milestone Card &middot; This Day in History (197 events) &middot; Daily Nice Numbers (thematic matching) &middot; Gift Store LIVE (Printful + Stripe)</text>
-    <text x="600" y="722" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">8 Gift Collections &middot; Gift Design Generator &middot; Pretty Palindrome Filter &middot; Thematic Bonus Scoring &middot; Form UX Improvements &middot; Year Always Shown</text>
+    <text x="600" y="704" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">NEW IN v1.3.1 (v15): Cosmic Cycles (7 planets, Saturn return) &middot; Sacred Numbers (7, 12, 33, 40, 108, 786) &middot; 6-screen Onboarding &middot; Printful Fully Connected</text>
+    <text x="600" y="722" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">Animations (counter roll-up, gold sparkles, stagger fade-in, number glow, tab transitions, pulse) &middot; Unit Fix in shares &middot; Build system with version code in footer</text>
 
     <!-- ============ GITHUB ECOSYSTEM BAR ============ -->
     <rect x="30" y="748" width="540" height="82" rx="8" fill="rgba(35,134,54,.04)" stroke="#238636" stroke-width="1.2" opacity=".7"/>
@@ -985,7 +987,7 @@
 
     <div class="module">
       <div class="module-name">app.js <span style="color:#d4b876;font-size:.85rem;font-weight:400">~4634 lines, 173KB</span></div>
-      <div class="module-desc">Main application: Hero Milestone card, This Day in History, nice numbers (thematic matching), premium gates, quick share, challenge mechanic, palindrome filter, thematic bonus scoring, form UX improvements</div>
+      <div class="module-desc">Main application: Hero Milestone card, Cosmic Cycles (7 planets, Saturn return), Sacred &amp; Spiritual numbers (7, 12, 33, 40, 108, 786), This Day in History, nice numbers (thematic matching), premium gates, quick share, challenge mechanic, palindrome filter, thematic bonus scoring, animations (counter roll-up, gold sparkles, stagger fade-in, number glow, tab transitions, milestone selection pulse), 6-screen onboarding wizard, unit fix in share messages</div>
       <div class="module-file">web/app.js &rarr; dist/app.min.js (~104KB)</div>
     </div>
 
@@ -997,7 +999,7 @@
 
     <div class="module">
       <div class="module-name">giftStore.js <span class="status-badge status-live">live</span> <span style="color:#fb7185;font-size:.85rem;font-weight:400">28KB</span></div>
-      <div class="module-desc">5 Printful products, 8 themed collections (Number Nerd, Celebrator, Romantic, Family, Achiever, Lucky, Minimalist, Adventurer), gift design generator with print-ready Canvas at Printful dimensions</div>
+      <div class="module-desc">5 Printful products, 8 themed collections matched to milestone types (Number Nerd, Celebrator, Romantic, Family, Achiever, Lucky, Minimalist, Adventurer), gift design generator with print-ready Canvas at Printful dimensions. Printful fully connected: orders confirmed with order ID, draft orders visible in dashboard.</div>
       <div class="module-file">web/giftStore.js</div>
     </div>
 
@@ -1027,13 +1029,13 @@
 
     <div class="module">
       <div class="module-name">specialNumbers.js</div>
-      <div class="module-desc">Number patterns + Asian lucky numbers + thematic matching (2^14 for IBM PC, Pi for Einstein) + pretty palindrome filter (monotone internal pattern)</div>
+      <div class="module-desc">Number patterns + Asian lucky numbers + Sacred &amp; Spiritual numbers (7, 12, 33, 40, 108, 786 &mdash; Biblical + Hindu + Islamic) + Cosmic Cycles (Moon, Mercury, Venus, Mars, Jupiter, Saturn, Chiron returns) + thematic matching (2^14 for IBM PC, Pi for Einstein) + pretty palindrome filter (monotone internal pattern)</div>
       <div class="module-file">web/specialNumbers.js</div>
     </div>
 
     <div class="module">
       <div class="module-name">shareMessages.js <span style="color:#60a5fa;font-size:.82rem;font-weight:400">153KB, 6 langs</span></div>
-      <div class="module-desc">1000+ EN templates + translated templates for PT, HI, ZH, JA, ES</div>
+      <div class="module-desc">1000+ EN templates + translated templates for PT, HI, ZH, JA, ES. Unit fix: all share messages always include the unit (min, sec, days, etc.)</div>
       <div class="module-file">web/shareMessages.js</div>
     </div>
 
@@ -1121,8 +1123,8 @@
         <div class="module-file">functions/api/admin.js</div>
       </div>
       <div class="module" style="border-color:rgba(244,63,94,.25)">
-        <div class="module-name" style="color:#fb7185">gift-order.js <span class="status-badge status-new">new</span></div>
-        <div class="module-desc">Printful order creation + Stripe checkout session for gift products. Connects Printful API for print-on-demand fulfillment.</div>
+        <div class="module-name" style="color:#fb7185">gift-order.js <span class="status-badge status-live">live</span></div>
+        <div class="module-desc">Printful order creation (order ID confirmed) + Stripe checkout session for gift products. Fully connected: draft orders visible in Printful dashboard.</div>
         <div class="module-file">functions/api/gift-order.js</div>
       </div>
     </div>
@@ -1138,7 +1140,7 @@
         <div class="module-desc">Webhook HMAC verification</div>
       </div>
       <div class="module" style="border-color:rgba(244,63,94,.25)">
-        <div class="module-name" style="font-family:'Cascadia Code','Fira Code',monospace;font-size:.92rem;color:#fb7185">PRINTFUL_API_TOKEN <span class="status-badge status-new">new</span></div>
+        <div class="module-name" style="font-family:'Cascadia Code','Fira Code',monospace;font-size:.92rem;color:#fb7185">PRINTFUL_API_TOKEN <span class="status-badge status-live">live</span></div>
         <div class="module-desc">Printful API authentication for gift store orders</div>
       </div>
     </div>
@@ -1209,14 +1211,15 @@
     </div>
 
     <div class="module" style="border-color:rgba(244,63,94,.25)">
-      <div class="module-name"><span class="live-dot"></span>Printful <span class="status-badge status-new">new</span></div>
-      <div class="module-desc">Print-on-demand fulfillment for gift store</div>
+      <div class="module-name"><span class="live-dot"></span>Printful <span class="status-badge status-live">fully connected</span></div>
+      <div class="module-desc">Print-on-demand fulfillment for gift store &mdash; orders confirmed with order ID returned</div>
       <div class="stripe-detail" style="border-color:rgba(244,63,94,.2)">
         <div><strong>Products:</strong> 5 (mugs, t-shirts, posters, etc.)</div>
-        <div><strong>Collections:</strong> 8 themed gift collections</div>
-        <div><strong>Design:</strong> Generated Canvas at Printful print dimensions</div>
+        <div><strong>Collections:</strong> 8 themed collections matched to milestone types</div>
+        <div><strong>Design:</strong> Placeholder PNG design at Printful print dimensions</div>
+        <div><strong>Orders:</strong> Draft orders visible in Printful dashboard</div>
         <div style="color:#999;margin-top:.2rem">Connected via PRINTFUL_API_TOKEN env var</div>
-        <div style="color:#999">Orders created by /api/gift-order.js</div>
+        <div style="color:#999">Orders created by /api/gift-order.js, order ID returned to client</div>
       </div>
     </div>
 
@@ -1289,10 +1292,10 @@
         <div class="plan-price" style="font-size:1.2rem;color:#fb7185">EUR 22&ndash;35 <span>/ product</span></div>
         <ul class="plan-features">
           <li>5 Printful products (mugs, tees, posters...)</li>
-          <li>8 themed collections</li>
-          <li>Print-ready Canvas designs</li>
+          <li>8 themed collections matched to milestone types</li>
+          <li>Printful fully connected (order ID confirmed)</li>
           <li>Stripe checkout + Printful fulfillment</li>
-          <li>Contextual banners for free users</li>
+          <li>Draft orders visible in Printful dashboard</li>
         </ul>
       </div>
       <div class="plan-card">
@@ -1325,12 +1328,24 @@
       <div class="module-desc">197 events across 366 days. Integrated into Today section. Thematic matching with nice numbers (e.g. 2^14 for IBM PC, Pi for Einstein).</div>
     </div>
     <div class="module" style="border-color:rgba(244,63,94,.25)">
+      <div class="module-name" style="color:#fb7185">Cosmic Cycles <span class="status-badge status-new">new v15</span></div>
+      <div class="module-desc">7 planetary milestone types: Moon, Mercury, Venus, Mars, Jupiter, Saturn, Chiron. Planetary returns calculated for each person. Saturn return highlighted as major life milestone (~29.5 years).</div>
+    </div>
+    <div class="module" style="border-color:rgba(244,63,94,.25)">
+      <div class="module-name" style="color:#fb7185">Sacred &amp; Spiritual Numbers <span class="status-badge status-new">new v15</span></div>
+      <div class="module-desc">Numbers with spiritual significance across traditions: 7, 12, 33, 40, 108, 786 (Biblical + Hindu + Islamic). Detected and highlighted in milestone lists.</div>
+    </div>
+    <div class="module" style="border-color:rgba(244,63,94,.25)">
       <div class="module-name" style="color:#fb7185">Daily Nice Numbers <span class="status-badge status-new">new</span></div>
       <div class="module-desc">Thematic number-event matching + pretty palindrome filter (monotone internal pattern only) + thematic bonus scoring</div>
     </div>
+    <div class="module" style="border-color:rgba(244,63,94,.25)">
+      <div class="module-name" style="color:#fb7185">Animations <span class="status-badge status-new">new v15</span></div>
+      <div class="module-desc">Counter roll-up, gold sparkles, stagger fade-in, number glow, tab transitions, milestone selection pulse. Polished micro-interactions throughout the app.</div>
+    </div>
     <div class="module">
-      <div class="module-name">Share Links (6 languages)</div>
-      <div class="module-desc">App link in ALL share messages. Image cards have "happymoments.app" branding. Instagram Story 1080x1920 format.</div>
+      <div class="module-name">Share Links (6 languages) <span class="status-badge status-live">unit fix</span></div>
+      <div class="module-desc">App link in ALL share messages. Unit always included (min, sec, days, etc.). Image cards have "happymoments.app" branding. Instagram Story 1080x1920 format.</div>
     </div>
     <div class="module">
       <div class="module-name">Challenge Mechanic</div>
@@ -1396,7 +1411,7 @@
 <!-- ====================================================================== -->
 <div class="data-flows-section">
   <div class="data-flows-title">
-    <span class="icon">&#x27A1;</span> Data Flows (9)
+    <span class="icon">&#x27A1;</span> Data Flows (11)
   </div>
   <div class="flow-list">
     <div class="flow-item">
@@ -1472,7 +1487,7 @@
       <span class="flow-node be-node" style="border-color:#fb7185">/api/gift-order</span>
       <span class="flow-arrow" style="color:#fb7185">&rarr;</span>
       <span class="flow-node ext-node" style="border-color:#fb7185">Printful API</span>
-      <span style="color:#888;font-size:.88rem">+ Stripe checkout</span>
+      <span style="color:#888;font-size:.88rem">+ Stripe checkout (order ID confirmed)</span>
     </div>
     <div class="flow-item" style="border-color:rgba(244,63,94,.25);background:rgba(244,63,94,.04)">
       <span class="flow-num" style="background:rgba(244,63,94,.2);color:#fb7185">9</span>
@@ -1481,6 +1496,22 @@
       <span class="flow-node pwa-node">app.js (Today)</span>
       <span class="flow-arrow" style="color:#fb7185">&rarr;</span>
       <span style="color:#888;font-size:.88rem">History event + thematic nice number match</span>
+    </div>
+    <div class="flow-item" style="border-color:rgba(244,63,94,.25);background:rgba(244,63,94,.04)">
+      <span class="flow-num" style="background:rgba(244,63,94,.2);color:#fb7185">10</span>
+      <span class="flow-node pwa-node">specialNumbers.js</span>
+      <span class="flow-arrow" style="color:#fb7185">&rarr;</span>
+      <span class="flow-node pwa-node">Cosmic Cycles engine</span>
+      <span class="flow-arrow" style="color:#fb7185">&rarr;</span>
+      <span style="color:#888;font-size:.88rem">7 planetary returns (Moon &rarr; Chiron) + Sacred numbers (7, 12, 33, 40, 108, 786)</span>
+    </div>
+    <div class="flow-item" style="border-color:rgba(244,63,94,.25);background:rgba(244,63,94,.04)">
+      <span class="flow-num" style="background:rgba(244,63,94,.2);color:#fb7185">11</span>
+      <span class="flow-node pwa-node">6-screen onboarding</span>
+      <span class="flow-arrow" style="color:#fb7185">&rarr;</span>
+      <span class="flow-node pwa-node">Hook &rarr; Prefs &rarr; Who &rarr; Name &rarr; Date &rarr; Reveal+Share</span>
+      <span class="flow-arrow" style="color:#fb7185">&rarr;</span>
+      <span style="color:#888;font-size:.88rem">Animated transitions + counter roll-up</span>
     </div>
   </div>
 </div>
@@ -1506,15 +1537,15 @@
 
       <div class="story-step">
         <div class="story-step-num" style="background:rgba(96,165,250,.2);color:#60a5fa">2</div>
-        <div class="story-step-title">First Visit</div>
-        <div class="story-step-desc">Opens app. No registration needed. Sees onboarding: "Enter a date that matters to you." Type selector below main row for clean UX.</div>
+        <div class="story-step-title">6-Screen Onboarding</div>
+        <div class="story-step-desc">Opens app. 6-screen wizard: Hook &rarr; Preferences &rarr; Who &rarr; Name &rarr; Date &rarr; Reveal+Share. Animated transitions with counter roll-up and gold sparkles.</div>
       </div>
       <span class="story-arrow">&rarr;</span>
 
       <div class="story-step">
         <div class="story-step-num" style="background:rgba(74,222,128,.2);color:#4ade80">3</div>
-        <div class="story-step-title">Hero Milestone</div>
-        <div class="story-step-desc">Enters birthday. Instantly sees the Hero Milestone Card &mdash; the #1 "Aha" moment prominently above the list. "You'll be 1 billion seconds on June 15, 2028!"</div>
+        <div class="story-step-title">Hero + Cosmic</div>
+        <div class="story-step-desc">Enters birthday. Instantly sees Hero Milestone Card + Cosmic Cycles (Saturn return, planetary milestones) + Sacred Numbers. Animated counter roll-up and number glow.</div>
       </div>
       <span class="story-arrow">&rarr;</span>
 
@@ -1768,9 +1799,9 @@
           <div style="font-size:.88rem;color:#999;margin-top:.15rem">Unlocks: unlimited people, groups, team views, clean image cards</div>
         </div>
         <div>
-          <div style="font-size:.95rem;font-weight:600;color:#fb7185;margin-bottom:.3rem">Gift Store (Printful)</div>
-          <div style="font-size:.92rem;color:#bbb">EUR 22-35 per product, ~30-40% margin</div>
-          <div style="font-size:.88rem;color:#999;margin-top:.15rem">5 products, 8 themed collections, print-on-demand fulfillment, zero inventory</div>
+          <div style="font-size:.95rem;font-weight:600;color:#fb7185;margin-bottom:.3rem">Gift Store (Printful Fully Connected)</div>
+          <div style="font-size:.92rem;color:#bbb">EUR 22-35 per product, ~30-40% margin, orders confirmed</div>
+          <div style="font-size:.88rem;color:#999;margin-top:.15rem">5 products, 8 themed collections matched to milestone types, print-on-demand, zero inventory</div>
         </div>
         <div>
           <div class="revenue-highlight">
@@ -1999,7 +2030,7 @@
 
 <!-- Footer -->
 <footer class="footer">
-  <p>Quantum Wave Ltd &mdash; June 2026 &mdash; v1.1</p>
+  <p>Quantum Wave Ltd &mdash; June 2026 &mdash; v1.3.1</p>
   <p style="margin-top:.3rem">HappyMoments &middot; Architecture Documentation</p>
 </footer>
 
