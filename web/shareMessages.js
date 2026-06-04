@@ -1188,7 +1188,7 @@ const SHARE_MESSAGES_I18N = {
         ],
         alternating: [
             "{name} com {value} {unit} em {date} \u2014 padr\u00e3o alternado! Os d\u00edgitos est\u00e3o dan\u00e7ando.",
-            "Pra l\u00e1 e pra c\u00e1, como bati\u00e3o de cora\u00e7\u00e3o: {value} {unit} de {name} alterna perfeitamente em {date}.",
+            "Pra l\u00e1 e pra c\u00e1, como batida de cora\u00e7\u00e3o: {value} {unit} de {name} alterna perfeitamente em {date}.",
             "{value} para {name}: um n\u00famero com ritmo pr\u00f3prio! Em {date}.",
             "Como um p\u00eandulo, {value} {unit} de {name} balan\u00e7a entre d\u00edgitos.",
             "O ritmo de {value} combina com o ritmo de {name}: constante e bonito.",
@@ -1231,7 +1231,7 @@ const SHARE_MESSAGES_I18N = {
             "{name} \u0915\u0947 {value} {unit} \u0915\u093e \u091c\u0936\u094d\u0928 \u0906 \u0930\u0939\u093e \u0939\u0948 \u2014 \u092c\u0938 {countdown} \u092c\u093e\u0915\u0940!",
             "{name}: {value} {unit} \u0915\u0940 \u091c\u093c\u093f\u0902\u0926\u0917\u0940 \u0914\u0930 \u0905\u092d\u0940 \u0938\u092c\u0938\u0947 \u0905\u091a\u094d\u091b\u0947 \u0905\u0927\u094d\u092f\u093e\u092f \u0906\u0928\u0947 \u092c\u093e\u0915\u0940 \u0939\u0948\u0902\u0964",
             "{date} \u0915\u094b {name} \u0915\u094b \u0907\u0938 \u0926\u0941\u0928\u093f\u092f\u093e \u092e\u0947\u0902 \u0906\u090f \u0920\u0940\u0915 {value} {unit} \u0939\u094b \u091c\u093e\u090f\u0902\u0917\u0947\u0964 \u0915\u094d\u092f\u093e \u0938\u092b\u093c\u0930!",
-            "{name} \u0915\u0947 {value} {unit} \u2014 \u0939\u0901\u0938\u0940, \u092a\u094d\u092f\u093e\u0930 \u0914\u0930 \u0905\u0926\u094d\u092d\u0941\u0924 \u0939\u094b\u0928\u0947 \u0915\u0947 {unit}\u0964 {date} \u0915\u094b \u0906 \u0930\u0939\u0947 \u0939\u0948\u0902\u0964",
+            "{name} \u0915\u0947 {value} {unit} \u2014 \u0939\u0901\u0938\u0940, \u092a\u094d\u092f\u093e\u0930 \u0914\u0930 \u0905\u0926\u094d\u092d\u0941\u0924 \u0939\u094b\u0928\u0947 \u0915\u0947 \u092a\u0932\u0964 {date} \u0915\u094b \u0906 \u0930\u0939\u0947 \u0939\u0948\u0902\u0964",
             "{name} \u0915\u094b {value} {unit} \u0915\u0940 \u092c\u0927\u093e\u0908 \u0926\u0947\u0928\u0947 \u0915\u0940 \u0924\u0948\u092f\u093e\u0930\u0940 \u0915\u0930\u094b!"
         ],
         round: [
