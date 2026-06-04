@@ -3709,6 +3709,23 @@ function shareAppLink() {
     _track('share_app', { source: 'settings' });
 }
 
+function submitFeedback() {
+    const text = document.getElementById('feedbackText')?.value?.trim();
+    if (!text) {
+        showToast('Please write something first.', 'info');
+        return;
+    }
+    // Send feedback as analytics event (stored in D1)
+    _track('user_feedback', {
+        text: text.substring(0, 500),
+        locale: typeof getAppLocale === 'function' ? getAppLocale() : 'en',
+        events: appData.events.length,
+        user: (typeof HM_AUTH !== 'undefined' && HM_AUTH.isLoggedIn()) ? HM_AUTH.getUserEmail() : 'anonymous'
+    });
+    document.getElementById('feedbackText').value = '';
+    showToast('Thank you! Your feedback helps us improve.', 'success');
+}
+
 let _shareAppPromptCount = 0;
 function promptShareApp() {
     _shareAppPromptCount++;
