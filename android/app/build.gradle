@@ -21,9 +21,9 @@ android {
             def ksFile = file("upload-keystore.jks")
             if (ksFile.exists()) {
                 storeFile ksFile
-                storePassword System.getenv("KEYSTORE_PASSWORD") ?: "happymoments2026"
+                storePassword System.getenv("KEYSTORE_PASSWORD") ?: ""
                 keyAlias "upload"
-                keyPassword System.getenv("KEY_PASSWORD") ?: "happymoments2026"
+                keyPassword System.getenv("KEY_PASSWORD") ?: ""
             }
         }
     }

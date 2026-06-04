@@ -25,6 +25,15 @@ android/.gradle/
 android/build/
 android/local.properties
 
+# Secrets & credentials
+.env
+.env.*
+*.jks
+*.keystore
+google-services.json
+.firebase/
+.wrangler/
+
 # Generated icons (built from SVG)
 web/icons/icon-*.png
 

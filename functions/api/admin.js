@@ -9,11 +9,12 @@
  * Auth: Bearer hm-admin-2026
  */
 
-const ADMIN_TOKEN = 'hm-admin-2026';
+const DEFAULT_ADMIN_TOKEN = 'hm-admin-2026';
 
-function checkAuth(request) {
+function checkAuth(request, env) {
+    const token = env?.ADMIN_TOKEN || DEFAULT_ADMIN_TOKEN;
     const auth = request.headers.get('Authorization');
-    return auth === `Bearer ${ADMIN_TOKEN}`;
+    return auth === `Bearer ${token}`;
 }
 
 function jsonResponse(data, status = 200) {
@@ -24,7 +25,7 @@ function jsonResponse(data, status = 200) {
 }
 
 export async function onRequestGet(context) {
-    if (!checkAuth(context.request)) {
+    if (!checkAuth(context.request, context.env)) {
         return jsonResponse({ error: 'Unauthorized' }, 401);
     }
 
