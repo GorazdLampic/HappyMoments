@@ -2639,6 +2639,16 @@ body {
     margin-bottom: var(--space-xs);
 }
 
+.wizard-reveal-why {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-style: italic;
+    margin-bottom: var(--space-sm);
+}
+.reveal-stagger .wizard-reveal-why { opacity: 0; transform: translateY(10px); }
+.reveal-done .wizard-reveal-why { animation: staggerIn 0.5s ease forwards 0.6s; }
+
 .wizard-reveal-countdown {
     font-family: var(--font-serif);
     font-size: 1.0rem;

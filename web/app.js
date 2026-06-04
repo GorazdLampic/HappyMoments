@@ -1234,18 +1234,33 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
     milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
     allMilestonesFlat = milestones;
 
-    // Find the best milestone for the reveal — from THIS person's milestones only
+    // Find the best milestone for the reveal — prefer universally understood numbers
     const revealEl = document.getElementById(revealElId);
     if (revealEl && milestones.length > 0) {
-        // Score milestones: prefer impressive + near-term
         let best = milestones[0];
         let bestScore = 0;
         milestones.forEach(m => {
-            let score = typeof roundnessScore === 'function' ? roundnessScore(m.value) : 0;
-            if (m.isBigMilestone) score += 80;
-            if (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(m.value)) score += 30;
+            let score = 0;
+            const s = String(m.value);
             const daysAway = m.timeUntil / (24*60*60*1000);
-            score += Math.max(0, 100 - daysAway * 0.27);
+
+            // STRONGLY prefer universally clear milestones for first reveal
+            if (m.isBirthday) score += 150; // upcoming birthday — everyone understands
+            if (m.isBigMilestone) score += 120; // billion seconds, 10K days — wow factor
+            if (m.value >= 1000 && m.value % 1000 === 0) score += 100; // round thousands
+            if (s.length >= 3 && new Set(s).size === 1) score += 90; // repdigit (11111)
+            if (m.isCosmic && m.isSaturnReturn) score += 110; // Saturn return — widely known
+            if (m.isCosmic && m.isVerySpecialCosmic) score += 70; // Jupiter/Chiron
+
+            // DEPRIORITIZE obscure patterns for onboarding reveal
+            if (m.type === 'fibonacci') score += 10; // low — people don't know 2584
+            if (m.type === 'power_of_2') score += 15; // low — 4096 is not obvious
+            if (m.type === 'scientific') score += 10; // low — Pi×10000 is niche
+            if (m.type === 'palindrome') score += 40; // medium — people can see 12321
+
+            // Proximity bonus (closer = better)
+            score += Math.max(0, 80 - daysAway * 0.22);
+
             if (score > bestScore) { bestScore = score; best = m; }
         });
         const m = best;
@@ -1262,7 +1277,8 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 <div class="wizard-reveal-sparkle"></div>
                 <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
             </div>
-            <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
+            <div class="wizard-reveal-unit">${m.isCosmic ? escapeHtml(m.description) : escapeHtml(m.unitName)}</div>
+            ${m.description && !m.isCosmic && !m.isBirthday ? `<div class="wizard-reveal-why">${escapeHtml(m.description)}</div>` : ''}
             <div class="wizard-reveal-date">${dateDisplay}</div>
             <div class="wizard-reveal-countdown">${countdown} from now</div>
         `;

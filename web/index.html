@@ -105,7 +105,7 @@
                     <p class="wizard-hook-subtitle">Let's find them together</p>
                 </div>
                 <button class="wizard-btn" onclick="wizardNext(2)">Let's find out &rarr;</button>
-                <div class="wizard-progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <div class="wizard-progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
 
             <!-- Screen 2: Preferences -->
@@ -141,7 +141,7 @@
                     <p class="wizard-pref-hint">We recommend keeping all active. You can adjust later in Settings.</p>
                 </div>
                 <button class="wizard-btn" onclick="wizardSavePreference(); wizardNext(3)">Next &rarr;</button>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <div class="wizard-progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
 
             <!-- Screen 3: Who first? -->
@@ -154,7 +154,7 @@
                         <button class="wizard-choice-btn" onclick="wizardChooseWho('other')">Someone I care about &#128157;</button>
                     </div>
                 </div>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
 
             <!-- Screen 4: Name -->
@@ -166,7 +166,7 @@
                     <input type="hidden" id="birthDate">
                 </div>
                 <button class="wizard-btn" onclick="wizardNameNext()">Next &rarr;</button>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
             </div>
 
             <!-- Screen 5: Date -->
@@ -183,7 +183,7 @@
                     </div>
                 </div>
                 <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscover()">Discover &rarr;</button>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
             </div>
 
             <!-- Screen 6: Your Reveal -->
@@ -192,10 +192,10 @@
                     <!-- Populated by wizardDiscover() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardNext(7)">What about a friend?</button>
-                    <button class="wizard-btn-tertiary" onclick="wizardFinish()">Explore milestones</button>
+                    <button class="wizard-btn" onclick="wizardShare()">Share this milestone</button>
+                    <button class="wizard-btn-secondary" onclick="wizardFinish()">Explore all milestones</button>
                 </div>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
             </div>
 
             <!-- Screen 7: Friend entry -->
