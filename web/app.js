@@ -290,15 +290,16 @@ function handleDeepLink() {
 }
 
 const DEEPLINK_TEXT = {
-    shared_with_you: { en: 'Someone shared these special moments with you.', pt: 'Alguem compartilhou esses momentos especiais com voce.', hi: 'किसी ने ये विशेष पल आपके साथ साझा किए।', zh: '有人与你分享了这些特别的时刻。', ja: '特別な瞬間があなたと共有されました。', es: 'Alguien compartio estos momentos especiales contigo.', de: 'Jemand hat diese besonderen Momente mit dir geteilt.', fr: 'Quelqu\'un a partage ces moments speciaux avec vous.', it: 'Qualcuno ha condiviso questi momenti speciali con te.', sl: 'Nekdo je s tabo delil te posebne trenutke.', ko: '누군가 특별한 순간을 공유했습니다.', th: 'มีคนแชร์ช่วงเวลาพิเศษเหล่านี้กับคุณ' },
-    whens_yours: { en: 'When\'s <strong>YOUR</strong> special number?', pt: 'Qual e o <strong>SEU</strong> numero especial?', hi: '<strong>आपका</strong> विशेष नंबर कब है?', zh: '<strong>你的</strong>特别数字是什么时候？', ja: '<strong>あなたの</strong>特別な数字は？', es: 'Cual es <strong>TU</strong> numero especial?', de: 'Wann ist <strong>DEINE</strong> besondere Zahl?', fr: 'Quel est <strong>VOTRE</strong> numero special?', it: 'Qual e il <strong>TUO</strong> numero speciale?', sl: 'Kdaj je <strong>TVOJA</strong> posebna stevilka?', ko: '<strong>당신의</strong> 특별한 숫자는?', th: 'ตัวเลขพิเศษของ<strong>คุณ</strong>คืออะไร?' },
-    discover_mine: { en: 'Discover My Milestones', pt: 'Descobrir Meus Marcos', hi: 'मेरे माइलस्टोन खोजें', zh: '发现我的里程碑', ja: '私のマイルストーンを発見', es: 'Descubrir Mis Hitos', de: 'Meine Meilensteine entdecken', fr: 'Decouvrir Mes Jalons', it: 'Scopri i Miei Traguardi', sl: 'Odkrij moje mejnike', ko: '내 마일스톤 발견', th: 'ค้นพบเหตุการณ์สำคัญของฉัน' },
-    just_browsing: { en: 'Just browsing', pt: 'So olhando', hi: 'बस देख रहा हूँ', zh: '随便看看', ja: 'ちょっと見てるだけ', es: 'Solo mirando', de: 'Nur schauen', fr: 'Je regarde', it: 'Sto solo guardando', sl: 'Samo gledam', ko: '그냥 구경', th: 'แค่ดูเฉยๆ' },
+    shared_with_you: { en: 'Someone shared these special moments with you.', pt: 'Algu\u00e9m compartilhou esses momentos especiais com voc\u00ea.', hi: 'किसी ने ये विशेष पल आपके साथ साझा किए।', zh: '有人与你分享了这些特别的时刻。', ja: '特別な瞬間があなたと共有されました。', es: 'Alguien comparti\u00f3 estos momentos especiales contigo.', de: 'Jemand hat diese besonderen Momente mit dir geteilt.', fr: 'Quelqu\'un a partag\u00e9 ces moments sp\u00e9ciaux avec vous.', it: 'Qualcuno ha condiviso questi momenti speciali con te.', sl: 'Nekdo je s tabo delil te posebne trenutke.', ko: '누군가 특별한 순간을 공유했습니다.', th: 'มีคนแชร์ช่วงเวลาพิเศษเหล่านี้กับคุณ' },
+    whens_yours: { en: 'When\'s <strong>YOUR</strong> special number?', pt: 'Qual \u00e9 o <strong>SEU</strong> n\u00famero especial?', hi: '<strong>आपका</strong> विशेष नंबर कब है?', zh: '<strong>你的</strong>特别数字是什么时候？', ja: '<strong>あなたの</strong>特別な数字は？', es: '\u00bfCu\u00e1l es <strong>TU</strong> n\u00famero especial?', de: 'Wann ist <strong>DEINE</strong> besondere Zahl?', fr: 'Quel est <strong>VOTRE</strong> num\u00e9ro sp\u00e9cial\u00a0?', it: 'Qual \u00e8 il <strong>TUO</strong> numero speciale?', sl: 'Kdaj je <strong>TVOJA</strong> posebna \u0161tevilka?', ko: '<strong>당신의</strong> 특별한 숫자는?', th: 'ตัวเลขพิเศษของ<strong>คุณ</strong>คืออะไร?' },
+    discover_mine: { en: 'Discover My Milestones', pt: 'Descobrir Meus Marcos', hi: 'मेरे माइलस्टोन खोजें', zh: '发现我的里程碑', ja: '私のマイルストーンを発見', es: 'Descubrir Mis Hitos', de: 'Meine Meilensteine entdecken', fr: 'D\u00e9couvrir Mes Jalons', it: 'Scopri i Miei Traguardi', sl: 'Odkrij moje mejnike', ko: '내 마일스톤 발견', th: 'ค้นพบเหตุการณ์สำคัญของฉัน' },
+    just_browsing: { en: 'Just browsing', pt: 'S\u00f3 olhando', hi: 'बस देख रहा हूँ', zh: '随便看看', ja: 'ちょっと見てるだけ', es: 'Solo mirando', de: 'Nur schauen', fr: 'Je regarde', it: 'Sto solo guardando', sl: 'Samo gledam', ko: '그냥 구경', th: 'แค่ดูเฉยๆ' },
 };
 function _dlText(key) {
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
+    const baseLang = locale.split('_')[0];
     const entry = DEEPLINK_TEXT[key];
-    return (entry && entry[locale]) || (entry && entry.en) || key;
+    return (entry && (entry[locale] || entry[baseLang])) || (entry && entry.en) || key;
 }
 
 function showDeepLinkPreview(name, date) {
@@ -1125,33 +1126,57 @@ function wizardTogglePreference(btn) {
 function wizardSavePreference() {
     const selected = document.querySelectorAll('#wizardPreferenceOptions .wizard-option.selected');
     const prefs = Array.from(selected).map(b => b.dataset.pref);
-    try { localStorage.setItem('hm_preferred_patterns', JSON.stringify(prefs.length > 0 ? prefs : ['math','palindromes','round','lucky'])); } catch(e) {}
+    const prefList = prefs.length > 0 ? prefs : ['math','palindromes','round','lucky','sacred','cosmic'];
+    try { localStorage.setItem('hm_preferred_patterns', JSON.stringify(prefList)); } catch(e) {}
+
+    // Apply wizard preferences to the actual appSettings.patterns
+    // Map wizard categories to appSettings pattern keys
+    const hasMath = prefList.includes('math');
+    const hasPalindromes = prefList.includes('palindromes');
+    const hasRound = prefList.includes('round');
+    const hasLucky = prefList.includes('lucky');
+
+    appSettings.patterns.scientific = hasMath;
+    appSettings.patterns.fibonacci = hasMath;
+    appSettings.patterns.powers2 = hasMath;
+    appSettings.patterns.palindromes = hasPalindromes;
+    appSettings.patterns.powers = hasRound;
+    appSettings.patterns.repdigits = hasRound;
+    appSettings.patterns.sequential = hasRound;
+    appSettings.patterns.alternating = hasRound;
+    appSettings.patterns.lucky = hasLucky;
+
+    // Save the settings so they persist
+    saveSettings();
 }
 
 // --- Screen 3: Who first? ---
 function wizardChooseWho(type) {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const nameInput = document.getElementById('birthName');
     if (type === 'self') {
-        if (nameInput) nameInput.value = 'My Birthday';
-        document.getElementById('wizardNameTitle').textContent = "What's your name?";
+        if (nameInput) nameInput.value = _t('wizard_my_birthday');
+        document.getElementById('wizardNameTitle').textContent = _t('wizard_name_self');
     } else {
         if (nameInput) nameInput.value = '';
-        document.getElementById('wizardNameTitle').textContent = "What's their name?";
+        document.getElementById('wizardNameTitle').textContent = _t('wizard_name_other');
     }
     wizardNext(4);
 }
 
 // --- Screen 4: Name next ---
 function wizardNameNext() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const name = document.getElementById('birthName')?.value?.trim();
     if (!name) {
-        showToast('Please enter a name', 'error');
+        showToast(_t('wizard_please_enter_name'), 'error');
         return;
     }
     // Update date screen title with the name
     const dateTitle = document.getElementById('wizardDateTitle');
     if (dateTitle) {
-        dateTitle.textContent = "When is " + name + "'s birthday?";
+        const template = _t('wizard_date_title');
+        dateTitle.textContent = template.replace('{name}', name);
     }
     wizardNext(5);
 }
@@ -1318,11 +1343,12 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
 
 // --- Screen 5: Discover (user's own milestone) ---
 function wizardDiscover() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const name = document.getElementById('birthName')?.value?.trim();
     const dateStr = buildDateFromFields('birth');
 
     if (!name || !dateStr) {
-        showToast('Please enter a name and date', 'error');
+        showToast(_t('wizard_please_enter_name_date'), 'error');
         return;
     }
 
@@ -1343,11 +1369,12 @@ function wizardDiscover() {
 
 // --- Screen 7 → 8: Discover friend's milestone ---
 function wizardDiscoverFriend() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const name = document.getElementById('friendName')?.value?.trim();
     const dateStr = buildDateFromFields('friend');
 
     if (!name || !dateStr) {
-        showToast('Please enter a name and date', 'error');
+        showToast(_t('wizard_please_enter_name_date'), 'error');
         return;
     }
 
@@ -1359,13 +1386,13 @@ function wizardDiscoverFriend() {
     if (friendRevealEl) {
         const shareTitle = document.createElement('div');
         shareTitle.className = 'wizard-share-title';
-        shareTitle.textContent = 'Share this with ' + name + '!';
+        shareTitle.textContent = _t('wizard_friend_share') + ': ' + name + '!';
         friendRevealEl.insertBefore(shareTitle, friendRevealEl.firstChild);
     }
 
     // Update share button text
     const shareBtn = document.getElementById('wizardShareFriendBtn');
-    if (shareBtn) shareBtn.textContent = 'Share with ' + name + ' \u2192';
+    if (shareBtn) shareBtn.textContent = _t('wizard_friend_share') + ' ' + name + ' \u2192';
 
     _track('wizard_friend_added', { event_count: appData.events.length });
 
@@ -1380,6 +1407,7 @@ function wizardDiscoverFriend() {
 
 // --- Screen 6: Share own milestone (kept for backward compat) ---
 function wizardShare() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const m = window._wizardMilestone;
     if (m) {
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
@@ -1387,7 +1415,7 @@ function wizardShare() {
             navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
         } else {
             navigator.clipboard.writeText(message).then(() => {
-                showToast('Copied! Share it with your friends.', 'success');
+                showToast(_t('wizard_copied_share'), 'success');
             }).catch(() => {});
         }
         _track('wizard_share', { value: m.value, unit: m.unit });
@@ -1396,6 +1424,7 @@ function wizardShare() {
 
 // --- Screen 8: Share friend's milestone ---
 function wizardShareFriend() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const m = window._wizardFriendMilestone;
     if (m) {
         const friendName = window._wizardFriendName || 'your friend';
@@ -1404,7 +1433,7 @@ function wizardShareFriend() {
             navigator.share({ title: 'HappyMoment for ' + friendName, text: message }).catch(() => {});
         } else {
             navigator.clipboard.writeText(message).then(() => {
-                showToast('Copied! Send it to ' + friendName + '.', 'success');
+                showToast(_t('wizard_copied_send').replace('{name}', friendName), 'success');
             }).catch(() => {});
         }
         _track('wizard_share_friend', { value: m.value, unit: m.unit });
@@ -3504,12 +3533,17 @@ function pickShareTemplate(category) {
     if (typeof SHARE_MESSAGES === 'undefined') return null;
 
     // Try locale-specific messages first
-    const locale = getAppLocale().split('-')[0]; // 'pt-BR' -> 'pt'
-    if (locale !== 'en' && typeof SHARE_MESSAGES_I18N !== 'undefined' && SHARE_MESSAGES_I18N[locale]) {
-        const localeMessages = SHARE_MESSAGES_I18N[locale];
-        const templates = localeMessages[category] || localeMessages.generic || [];
-        if (templates.length > 0) {
-            return templates[Math.floor(Math.random() * templates.length)];
+    // Handle both hyphen (pt-BR) and underscore (pt_BR) locale formats
+    const rawLocale = getAppLocale();
+    const locale = rawLocale.split('-')[0]; // 'pt-BR' -> 'pt'
+    const baseLang = locale.split('_')[0]; // 'pt_BR' -> 'pt'
+    if (locale !== 'en' && typeof SHARE_MESSAGES_I18N !== 'undefined') {
+        const localeMessages = SHARE_MESSAGES_I18N[locale] || SHARE_MESSAGES_I18N[baseLang];
+        if (localeMessages) {
+            const templates = localeMessages[category] || localeMessages.generic || [];
+            if (templates.length > 0) {
+                return templates[Math.floor(Math.random() * templates.length)];
+            }
         }
     }
 
@@ -3551,8 +3585,9 @@ function fillShareTemplate(template, m) {
     // If template doesn't mention date/countdown, append it
     if (!template.includes('{date}') && !template.includes('{countdown}')) {
         const locale = getAppLocale().split('-')[0];
-        const fallbackTpl = (typeof SHARE_DATE_FALLBACK_I18N !== 'undefined' && SHARE_DATE_FALLBACK_I18N[locale])
-            ? SHARE_DATE_FALLBACK_I18N[locale]
+        const baseLang = locale.split('_')[0];
+        const fallbackTpl = (typeof SHARE_DATE_FALLBACK_I18N !== 'undefined' && (SHARE_DATE_FALLBACK_I18N[locale] || SHARE_DATE_FALLBACK_I18N[baseLang]))
+            ? (SHARE_DATE_FALLBACK_I18N[locale] || SHARE_DATE_FALLBACK_I18N[baseLang])
             : ' On {date} \u2014 {countdown} from now!';
         filled += fallbackTpl.replace(/\{date\}/g, dateStr).replace(/\{countdown\}/g, countdown);
     }
@@ -3581,9 +3616,10 @@ const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 https:/
 
 function getAppShareLink(milestone) {
     const locale = getAppLocale().split('-')[0];
+    const baseLang = locale.split('_')[0];
     let linkText;
-    if (typeof APP_SHARE_LINK_I18N !== 'undefined' && APP_SHARE_LINK_I18N[locale]) {
-        linkText = APP_SHARE_LINK_I18N[locale];
+    if (typeof APP_SHARE_LINK_I18N !== 'undefined' && (APP_SHARE_LINK_I18N[locale] || APP_SHARE_LINK_I18N[baseLang])) {
+        linkText = APP_SHARE_LINK_I18N[locale] || APP_SHARE_LINK_I18N[baseLang];
     } else {
         linkText = APP_SHARE_LINK_DEFAULT;
     }
@@ -4908,15 +4944,16 @@ function checkTeamViewLimit() {
 // Upgrade text with i18n fallback
 const UPGRADE_TEXT = {
     go_premium: { en: 'Go Premium', pt: 'Seja Premium', hi: 'प्रीमियम लें', zh: '升级高级版', ja: 'プレミアムへ', es: 'Hazte Premium', ko: '프리미엄', th: 'อัพเกรด' },
-    clean_experience: { en: 'clean cards, no banners', pt: 'sem anuncios, cartoes limpos', hi: 'विज्ञापन-मुक्त', zh: '无广告，干净卡片', ja: '広告なし', es: 'sin anuncios', ko: '광고 없음', th: 'ไม่มีโฆษณา' },
+    clean_experience: { en: 'clean cards, no banners', pt: 'sem an\u00fancios, cart\u00f5es limpos', hi: 'विज्ञापन-मुक्त', zh: '无广告，干净卡片', ja: '広告なし', es: 'sin anuncios', ko: '광고 없음', th: 'ไม่มีโฆษณา' },
     upgrade_now: { en: 'Upgrade Now', pt: 'Atualizar Agora', hi: 'अभी अपग्रेड करें', zh: '立即升级', ja: '今すぐアップグレード', es: 'Mejorar Ahora', ko: '지금 업그레이드', th: 'อัพเกรดเลย' },
-    maybe_later: { en: 'Maybe later', pt: 'Talvez depois', hi: 'बाद में', zh: '以后再说', ja: 'あとで', es: 'Quizas luego', ko: '나중에', th: 'ไว้ทีหลัง' },
+    maybe_later: { en: 'Maybe later', pt: 'Talvez depois', hi: 'बाद में', zh: '以后再说', ja: 'あとで', es: 'Quiz\u00e1s luego', ko: '나중에', th: 'ไว้ทีหลัง' },
     unlimited: { en: 'Unlimited people & groups', pt: 'Pessoas e grupos ilimitados', hi: 'असीमित लोग और समूह', zh: '无限人数和群组', ja: '無制限の人数とグループ', es: 'Personas y grupos ilimitados', ko: '무제한 인원 및 그룹', th: 'ไม่จำกัดคนและกลุ่ม' },
 };
 function _ut(key) {
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
+    const baseLang = locale.split('_')[0];
     const entry = UPGRADE_TEXT[key];
-    return (entry && entry[locale]) || (entry && entry.en) || key;
+    return (entry && (entry[locale] || entry[baseLang])) || (entry && entry.en) || key;
 }
 
 function showPremiumBanner() {
