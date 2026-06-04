@@ -3536,9 +3536,12 @@ function fillShareTemplate(template, m) {
         why = m.description || m.type || 'special';
     }
 
+    // If template uses {value} but not {unit}, combine them so unit is never lost
+    const valueWithUnit = (unit && !template.includes('{unit}')) ? `${val} ${unit}` : val;
+
     let filled = template
         .replace(/\{name\}/g, name)
-        .replace(/\{value\}/g, val)
+        .replace(/\{value\}/g, valueWithUnit)
         .replace(/\{unit\}/g, unit)
         .replace(/\{date\}/g, dateStr)
         .replace(/\{countdown\}/g, countdown)
