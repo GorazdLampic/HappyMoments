@@ -299,6 +299,7 @@ function renderGiftSuggestions(milestone) {
     // Show gifts for any moderately special milestone
     const isSpecialEnough = milestone.isBirthday
         || milestone.isBigMilestone
+        || milestone.isCosmic
         || (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(milestone.value))
         || (milestone.value >= 1000 && milestone.value % 1000 === 0)
         || (milestone.type && milestone.type !== 'special');

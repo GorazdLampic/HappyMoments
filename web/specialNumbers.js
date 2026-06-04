@@ -631,6 +631,9 @@ function classifyNumber(num, settings) {
         types.push({ type: 'custom', description: _t('custom_label') || 'Your special number' });
     }
 
+    // Note: cosmic milestones (planetary returns) are classified separately
+    // via findCosmicMilestones() — they carry their own type/description.
+
     if (types.length === 0) {
         types.push({ type: 'special', description: _t('special_label') || 'Special number' });
     }

@@ -303,3 +303,146 @@ function formatDateShort(date) {
         year: 'numeric'
     });
 }
+
+// ============================================================
+// COSMIC CYCLES — Planetary Return Milestones
+// ============================================================
+// These are astronomical facts: when a planet completes a full orbit
+// since the person's birthday, it returns to (approximately) the same
+// position it occupied at birth.
+
+const PLANETARY_PERIODS = {
+    moon:    { days: 27.322,   name: 'lunar return',    unitKey: 'lunar_return' },
+    mercury: { days: 87.969,  name: 'Mercury return',  unitKey: 'mercury_return' },
+    venus:   { days: 224.701, name: 'Venus return',    unitKey: 'venus_return' },
+    mars:    { days: 686.971, name: 'Mars return',     unitKey: 'mars_return' },
+    jupiter: { days: 4332.59, name: 'Jupiter return',  unitKey: 'jupiter_return' },
+    saturn:  { days: 10759.22,name: 'Saturn return',   unitKey: 'saturn_return' },
+    chiron:  { days: 18520,   name: 'Chiron return',   unitKey: 'chiron_return' }
+};
+
+// Which return numbers are "round enough" for fast planets
+const FAST_PLANET_ROUND_RETURNS = {
+    moon:    [500, 1000, 1500, 2000, 2500, 3000, 5000, 10000],
+    mercury: [100, 200, 300, 500, 1000],
+    venus:   [50, 100, 150, 200, 250, 500]
+};
+
+// Descriptions for notable returns
+function getCosmicDescription(planet, returnNumber) {
+    const key = planet + '_' + returnNumber;
+    const descriptions = {
+        saturn_1:  'First Saturn return \u2014 a major life transition',
+        saturn_2:  'Second Saturn return \u2014 wisdom and mastery',
+        saturn_3:  'Third Saturn return \u2014 legacy and reflection',
+        jupiter_1: 'First Jupiter return \u2014 growth chapter begins',
+        jupiter_2: 'Second Jupiter return \u2014 expanding horizons',
+        jupiter_3: 'Third Jupiter return \u2014 finding purpose',
+        jupiter_4: 'Fourth Jupiter return \u2014 deeper understanding',
+        jupiter_5: 'Fifth Jupiter return \u2014 life in perspective',
+        jupiter_6: 'Sixth Jupiter return \u2014 gathered wisdom',
+        jupiter_7: 'Seventh Jupiter return \u2014 full circle',
+        chiron_1:  'Chiron return \u2014 the wounded healer, wisdom milestone',
+        mars_1:    'Mars return \u2014 energy renewal cycle'
+    };
+
+    if (descriptions[key]) return descriptions[key];
+
+    // Generic descriptions
+    const planetNames = {
+        saturn: 'Saturn', jupiter: 'Jupiter', mars: 'Mars',
+        chiron: 'Chiron', venus: 'Venus', mercury: 'Mercury', moon: 'Moon'
+    };
+    const pName = planetNames[planet] || planet;
+
+    if (planet === 'mars') return 'Mars return \u2014 energy renewal cycle';
+    if (planet === 'moon') return ordinal(returnNumber) + ' lunar return \u2014 Moon completes its orbit';
+    if (planet === 'mercury') return ordinal(returnNumber) + ' Mercury return \u2014 Mercury completes its orbit';
+    if (planet === 'venus') return ordinal(returnNumber) + ' Venus return \u2014 Venus completes its orbit';
+    return ordinal(returnNumber) + ' ' + pName + ' return \u2014 ' + pName + ' completes its orbit';
+}
+
+function ordinal(n) {
+    const s = ['th','st','nd','rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+/**
+ * Find upcoming cosmic (planetary return) milestones for a given birthday.
+ * Returns milestones in the same format as findBigMilestones.
+ *
+ * @param {Date|string} startDate - Birthday / start date
+ * @returns {Array} Array of milestone objects with isCosmic flag
+ */
+function findCosmicMilestones(startDate) {
+    const start = startDate instanceof Date ? startDate : new Date(startDate);
+    const now = new Date();
+    const maxMs = 1.5 * 365.25 * 24 * 60 * 60 * 1000; // 1.5 years ahead
+    const maxDate = new Date(now.getTime() + maxMs);
+    const milestones = [];
+    const dayMs = 24 * 60 * 60 * 1000;
+
+    // Days since birth
+    const daysSinceBirth = (now.getTime() - start.getTime()) / dayMs;
+    if (daysSinceBirth < 0) return milestones; // future date
+
+    for (const [planet, info] of Object.entries(PLANETARY_PERIODS)) {
+        const periodDays = info.days;
+        const isFast = !!FAST_PLANET_ROUND_RETURNS[planet];
+
+        // Current return number (how many full orbits completed)
+        const currentReturn = Math.floor(daysSinceBirth / periodDays);
+
+        if (isFast) {
+            // Fast planets: only show "round" return numbers
+            const roundReturns = FAST_PLANET_ROUND_RETURNS[planet];
+            for (const rn of roundReturns) {
+                if (rn <= currentReturn) continue; // already passed
+                const milestoneDate = new Date(start.getTime() + rn * periodDays * dayMs);
+                if (milestoneDate <= now) continue;
+                if (milestoneDate > maxDate) continue;
+
+                milestones.push({
+                    value: rn,
+                    unit: info.unitKey,
+                    unitName: info.name,
+                    date: milestoneDate,
+                    type: 'cosmic',
+                    description: getCosmicDescription(planet, rn),
+                    timeUntil: milestoneDate.getTime() - now.getTime(),
+                    isCosmic: true,
+                    planet: planet
+                });
+            }
+        } else {
+            // Slow planets (Mars, Jupiter, Saturn, Chiron): show ALL upcoming returns
+            // Start from the next return after current
+            const startReturn = currentReturn + 1;
+            // Cap search at a reasonable number of returns
+            const maxReturns = planet === 'mars' ? 3 : 5;
+            for (let rn = startReturn; rn < startReturn + maxReturns; rn++) {
+                const milestoneDate = new Date(start.getTime() + rn * periodDays * dayMs);
+                if (milestoneDate <= now) continue;
+                if (milestoneDate > maxDate) break; // ordered, so can break
+
+                const isSaturnReturn = (planet === 'saturn');
+                milestones.push({
+                    value: rn,
+                    unit: info.unitKey,
+                    unitName: info.name,
+                    date: milestoneDate,
+                    type: 'cosmic',
+                    description: getCosmicDescription(planet, rn),
+                    timeUntil: milestoneDate.getTime() - now.getTime(),
+                    isCosmic: true,
+                    isSaturnReturn: isSaturnReturn,
+                    isVerySpecialCosmic: isSaturnReturn || planet === 'chiron' || planet === 'jupiter',
+                    planet: planet
+                });
+            }
+        }
+    }
+
+    return milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
+}

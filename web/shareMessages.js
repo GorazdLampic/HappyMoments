@@ -889,6 +889,19 @@ const SHARE_MESSAGES = {
         "Your ages in the ratio {value}: this won't happen again. Toast to it on {date}!"
     ],
 
+    cosmic: [
+        "{name}'s {value} is coming on {date}! {why}.",
+        "A cosmic milestone for {name}: {value} on {date}. The planets align!",
+        "{name} reaches their {value} on {date}. An astronomical fact worth celebrating!",
+        "The cosmos marks a milestone for {name}: {value} arrives on {date}. {why}.",
+        "{value} for {name} on {date} \u2014 a moment written in the orbits of planets.",
+        "On {date}, {name} experiences their {value}. {why}. The universe keeps time too!",
+        "{name}'s {value}: {why}. Coming {date}.",
+        "The planets have something to say about {name}: {value} arrives on {date}.",
+        "{value} for {name}. Not astrology \u2014 astronomy. A real orbital milestone on {date}!",
+        "Every {value} marks a cosmic chapter. {name}'s next one is {date}."
+    ],
+
     generic: [
         "{name} is about to hit {value} {unit}! That's {why}. Time to prepare the celebration!",
         "Did you know? {name} will reach exactly {value} {unit} on {date}. What a milestone!",

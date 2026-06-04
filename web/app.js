@@ -317,6 +317,16 @@ function showDeepLinkPreview(name, date) {
         });
     }
 
+    // Add cosmic milestones (planetary returns)
+    if (typeof findCosmicMilestones === 'function') {
+        const cosmicOnes = findCosmicMilestones(date);
+        cosmicOnes.forEach(cm => {
+            if (!milestones.some(m => m.unit === cm.unit && m.value === cm.value)) {
+                milestones.push(cm);
+            }
+        });
+    }
+
     milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
 
     // Build preview HTML
@@ -1215,6 +1225,10 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
     if (typeof findBigMilestones === 'function') {
         const big = findBigMilestones(date, appSettings || {});
         big.forEach(b => { if (!milestones.some(m => m.value === b.value && m.unit === b.unit)) milestones.push(b); });
+    }
+    if (typeof findCosmicMilestones === 'function') {
+        const cosmic = findCosmicMilestones(date);
+        cosmic.forEach(c => { if (!milestones.some(m => m.unit === c.unit && m.value === c.value)) milestones.push(c); });
     }
     milestones.forEach(m => { m.eventName = name; m.eventId = appData.events[appData.events.length - 1].id; });
     milestones.sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -2222,6 +2236,14 @@ function handleComboTypeChange() {
 
 // Get appropriate wording for milestone based on event type
 function getEventMilestoneDescription(event, milestone) {
+    // Cosmic milestones carry their own description
+    if (milestone.isCosmic) {
+        const name = escapeHtml(event.name);
+        const cosmicOrd = typeof ordinal === 'function' ? ordinal(milestone.value) : milestone.value;
+        const label = (milestone.value === 1 ? '' : cosmicOrd + ' ') + milestone.unitName;
+        return `${name}'s ${label}`;
+    }
+
     const type = event.type || 'birthday';
     const value = milestone.value.toLocaleString();
     const unit = milestone.unitName;
@@ -2450,6 +2472,16 @@ function findHeroMilestone() {
             });
         }
 
+        // Cosmic milestones (planetary returns)
+        if (typeof findCosmicMilestones === 'function') {
+            const cosmicOnes = findCosmicMilestones(e.date);
+            cosmicOnes.forEach(cm => {
+                if (!milestones.some(m => m.unit === cm.unit && m.value === cm.value)) {
+                    milestones.push(cm);
+                }
+            });
+        }
+
         milestones.forEach(m => {
             m.eventName = e.name;
             m.eventId = e.id;
@@ -2466,13 +2498,18 @@ function findHeroMilestone() {
         const daysAway = m.timeUntil / (24 * 60 * 60 * 1000);
 
         // Roundness component (0-200+)
-        let rScore = m.isBirthday ? 40 : roundnessScore(m.value);
+        let rScore = m.isBirthday ? 40 : (m.isCosmic ? 0 : roundnessScore(m.value));
 
         // Big milestone bonus
         if (m.isBigMilestone) rScore += 80;
 
+        // Cosmic milestone bonus (Saturn return = very important)
+        if (m.isCosmic) {
+            rScore += m.isSaturnReturn ? 120 : (m.isVerySpecialCosmic ? 70 : 30);
+        }
+
         // Very special bonus
-        if (!m.isBirthday && isVerySpecialNumber(m.value)) rScore += 30;
+        if (!m.isBirthday && !m.isCosmic && isVerySpecialNumber(m.value)) rScore += 30;
 
         // Proximity bonus: within 30 days = max bonus, decays over 365 days
         let pScore;
@@ -2503,7 +2540,7 @@ function renderHeroMilestone() {
 
     const hero = findHeroMilestone();
     // Only show hero if it's genuinely impressive (not weak alternating patterns etc.)
-    if (!hero || !isVerySpecialNumber(hero.value)) {
+    if (!hero || (!isVerySpecialNumber(hero.value) && !hero.isCosmic)) {
         heroEl.style.display = 'none';
         return;
     }
@@ -2517,6 +2554,10 @@ function renderHeroMilestone() {
     if (hero.isBirthday) {
         displayValue = hero.description; // e.g. "Turns 30"
         displayUnit = hero.unitName;     // "birthday" or "anniversary"
+    } else if (hero.isCosmic) {
+        const cosmicOrdinal = typeof ordinal === 'function' ? ordinal(hero.value) : hero.value;
+        displayValue = (hero.value === 1 ? '' : cosmicOrdinal + ' ') + hero.unitName;
+        displayUnit = '';
     } else {
         displayValue = hero.value.toLocaleString();
         displayUnit = hero.unitName;
@@ -2526,16 +2567,21 @@ function renderHeroMilestone() {
     let sentence;
     if (hero.isBirthday) {
         sentence = `${hero.eventName} ${hero.description.toLowerCase()}`;
+    } else if (hero.isCosmic) {
+        sentence = `${hero.eventName}'s ${displayValue}`;
     } else {
         sentence = `${hero.eventName} will be ${displayValue} ${displayUnit} old`;
     }
 
+    const heroClasses = hero.isCosmic ? 'hero-milestone-inner cosmic-hero' + (hero.isSaturnReturn ? ' saturn-return' : '') : 'hero-milestone-inner';
     heroEl.innerHTML = `
-        <div class="hero-milestone-inner">
+        <div class="${heroClasses}">
             <div class="hero-value-row">
+                ${hero.isCosmic ? '<span class="hero-cosmic-icon">\u2731</span>' : ''}
                 <span class="hero-value">${hero.isBirthday ? hero.description : displayValue}</span>
-                ${!hero.isBirthday ? `<span class="hero-unit">${displayUnit}</span>` : ''}
+                ${!hero.isBirthday && !hero.isCosmic ? `<span class="hero-unit">${displayUnit}</span>` : ''}
             </div>
+            ${hero.isCosmic && hero.description ? `<div class="hero-cosmic-desc">${hero.description}</div>` : ''}
             <div class="hero-details">
                 <span class="hero-person">${escapeHtml(hero.eventName)}</span>
                 <span class="hero-separator">&mdash;</span>
@@ -2661,14 +2707,24 @@ function renderMostSpecialMilestones() {
             });
         }
 
+        // Add cosmic milestones (planetary returns)
+        if (typeof findCosmicMilestones === 'function') {
+            const cosmicOnes = findCosmicMilestones(e.date);
+            cosmicOnes.forEach(cm => {
+                if (!milestones.some(m => m.unit === cm.unit && m.value === cm.value)) {
+                    milestones.push(cm);
+                }
+            });
+        }
+
         milestones.forEach(m => {
             m.eventName = e.name;
             m.eventId = e.id;
             m.eventType = e.type || 'birthday';
             m.fullDescription = getEventMilestoneDescription(e, m);
         });
-        // Only add very special milestones
-        const verySpecial = milestones.filter(m => isVerySpecialNumber(m.value) || m.isBigMilestone);
+        // Only add very special milestones (including cosmic)
+        const verySpecial = milestones.filter(m => isVerySpecialNumber(m.value) || m.isBigMilestone || m.isCosmic);
         allMilestonesFlat = allMilestonesFlat.concat(verySpecial);
     });
 
@@ -2685,20 +2741,38 @@ function renderMostSpecialMilestones() {
             const timeUntilStr = formatTimeDistance(m.timeUntil);
             const dateStr = formatDateWithTime(m.date);
 
-            html += `
-                <div class="milestone-item-vertical very-special ${selectedMilestone === idx ? 'selected-for-share' : ''}"
-                     onclick="selectMilestoneForShare(${idx})">
-                    <div class="miv-left">
-                        <div class="miv-value">${m.value.toLocaleString()}</div>
-                        <div class="miv-unit">${m.unitName}</div>
+            if (m.isCosmic) {
+                const cosmicLabel = (m.value === 1 ? '' : (typeof ordinal === 'function' ? ordinal(m.value) : m.value) + ' ') + m.unitName;
+                html += `
+                    <div class="milestone-item-vertical very-special cosmic-milestone ${m.isSaturnReturn ? 'saturn-return' : ''} ${selectedMilestone === idx ? 'selected-for-share' : ''}"
+                         onclick="selectMilestoneForShare(${idx})">
+                        <div class="miv-left">
+                            <div class="miv-value"><span class="cm-cosmic-icon">\u2731</span> ${cosmicLabel}</div>
+                        </div>
+                        <div class="miv-right">
+                            <div class="miv-person">${m.eventName}</div>
+                            <div class="miv-when">${dateStr}</div>
+                            <div class="miv-countdown">${timeUntilStr}</div>
+                            <div class="miv-cosmic-desc">${m.description}</div>
+                        </div>
                     </div>
-                    <div class="miv-right">
-                        <div class="miv-person">${m.eventName}</div>
-                        <div class="miv-when">${dateStr}</div>
-                        <div class="miv-countdown">${timeUntilStr}</div>
+                `;
+            } else {
+                html += `
+                    <div class="milestone-item-vertical very-special ${selectedMilestone === idx ? 'selected-for-share' : ''}"
+                         onclick="selectMilestoneForShare(${idx})">
+                        <div class="miv-left">
+                            <div class="miv-value">${m.value.toLocaleString()}</div>
+                            <div class="miv-unit">${m.unitName}</div>
+                        </div>
+                        <div class="miv-right">
+                            <div class="miv-person">${m.eventName}</div>
+                            <div class="miv-when">${dateStr}</div>
+                            <div class="miv-countdown">${timeUntilStr}</div>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
         });
     }
 
@@ -2798,9 +2872,22 @@ function renderPersonColumns() {
             });
         }
 
+        // Add cosmic milestones (planetary returns)
+        if (typeof findCosmicMilestones === 'function') {
+            const cosmicOnes = findCosmicMilestones(event.date);
+            cosmicOnes.forEach(cm => {
+                if (!milestones.some(m => m.unit === cm.unit && m.value === cm.value)) {
+                    milestones.push(cm);
+                }
+            });
+        }
+
         // Score and sort by combined roundness + proximity
         milestones.forEach(m => {
-            const rScore = roundnessScore(m.value);
+            // Cosmic milestones get a fixed score (not based on roundnessScore of small return numbers)
+            const rScore = m.isCosmic
+                ? (m.isSaturnReturn ? 150 : (m.isVerySpecialCosmic ? 80 : 40))
+                : roundnessScore(m.value);
             const daysAway = m.timeUntil / (24 * 60 * 60 * 1000);
             // Proximity score: closer = higher (max ~100 for today, ~0 for 365d away)
             const pScore = Math.max(0, 100 - daysAway * 0.27);
@@ -2847,6 +2934,20 @@ function renderPersonColumns() {
                              onclick="selectMilestoneForShare(${m.globalIdx})">
                             <div class="cm-line1"><span class="cm-num">${m.description}</span><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
                             <div class="cm-line2"><span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span></div>
+                        </div>
+                    `;
+                } else if (m.isCosmic) {
+                    // Cosmic milestone — planetary return
+                    const cosmicSpecial = m.isVerySpecialCosmic || m.isSaturnReturn;
+                    const cosmicLabel = (m.value === 1 ? '' : ordinal(m.value) + ' ') + m.unitName;
+                    html += `
+                        <div class="column-milestone cosmic-milestone ${cosmicSpecial ? 'very-special' : ''} ${m.isSaturnReturn ? 'saturn-return' : ''} ${hiddenClass} ${selected}"
+                             onclick="selectMilestoneForShare(${m.globalIdx})">
+                            <div class="cm-line1"><span class="cm-cosmic-icon">\u2731</span> <span class="cm-num">${cosmicLabel}</span><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line2">
+                                <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
+                                <span class="cm-alt-b cm-cosmic-desc">${m.description}</span>
+                            </div>
                         </div>
                     `;
                 } else {
@@ -3030,7 +3131,9 @@ function filterNearbyMilestones(milestones) {
     if (!milestones || milestones.length === 0) return milestones;
 
     // Special unit types that shouldn't be filtered by proximity
-    const specialUnits = ['ratio', 'percent', 'multiple', 'halflife', 'crossover', 'double', 'gap_multiple'];
+    const specialUnits = ['ratio', 'percent', 'multiple', 'halflife', 'crossover', 'double', 'gap_multiple',
+        'lunar_return', 'mercury_return', 'venus_return', 'mars_return',
+        'jupiter_return', 'saturn_return', 'chiron_return'];
 
     // Group milestones by unit
     const byUnit = {};
@@ -3403,10 +3506,19 @@ function pickShareTemplate(category) {
 function fillShareTemplate(template, m) {
     const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
     const countdown = formatTimeDistance(m.timeUntil);
-    const val = m.value.toLocaleString();
-    const unit = m.unitName;
     const name = m.eventName || 'someone special';
-    const why = m.description || m.type || 'special';
+    // For cosmic milestones, format value+unit as a single label
+    let val, unit, why;
+    if (m.isCosmic) {
+        const cosmicOrd = typeof ordinal === 'function' ? ordinal(m.value) : m.value;
+        val = (m.value === 1 ? '' : cosmicOrd + ' ') + m.unitName;
+        unit = '';
+        why = m.description || 'a cosmic cycle milestone';
+    } else {
+        val = m.value.toLocaleString();
+        unit = m.unitName;
+        why = m.description || m.type || 'special';
+    }
 
     let filled = template
         .replace(/\{name\}/g, name)
@@ -3431,6 +3543,7 @@ function fillShareTemplate(template, m) {
 
 function getShareCategory(m) {
     if (m.isBirthday) return 'birthday';
+    if (m.isCosmic) return 'cosmic';
     if (m.eventId === 'combined_sum' || m.eventName === 'Combined Sum') return 'combined';
     if (m.eventId === 'combined_ratio' || m.type === 'ratio') return 'ratio';
     // Map milestone type to message category
@@ -3439,7 +3552,8 @@ function getShareCategory(m) {
         'repdigit': 'repdigit', 'palindrome': 'palindrome',
         'fibonacci': 'fibonacci', 'power_of_2': 'power_of_2',
         'scientific': 'scientific', 'sequential': 'sequential',
-        'alternating': 'alternating'
+        'alternating': 'alternating',
+        'cosmic': 'cosmic'
     };
     return typeMap[m.type] || 'generic';
 }
