@@ -102,6 +102,11 @@ function findAllUpcomingMilestones(startDate, maxResults, maxDaysAhead, settings
 
         for (const num of relevantNumbers) {
             if (num > currentAge) {
+                // Filter ugly milestones: months need to be round (×100) or very special,
+                // weeks need to be round (×100) or very special
+                if (unit === 'months' && num % 100 !== 0 && num < 1000 && !isPowerOf10(num)) continue;
+                if (unit === 'weeks' && num % 100 !== 0 && num < 1000 && !isPowerOf10(num)) continue;
+
                 const milestoneDate = calculateMilestoneDate(startDate, num, unit);
 
                 if (milestoneDate.getTime() <= maxDateMs) {

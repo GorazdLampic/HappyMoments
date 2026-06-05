@@ -101,83 +101,26 @@
                 <span class="wizard-header-title">HappyMoments</span>
             </div>
 
-            <!-- Screen 1: Hook -->
+            <!-- Screen 1: Hook with examples -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content">
                     <h1 class="wizard-hook-title" data-i18n="wizard_hook_title">Your life is full of hidden milestones worth celebrating</h1>
-                    <p class="wizard-hook-subtitle" data-i18n="wizard_hook_subtitle">Let's find them together</p>
+                    <div class="wizard-examples">
+                        <p class="wizard-example" data-i18n="wizard_example_1">You will turn <strong>1,000,000,000 seconds</strong> old. Do you know when?</p>
+                        <p class="wizard-example" data-i18n="wizard_example_2">Your friend might be exactly <strong>10,000 days</strong> old next week &mdash; a perfect reason to call.</p>
+                    </div>
                 </div>
-                <button class="wizard-btn" onclick="wizardNext(2)" data-i18n="wizard_hook_btn">Let's find out &rarr;</button>
-                <div class="wizard-progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+                <button class="wizard-btn" onclick="wizardNext(2)" data-i18n="wizard_hook_btn">Find my milestones &rarr;</button>
             </div>
 
-            <!-- Screen 2: Preferences -->
+            <!-- Screen 2: Name + Date (combined) -->
             <div class="wizard-step" id="wizardStep2">
+                <button class="wizard-back" onclick="wizardNext(1)">&larr;</button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question" data-i18n="wizard_pref_title">What kind of numbers excite you?</h2>
-                    <div class="wizard-options" id="wizardPreferenceOptions">
-                        <button class="wizard-option selected" data-pref="math" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_math">Math wonders</span><span class="wizard-option-example" data-i18n="wizard_pref_math_ex">Pi, Fibonacci, powers of 2</span></span>
-                        </button>
-                        <button class="wizard-option selected" data-pref="palindromes" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_palindromes">Palindromes</span><span class="wizard-option-example" data-i18n="wizard_pref_palindromes_ex">12321, 45654</span></span>
-                        </button>
-                        <button class="wizard-option selected" data-pref="round" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_round">Round milestones</span><span class="wizard-option-example" data-i18n="wizard_pref_round_ex">10,000 days, 1 million minutes</span></span>
-                        </button>
-                        <button class="wizard-option selected" data-pref="lucky" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_lucky">Lucky numbers</span><span class="wizard-option-example" data-i18n="wizard_pref_lucky_ex">888, 520 &mdash; I love you</span></span>
-                        </button>
-                        <button class="wizard-option selected" data-pref="sacred" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_sacred">Sacred &amp; spiritual</span><span class="wizard-option-example" data-i18n="wizard_pref_sacred_ex">7, 12, 33, 40, 108, 786</span></span>
-                        </button>
-                        <button class="wizard-option selected" data-pref="cosmic" onclick="wizardTogglePreference(this)">
-                            <span class="wizard-option-check">&#10003;</span>
-                            <span class="wizard-option-text"><span class="wizard-option-label" data-i18n="wizard_pref_cosmic">Cosmic cycles</span><span class="wizard-option-example" data-i18n="wizard_pref_cosmic_ex">Saturn return, Jupiter return, lunar cycles</span></span>
-                        </button>
-                    </div>
-                    <p class="wizard-pref-hint" data-i18n="wizard_pref_hint">We recommend keeping all active. You can adjust later in Settings.</p>
-                </div>
-                <button class="wizard-btn" onclick="wizardSavePreference(); wizardNext(3)" data-i18n="wizard_next">Next &rarr;</button>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-            </div>
-
-            <!-- Screen 3: Who first? -->
-            <div class="wizard-step" id="wizardStep3">
-                <button class="wizard-back" onclick="wizardNext(2)">&larr;</button>
-                <div class="wizard-content">
-                    <h2 class="wizard-question" data-i18n="wizard_who_title">Let's start with...</h2>
-                    <div class="wizard-choices">
-                        <button class="wizard-choice-btn" onclick="wizardChooseWho('self')"><span data-i18n="wizard_who_self">My own birthday</span> &#127874;</button>
-                        <button class="wizard-choice-btn" onclick="wizardChooseWho('other')"><span data-i18n="wizard_who_other">Someone I care about</span> &#128157;</button>
-                    </div>
-                </div>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-            </div>
-
-            <!-- Screen 4: Name -->
-            <div class="wizard-step" id="wizardStep4">
-                <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
-                <div class="wizard-content">
-                    <h2 class="wizard-question" id="wizardNameTitle" data-i18n="wizard_name_title">What's the name?</h2>
+                    <h2 class="wizard-question" id="wizardNameTitle" data-i18n="wizard_name_date_title">Enter a name and birthday</h2>
                     <input type="text" id="birthName" class="wizard-input" data-i18n-placeholder="wizard_name_placeholder" placeholder="e.g. Anna, Mom, My partner" autocomplete="off">
                     <input type="hidden" id="birthDate">
-                </div>
-                <button class="wizard-btn" onclick="wizardNameNext()" data-i18n="wizard_next">Next &rarr;</button>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
-            </div>
-
-            <!-- Screen 5: Date -->
-            <div class="wizard-step" id="wizardStep5">
-                <button class="wizard-back" onclick="wizardNext(4)">&larr;</button>
-                <div class="wizard-content">
-                    <h2 class="wizard-question" id="wizardDateTitle" data-i18n="wizard_date_title">When is their birthday?</h2>
-                    <div class="wizard-date-fields">
+                    <div class="wizard-date-fields" style="margin-top: 20px;">
                         <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'birthMonth', 2)">
                         <span class="wizard-date-sep">/</span>
                         <input type="number" id="birthMonth" placeholder="MM" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'birthYear', 2)">
@@ -186,8 +129,12 @@
                     </div>
                 </div>
                 <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscover()" data-i18n="wizard_discover_btn">Discover &rarr;</button>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
             </div>
+
+            <!-- Screens 3-5 removed (preferences in Settings, who/name/date combined above) -->
+            <div class="wizard-step" id="wizardStep3"></div>
+            <div class="wizard-step" id="wizardStep4"></div>
+            <div class="wizard-step" id="wizardStep5"></div>
 
             <!-- Screen 6: Your Reveal -->
             <div class="wizard-step" id="wizardStep6">

@@ -2322,6 +2322,27 @@ body {
     text-align: center;
 }
 
+.wizard-examples {
+    margin-top: var(--space-lg);
+    max-width: 380px;
+    text-align: center;
+}
+
+.wizard-example {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+    font-style: italic;
+}
+
+.wizard-example strong {
+    color: var(--warning);
+    font-weight: 600;
+    font-style: normal;
+}
+
 .wizard-subtitle {
     font-family: var(--font-serif);
     font-size: 1.15rem;
