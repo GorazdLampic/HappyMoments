@@ -227,7 +227,15 @@ function init() {
 
     // Date fields are now DD/MM/YYYY number inputs — no max needed
 
-    checkConsent();
+    // Hide consent banner and lang picker during onboarding
+    // Consent is auto-accepted when user taps first wizard button
+    if (appData.events.length === 0 && !localStorage.getItem('hm_onboarded')) {
+        const langPicker = document.getElementById('langPicker');
+        if (langPicker) langPicker.style.display = 'none';
+        // Don't show consent banner — will auto-accept on first wizard tap
+    } else {
+        checkConsent();
+    }
 
     // Init notifications
     if (typeof NOTIF !== 'undefined') {
@@ -1099,6 +1107,14 @@ function validateDateFields(dateStr) {
 // ============================================================
 
 function wizardNext(step) {
+    // Auto-accept consent on first wizard interaction (no tap needed)
+    if (!localStorage.getItem('happymoments_consent')) {
+        acceptConsent();
+    }
+    // Hide lang picker during onboarding — user starts in browser language
+    const langPicker = document.getElementById('langPicker');
+    if (langPicker) langPicker.style.display = 'none';
+
     // Hide all steps
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     const nextStep = document.getElementById('wizardStep' + step);
@@ -1453,6 +1469,9 @@ function wizardFinish() {
     // Dismiss wizard, show the normal dashboard
     onboardingSection.classList.add('hidden');
     tabNav.classList.remove('hidden');
+    // Restore lang picker
+    const langPicker = document.getElementById('langPicker');
+    if (langPicker) langPicker.style.display = '';
     updateSetSwitcher();
     selectedPersonIds = appData.events.map(e => e.id);
     renderPersonFilter();
