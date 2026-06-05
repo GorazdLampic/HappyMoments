@@ -220,6 +220,23 @@ let _mostSpecialMode = false; // When true, show only very special milestones ac
 // ============================================================
 
 function init() {
+    // ?reset in URL clears all data and shows fresh onboarding
+    if (window.location.search.includes('reset')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        // Unregister service worker to clear cached assets
+        if (navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                regs.forEach(r => r.unregister());
+            });
+        }
+        // Clear caches
+        if (window.caches) {
+            caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+    }
+
     loadDarkMode();
     loadData();
     loadSettings();
