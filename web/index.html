@@ -102,15 +102,11 @@
 
             <!-- Screen 1: Hook + Date entry -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
-                <div class="wizard-content">
-                    <div class="wizard-examples">
-                        <p class="wizard-example">Somewhere between your 31st and 32nd birthday, you quietly turn <strong>1,000,000,000 seconds</strong> old.</p>
-                        <p class="wizard-example">Your mom might hit <strong>20,000 days</strong> next Tuesday &mdash; imagine calling her with that.</p>
-                    </div>
-                    <h2 class="wizard-question wizard-date-prompt" data-i18n="wizard_enter_date">When were you born?</h2>
+                <div class="wizard-content wizard-content-centered">
+                    <p class="wizard-single-hook">You have a <strong>billionth-second birthday.</strong><br>When is it?</p>
                     <input type="hidden" id="birthName" value="Me">
                     <input type="hidden" id="birthDate">
-                    <div class="wizard-date-fields">
+                    <div class="wizard-date-fields wizard-date-large">
                         <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'birthMonth', 2)">
                         <span class="wizard-date-sep">/</span>
                         <input type="number" id="birthMonth" placeholder="MM" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'birthYear', 2)">
@@ -118,7 +114,7 @@
                         <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" class="wizard-date-field" oninput="syncDateFields(this)">
                     </div>
                 </div>
-                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscoverV5()" data-i18n="wizard_discover_btn">Show me &rarr;</button>
+                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscoverV5()" data-i18n="wizard_discover_btn">Show me</button>
             </div>
 
             <!-- Screen 2: Your Billion Reveal (counter animation) -->
@@ -127,7 +123,7 @@
                     <!-- Populated by wizardDiscoverV5() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShowMore()" data-i18n="wizard_whatelse_btn">What else is coming? &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardShowMore()" data-i18n="wizard_whatelse_btn">That's not all &mdash; see more</button>
                 </div>
             </div>
 

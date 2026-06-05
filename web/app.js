@@ -1329,17 +1329,31 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         });
         const countdown = typeof formatTimeDistance === 'function' ? formatTimeDistance(m.timeUntil) : '';
 
-        // Build reveal HTML with sparkle wrapper and stagger container
+        // Emotional framing for countdown (Spotify Wrapped style)
+        const daysAway = Math.ceil(m.timeUntil / (24*60*60*1000));
+        let countdownText = '';
+        if (m.timeUntil <= 0) {
+            const daysPast = Math.abs(daysAway);
+            countdownText = daysPast <= 1 ? 'That was yesterday!' : `You passed this ${countdown} ago`;
+        } else if (daysAway <= 1) {
+            countdownText = 'That\u2019s today!';
+        } else if (daysAway <= 7) {
+            countdownText = `That\u2019s this week!`;
+        } else if (daysAway <= 30) {
+            countdownText = `Coming in just ${daysAway} days`;
+        } else {
+            countdownText = `${countdown} from now`;
+        }
+
+        // Build reveal HTML — clean, spacious, large type
         revealEl.innerHTML = `
-            <div class="wizard-reveal-name">${escapeHtml(m.eventName || name)}</div>
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-sparkle"></div>
                 <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
             </div>
             <div class="wizard-reveal-unit">${m.isCosmic ? escapeHtml(m.description) : escapeHtml(m.unitName)}</div>
-            ${m.description && !m.isCosmic && !m.isBirthday ? `<div class="wizard-reveal-why">${escapeHtml(m.description)}</div>` : ''}
             <div class="wizard-reveal-date">${dateDisplay}</div>
-            <div class="wizard-reveal-countdown">${countdown} from now</div>
+            <div class="wizard-reveal-countdown">${countdownText}</div>
         `;
 
         // Store for sharing (keyed so we can have both user and friend)

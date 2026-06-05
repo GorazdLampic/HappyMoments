@@ -2322,12 +2322,41 @@ body {
     text-align: center;
 }
 
+/* Screen 1: Single hook — Calm/Headspace style: one thought, one action */
+.wizard-single-hook {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    max-width: 340px;
+    font-style: italic;
+}
+.wizard-single-hook strong {
+    color: var(--warning);
+    font-style: normal;
+}
+.wizard-content-centered {
+    justify-content: center;
+}
+
+/* Large date fields — Cash App style: big, obvious, centered */
+.wizard-date-large .wizard-date-field {
+    width: 80px;
+    padding: 18px 10px;
+    font-size: 1.6rem;
+}
+.wizard-date-large .wizard-date-sep {
+    font-size: 1.6rem;
+}
+
+/* Legacy examples (kept for other screens) */
 .wizard-examples {
     margin-top: var(--space-md);
     max-width: 400px;
     text-align: center;
 }
-
 .wizard-example {
     font-family: var(--font-serif);
     font-size: 1.35rem;
@@ -2336,19 +2365,11 @@ body {
     margin-bottom: var(--space-lg);
     font-style: italic;
 }
-
 .wizard-example strong {
     color: var(--warning);
     font-weight: 600;
     font-style: normal;
     font-size: 1.4rem;
-}
-
-.wizard-date-prompt {
-    margin-top: var(--space-xl);
-    font-size: 1.6rem;
-    color: var(--text-primary);
-    text-align: center;
 }
 
 /* v5 onboarding: milestone list on screen 3 */
@@ -2970,6 +2991,9 @@ body {
     .wizard-title { font-size: 2.2rem; }
     .wizard-hook-title { font-size: 2.2rem; }
     .wizard-hook-subtitle { font-size: 1.5rem; }
+    .wizard-single-hook { font-size: 1.7rem; }
+    .wizard-date-large .wizard-date-field { width: 70px; padding: 16px 8px; font-size: 1.4rem; }
+    .wizard-date-large .wizard-date-sep { font-size: 1.4rem; }
     .wizard-subtitle { font-size: 1.05rem; }
     .wizard-question { font-size: 1.3rem; }
     .wizard-input { font-size: 1.1rem; padding: 14px 16px; }
