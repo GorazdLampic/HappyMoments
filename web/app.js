@@ -244,11 +244,12 @@ function init() {
 
     // Date fields are now DD/MM/YYYY number inputs — no max needed
 
-    // Hide consent banner and lang picker during onboarding
-    // Consent is auto-accepted when user taps first wizard button
+    // Hide header, consent banner, and lang picker during onboarding
     if (appData.events.length === 0 && !localStorage.getItem('hm_onboarded')) {
         const langPicker = document.getElementById('langPicker');
         if (langPicker) langPicker.style.display = 'none';
+        const header = document.querySelector('.header');
+        if (header) header.style.display = 'none';
         // Don't show consent banner — will auto-accept on first wizard tap
     } else {
         checkConsent();
@@ -1573,7 +1574,9 @@ function wizardFinish() {
     // Dismiss wizard, show the normal dashboard
     onboardingSection.classList.add('hidden');
     tabNav.classList.remove('hidden');
-    // Restore lang picker
+    // Restore header and lang picker
+    const header = document.querySelector('.header');
+    if (header) header.style.display = '';
     const langPicker = document.getElementById('langPicker');
     if (langPicker) langPicker.style.display = '';
     updateSetSwitcher();
