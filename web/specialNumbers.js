@@ -405,49 +405,49 @@ const DEFAULT_SETTINGS = {
 // Time unit configurations with short abbreviations
 const TIME_UNITS = {
     seconds: {
-        name: 'sec',
+        name: 'seconds',
         plural: 'seconds',
-        short: 's',
+        short: 'sec',
         msMultiplier: 1000,
-        maxReasonable: 15000000000  // 15 billion for combined milestones (10B+)
+        maxReasonable: 15000000000
     },
     minutes: {
-        name: 'min',
+        name: 'minutes',
         plural: 'minutes',
         short: 'min',
         msMultiplier: 60 * 1000,
-        maxReasonable: 200000000  // 200 million for combined
+        maxReasonable: 200000000
     },
     hours: {
-        name: 'hrs',
+        name: 'hours',
         plural: 'hours',
-        short: 'h',
+        short: 'hrs',
         msMultiplier: 60 * 60 * 1000,
-        maxReasonable: 3000000  // 3 million for combined
+        maxReasonable: 3000000
     },
     days: {
-        name: 'd',
+        name: 'days',
         plural: 'days',
         short: 'd',
         msMultiplier: 24 * 60 * 60 * 1000,
         maxReasonable: 50000
     },
     weeks: {
-        name: 'w',
+        name: 'weeks',
         plural: 'weeks',
         short: 'w',
         msMultiplier: 7 * 24 * 60 * 60 * 1000,
         maxReasonable: 7000
     },
     months: {
-        name: 'mo',
+        name: 'months',
         plural: 'months',
         short: 'mo',
         msMultiplier: 30.44 * 24 * 60 * 60 * 1000,
         maxReasonable: 1500
     },
     years: {
-        name: 'y',
+        name: 'years',
         plural: 'years',
         short: 'y',
         msMultiplier: 365.25 * 24 * 60 * 60 * 1000,

@@ -102,10 +102,32 @@ function findAllUpcomingMilestones(startDate, maxResults, maxDaysAhead, settings
 
         for (const num of relevantNumbers) {
             if (num > currentAge) {
-                // Filter ugly milestones: months need to be round (×100) or very special,
-                // weeks need to be round (×100) or very special
-                if (unit === 'months' && num % 100 !== 0 && num < 1000 && !isPowerOf10(num)) continue;
-                if (unit === 'weeks' && num % 100 !== 0 && num < 1000 && !isPowerOf10(num)) continue;
+                // ── Coherence filter: only show numbers that make sense for each unit ──
+                // Seconds/minutes: only round thousands, powers of 10, repdigits (1B, 500M, 11111111)
+                // No palindromes, Fibonacci, alternating — "25,252,525 minutes" means nothing
+                if (unit === 'seconds' || unit === 'minutes') {
+                    const isRound = num % 1000 === 0 || isPowerOf10(num);
+                    const isRepdigit = String(num).length >= 4 && new Set(String(num)).size === 1;
+                    const isAsianLucky = [888, 8888, 88888, 888888, 8888888, 9999, 99999, 999999, 1314, 5201314].includes(num);
+                    if (!isRound && !isRepdigit && !isAsianLucky) continue;
+                }
+                // Hours: round hundreds, powers of 10, repdigits
+                if (unit === 'hours') {
+                    const isRound = num % 100 === 0 || isPowerOf10(num);
+                    const isRepdigit = String(num).length >= 3 && new Set(String(num)).size === 1;
+                    if (!isRound && !isRepdigit && num > 100) continue;
+                }
+                // Weeks: only round hundreds or powers of 10
+                if (unit === 'weeks' && num % 100 !== 0 && !isPowerOf10(num) && num > 100) continue;
+                // Months: only round hundreds or meaningful numbers (108, 786, etc.)
+                if (unit === 'months' && num % 100 !== 0 && num > 100 && !isPowerOf10(num)) {
+                    // Allow sacred/cultural numbers
+                    const isCultural = [108, 786, 888, 1008, 1314].includes(num);
+                    if (!isCultural) continue;
+                }
+                // Days: allow more variety (palindromes, Fibonacci work here)
+                // but still filter obscure ones under 1000 that aren't round
+                // Years: show everything (small numbers, all meaningful)
 
                 const milestoneDate = calculateMilestoneDate(startDate, num, unit);
 

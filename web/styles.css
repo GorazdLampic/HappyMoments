@@ -46,14 +46,14 @@
     --space-xl: 26px;
     --space-2xl: 38px;
 
-    --font-size-xs: 0.82rem;
-    --font-size-sm: 0.9rem;
+    --font-size-xs: 0.88rem;
+    --font-size-sm: 1rem;
     --font-size-base: 1.06rem;
-    --font-size-lg: 1.12rem;
-    --font-size-xl: 1.2rem;
-    --font-size-2xl: 1.45rem;
-    --font-size-3xl: 1.75rem;
-    --font-size-4xl: 2.2rem;
+    --font-size-lg: 1.15rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.85rem;
+    --font-size-4xl: 2.3rem;
 
     --radius-sm: 3px;
     --radius-md: 5px;
