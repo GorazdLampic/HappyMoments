@@ -1374,14 +1374,14 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
     return true;
 }
 
-// --- Screen 5: Discover (user's own milestone) ---
+// --- Discover (user's own milestone from onboarding) ---
 function wizardDiscover() {
     const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
-    const name = document.getElementById('birthName')?.value?.trim();
+    const name = document.getElementById('birthName')?.value?.trim() || 'Me';
     const dateStr = buildDateFromFields('birth');
 
-    if (!name || !dateStr) {
-        showToast(_t('wizard_please_enter_name_date'), 'error');
+    if (!dateStr) {
+        showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error');
         return;
     }
 

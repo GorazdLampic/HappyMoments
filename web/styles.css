@@ -2343,6 +2343,12 @@ body {
     font-style: normal;
 }
 
+.wizard-date-prompt {
+    margin-top: var(--space-xl);
+    font-size: 1.4rem;
+    color: var(--text-primary);
+}
+
 .wizard-subtitle {
     font-family: var(--font-serif);
     font-size: 1.15rem;

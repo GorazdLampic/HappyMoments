@@ -101,26 +101,17 @@
                 <span class="wizard-header-title">HappyMoments</span>
             </div>
 
-            <!-- Screen 1: Hook with examples -->
+            <!-- Screen 1: Examples + Date entry — single screen onboarding -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content">
-                    <h1 class="wizard-hook-title" data-i18n="wizard_hook_title">Your life is full of hidden milestones worth celebrating</h1>
                     <div class="wizard-examples">
                         <p class="wizard-example" data-i18n="wizard_example_1">You will turn <strong>1,000,000,000 seconds</strong> old. Do you know when?</p>
                         <p class="wizard-example" data-i18n="wizard_example_2">Your friend might be exactly <strong>10,000 days</strong> old next week &mdash; a perfect reason to call.</p>
                     </div>
-                </div>
-                <button class="wizard-btn" onclick="wizardNext(2)" data-i18n="wizard_hook_btn">Find my milestones &rarr;</button>
-            </div>
-
-            <!-- Screen 2: Name + Date (combined) -->
-            <div class="wizard-step" id="wizardStep2">
-                <button class="wizard-back" onclick="wizardNext(1)">&larr;</button>
-                <div class="wizard-content">
-                    <h2 class="wizard-question" id="wizardNameTitle" data-i18n="wizard_name_date_title">Enter a name and birthday</h2>
-                    <input type="text" id="birthName" class="wizard-input" data-i18n-placeholder="wizard_name_placeholder" placeholder="e.g. Anna, Mom, My partner" autocomplete="off">
+                    <h2 class="wizard-question wizard-date-prompt" data-i18n="wizard_enter_date">Enter your birthday</h2>
+                    <input type="hidden" id="birthName" value="Me">
                     <input type="hidden" id="birthDate">
-                    <div class="wizard-date-fields" style="margin-top: 20px;">
+                    <div class="wizard-date-fields">
                         <input type="number" id="birthDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'birthMonth', 2)">
                         <span class="wizard-date-sep">/</span>
                         <input type="number" id="birthMonth" placeholder="MM" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'birthYear', 2)">
@@ -131,7 +122,8 @@
                 <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscover()" data-i18n="wizard_discover_btn">Discover &rarr;</button>
             </div>
 
-            <!-- Screens 3-5 removed (preferences in Settings, who/name/date combined above) -->
+            <!-- Screens 2-5 removed (single-screen onboarding above) -->
+            <div class="wizard-step" id="wizardStep2"></div>
             <div class="wizard-step" id="wizardStep3"></div>
             <div class="wizard-step" id="wizardStep4"></div>
             <div class="wizard-step" id="wizardStep5"></div>
