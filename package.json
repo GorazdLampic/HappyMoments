@@ -16,7 +16,13 @@
     "type": "git",
     "url": "git+https://github.com/GorazdLampic/HappyMoments.git"
   },
-  "keywords": ["milestones", "birthdays", "anniversaries", "numbers", "celebrations"],
+  "keywords": [
+    "milestones",
+    "birthdays",
+    "anniversaries",
+    "numbers",
+    "celebrations"
+  ],
   "author": "Quantum Wave Ltd (Kvantni Val d.o.o.)",
   "license": "UNLICENSED",
   "type": "commonjs",
@@ -26,16 +32,16 @@
   "homepage": "https://github.com/GorazdLampic/HappyMoments#readme",
   "devDependencies": {
     "clean-css": "^5.3.3",
-    "terser": "^5.48.0",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "terser": "^5.48.0"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",
-    "@capacitor/core": "^6.0.0",
     "@capacitor/cli": "^6.0.0",
-    "@capacitor/splash-screen": "^6.0.0",
-    "@capacitor/status-bar": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
     "@capacitor/local-notifications": "^6.0.0",
-    "@capacitor/share": "^6.0.0"
+    "@capacitor/share": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0"
   }
 }
