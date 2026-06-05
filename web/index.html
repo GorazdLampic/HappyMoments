@@ -101,15 +101,16 @@
                 <span class="wizard-header-title">HappyMoments</span>
             </div>
 
-            <!-- Screen 1: Examples + Date entry — single screen onboarding -->
+            <!-- ═══ ONBOARDING v5: 6-screen value-first journey ═══ -->
+
+            <!-- Screen 1: Hook + Date entry -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content">
                     <div class="wizard-examples">
-                        <p class="wizard-example" data-i18n="wizard_example_1">Somewhere between your 31st and 32nd birthday, you quietly turn <strong>1,000,000,000 seconds</strong> old.</p>
-                        <p class="wizard-example" data-i18n="wizard_example_2">Your mom might hit <strong>20,000 days</strong> next Tuesday &mdash; imagine calling her with that.</p>
-                        <p class="wizard-example" data-i18n="wizard_example_3">Your partner's <strong>Saturn return</strong> is coming &mdash; the moment the planet completes a full orbit since they were born.</p>
+                        <p class="wizard-example">Somewhere between your 31st and 32nd birthday, you quietly turn <strong>1,000,000,000 seconds</strong> old.</p>
+                        <p class="wizard-example">Your mom might hit <strong>20,000 days</strong> next Tuesday &mdash; imagine calling her with that.</p>
                     </div>
-                    <h2 class="wizard-question wizard-date-prompt" data-i18n="wizard_enter_date">Enter your birthday</h2>
+                    <h2 class="wizard-question wizard-date-prompt" data-i18n="wizard_enter_date">When were you born?</h2>
                     <input type="hidden" id="birthName" value="Me">
                     <input type="hidden" id="birthDate">
                     <div class="wizard-date-fields">
@@ -120,34 +121,37 @@
                         <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" class="wizard-date-field" oninput="syncDateFields(this)">
                     </div>
                 </div>
-                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscover()" data-i18n="wizard_discover_btn">Discover &rarr;</button>
+                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscoverV5()" data-i18n="wizard_discover_btn">Show me &rarr;</button>
             </div>
 
-            <!-- Screens 2-5 removed (single-screen onboarding above) -->
-            <div class="wizard-step" id="wizardStep2"></div>
-            <div class="wizard-step" id="wizardStep3"></div>
-            <div class="wizard-step" id="wizardStep4"></div>
-            <div class="wizard-step" id="wizardStep5"></div>
-
-            <!-- Screen 6: Your Reveal -->
-            <div class="wizard-step" id="wizardStep6">
+            <!-- Screen 2: Your Billion Reveal (counter animation) -->
+            <div class="wizard-step" id="wizardStep2">
                 <div class="wizard-content" id="wizardReveal">
-                    <!-- Populated by wizardDiscover() -->
+                    <!-- Populated by wizardDiscoverV5() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShare()" data-i18n="wizard_share_btn">Share this milestone</button>
-                    <button class="wizard-btn-secondary" onclick="wizardFinish()" data-i18n="wizard_explore_btn">Explore all milestones</button>
+                    <button class="wizard-btn" onclick="wizardShowMore()" data-i18n="wizard_whatelse_btn">What else is coming? &rarr;</button>
                 </div>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
             </div>
 
-            <!-- Screen 7: Friend entry -->
-            <div class="wizard-step" id="wizardStep7">
-                <button class="wizard-back" onclick="wizardNext(6)">&larr;</button>
+            <!-- Screen 3: More milestones list + transition to "someone you care about" -->
+            <div class="wizard-step" id="wizardStep3">
+                <div class="wizard-content" id="wizardMoreMilestones">
+                    <!-- Populated by wizardShowMore() -->
+                </div>
+                <div class="wizard-actions">
+                    <button class="wizard-btn" onclick="wizardNext(4)">Now someone I care about &rarr;</button>
+                    <button class="wizard-skip" onclick="wizardGoToSummary()">Skip &mdash; explore on my own</button>
+                </div>
+            </div>
+
+            <!-- Screen 4: Add someone you care about (name + date) -->
+            <div class="wizard-step" id="wizardStep4">
+                <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question" data-i18n="wizard_friend_title">Who would you like to surprise?</h2>
-                    <p class="wizard-subtitle" data-i18n="wizard_friend_subtitle">Enter their name and birthday to find their special number</p>
-                    <input type="text" id="friendName" class="wizard-input" data-i18n-placeholder="wizard_friend_placeholder" placeholder="e.g. Anna, Dad, Best friend" autocomplete="off" style="margin-bottom: 16px;">
+                    <h2 class="wizard-question" data-i18n="wizard_friend_title">Who do you want to celebrate?</h2>
+                    <p class="wizard-subtitle">Mom, partner, best friend, child &mdash; anyone whose birthday you know.</p>
+                    <input type="text" id="friendName" class="wizard-input" placeholder="Their name" autocomplete="off" style="margin-bottom: 16px;">
                     <div class="wizard-date-fields">
                         <input type="number" id="friendDay" placeholder="DD" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'friendMonth', 2)">
                         <span class="wizard-date-sep">/</span>
@@ -157,22 +161,38 @@
                     </div>
                     <input type="hidden" id="friendDate">
                 </div>
-                <button class="wizard-btn" onclick="wizardDiscoverFriend()" data-i18n="wizard_friend_discover">Discover theirs &rarr;</button>
-                <button class="wizard-skip" onclick="wizardFinish()" data-i18n="wizard_friend_skip">Skip for now</button>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
+                <button class="wizard-btn" onclick="wizardDiscoverFriend()" data-i18n="wizard_friend_discover">Find their milestones &rarr;</button>
+                <button class="wizard-skip" onclick="wizardGoToSummary()">Skip for now</button>
             </div>
 
-            <!-- Screen 8: Friend's reveal + share -->
-            <div class="wizard-step" id="wizardStep8">
+            <!-- Screen 5: Friend's reveal + share prompt -->
+            <div class="wizard-step" id="wizardStep5">
                 <div class="wizard-content" id="wizardFriendReveal">
                     <!-- Populated by wizardDiscoverFriend() -->
                 </div>
-                <div class="wizard-actions">
-                    <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()" data-i18n="wizard_friend_share">Share &rarr;</button>
-                    <button class="wizard-btn-secondary" onclick="wizardFinish()" data-i18n="wizard_explore_btn">Explore all milestones</button>
+                <div class="wizard-actions" id="wizardShareActions">
+                    <div class="wizard-share-message" id="wizardSharePreview">
+                        <!-- Populated with pre-written share message -->
+                    </div>
+                    <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Send to them &rarr;</button>
+                    <button class="wizard-skip" onclick="wizardGoToSummary()">Maybe later</button>
                 </div>
-                <div class="wizard-progress"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
             </div>
+
+            <!-- Screen 6: Summary + reminders + go -->
+            <div class="wizard-step" id="wizardStep6">
+                <div class="wizard-content" id="wizardSummary">
+                    <!-- Populated by wizardGoToSummary() -->
+                </div>
+                <div class="wizard-actions">
+                    <button class="wizard-btn" onclick="wizardEnableReminders()" id="wizardReminderBtn" data-i18n="wizard_enable_reminders">Enable milestone reminders</button>
+                    <button class="wizard-btn-secondary" onclick="wizardFinish()" data-i18n="wizard_explore_btn">Go to my milestones &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Legacy screen IDs (kept for compatibility) -->
+            <div class="wizard-step" id="wizardStep7"></div>
+            <div class="wizard-step" id="wizardStep8"></div>
 
         </section>
 

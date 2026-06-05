@@ -1374,8 +1374,8 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
     return true;
 }
 
-// --- Discover (user's own milestone from onboarding) ---
-function wizardDiscover() {
+// --- v5 Onboarding: Screen 1 → 2 (enter date → show billion reveal) ---
+function wizardDiscoverV5() {
     const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const name = document.getElementById('birthName')?.value?.trim() || 'Me';
     const dateStr = buildDateFromFields('birth');
@@ -1385,19 +1385,100 @@ function wizardDiscover() {
         return;
     }
 
-    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardReveal', 'wizardStep6');
+    // Auto-accept consent
+    if (!localStorage.getItem('happymoments_consent')) acceptConsent();
+
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardReveal', 'wizardStep2');
     if (!ok) return;
 
-    _track('onboard_complete', { event_count: appData.events.length });
+    _track('onboard_date_entered', { event_count: appData.events.length });
 
-    // Show reveal step (screen 6)
+    // Show reveal (screen 2)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep2')?.classList.add('wizard-step-active');
 
-    // Ensure wizard is visible, dashboard hidden
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+}
+
+// --- v5 Onboarding: Screen 2 → 3 (show more milestones list) ---
+function wizardShowMore() {
+    _track('onboard_more_tapped');
+    const el = document.getElementById('wizardMoreMilestones');
+    if (!el) return;
+
+    // Get milestones already computed
+    const milestones = allMilestonesFlat || [];
+    const upcoming = milestones.filter(m => m.timeUntil > 0).slice(0, 5);
+    const count = milestones.filter(m => m.timeUntil > 0).length;
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+
+    let listHtml = '';
+    upcoming.forEach(m => {
+        const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
+        const val = m.value.toLocaleString(locale);
+        const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
+        const isBig = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
+        listHtml += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
+            <span class="wizard-milestone-value">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
+            <span class="wizard-milestone-date">${dateStr}</span>
+        </div>`;
+    });
+
+    const moreCount = Math.max(0, count - 5);
+    el.innerHTML = `
+        <h2 class="wizard-question">You have ${count} milestones coming</h2>
+        <div class="wizard-milestone-list">${listHtml}</div>
+        ${moreCount > 0 ? `<p class="wizard-more-hint">...and ${moreCount} more</p>` : ''}
+    `;
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep3')?.classList.add('wizard-step-active');
+}
+
+// --- v5 Onboarding: Go to summary (screen 6) ---
+function wizardGoToSummary() {
+    const el = document.getElementById('wizardSummary');
+    if (el) {
+        const personCount = appData.events.length;
+        const milestoneCount = (allMilestonesFlat || []).filter(m => m.timeUntil > 0).length;
+        const nextM = (allMilestonesFlat || []).find(m => m.timeUntil > 0);
+        const nextDays = nextM ? Math.ceil(nextM.timeUntil / (24*60*60*1000)) : null;
+
+        el.innerHTML = `
+            <h2 class="wizard-question">You're all set!</h2>
+            <div class="wizard-summary-stats">
+                <div class="wizard-summary-stat">\u2713 ${personCount} ${personCount === 1 ? 'person' : 'people'} tracked</div>
+                <div class="wizard-summary-stat">\u2713 ${milestoneCount} milestones found</div>
+                ${nextDays ? `<div class="wizard-summary-stat">\u2713 Next milestone in ${nextDays} days</div>` : ''}
+            </div>
+            <p class="wizard-summary-hint">Come back when a milestone is near &mdash; we'll help you celebrate.</p>
+        `;
+    }
+
+    _track('onboard_complete', { event_count: appData.events.length });
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+}
+
+// --- v5 Onboarding: Enable reminders from summary ---
+function wizardEnableReminders() {
+    if (typeof NOTIF !== 'undefined') {
+        NOTIF.enable().then(ok => {
+            if (ok) {
+                _track('onboard_reminders_enabled');
+                const btn = document.getElementById('wizardReminderBtn');
+                if (btn) { btn.textContent = '\u2713 Reminders enabled!'; btn.disabled = true; }
+            }
+        });
+    }
+}
+
+// --- Legacy: wizardDiscover still works (for deep links, reset wizard etc.) ---
+function wizardDiscover() {
+    wizardDiscoverV5();
 }
 
 // --- Screen 7 → 8: Discover friend's milestone ---
@@ -1411,27 +1492,28 @@ function wizardDiscoverFriend() {
         return;
     }
 
-    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep8');
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep5');
     if (!ok) return;
 
-    // Add share title above the reveal content
-    const friendRevealEl = document.getElementById('wizardFriendReveal');
-    if (friendRevealEl) {
-        const shareTitle = document.createElement('div');
-        shareTitle.className = 'wizard-share-title';
-        shareTitle.textContent = _t('wizard_friend_share') + ': ' + name + '!';
-        friendRevealEl.insertBefore(shareTitle, friendRevealEl.firstChild);
+    // Build share preview message
+    const friendM = window._wizardFriendMilestone;
+    if (friendM) {
+        const shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
+        const previewEl = document.getElementById('wizardSharePreview');
+        if (previewEl && shareMsg) {
+            previewEl.innerHTML = `<p class="wizard-share-preview-text">\u201c${escapeHtml(shareMsg)}\u201d</p>`;
+        }
     }
 
     // Update share button text
     const shareBtn = document.getElementById('wizardShareFriendBtn');
-    if (shareBtn) shareBtn.textContent = _t('wizard_friend_share') + ' ' + name + ' \u2192';
+    if (shareBtn) shareBtn.textContent = 'Send to ' + name + ' \u2192';
 
-    _track('wizard_friend_added', { event_count: appData.events.length });
+    _track('onboard_add_person', { event_count: appData.events.length });
 
-    // Show friend reveal step (screen 8)
+    // Show friend reveal (screen 5)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
 
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
@@ -1455,7 +1537,7 @@ function wizardShare() {
     }
 }
 
-// --- Screen 8: Share friend's milestone ---
+// --- Screen 5: Share friend's milestone, then go to summary ---
 function wizardShareFriend() {
     const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const m = window._wizardFriendMilestone;
@@ -1463,13 +1545,18 @@ function wizardShareFriend() {
         const friendName = window._wizardFriendName || 'your friend';
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
         if (navigator.share) {
-            navigator.share({ title: 'HappyMoment for ' + friendName, text: message }).catch(() => {});
+            navigator.share({ title: 'HappyMoment for ' + friendName, text: message })
+                .then(() => wizardGoToSummary())
+                .catch(() => wizardGoToSummary());
         } else {
             navigator.clipboard.writeText(message).then(() => {
-                showToast(_t('wizard_copied_send').replace('{name}', friendName), 'success');
-            }).catch(() => {});
+                showToast('Copied! Send it to ' + friendName, 'success');
+                setTimeout(() => wizardGoToSummary(), 1500);
+            }).catch(() => wizardGoToSummary());
         }
-        _track('wizard_share_friend', { value: m.value, unit: m.unit });
+        _track('onboard_share_initiated', { value: m.value, unit: m.unit });
+    } else {
+        wizardGoToSummary();
     }
 }
 
