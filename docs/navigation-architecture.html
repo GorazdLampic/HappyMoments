@@ -104,6 +104,16 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <li><strong>Profile as top-right icon:</strong> Settings are used 10% of the time. They don't earn a bottom tab. The person icon (&#128100;) is a known pattern from Instagram, Spotify, YouTube.</li>
 </ul>
 
+<div class="rule">
+<strong>Tab visual design:</strong> The bottom tabs must be visually distinct from content &mdash; the user must immediately recognize them as tappable navigation. Use:<br>
+&bull; A thin top border separating the tab bar from content (1px, <code>var(--border)</code>)<br>
+&bull; Icons above text labels (Home icon + "Home", People icon + "People")<br>
+&bull; Active tab: gold icon + gold text. Inactive: gray icon + gray text.<br>
+&bull; Fixed at bottom of viewport (sticky), never scrolls away.<br>
+&bull; Tab bar height: 56px (Apple HIG minimum 49pt, Material Design 80dp &mdash; 56px is a good compromise).<br>
+This follows the iOS tab bar convention that billions of users already know.
+</div>
+
 <!-- ═════════════════════════════════════════════ -->
 <h2>Home Screen Architecture</h2>
 

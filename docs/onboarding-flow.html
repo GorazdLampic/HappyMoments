@@ -340,27 +340,30 @@ Each screen has: the user's ACTION, the app's REWARD, and the TRANSITION to next
 </div>
 
 <!-- ── Screen 1 ── -->
-<h3>Screen 1: The Question + Your Date</h3>
+<h3>Screen 1: Inspiration + Your Date</h3>
 
 <div class="mockup">
-    <div class="screen-question">
-        You have a<br>
-        billionth-second<br>
-        birthday.
+    <div style="color:#aaa; font-size:0.95rem; font-style:italic; margin-bottom:6px;">She just turned <span style="color:#d4b876; font-weight:600;">1,000,000,000 seconds</span> old.</div>
+    <div style="color:#aaa; font-size:0.95rem; font-style:italic; margin-bottom:20px;">They've known each other for exactly <span style="color:#d4b876; font-weight:600;">3,333 days</span>.</div>
+    <div class="screen-question" style="font-size:1.3rem; margin-bottom:16px;">
+        What about you?
     </div>
-    <div style="color:#ccc; font-size:1.1rem; margin-bottom:20px;">When is it?</div>
     <div class="input-field">DD / MM / YYYY</div>
     <div class="btn-gold">Show me</div>
 </div>
 
-<p><strong>Elements:</strong> 3 (question, date input, button)</p>
-<p><strong>User action:</strong> Type 8 digits (birthday)</p>
-<p><strong>Reward:</strong> Curiosity answered in 3 seconds</p>
-<p><strong>Psychology:</strong> Value before identity (Duolingo principle). No name, no email, no preferences.</p>
+<p><strong>Elements:</strong> 4 (two inspirational examples, question, date input + button)</p>
+<p><strong>User action:</strong> Read the examples (2 seconds), then type 8 digits</p>
+<p><strong>Reward:</strong> Curiosity &mdash; "what's MY number?"</p>
+<p><strong>Psychology:</strong> The examples show OTHER people's milestones first. This creates social proof + curiosity ("she has a billionth-second birthday &mdash; what about me?"). The examples demonstrate the range: big cosmic numbers AND small personal ones. Value before identity (Duolingo principle).</p>
 <p><strong>Transition:</strong> Counter animation starts &rarr; slide to Screen 2</p>
 
 <div class="rule">
-<strong>What is NOT here:</strong> App name. Logo. Tagline. Language picker. Consent banner. Name field.
+<strong>Why examples first:</strong> Without examples, "billionth-second birthday" is abstract. With examples, the user immediately sees: (1) these are real milestones people have, (2) they're sharable moments ("she just turned..."), (3) they cover different scales (billions of seconds, thousands of days). The examples ARE the elevator pitch.
+</div>
+
+<div class="rule">
+<strong>What is NOT here:</strong> App name. Logo. Tagline. Language picker. Consent banner. Name field. No explanation of what the app does &mdash; the examples show it.
 </div>
 
 <!-- ── Screen 2 ── -->
@@ -399,6 +402,20 @@ Each screen has: the user's ACTION, the app's REWARD, and the TRANSITION to next
 <li>Saturn return</li>
 <li>Avoid: Fibonacci, palindromes, obscure patterns for the FIRST reveal</li>
 </ol>
+
+<div class="rule">
+<strong>Past vs. near future vs. far future &mdash; critical design difference:</strong>
+<br><br>
+The reveal must feel exciting regardless of WHEN the milestone falls. Three scenarios:
+<br><br>
+<strong>Milestone is in the PAST</strong> (e.g., billion seconds was 1 year ago):<br>
+&rarr; Show it as a discovery: "You passed your billionth second on March 23, 2025!" The value is learning it happened. CTA: "Now someone I love &rarr;" (find THEIR upcoming milestone)<br><br>
+<strong>Milestone is NEAR FUTURE</strong> (&le;30 days):<br>
+&rarr; Maximum excitement: "That's in 12 days!" The countdown IS the reward. CTA: "Now someone I love &rarr;" (share the excitement)<br><br>
+<strong>Milestone is FAR FUTURE</strong> (&gt;6 months):<br>
+&rarr; The algorithm should prefer a CLOSER milestone from a different unit. If the billion seconds is 4 years away, show 12,000 days instead (if it's 3 months away). Only show a far-future milestone if it's truly the most impressive option (1 billion seconds always wins over 12,321 days). Frame it as anticipation: "Coming in 14 months &mdash; mark your calendar."<br><br>
+<strong>Rule:</strong> Never show a milestone that's both unimpressive AND far away. A Fibonacci number 2 years from now is the worst possible onboarding reveal.
+</div>
 
 <!-- ── Screen 3 ── -->
 <h3>Screen 3: Someone You Love</h3>

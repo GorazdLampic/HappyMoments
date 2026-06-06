@@ -242,6 +242,45 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 <li>Gold + gray color system</li>
 </ul>
 
+<!-- ═════════════════════════════════════════════ -->
+<h2>9. Number Quality Guidelines</h2>
+
+<h3>Palindrome quality hierarchy</h3>
+<p>Not all palindromes are equally impressive. Palindromes with <strong>internal order</strong> are the strongest:</p>
+
+<table>
+<tr><th>Tier</th><th>Pattern</th><th>Examples</th><th>Why it's good</th></tr>
+<tr><td><strong>Tier 1: Mountain</strong></td><td>Digits ascend then descend</td><td>12321, 1234321, 123454321</td><td>Instantly recognizable pattern. Beautiful symmetry. People go "wow" immediately.</td></tr>
+<tr><td><strong>Tier 2: Round palindrome</strong></td><td>Zeros create visual balance</td><td>10001, 100001, 1000001</td><td>Clean, impressive-looking. Easy to understand.</td></tr>
+<tr><td><strong>Tier 3: Repeated core</strong></td><td>Single digit core repeated</td><td>1221, 5005, 9009, 12321</td><td>Simple structure, recognizable.</td></tr>
+<tr><td><strong>Tier 4: Generic</strong></td><td>Reads same forwards/backwards but no additional order</td><td>14241, 27372</td><td>Valid palindrome but less visually striking. Show only in days/years, filter from seconds/minutes/hours.</td></tr>
+</table>
+
+<h3>Repdigit coverage</h3>
+<p>All repdigits (111, 222, 333, ... 999, 1111, 2222, ... 9999, 11111, ...) are generated up to 11 digits. This is comprehensive. Repdigits are universally recognized as "special" across all cultures.</p>
+
+<h3>Coherence filter reminder</h3>
+<p>See <a href="navigation-architecture.html">navigation-architecture.html</a> &sect;Milestone Coherence Rules for the per-unit filter that prevents ugly numbers like "25,252,525 minutes" from showing.</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>10. UX Foundations (Key Experts)</h2>
+
+<p>The design decisions in this document are grounded in work by these researchers and practitioners:</p>
+
+<table>
+<tr><th>Expert</th><th>Contribution</th><th>How it applies here</th></tr>
+<tr><td><strong>Don Norman</strong></td><td>Coined "user experience," <em>Design of Everyday Things</em></td><td>Every element must communicate its purpose without labels. Affordances on buttons, inputs, cards.</td></tr>
+<tr><td><strong>Jakob Nielsen</strong></td><td>10 Usability Heuristics</td><td>Follow platform conventions. Share sheet, tab bar, back arrow &mdash; work like every other app.</td></tr>
+<tr><td><strong>Jony Ive</strong></td><td>Designed iPhone/iOS</td><td>"Simplicity is removing everything that isn't essential." Our 2-color, 3-type-level system.</td></tr>
+<tr><td><strong>Daniel Kahneman</strong></td><td>Peak-End Rule (Nobel laureate)</td><td>The counter animation is the peak. Every session ends with anticipation.</td></tr>
+<tr><td><strong>Nir Eyal</strong></td><td>Hook Model (<em>Hooked</em>)</td><td>Trigger (notification) &rarr; Action (open) &rarr; Reward (milestone) &rarr; Investment (share/add person).</td></tr>
+<tr><td><strong>Luke Wroblewski</strong></td><td>"Mobile First," Google Product Director</td><td>Input should be minimal. Show, don't ask. Date input is the ONLY input in onboarding.</td></tr>
+<tr><td><strong>Jon Yablonski</strong></td><td>Laws of UX (lawsofux.com)</td><td>Hick's Law (fewer tabs), Fitts's Law (big tap targets), Von Restorff (one gold element).</td></tr>
+<tr><td><strong>Spotify Wrapped team</strong></td><td>"Design the shareable artifact first"</td><td>Every milestone card is screenshot-ready. Share produces beautiful images, not just text.</td></tr>
+</table>
+
+<p>Full research archive: <code>docs/archive/ux-research-strategic.md</code> (25 principles, 12 anti-patterns, 10 expert profiles with sources).</p>
+
 <p class="meta" style="margin-top:48px">End of document. Open in browser for rendered component examples.</p>
 
 </body>
