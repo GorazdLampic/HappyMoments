@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments Implementation Plan</title>
+<style>
+:root { --gold: #d4b876; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #1a1a1a; background: #fafafa; }
+h1 { font-size: 2rem; margin-bottom: 4px; }
+h2 { font-size: 1.4rem; margin-top: 48px; margin-bottom: 12px; color: #1a3c6e; border-bottom: 2px solid #1a3c6e; padding-bottom: 6px; }
+h3 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 8px; }
+p, li { font-size: 1rem; margin-bottom: 10px; }
+ul, ol { margin: 6px 0 14px 22px; }
+.meta { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 0.92rem; }
+th { background: #1a3c6e; color: white; padding: 8px 12px; text-align: left; }
+td { padding: 8px 12px; border-bottom: 1px solid #ddd; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f5f2; }
+.rule { border-left: 4px solid var(--gold); padding: 12px 18px; margin: 16px 0; background: #faf8f0; }
+.warn { border-left: 4px solid #c62828; padding: 12px 18px; margin: 16px 0; background: #fff5f5; }
+.ok { border-left: 4px solid #2e7d32; padding: 12px 18px; margin: 16px 0; background: #f0faf0; }
+code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+.phase { display: inline-block; background: #1a3c6e; color: white; padding: 3px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; margin-right: 8px; }
+.hours { display: inline-block; background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; color: #666; }
+</style>
+</head>
+<body>
+
+<h1>HappyMoments Implementation Plan</h1>
+<p class="meta">From current app to canonical UX spec &middot; June 2026<br>
+Based on: <a href="ux-guidelines.html">ux-guidelines.html</a>, <a href="onboarding-flow.html">onboarding-flow.html</a>, <a href="navigation-architecture.html">navigation-architecture.html</a>, <a href="user-psychology.html">user-psychology.html</a></p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Strategy: 4 Phases, Ship After Each</h2>
+
+<div class="rule">
+<strong>Principle:</strong> Each phase produces a deployable version. No "big bang" rewrite. Each phase makes the app better on its own, even if the later phases never happen. Test with real users after each phase.
+</div>
+
+<table>
+<tr><th>Phase</th><th>What changes</th><th>Effort</th><th>Impact</th><th>Can ship alone?</th></tr>
+<tr><td><span class="phase">1</span> Onboarding</td><td>5-screen flow with role chips, inspirational examples, past/future handling</td><td><span class="hours">3-4 hrs</span></td><td>First impression, activation rate, share rate</td><td>Yes</td></tr>
+<tr><td><span class="phase">2</span> Navigation</td><td>2 tabs + profile icon, bottom bar, tab styling</td><td><span class="hours">3-4 hrs</span></td><td>Daily use clarity, feature discovery</td><td>Yes</td></tr>
+<tr><td><span class="phase">3</span> Home screen</td><td>Hero card + time-chunked list + Together section + empty states</td><td><span class="hours">4-6 hrs</span></td><td>Daily engagement, retention, "check and go"</td><td>Yes</td></tr>
+<tr><td><span class="phase">4</span> Polish</td><td>Typography to 3 levels, gold-only accents, hero scoring fix, share as image</td><td><span class="hours">2-3 hrs</span></td><td>Visual quality, shareability, number ranking</td><td>Yes</td></tr>
+</table>
+
+<p><strong>Total estimated: 12-17 hours across 3-5 sessions.</strong></p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Phase 1: Onboarding <span class="hours">3-4 hrs</span></h2>
+
+<p>The most impactful change. First impression determines whether users stay or leave.</p>
+
+<h3>What changes</h3>
+
+<table>
+<tr><th>#</th><th>Change</th><th>Current</th><th>Target</th><th>Files</th></tr>
+<tr><td>1.1</td><td><strong>Screen 1: Add inspirational examples</strong></td><td>Just "billionth-second birthday" + date</td><td>Two mini-stories ("She turned 1B seconds old", "They've known each other 3,333 days") + "What about you?" + date</td><td><code>index.html</code></td></tr>
+<tr><td>1.2</td><td><strong>Remove Screen 3 (More Milestones)</strong></td><td>6 screens total, screen 3 shows milestone list preview</td><td>5 screens. Screen 3 goes directly to "Someone you love"</td><td><code>index.html</code>, <code>app.js</code></td></tr>
+<tr><td>1.3</td><td><strong>Screen 3: Role chips instead of text input</strong></td><td>Text field "Their name" + date</td><td>Tap chips: Mom / Partner / Sister / Friend / Child / Other... + date</td><td><code>index.html</code>, <code>app.js</code>, <code>styles.css</code></td></tr>
+<tr><td>1.4</td><td><strong>Past/future milestone handling</strong></td><td>Same countdown text regardless</td><td>Different framing: past ("You passed it!"), near ("This week!"), far ("Coming in 14 months")</td><td><code>app.js</code> (<code>_wizardCreateAndReveal</code>)</td></tr>
+<tr><td>1.5</td><td><strong>Hero scoring in reveal: flip weights</strong></td><td><code>rScore * 0.7 + pScore * 0.3</code></td><td><code>impressiveness * 0.6 + proximity * 0.4</code></td><td><code>app.js</code> (<code>_wizardCreateAndReveal</code>, <code>findHeroMilestone</code>)</td></tr>
+<tr><td>1.6</td><td><strong>Hide header during onboarding</strong></td><td>Header partially hidden</td><td>Full header + tagline hidden. Clean screen.</td><td><code>app.js</code> (init)</td></tr>
+</table>
+
+<h3>What NOT to touch in Phase 1</h3>
+<ul>
+<li>Tab navigation (Phase 2)</li>
+<li>Daily dashboard layout (Phase 3)</li>
+<li>Typography scale (Phase 4)</li>
+</ul>
+
+<h3>How to test</h3>
+<ol>
+<li><code>happymoments.app?reset</code> &mdash; fresh onboarding</li>
+<li>Enter various birthdates: someone ~31 (billion seconds near), someone ~20 (far future), someone ~55 (past)</li>
+<li>Check: does the reveal feel exciting regardless of timing?</li>
+<li>Test role chips: tap Mom, tap Friend, tap Other (should open text input)</li>
+<li>Test share: does the pre-written message use the role label correctly?</li>
+</ol>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Phase 2: Navigation <span class="hours">3-4 hrs</span></h2>
+
+<p>Restructure from 4 top-sticky tabs to 2 bottom-fixed tabs + profile icon.</p>
+
+<h3>What changes</h3>
+
+<table>
+<tr><th>#</th><th>Change</th><th>Current</th><th>Target</th><th>Files</th></tr>
+<tr><td>2.1</td><td><strong>Remove Team and Settings tabs</strong></td><td>4 tabs: Personal, Team, Data, Settings</td><td>2 tabs: Home, People</td><td><code>index.html</code>, <code>app.js</code>, <code>styles.css</code></td></tr>
+<tr><td>2.2</td><td><strong>Add Profile icon (top-right)</strong></td><td>No profile icon visible</td><td>Person icon &#128100; in header, opens settings panel</td><td><code>index.html</code>, <code>app.js</code>, <code>styles.css</code></td></tr>
+<tr><td>2.3</td><td><strong>Move tab bar to bottom</strong></td><td>Sticky at top, text-only, underline active</td><td>Fixed at bottom, icons + text, gold active state, 56px height</td><td><code>styles.css</code></td></tr>
+<tr><td>2.4</td><td><strong>Rename tabs</strong></td><td>"Personal", "Data"</td><td>"Home", "People"</td><td><code>index.html</code>, <code>i18n.js</code></td></tr>
+<tr><td>2.5</td><td><strong>Move Settings content into Profile panel</strong></td><td>Full settings tab with all options visible</td><td>Profile slide-in panel (or full-screen modal) with: theme, language, notifications, account, legal, export</td><td><code>index.html</code>, <code>app.js</code>, <code>styles.css</code></td></tr>
+<tr><td>2.6</td><td><strong>Move combined milestones to Home</strong></td><td>Separate "Team" tab</td><td>Section at bottom of Home, visible when 2+ people</td><td><code>app.js</code> (<code>renderMilestonesTab</code>)</td></tr>
+</table>
+
+<div class="warn">
+<strong>Risk:</strong> This is the most structurally disruptive phase. The <code>switchTab()</code> function, all tab references in JS, and the CSS layout all need updating. Existing users who know the 4-tab layout will notice the change. Mitigate by keeping ALL functionality accessible &mdash; nothing is removed, just reorganized.
+</div>
+
+<h3>What to preserve</h3>
+<ul>
+<li>All functionality from Team tab &rarr; moves to Home as a section</li>
+<li>All functionality from Settings tab &rarr; moves to Profile panel</li>
+<li>All functionality from Data tab &rarr; becomes the People tab</li>
+<li>Person columns view (existing daily users may prefer it) &rarr; keep as the People tab's per-person view</li>
+</ul>
+
+<h3>How to test</h3>
+<ol>
+<li>Open app with existing data (2+ people) &mdash; Home should show hero + milestones + Together</li>
+<li>Tap People tab &mdash; should show people list, tap person &rarr; their milestones</li>
+<li>Tap profile icon &mdash; should open settings panel</li>
+<li>Check: can you reach every old feature in &le;3 taps?</li>
+<li>Check: tab bar stays fixed at bottom while scrolling</li>
+</ol>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Phase 3: Home Screen <span class="hours">4-6 hrs</span></h2>
+
+<p>The daily experience. This is what users see 90% of the time.</p>
+
+<h3>What changes</h3>
+
+<table>
+<tr><th>#</th><th>Change</th><th>Current</th><th>Target</th><th>Files</th></tr>
+<tr><td>3.1</td><td><strong>Hero card redesign</strong></td><td>Existing hero milestone with share/actions</td><td>Weather-app style card: big gold number, date, emotional countdown, Share + Remind me buttons</td><td><code>app.js</code>, <code>styles.css</code></td></tr>
+<tr><td>3.2</td><td><strong>Time-chunked milestone list</strong></td><td>Person columns (vertical per-person)</td><td>"This week" / "This month" / "Later" sections with max 5-7 items each</td><td><code>app.js</code> (new <code>renderTimeChunkedList()</code>)</td></tr>
+<tr><td>3.3</td><td><strong>"Together" section</strong></td><td>Separate Team tab</td><td>Section at bottom of Home, appears when 2+ people, shows one combined milestone as teaser</td><td><code>app.js</code></td></tr>
+<tr><td>3.4</td><td><strong>"Add someone" persistent card</strong></td><td>Button in Data tab</td><td>Dashed-border card always at bottom of Home</td><td><code>index.html</code>, <code>styles.css</code></td></tr>
+<tr><td>3.5</td><td><strong>Empty states</strong></td><td>Generic "Add events first"</td><td>Context-aware copy per section (see <a href="navigation-architecture.html">navigation-architecture.html</a> &sect;Empty States)</td><td><code>app.js</code></td></tr>
+<tr><td>3.6</td><td><strong>Remove Today Highlight</strong></td><td>Shows history facts + today's milestones</td><td>Removed. Hero card replaces it.</td><td><code>app.js</code>, <code>index.html</code></td></tr>
+</table>
+
+<h3>The big decision: person columns vs time list</h3>
+
+<div class="rule">
+<strong>Keep both, surface differently.</strong> Time-chunked list is the DEFAULT on Home (what's coming soonest?). Person columns become the per-person view inside the People tab (tap a person &rarr; see their milestones). This way daily users get the time-first view, but users who want to explore by person can do so in the People tab. No functionality lost.
+</div>
+
+<h3>How to test</h3>
+<ol>
+<li>Open app with 3+ people &mdash; Home should show hero + chunked list + Together + Add someone</li>
+<li>Milestones should be grouped by proximity (This week, This month, Later)</li>
+<li>Together section should show one combined milestone</li>
+<li>Scroll to bottom &mdash; "Add someone to celebrate" always visible</li>
+<li>Empty state: open with 1 person, no milestones this week &mdash; should show motivational message</li>
+</ol>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Phase 4: Polish <span class="hours">2-3 hrs</span></h2>
+
+<p>Visual refinement. Makes everything feel professional.</p>
+
+<h3>What changes</h3>
+
+<table>
+<tr><th>#</th><th>Change</th><th>Files</th></tr>
+<tr><td>4.1</td><td><strong>Typography: reduce to 3 levels</strong><br>Replace 8 CSS variables with Hero (2.5rem) / Body (1.1rem) / Caption (0.88rem)</td><td><code>styles.css</code></td></tr>
+<tr><td>4.2</td><td><strong>Gold consistency</strong><br>Active tab: gold. Section labels: gold. Hero number: gold. Everything else: gray.</td><td><code>styles.css</code></td></tr>
+<tr><td>4.3</td><td><strong>Reduce themes to 2</strong><br>Keep Dark + Light only. Remove Ocean, Sunset, Blossom, Forest.</td><td><code>styles.css</code>, <code>app.js</code></td></tr>
+<tr><td>4.4</td><td><strong>Share as image</strong><br>Expose imageCard.js in the share bottom sheet. "Share as image" button generates 9:16 card.</td><td><code>app.js</code>, <code>giftStore.js</code></td></tr>
+<tr><td>4.5</td><td><strong>Hero scoring algorithm</strong><br>Fix weights: <code>impressiveness * 0.6 + proximity * 0.4</code></td><td><code>app.js</code> (<code>findHeroMilestone</code>)</td></tr>
+<tr><td>4.6</td><td><strong>Gift suggestion: contextual</strong><br>Show "Gift idea" on milestone cells when the milestone is for another person AND has high impressiveness score</td><td><code>app.js</code>, <code>giftStore.js</code></td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Implementation Order Within Each Phase</h2>
+
+<div class="rule">
+<strong>Within each phase:</strong>
+<ol>
+<li><strong>HTML first</strong> &mdash; structure the screens/elements</li>
+<li><strong>CSS second</strong> &mdash; style them</li>
+<li><strong>JS third</strong> &mdash; wire up the logic</li>
+<li><strong>Test</strong> &mdash; <code>?reset</code> for onboarding, normal for daily use</li>
+<li><strong>Build + push</strong> &mdash; deploy to Cloudflare</li>
+</ol>
+</div>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>What We Intentionally Do NOT Change</h2>
+
+<p>These stay as they are (from <a href="ux-guidelines.html">ux-guidelines.html</a> &sect;8. What We Protect):</p>
+
+<ul>
+<li>The billion-second hook concept</li>
+<li>Counter animation on reveals</li>
+<li>Pre-written share messages (1000+ templates, 6 languages)</li>
+<li>PWA capability</li>
+<li>21-language support</li>
+<li>Local-first data (no account required)</li>
+<li>Milestone calculation engine (specialNumbers.js, milestoneCalculator.js)</li>
+<li>API backend (Cloudflare Functions, D1, Stripe)</li>
+<li>Android build pipeline (GitHub Actions)</li>
+</ul>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Matej's Directive: Find Reference Apps to Copy</h2>
+
+<div class="rule">
+<strong>Before implementing each phase,</strong> identify 2-3 popular apps that do that specific thing well, and copy their patterns:
+<br><br>
+<table>
+<tr><th>Phase</th><th>Reference apps to study</th><th>What to copy</th></tr>
+<tr><td>1. Onboarding</td><td>Duolingo, Headspace, Calm</td><td>Screen count, element count, CTA placement, animation timing</td></tr>
+<tr><td>2. Navigation</td><td>Instagram, WhatsApp, Spotify</td><td>Tab bar position, icon style, active state, profile icon placement</td></tr>
+<tr><td>3. Home screen</td><td>Apple Weather, Apple Activity, Hip (birthday app)</td><td>Hero card layout, list grouping, section headers</td></tr>
+<tr><td>4. Polish</td><td>Spotify Wrapped, Cash App</td><td>Number display, share card format, typography hierarchy</td></tr>
+</table>
+</div>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Risk Mitigation</h2>
+
+<table>
+<tr><th>Risk</th><th>Mitigation</th></tr>
+<tr><td>Existing users confused by nav change</td><td>All features remain accessible. Nothing removed, only reorganized. Consider a one-time "What's new" overlay on first open after update.</td></tr>
+<tr><td>Onboarding regression</td><td><code>?reset</code> testing after each change. Track <code>onboard_complete</code> rate before and after.</td></tr>
+<tr><td>Combined milestones lost</td><td>Together section on Home ensures visibility. Also accessible from People tab.</td></tr>
+<tr><td>Phase 2 breaks something</td><td>Most structurally risky phase. Do it in a git branch, test thoroughly before merging. Keep old tab code commented, not deleted.</td></tr>
+<tr><td>Too many changes confuse beta testers</td><td>Ship Phase 1 first, get feedback, THEN Phase 2. Don't batch.</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Session Planning</h2>
+
+<table>
+<tr><th>Session</th><th>Phase</th><th>Deliverable</th></tr>
+<tr><td><strong>Session 1</strong></td><td>Phase 1: Onboarding</td><td>New 5-screen flow with role chips, deployed and testable at <code>?reset</code></td></tr>
+<tr><td><strong>Session 2</strong></td><td>Phase 2: Navigation</td><td>2-tab + profile layout, deployed</td></tr>
+<tr><td><strong>Session 3</strong></td><td>Phase 3: Home screen</td><td>Hero card + time-chunked list + Together, deployed</td></tr>
+<tr><td><strong>Session 4</strong></td><td>Phase 4: Polish</td><td>Typography, colors, scoring, share-as-image, deployed</td></tr>
+</table>
+
+<p>Each session is self-contained. If we stop after Session 1, we still have a better app. If we complete all 4, we have the app described in the canonical docs.</p>
+
+<p class="meta" style="margin-top:48px;">This plan is derived from the gap analysis between current implementation and the 4 canonical UX documents. No code was changed &mdash; this is strategy only.</p>
+
+</body>
+</html>
