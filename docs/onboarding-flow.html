@@ -423,13 +423,21 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <div class="mockup">
     <div class="back-arrow">&larr;</div>
     <div class="screen-question" style="font-size:1.2rem;">
-        Who do you want<br>
-        to celebrate?
+        Now someone<br>
+        you care about
     </div>
-    <div class="input-field">Their name</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Mom</span>
+            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Partner</span>
+            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Sister</span>
+            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Friend</span>
+            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Child</span>
+            <span style="background:#2a2a2a;border:1px solid #d4b876;border-radius:16px;padding:8px 14px;color:#d4b876;font-size:0.9rem;cursor:pointer;">Other...</span>
+        </div>
+    </div>
     <div class="input-field">DD / MM / YYYY</div>
-    <div class="hint-text">Mom, partner, best friend, child &mdash; anyone whose birthday you know.</div>
-    <div class="btn-gold">Find their milestones</div>
+    <div class="btn-gold">Show their milestone</div>
     <div class="btn-skip">Skip for now</div>
 </div>
 
@@ -441,7 +449,9 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 
 <p><strong>Skip path:</strong> "Skip for now" (small, muted text) &rarr; jump to Screen 5 (dashboard). De-emphasized but always available.</p>
 
-<p><strong>Name matters here:</strong> For yourself, "Me" is fine. For another person, the name goes into the share message ("Hey Mom, did you know...").</p>
+<div class="rule">
+<strong>No name input &mdash; tap a role instead (Matej Guid insight):</strong> "Input should be minimal; show, don't ask." The user doesn't type a name &mdash; they tap a pre-set role chip: Mom, Partner, Sister, Friend, Child, or "Other..." (which opens a text field). This is faster (one tap vs typing), less intimidating, and immediately communicates what the app is for. The role label ("Mom") works as the name in the share message until the user renames it later. Names can be added anytime from the People tab &mdash; they are NOT needed for the reveal to work.
+</div>
 
 <!-- ── Screen 4 ── -->
 <h3>Screen 4: Their Reveal + Share</h3>
