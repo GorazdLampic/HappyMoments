@@ -244,13 +244,25 @@ function init() {
 
     // Date fields are now DD/MM/YYYY number inputs — no max needed
 
-    // Hide header and tab bar during onboarding
-    if (appData.events.length === 0 && !localStorage.getItem('hm_onboarded')) {
+    const isNewUser = appData.events.length === 0 && !localStorage.getItem('hm_onboarded');
+    const isReturningUser = appData.events.length > 0 || localStorage.getItem('hm_onboarded');
+
+    if (isNewUser) {
+        // New user: hide header + tabs, show onboarding wizard
         const header = document.getElementById('appHeader');
         if (header) header.style.display = 'none';
-        // Don't show consent banner — will auto-accept on first wizard tap
-    } else {
+        tabNav.classList.add('hidden');
+    } else if (isReturningUser) {
+        // Returning user: show everything, hide onboarding
+        const header = document.getElementById('appHeader');
+        if (header) header.style.display = '';
+        tabNav.classList.remove('hidden');
+        onboardingSection.classList.add('hidden');
         checkConsent();
+        // Render the dashboard
+        selectedPersonIds = appData.events.map(e => e.id);
+        renderMilestonesTab();
+        switchTab('milestones');
     }
 
     // Init notifications
@@ -891,12 +903,12 @@ function switchTab(tabName) {
 // ============================================================
 
 function renderPersonFilter() {
-    // Person filter pills hidden in new 2-tab UI — columns replaced by time-chunked list
-    personFilterEl.classList.add('hidden');
-    personFilterEl.style.display = 'none';
     if (appData.events.length === 0) {
+        personFilterEl.classList.add('hidden');
         return;
     }
+    // Show person filter for returning users so they can filter by person
+    personFilterEl.style.display = '';
 
     personFilterEl.classList.remove('hidden');
 

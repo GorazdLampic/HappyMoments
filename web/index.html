@@ -200,6 +200,11 @@
 
         <!-- Home Tab Content -->
         <section id="milestonesTab" class="tab-content hidden">
+            <!-- Person Filter — tap to see one person's milestones -->
+            <div id="personFilter" class="person-filter">
+                <!-- Dynamically populated with person buttons -->
+            </div>
+
             <!-- Hero Milestone Card (weather-app style) -->
             <div id="heroMilestone" class="hero-milestone" style="display:none;"></div>
 
@@ -220,8 +225,7 @@
                 <span style="font-size:0.9rem;color:var(--text-muted);">Discover their milestones &mdash; find a reason to connect</span>
             </div>
 
-            <!-- Legacy elements (kept for JS compatibility, hidden) -->
-            <div id="personFilter" class="person-filter" style="display:none;"></div>
+            <!-- Hidden elements (kept for JS compatibility) -->
             <div id="milestonesColumns" class="milestones-columns" style="display:none;"></div>
             <div id="sharePreview" class="share-preview" style="display:none;"></div>
             <div id="todayHighlight" style="display:none;"></div>
