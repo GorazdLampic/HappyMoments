@@ -1492,18 +1492,43 @@ function wizardGoToSummary() {
     const el = document.getElementById('wizardSummary');
     if (el) {
         const personCount = appData.events.length;
-        const milestoneCount = (allMilestonesFlat || []).filter(m => m.timeUntil > 0).length;
-        const nextM = (allMilestonesFlat || []).find(m => m.timeUntil > 0);
+        // Count milestones over 2-year horizon for a better number
+        let allMs = [];
+        appData.events.forEach(e => {
+            const ms = typeof findAllUpcomingMilestones === 'function'
+                ? findAllUpcomingMilestones(e.date, 50, 730, appSettings) : [];
+            if (typeof findBigMilestones === 'function') {
+                findBigMilestones(e.date, appSettings).forEach(b => {
+                    if (!ms.some(m => m.value === b.value && m.unit === b.unit)) ms.push(b);
+                });
+            }
+            if (typeof findCosmicMilestones === 'function') {
+                findCosmicMilestones(e.date).forEach(c => {
+                    if (!ms.some(m => m.unit === c.unit && m.value === c.value)) ms.push(c);
+                });
+            }
+            allMs = allMs.concat(ms.filter(m => m.timeUntil > 0));
+        });
+        const milestoneCount = allMs.length;
+        const nextM = allMs.sort((a, b) => a.timeUntil - b.timeUntil)[0];
         const nextDays = nextM ? Math.ceil(nextM.timeUntil / (24*60*60*1000)) : null;
+
+        // Only show "Next in X days" if close enough to be motivating
+        let nextLine = '';
+        if (nextDays && nextDays <= 60) {
+            nextLine = `<div class="wizard-summary-stat">\u2713 Next milestone in ${nextDays} days</div>`;
+        } else {
+            nextLine = `<div class="wizard-summary-stat">\u2713 We\u2019ll let you know when one is near</div>`;
+        }
 
         el.innerHTML = `
             <h2 class="wizard-question">You're all set!</h2>
             <div class="wizard-summary-stats">
-                <div class="wizard-summary-stat">\u2713 ${personCount} ${personCount === 1 ? 'person' : 'people'} tracked</div>
-                <div class="wizard-summary-stat">\u2713 ${milestoneCount} milestones found</div>
-                ${nextDays ? `<div class="wizard-summary-stat">\u2713 Next milestone in ${nextDays} days</div>` : ''}
+                <div class="wizard-summary-stat">\u2713 ${personCount} ${personCount === 1 ? 'person' : 'people'}</div>
+                <div class="wizard-summary-stat">\u2713 ${milestoneCount} milestones coming</div>
+                ${nextLine}
             </div>
-            <p class="wizard-summary-hint">Come back when a milestone is near &mdash; we'll help you celebrate.</p>
+            <p class="wizard-summary-hint">We\u2019ll watch for milestones and remind you when it\u2019s time to celebrate.</p>
         `;
     }
 
@@ -1571,19 +1596,34 @@ function wizardDiscoverFriend() {
     const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep4');
     if (!ok) return;
 
-    // Build share preview message
+    // Build share preview message — adjust for role-based names
+    const ROLE_NAMES = ['Mom', 'Dad', 'Partner', 'Sister', 'Brother', 'Friend', 'Child'];
+    const isRole = ROLE_NAMES.includes(name);
     const friendM = window._wizardFriendMilestone;
     if (friendM) {
-        const shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
+        let shareMsg;
+        if (isRole) {
+            // For roles: "Did you know you turn exactly 20,000 days old on June 18th?"
+            const val = friendM.value.toLocaleString();
+            const unit = friendM.isCosmic ? (friendM.description || friendM.unitName) : friendM.unitName;
+            const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
+            const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+            const dateStr2 = friendM.date.toLocaleDateString(locale, dateOpts);
+            shareMsg = `Did you know you turn exactly ${val} ${unit} old on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 happymoments.app`;
+        } else {
+            shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
+        }
         const previewEl = document.getElementById('wizardSharePreview');
         if (previewEl && shareMsg) {
             previewEl.innerHTML = `<p class="wizard-share-preview-text">\u201c${escapeHtml(shareMsg)}\u201d</p>`;
         }
+        // Store the custom message for sharing
+        window._wizardFriendShareMsg = shareMsg;
     }
 
     // Update share button text
     const shareBtn = document.getElementById('wizardShareFriendBtn');
-    if (shareBtn) shareBtn.textContent = 'Send to ' + name + ' \u2192';
+    if (shareBtn) shareBtn.textContent = isRole ? 'Send to your ' + name.toLowerCase() + ' \u2192' : 'Send to ' + name + ' \u2192';
 
     _track('onboard_add_person', { event_count: appData.events.length });
 
@@ -1619,7 +1659,7 @@ function wizardShareFriend() {
     const m = window._wizardFriendMilestone;
     if (m) {
         const friendName = window._wizardFriendName || 'your friend';
-        const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
+        const message = window._wizardFriendShareMsg || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
         if (navigator.share) {
             navigator.share({ title: 'HappyMoment for ' + friendName, text: message })
                 .then(() => wizardGoToSummary())
@@ -2920,6 +2960,7 @@ function renderHomeScreen() {
     });
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const thisYear = new Date().getFullYear();
     function renderChunk(label, items, maxShow) {
         if (items.length === 0) return '';
         maxShow = maxShow || 7;
@@ -2927,7 +2968,13 @@ function renderHomeScreen() {
         items.slice(0, maxShow).forEach((m, i) => {
             const val = m.value.toLocaleString(locale);
             const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
-            const dateStr = m.date.toLocaleDateString(locale, { weekday: 'short', month: 'short', day: 'numeric' });
+            // Add year if milestone is in a different year
+            const mYear = m.date.getFullYear();
+            const showYear = mYear !== thisYear;
+            const dateOpts = showYear
+                ? { month: 'short', day: 'numeric', year: 'numeric' }
+                : { weekday: 'short', month: 'short', day: 'numeric' };
+            const dateStr = m.date.toLocaleDateString(locale, dateOpts);
             const isSpecial = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
             html += `<div class="time-chunk-item" onclick="homeShareMilestone(${all.indexOf(m)})">
                 <div class="tc-left">
@@ -2935,6 +2982,7 @@ function renderHomeScreen() {
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>
+                <span class="tc-share-btn">\u2197</span>
             </div>`;
         });
         if (items.length > maxShow) {
@@ -2943,10 +2991,17 @@ function renderHomeScreen() {
         return html;
     }
 
+    // Split "Later" into this year vs next year
+    const laterThisYear = later.filter(m => m.date.getFullYear() === thisYear);
+    const nextYear = later.filter(m => m.date.getFullYear() > thisYear);
+
     let html = '';
     html += renderChunk('This week', week, 5);
     html += renderChunk('This month', month, 5);
-    html += renderChunk('Later', later, 5);
+    html += renderChunk(laterThisYear.length > 0 ? 'Later this year' : 'Coming up', laterThisYear, 5);
+    if (nextYear.length > 0) {
+        html += renderChunk('Next year', nextYear, 3);
+    }
 
     if (html === '') {
         html = '<p class="empty-text" style="padding:24px;text-align:center;font-style:italic;color:var(--text-muted);">Your next milestone is coming. Add more people to find milestones sooner!</p>';
