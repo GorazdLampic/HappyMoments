@@ -1466,16 +1466,17 @@ function wizardShowMore() {
     document.getElementById('wizardStep3')?.classList.add('wizard-step-active');
 }
 
-// --- v5 Onboarding: Go to summary (screen 6) ---
+// --- v5 Onboarding: Go to milestone preview (screen 5) ---
 function wizardGoToSummary() {
     const el = document.getElementById('wizardSummary');
     if (el) {
-        const personCount = appData.events.length;
-        // Count milestones over 2-year horizon for a better number
-        let allMs = [];
+        const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+        // Gather top milestones per person for a preview
+        let previewHtml = '<h2 class="wizard-question">Your milestones</h2>';
+
         appData.events.forEach(e => {
             const ms = typeof findAllUpcomingMilestones === 'function'
-                ? findAllUpcomingMilestones(e.date, 50, 730, appSettings) : [];
+                ? findAllUpcomingMilestones(e.date, 20, 730, appSettings) : [];
             if (typeof findBigMilestones === 'function') {
                 findBigMilestones(e.date, appSettings).forEach(b => {
                     if (!ms.some(m => m.value === b.value && m.unit === b.unit)) ms.push(b);
@@ -1486,29 +1487,24 @@ function wizardGoToSummary() {
                     if (!ms.some(m => m.unit === c.unit && m.value === c.value)) ms.push(c);
                 });
             }
-            allMs = allMs.concat(ms.filter(m => m.timeUntil > 0));
+            const upcoming = ms.filter(m => m.timeUntil > 0).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 3);
+
+            if (upcoming.length > 0) {
+                previewHtml += `<div class="wizard-preview-person">${escapeHtml(e.name)}</div>`;
+                upcoming.forEach(m => {
+                    const val = m.value.toLocaleString(locale);
+                    const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
+                    const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+                    const isSpecial = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
+                    previewHtml += `<div class="wizard-preview-row">
+                        <span class="wizard-preview-val ${isSpecial ? 'starred' : ''}">${isSpecial ? '\u2605 ' : ''}${val} ${unit}</span>
+                        <span class="wizard-preview-date">${dateStr}</span>
+                    </div>`;
+                });
+            }
         });
-        const milestoneCount = allMs.length;
-        const nextM = allMs.sort((a, b) => a.timeUntil - b.timeUntil)[0];
-        const nextDays = nextM ? Math.ceil(nextM.timeUntil / (24*60*60*1000)) : null;
 
-        // Only show "Next in X days" if close enough to be motivating
-        let nextLine = '';
-        if (nextDays && nextDays <= 60) {
-            nextLine = `<div class="wizard-summary-stat">\u2713 Next milestone in ${nextDays} days</div>`;
-        } else {
-            nextLine = `<div class="wizard-summary-stat">\u2713 We\u2019ll let you know when one is near</div>`;
-        }
-
-        el.innerHTML = `
-            <h2 class="wizard-question">You're all set!</h2>
-            <div class="wizard-summary-stats">
-                <div class="wizard-summary-stat">\u2713 ${personCount} ${personCount === 1 ? 'person' : 'people'}</div>
-                <div class="wizard-summary-stat">\u2713 ${milestoneCount} milestones coming</div>
-                ${nextLine}
-            </div>
-            <p class="wizard-summary-hint">We\u2019ll watch for milestones and remind you when it\u2019s time to celebrate.</p>
-        `;
+        el.innerHTML = previewHtml;
     }
 
     _track('onboard_complete', { event_count: appData.events.length });
@@ -1588,7 +1584,7 @@ function wizardDiscoverFriend() {
             const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
             const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
             const dateStr2 = friendM.date.toLocaleDateString(locale, dateOpts);
-            shareMsg = `Did you know you turn exactly ${val} ${unit} old on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 happymoments.app`;
+            shareMsg = `Did you know you turn exactly ${val} ${unit} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 happymoments.app`;
         } else {
             shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
         }
@@ -2833,7 +2829,7 @@ function renderHeroMilestone() {
     } else if (hero.isCosmic) {
         sentence = `${hero.eventName}'s ${displayValue}`;
     } else {
-        sentence = `${hero.eventName} will be ${displayValue} ${displayUnit} old`;
+        sentence = `${hero.eventName} turns ${displayValue} ${displayUnit}`;
     }
 
     const heroClasses = hero.isCosmic ? 'hero-milestone-inner cosmic-hero' + (hero.isSaturnReturn ? ' saturn-return' : '') : 'hero-milestone-inner';

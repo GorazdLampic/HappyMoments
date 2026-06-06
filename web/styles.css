@@ -2758,6 +2758,40 @@ body {
     line-height: 1.5;
 }
 
+/* Screen 5: Milestone preview per person */
+.wizard-preview-person {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--warning);
+    font-weight: 600;
+    padding: var(--space-md) 0 var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+}
+.wizard-preview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+}
+.wizard-preview-val {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+}
+.wizard-preview-val.starred {
+    color: var(--warning);
+    font-weight: 600;
+}
+.wizard-preview-date {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-left: 12px;
+}
+
 /* Skip link styling */
 .wizard-skip {
     font-family: var(--font-serif);

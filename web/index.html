@@ -111,8 +111,8 @@
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content wizard-content-centered">
                     <div class="wizard-inspiration">
-                        <p class="wizard-inspo-line">Anna just discovered she turned<br><strong>1,000,000,000 seconds</strong> old last month.</p>
-                        <p class="wizard-inspo-line">Mark and Tina have been friends for exactly<br><strong>3,333 days</strong>. That called for a coffee.</p>
+                        <p class="wizard-inspo-line">Luka just discovered he turned<br><strong>1,000,000,000 seconds</strong> last month.</p>
+                        <p class="wizard-inspo-line">Sara and Maja have been friends for exactly<br><strong>3,333 days</strong>. That called for a coffee.</p>
                     </div>
                     <p class="wizard-inspo-question">What about you?</p>
                     <input type="hidden" id="birthName" value="Me">
@@ -134,7 +134,7 @@
                     <!-- Populated by wizardDiscoverV5() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardNext(3)">Now someone I love &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardNext(3)">Now check someone you know &rarr;</button>
                 </div>
             </div>
 
@@ -177,18 +177,18 @@
                         <!-- Populated with pre-written share message -->
                     </div>
                     <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Send to them &rarr;</button>
-                    <button class="wizard-skip" onclick="wizardGoToSummary()">Maybe later</button>
+                    <button class="wizard-btn-secondary" onclick="wizardGoToSummary()">Explore all milestones &rarr;</button>
                 </div>
             </div>
 
-            <!-- Screen 5: Dashboard landing + reminders -->
+            <!-- Screen 5: Milestone preview + actions -->
             <div class="wizard-step" id="wizardStep5">
                 <div class="wizard-content" id="wizardSummary">
-                    <!-- Populated by wizardGoToSummary() -->
+                    <!-- Populated by wizardGoToSummary() with milestone previews -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardEnableReminders()" id="wizardReminderBtn">Never miss a milestone &mdash; notify me</button>
-                    <button class="wizard-btn-secondary" onclick="wizardFinish()">Go to my milestones &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardFinish()">Tap the most interesting and share &rarr;</button>
+                    <button class="wizard-btn-secondary" onclick="wizardFinish()">Add more people &rarr;</button>
                 </div>
             </div>
 
