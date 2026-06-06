@@ -2833,7 +2833,10 @@ function renderHeroMilestone() {
                 <span class="hero-separator">&mdash;</span>
                 <span class="hero-countdown">${timeUntilStr}</span>
             </div>
-            <button class="hero-share-btn" onclick="heroShare()" title="Share this milestone">Share &#8599;</button>
+            <div class="hero-actions">
+                <button class="hero-share-btn" onclick="heroShare()">Share</button>
+                <button class="hero-remind-btn" onclick="heroRemind()">Remind me</button>
+            </div>
         </div>
     `;
     heroEl.style.display = 'block';
@@ -2846,7 +2849,7 @@ function heroShare() {
     const heroEl = document.getElementById('heroMilestone');
     if (!heroEl || !heroEl._heroMilestone) return;
     const m = heroEl._heroMilestone;
-    const message = generateShareMessage(m);
+    const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
     if (navigator.share) {
         navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
     } else {
@@ -2855,13 +2858,145 @@ function heroShare() {
         }).catch(() => {});
     }
     _track('hero_share', { value: m.value, unit: m.unit });
-    promptShareApp();
+}
+
+function heroRemind() {
+    if (typeof NOTIF !== 'undefined' && !NOTIF.isEnabled()) {
+        NOTIF.enable().then(ok => {
+            if (ok) {
+                showToast('Reminders enabled! We\u2019ll notify you before this milestone.', 'success');
+                _track('hero_remind_enabled');
+            }
+        });
+    } else {
+        showToast('Reminder set! We\u2019ll notify you the day before.', 'success');
+        _track('hero_remind');
+    }
+}
+
+// ── HOME SCREEN: Time-chunked view ──
+function renderHomeScreen() {
+    const listEl = document.getElementById('timeChunkedList');
+    const togetherEl = document.getElementById('togetherSection');
+    if (!listEl) return;
+
+    if (appData.events.length === 0) {
+        listEl.innerHTML = '<p class="empty-text" style="padding:32px;text-align:center;font-style:italic;color:var(--text-muted);">Enter a birthday to discover hidden milestones.</p>';
+        if (togetherEl) togetherEl.style.display = 'none';
+        return;
+    }
+
+    // Gather all milestones across all people
+    let all = [];
+    const now = new Date();
+    appData.events.forEach(e => {
+        const milestones = typeof findAllUpcomingMilestones === 'function'
+            ? findAllUpcomingMilestones(e.date, 30, 365, appSettings) : [];
+        if (typeof findBigMilestones === 'function') {
+            findBigMilestones(e.date, appSettings).forEach(b => {
+                if (!milestones.some(m => m.value === b.value && m.unit === b.unit)) milestones.push(b);
+            });
+        }
+        if (typeof findCosmicMilestones === 'function') {
+            findCosmicMilestones(e.date).forEach(c => {
+                if (!milestones.some(m => m.unit === c.unit && m.value === c.value)) milestones.push(c);
+            });
+        }
+        milestones.forEach(m => { m.eventName = e.name; m.eventId = e.id; });
+        all = all.concat(milestones.filter(m => m.timeUntil > 0));
+    });
+
+    all.sort((a, b) => a.timeUntil - b.timeUntil);
+    allMilestonesFlat = all;
+
+    // Chunk by time
+    const week = [], month = [], later = [];
+    const weekMs = 7 * 24 * 60 * 60 * 1000;
+    const monthMs = 30 * 24 * 60 * 60 * 1000;
+    all.forEach(m => {
+        if (m.timeUntil <= weekMs) week.push(m);
+        else if (m.timeUntil <= monthMs) month.push(m);
+        else later.push(m);
+    });
+
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    function renderChunk(label, items, maxShow) {
+        if (items.length === 0) return '';
+        maxShow = maxShow || 7;
+        let html = `<div class="time-chunk-label">${label}</div>`;
+        items.slice(0, maxShow).forEach((m, i) => {
+            const val = m.value.toLocaleString(locale);
+            const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
+            const dateStr = m.date.toLocaleDateString(locale, { weekday: 'short', month: 'short', day: 'numeric' });
+            const isSpecial = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
+            html += `<div class="time-chunk-item" onclick="homeShareMilestone(${all.indexOf(m)})">
+                <div class="tc-left">
+                    <span class="tc-value ${isSpecial ? 'starred' : ''}">${isSpecial ? '\u2605 ' : ''}${val} ${unit}</span>
+                    <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                </div>
+                <span class="tc-date">${dateStr}</span>
+            </div>`;
+        });
+        if (items.length > maxShow) {
+            html += `<div class="time-chunk-more">...and ${items.length - maxShow} more</div>`;
+        }
+        return html;
+    }
+
+    let html = '';
+    html += renderChunk('This week', week, 5);
+    html += renderChunk('This month', month, 5);
+    html += renderChunk('Later', later, 5);
+
+    if (html === '') {
+        html = '<p class="empty-text" style="padding:24px;text-align:center;font-style:italic;color:var(--text-muted);">Your next milestone is coming. Add more people to find milestones sooner!</p>';
+    }
+    listEl.innerHTML = html;
+
+    // Together section
+    if (togetherEl && appData.events.length >= 2) {
+        togetherEl.style.display = '';
+        const contentEl = document.getElementById('togetherContent');
+        if (contentEl) {
+            // Calculate combined age
+            let totalDays = 0;
+            appData.events.forEach(e => {
+                totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
+            });
+            const nextRound = Math.ceil(totalDays / 10000) * 10000;
+            const daysUntilRound = nextRound - totalDays;
+            contentEl.innerHTML = `<p class="together-teaser">Together you are <strong>${totalDays.toLocaleString(locale)} days</strong>.<br>
+                <strong>${nextRound.toLocaleString(locale)} days</strong> together in ${daysUntilRound} days.</p>`;
+        }
+    } else if (togetherEl) {
+        togetherEl.style.display = 'none';
+    }
+}
+
+// Share from time-chunked list
+function homeShareMilestone(idx) {
+    const m = allMilestonesFlat[idx];
+    if (!m) return;
+    const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : `${m.eventName}: ${m.value.toLocaleString()} ${m.unitName}`;
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Copied to clipboard!', 'success');
+        }).catch(() => {});
+    }
+    _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
 }
 
 function renderMilestonesTab() {
+    // Render the new Home screen
+    renderHomeScreen();
+
+    // Also render hero milestone
+    renderHeroMilestone();
+
+    // Legacy: keep old columns for compatibility but don't show
     if (appData.events.length === 0) {
-        milestonesColumnsEl.innerHTML = '<p class="empty-text">Add events first.</p>';
-        personFilterEl.classList.add('hidden');
         const heroEl = document.getElementById('heroMilestone');
         if (heroEl) heroEl.style.display = 'none';
         return;

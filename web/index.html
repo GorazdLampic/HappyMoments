@@ -198,66 +198,34 @@
 
         </section>
 
-        <!-- Individual Milestones Tab Content (PRIMARY) -->
+        <!-- Home Tab Content -->
         <section id="milestonesTab" class="tab-content hidden">
-            <!-- Person Filter - Switch between people -->
-            <div id="personFilter" class="person-filter">
-                <!-- Dynamically populated with person buttons -->
-            </div>
-            <!-- Quick add person button -->
-            <button class="btn-add-person" onclick="switchTab('events'); document.getElementById('newEventName').focus();" data-i18n="add_date">+ Add person or date</button>
-
-            <!-- Today highlight -->
-            <div class="today-highlight" id="todayHighlight" style="display:none;"></div>
-
-            <!-- Hero Milestone -->
+            <!-- Hero Milestone Card (weather-app style) -->
             <div id="heroMilestone" class="hero-milestone" style="display:none;"></div>
 
-            <!-- Milestones by Event -->
-            <div class="card milestones-card">
-                <div class="section-header">
-                    <h2 id="milestonesTitle" data-i18n="upcoming_milestones">Upcoming Milestones</h2>
-                    <div class="header-actions">
-                        <button id="highlightsBtn" class="btn-small btn-highlights" onclick="selectMostSpecial()" data-i18n="highlights">Highlights</button>
-                        <button id="refreshMilestonesBtn" class="btn-small" data-i18n="refresh">Refresh</button>
-                    </div>
-                </div>
-                <div id="milestonesColumns" class="milestones-columns"></div>
+            <!-- Time-chunked milestone list -->
+            <div id="timeChunkedList" class="time-chunked-list">
+                <!-- Populated by renderHomeScreen() -->
             </div>
 
-            <!-- Share & Celebrate Section -->
-            <div class="card share-card share-card-priority">
-                <h3 data-i18n="share">Share &amp; Celebrate</h3>
-                <div id="sharePreview" class="share-preview"></div>
-                <div class="share-buttons">
-                        <button id="nativeShareBtn" class="btn-primary btn-native-share hidden">Share...</button>
-                        <button id="whatsappShareBtn" class="btn-primary btn-whatsapp">WhatsApp</button>
-                        <button id="viberShareBtn" class="btn-primary btn-viber">Viber</button>
-                        <button id="emailShareBtn" class="btn-secondary">Email</button>
-                        <button id="copyShareBtn" class="btn-secondary" data-i18n="copy">Copy</button>
-                </div>
-                <button class="btn-challenge" onclick="handleChallengeGroup()" style="width:100%; margin-top:8px;" data-i18n="share_with_group">Share with your group</button>
-                <div class="calendar-buttons">
-                    <span class="calendar-label" data-i18n="save_to_calendar">Save to calendar:</span>
-                    <button id="googleCalBtn" class="btn-calendar btn-gcal">Google</button>
-                    <button id="outlookCalBtn" class="btn-calendar btn-outlook">Outlook</button>
-                    <button id="icsCalBtn" class="btn-calendar btn-ics">.ics</button>
-                </div>
+            <!-- Together section (appears when 2+ people) -->
+            <div id="togetherSection" class="together-section" style="display:none;">
+                <div class="together-label">Together</div>
+                <div id="togetherContent"></div>
             </div>
 
-            <!-- Gift Ideas (below share, only for special milestones) -->
-            <div class="card gift-card" id="giftSection">
-                <h3 data-i18n="gift_idea">Gift Idea</h3>
-                <p class="card-description" data-i18n="gift_idea_desc">Make this milestone unforgettable with a personalized gift.</p>
-                <div id="giftPreview" class="gift-preview">
-                    <p class="empty-text" data-i18n="gift_idea_empty">Select a special milestone to see gift ideas.</p>
-                </div>
-                <div id="giftProducts" class="gift-products"></div>
+            <!-- Add someone — always at bottom -->
+            <div class="home-add-person" onclick="switchTab('events'); setTimeout(() => { const el = document.getElementById('newEventName'); if(el) el.focus(); }, 200);">
+                + Add someone to celebrate
             </div>
 
-            <!-- Hidden card preview container (used by image generation) -->
+            <!-- Legacy elements (kept for JS compatibility, hidden) -->
+            <div id="personFilter" class="person-filter" style="display:none;"></div>
+            <div id="milestonesColumns" class="milestones-columns" style="display:none;"></div>
+            <div id="sharePreview" class="share-preview" style="display:none;"></div>
+            <div id="todayHighlight" style="display:none;"></div>
+            <div id="giftSection" style="display:none;"><div id="giftPreview"></div><div id="giftProducts"></div></div>
             <div id="cardPreview" class="card-preview-container" style="display:none;"></div>
-
         </section>
 
         <!-- Combined Milestones Tab Content -->
@@ -475,18 +443,7 @@
                     <button class="theme-btn" data-theme-val="light" onclick="setAppTheme('light')">
                         <span class="theme-dot" style="background:#f5f0e8;"></span> Light
                     </button>
-                    <button class="theme-btn" data-theme-val="ocean" onclick="setAppTheme('ocean')">
-                        <span class="theme-dot" style="background:#0c1929;"></span> Ocean
-                    </button>
-                    <button class="theme-btn" data-theme-val="sunset" onclick="setAppTheme('sunset')">
-                        <span class="theme-dot" style="background:#1f1018;"></span> Sunset
-                    </button>
-                    <button class="theme-btn" data-theme-val="blossom" onclick="setAppTheme('blossom')">
-                        <span class="theme-dot" style="background:#1e1020;border-color:#e078b0;"></span> Blossom
-                    </button>
-                    <button class="theme-btn" data-theme-val="forest" onclick="setAppTheme('forest')">
-                        <span class="theme-dot" style="background:#0f1a10;"></span> Forest
-                    </button>
+                    <!-- Ocean, Sunset, Blossom, Forest removed — 2 themes only per UX spec -->
                 </div>
             </div>
 
