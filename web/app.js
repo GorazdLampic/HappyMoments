@@ -244,11 +244,9 @@ function init() {
 
     // Date fields are now DD/MM/YYYY number inputs — no max needed
 
-    // Hide header, consent banner, and lang picker during onboarding
+    // Hide header and tab bar during onboarding
     if (appData.events.length === 0 && !localStorage.getItem('hm_onboarded')) {
-        const langPicker = document.getElementById('langPicker');
-        if (langPicker) langPicker.style.display = 'none';
-        const header = document.querySelector('.header');
+        const header = document.getElementById('appHeader');
         if (header) header.style.display = 'none';
         // Don't show consent banner — will auto-accept on first wizard tap
     } else {
@@ -817,16 +815,53 @@ function setupEventListeners() {
 // TAB NAVIGATION
 // ============================================================
 
+// ── Profile Panel ──
+function toggleProfilePanel() {
+    const panel = document.getElementById('profilePanel');
+    const overlay = document.getElementById('profileOverlay');
+    if (!panel) return;
+
+    const isOpen = panel.classList.contains('visible');
+    if (isOpen) {
+        panel.classList.remove('visible');
+        if (overlay) overlay.classList.add('hidden');
+    } else {
+        // Move settings content into profile panel on first open
+        const body = document.getElementById('profilePanelBody');
+        if (body && body.children.length === 0 && settingsTab) {
+            // Move all cards from settings tab into profile panel
+            while (settingsTab.firstChild) {
+                body.appendChild(settingsTab.firstChild);
+            }
+            // Add lang picker into panel
+            const langPicker = document.getElementById('langPicker');
+            if (langPicker) {
+                langPicker.classList.remove('hidden');
+                body.insertBefore(langPicker, body.firstChild);
+            }
+        }
+        panel.classList.add('visible');
+        panel.classList.remove('hidden');
+        if (overlay) overlay.classList.remove('hidden');
+    }
+}
+
 function switchTab(tabName) {
     _track('tab_switched', { tab: tabName });
+    // Update bottom tab buttons
+    document.querySelectorAll('.tab-btn-bottom').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+    // Legacy top tabs (if any remain)
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
+    // Show/hide tab content — Home shows milestones + combined, People shows events
     milestonesTab.classList.toggle('hidden', tabName !== 'milestones');
-    combinedTab.classList.toggle('hidden', tabName !== 'combined');
+    combinedTab.classList.toggle('hidden', tabName !== 'milestones'); // Combined shows on Home
     eventsTab.classList.toggle('hidden', tabName !== 'events');
-    if (settingsTab) settingsTab.classList.toggle('hidden', tabName !== 'settings');
+    if (settingsTab) settingsTab.classList.add('hidden'); // Settings always hidden (in profile panel)
 
     // Clear selection state on tab switch
     selectedMilestone = null;
@@ -1614,11 +1649,9 @@ function wizardFinish() {
     // Dismiss wizard, show the normal dashboard
     onboardingSection.classList.add('hidden');
     tabNav.classList.remove('hidden');
-    // Restore header and lang picker
-    const header = document.querySelector('.header');
+    // Restore header
+    const header = document.getElementById('appHeader');
     if (header) header.style.display = '';
-    const langPicker = document.getElementById('langPicker');
-    if (langPicker) langPicker.style.display = '';
     updateSetSwitcher();
     selectedPersonIds = appData.events.map(e => e.id);
     renderPersonFilter();

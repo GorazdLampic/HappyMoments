@@ -669,7 +669,146 @@ body {
 }
 
 /* ============================================================
-   TAB NAVIGATION
+   PROFILE ICON (top-right in header)
+   ============================================================ */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.profile-icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.2s, border-color 0.2s;
+}
+.profile-icon:hover {
+    color: var(--warning);
+    border-color: var(--warning);
+}
+
+/* ============================================================
+   PROFILE PANEL (slide-in from right)
+   ============================================================ */
+
+.profile-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 85%;
+    max-width: 380px;
+    height: 100vh;
+    background: var(--bg-page);
+    z-index: 2000;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.3);
+}
+.profile-panel.visible {
+    transform: translateX(0);
+}
+.profile-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg) var(--space-xl);
+    border-bottom: 1px solid var(--border);
+}
+.profile-panel-header h2 {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xl);
+    color: var(--text-primary);
+}
+.profile-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+}
+.profile-close:hover { color: var(--text-primary); }
+
+.profile-panel-body {
+    padding: var(--space-md);
+}
+
+.profile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1999;
+}
+
+/* ============================================================
+   BOTTOM TAB BAR — 2 tabs: Home + People
+   ============================================================ */
+
+.tab-nav-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background: var(--bg-page);
+    border-top: 1px solid var(--border);
+    z-index: 500;
+    height: 56px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab-btn-bottom {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: var(--font-serif);
+    font-size: 0.75rem;
+    padding: 6px 0;
+    transition: color 0.2s;
+}
+.tab-btn-bottom svg {
+    stroke: var(--text-muted);
+    transition: stroke 0.2s;
+}
+.tab-btn-bottom.active {
+    color: var(--warning);
+}
+.tab-btn-bottom.active svg {
+    stroke: var(--warning);
+}
+
+/* Body padding for bottom tab bar */
+#app {
+    padding-bottom: 70px;
+}
+
+/* ============================================================
+   LEGACY TAB NAV (kept for backward compat, hidden)
    ============================================================ */
 
 .tab-nav {

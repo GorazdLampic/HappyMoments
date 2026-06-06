@@ -43,14 +43,16 @@
 <body>
     <div id="app">
         <!-- Header -->
-        <header class="header">
+        <header class="header" id="appHeader">
             <h1>HappyMoments</h1>
-            <p class="tagline" data-i18n="tagline">The poetry of numbers in your life, revealed.</p>
+            <button class="profile-icon" id="profileBtn" onclick="toggleProfilePanel()" title="Profile &amp; Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
             <div id="userBadge" class="user-badge hidden"></div>
         </header>
 
-        <!-- Language Picker — always visible -->
-        <div class="lang-picker" id="langPicker">
+        <!-- Language Picker — moved inside profile panel -->
+        <div class="lang-picker hidden" id="langPicker">
             <button class="lang-current" id="langBtnFallback" onclick="document.getElementById('langDropFallback').style.display=document.getElementById('langDropFallback').style.display==='block'?'none':'block'">
                 <span id="langFlagDisplay">🇬🇧</span>
                 <span id="langCodeDisplay">EN</span>
@@ -81,18 +83,22 @@
             </div>
         </div>
 
-        <!-- Set Switcher (for multiple event sets) -->
+        <!-- Set Switcher (hidden — simplified to one list) -->
         <div id="setSwitcher" class="set-switcher hidden">
             <select id="currentSetSelect"></select>
             <button id="renameCurrentSetBtn" class="btn-rename-set" title="Rename this set">✏️</button>
         </div>
 
-        <!-- Tab Navigation -->
-        <nav id="tabNav" class="tab-nav hidden">
-            <button class="tab-btn active" data-tab="milestones" data-i18n="tab_personal">Personal</button>
-            <button class="tab-btn" data-tab="combined" data-i18n="tab_team">Team</button>
-            <button class="tab-btn" data-tab="events" data-i18n="tab_data">Data</button>
-            <button class="tab-btn" data-tab="settings" data-i18n="tab_settings">Settings</button>
+        <!-- Bottom Tab Navigation — 2 tabs: Home + People -->
+        <nav id="tabNav" class="tab-nav-bottom hidden">
+            <button class="tab-btn-bottom active" data-tab="milestones" onclick="switchTab('milestones')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span>Home</span>
+            </button>
+            <button class="tab-btn-bottom" data-tab="events" onclick="switchTab('events')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>People</span>
+            </button>
         </nav>
 
         <!-- Onboarding Wizard -->
@@ -520,14 +526,17 @@
             </div>
         </section>
 
-        <!-- Happiness Counter -->
-        <div class="happy-counter" id="happyCounter">
-            <button class="happy-btn" id="happyBtn" onclick="handleHappyClick()">
-                <span class="happy-emoji">&#128522;</span>
-                <span>This made me happy!</span>
-            </button>
-            <div class="happy-count" id="happyCount"></div>
+        <!-- Profile Panel (slide-in from right) -->
+        <div class="profile-panel hidden" id="profilePanel">
+            <div class="profile-panel-header">
+                <h2>Settings</h2>
+                <button class="profile-close" onclick="toggleProfilePanel()">&times;</button>
+            </div>
+            <div class="profile-panel-body" id="profilePanelBody">
+                <!-- Settings content moved here by JS on init -->
+            </div>
         </div>
+        <div class="profile-overlay hidden" id="profileOverlay" onclick="toggleProfilePanel()"></div>
 
         <!-- Footer -->
         <footer class="app-footer">
