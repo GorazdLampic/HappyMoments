@@ -2322,26 +2322,38 @@ body {
     text-align: center;
 }
 
-/* Screen 1: Single hook — Calm/Headspace style: one thought, one action */
-.wizard-single-hook {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    color: var(--text-primary);
-    line-height: 1.4;
-    text-align: center;
-    margin-bottom: var(--space-2xl);
-    max-width: 340px;
-    font-style: italic;
-}
-.wizard-single-hook strong {
-    color: var(--warning);
-    font-style: normal;
-}
+/* Screen 1: Inspiration + Date */
 .wizard-content-centered {
     justify-content: center;
 }
+.wizard-inspiration {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+    max-width: 360px;
+}
+.wizard-inspo-line {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-md);
+    font-style: italic;
+}
+.wizard-inspo-line strong {
+    color: var(--warning);
+    font-weight: 600;
+    font-style: normal;
+}
+.wizard-inspo-question {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: var(--space-xl);
+    font-style: italic;
+}
 
-/* Large date fields — Cash App style: big, obvious, centered */
+/* Large date fields — Cash App style */
 .wizard-date-large .wizard-date-field {
     width: 80px;
     padding: 18px 10px;
@@ -2351,25 +2363,46 @@ body {
     font-size: 1.6rem;
 }
 
-/* Legacy examples (kept for other screens) */
-.wizard-examples {
-    margin-top: var(--space-md);
-    max-width: 400px;
-    text-align: center;
+/* Role chips — Screen 3 */
+.wizard-role-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    max-width: 360px;
 }
-.wizard-example {
+.wizard-role-chip {
+    background: var(--bg-elevated);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 10px 20px;
     font-family: var(--font-serif);
-    font-size: 1.35rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
-    line-height: 1.55;
-    margin-bottom: var(--space-lg);
-    font-style: italic;
+    cursor: pointer;
+    transition: all 0.2s;
 }
-.wizard-example strong {
+.wizard-role-chip:hover {
+    border-color: var(--warning);
+    color: var(--text-primary);
+}
+.wizard-role-chip.selected {
+    border-color: var(--warning);
+    background: rgba(212, 184, 118, 0.15);
     color: var(--warning);
     font-weight: 600;
-    font-style: normal;
-    font-size: 1.4rem;
+}
+.wizard-role-other {
+    border-style: dashed;
+    color: var(--text-muted);
+}
+.wizard-other-input {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+.wizard-other-input.hidden {
+    display: none;
 }
 
 /* v5 onboarding: milestone list on screen 3 */

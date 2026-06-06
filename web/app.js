@@ -1475,7 +1475,7 @@ function wizardGoToSummary() {
     _track('onboard_complete', { event_count: appData.events.length });
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
 }
 
 // --- v5 Onboarding: Enable reminders from summary ---
@@ -1496,18 +1496,44 @@ function wizardDiscover() {
     wizardDiscoverV5();
 }
 
-// --- Screen 7 → 8: Discover friend's milestone ---
+// --- Role chip selection (Screen 3) ---
+function wizardSelectRole(btn, role) {
+    // Deselect all chips, select this one
+    document.querySelectorAll('.wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    btn.classList.add('selected');
+    // Set the friend name to the role label
+    const nameInput = document.getElementById('friendName');
+    if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
+    // Focus the date field
+    const dayField = document.getElementById('friendDay');
+    if (dayField) setTimeout(() => dayField.focus(), 200);
+}
+
+function wizardSelectOther() {
+    // Deselect all chips
+    document.querySelectorAll('.wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelector('.wizard-role-other')?.classList.add('selected');
+    // Show and focus the text input
+    const nameInput = document.getElementById('friendName');
+    if (nameInput) { nameInput.classList.remove('hidden'); nameInput.value = ''; setTimeout(() => nameInput.focus(), 200); }
+}
+
+// --- Screen 3 → 4: Discover friend's milestone ---
 function wizardDiscoverFriend() {
     const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const name = document.getElementById('friendName')?.value?.trim();
     const dateStr = buildDateFromFields('friend');
 
-    if (!name || !dateStr) {
-        showToast(_t('wizard_please_enter_name_date'), 'error');
+    if (!name) {
+        showToast('Tap a role or enter a name', 'error');
+        return;
+    }
+    if (!dateStr) {
+        showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error');
         return;
     }
 
-    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep5');
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep4');
     if (!ok) return;
 
     // Build share preview message
@@ -1526,9 +1552,9 @@ function wizardDiscoverFriend() {
 
     _track('onboard_add_person', { event_count: appData.events.length });
 
-    // Show friend reveal (screen 5)
+    // Show friend reveal (screen 4)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep4')?.classList.add('wizard-step-active');
 
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
@@ -3076,7 +3102,7 @@ function renderPersonColumns() {
             const daysAway = m.timeUntil / (24 * 60 * 60 * 1000);
             // Proximity score: closer = higher (max ~100 for today, ~0 for 365d away)
             const pScore = Math.max(0, 100 - daysAway * 0.27);
-            m._score = rScore * 0.7 + pScore * 0.3;
+            m._score = rScore * 0.5 + pScore * 0.5;
         });
         milestones.sort((a, b) => b._score - a._score);
 
