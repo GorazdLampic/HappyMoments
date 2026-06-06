@@ -857,9 +857,9 @@ function switchTab(tabName) {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    // Show/hide tab content — Home shows milestones + combined, People shows events
+    // Show/hide tab content — Home shows milestones only (Together section is embedded), People shows events
     milestonesTab.classList.toggle('hidden', tabName !== 'milestones');
-    combinedTab.classList.toggle('hidden', tabName !== 'milestones'); // Combined shows on Home
+    combinedTab.classList.add('hidden'); // Old combined tab always hidden — replaced by Together section on Home
     eventsTab.classList.toggle('hidden', tabName !== 'events');
     if (settingsTab) settingsTab.classList.add('hidden'); // Settings always hidden (in profile panel)
 
@@ -883,42 +883,7 @@ function switchTab(tabName) {
     }
 
     // Show first-visit tab hint
-    showTabHint(tabName);
-}
-
-const TAB_HINTS = {
-    milestones: "Here are the special number milestones for your people. Tap any to share it!",
-    combined: "Combined milestones show when your group's ages add up to something special.",
-    events: "Add birthdays, anniversaries, and special dates for the people you care about.",
-    settings: "Customize which number patterns to show, manage notifications, and more."
-};
-
-function showTabHint(tabName) {
-    const storageKey = `hm_tab_seen_${tabName}`;
-    if (localStorage.getItem(storageKey)) return;
-
-    const hint = TAB_HINTS[tabName];
-    if (!hint) return;
-
-    // Find the tab content section
-    const tabMap = { milestones: milestonesTab, combined: combinedTab, events: eventsTab, settings: settingsTab };
-    const tabEl = tabMap[tabName];
-    if (!tabEl) return;
-
-    // Remove any existing hint in this tab
-    const existing = tabEl.querySelector('.tab-hint-banner');
-    if (existing) existing.remove();
-
-    const banner = document.createElement('div');
-    banner.className = 'tab-hint-banner';
-    banner.innerHTML = `
-        <span class="tab-hint-text">${hint}</span>
-        <button class="tab-hint-dismiss" onclick="this.parentElement.remove()">&times;</button>
-    `;
-    tabEl.insertBefore(banner, tabEl.firstChild);
-
-    // Mark as seen
-    localStorage.setItem(storageKey, '1');
+    // TAB_HINTS removed — legacy from old 4-tab UI
 }
 
 // ============================================================
@@ -926,8 +891,10 @@ function showTabHint(tabName) {
 // ============================================================
 
 function renderPersonFilter() {
+    // Person filter pills hidden in new 2-tab UI — columns replaced by time-chunked list
+    personFilterEl.classList.add('hidden');
+    personFilterEl.style.display = 'none';
     if (appData.events.length === 0) {
-        personFilterEl.classList.add('hidden');
         return;
     }
 
