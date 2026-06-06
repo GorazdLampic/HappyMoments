@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments UX Guidelines</title>
+<style>
+:root { --gold: #d4b876; --bg: #1a1a1a; --card: #222; --text: #e0e0e0; --muted: #888; --border: #333; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #1a1a1a; background: #fafafa; }
+h1 { font-size: 2rem; margin-bottom: 4px; }
+h2 { font-size: 1.4rem; margin-top: 48px; margin-bottom: 12px; color: #1a3c6e; border-bottom: 2px solid #1a3c6e; padding-bottom: 6px; }
+h3 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 8px; }
+p, li { font-size: 1rem; margin-bottom: 10px; }
+.meta { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 0.92rem; }
+th { background: #1a3c6e; color: white; padding: 8px 12px; text-align: left; }
+td { padding: 8px 12px; border-bottom: 1px solid #ddd; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f5f2; }
+.rule { border-left: 4px solid var(--gold); padding: 12px 18px; margin: 16px 0; background: #faf8f0; }
+.swatch { display: inline-block; width: 48px; height: 28px; border-radius: 4px; vertical-align: middle; border: 1px solid #ccc; margin-right: 8px; }
+ul { margin: 6px 0 14px 22px; }
+
+/* ── Live component demos ── */
+.demo-area { background: var(--bg); color: var(--text); border-radius: 12px; padding: 24px; margin: 16px 0; font-family: 'Georgia', 'EB Garamond', serif; }
+.demo-area .hero-num { font-family: 'Consolas', 'Source Code Pro', monospace; font-size: 2.5rem; font-weight: 300; color: var(--gold); text-align: center; margin: 12px 0 4px; }
+.demo-area .hero-unit { font-size: 1.1rem; text-align: center; font-style: italic; color: var(--text); margin-bottom: 12px; }
+.demo-area .hero-date { font-size: 1.1rem; text-align: center; color: #aaa; margin-bottom: 4px; }
+.demo-area .hero-countdown { font-size: 1.1rem; text-align: center; color: var(--gold); font-style: italic; font-weight: 500; }
+.demo-area .milestone-cell { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.demo-area .mc-left { }
+.demo-area .mc-value { font-family: 'Consolas', monospace; font-size: 1.1rem; color: var(--gold); font-weight: 500; }
+.demo-area .mc-date { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+.demo-area .btn-gold { background: var(--gold); color: var(--bg); border: none; padding: 14px 32px; border-radius: 8px; font-size: 1.1rem; font-weight: 600; display: block; width: 100%; max-width: 340px; margin: 16px auto 0; cursor: pointer; font-family: 'Georgia', serif; }
+.demo-area .btn-gray { background: transparent; color: var(--muted); border: none; padding: 8px 16px; font-size: 0.85rem; display: block; margin: 8px auto 0; cursor: pointer; font-family: 'Georgia', serif; }
+.demo-area .section-label { font-size: 0.85rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; padding: 16px 16px 8px; font-weight: 600; }
+.demo-area .empty-state { text-align: center; padding: 32px 24px; color: var(--muted); font-style: italic; font-size: 1.1rem; }
+.demo-area .add-btn { display: block; text-align: center; padding: 14px; border: 2px dashed var(--border); border-radius: 8px; color: var(--muted); margin: 16px; font-size: 1rem; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1>HappyMoments UX Guidelines</h1>
+<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
+Cross-references: <a href="onboarding-flow.md">onboarding-flow.md</a> &middot; <a href="navigation-architecture.md">navigation-architecture.md</a> &middot; <a href="user-psychology.md">user-psychology.md</a><br>
+Supersedes: archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>1. Design Philosophy</h2>
+
+<div class="rule">
+<strong>Less but better.</strong> HappyMoments is a relationship tool disguised as a number calculator. It gives people reasons to celebrate and reconnect. Every pixel must serve that mission. If an element doesn't help the user discover, celebrate, or share a milestone &mdash; remove it.
+</div>
+
+<p>Three rules that override everything else:</p>
+<ol>
+<li><strong>One hero per screen.</strong> Each screen has ONE dominant element. Everything else supports it.</li>
+<li><strong>Never feel like accounting software.</strong> Numbers are celebrations, not data. Reward every action.</li>
+<li><strong>The shareable artifact is the product.</strong> If the user can't screenshot it and send it, we failed.</li>
+</ol>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>2. Color System</h2>
+
+<p>Two semantic colors. Nothing else.</p>
+
+<table>
+<tr><th>Color</th><th>Role</th><th>Usage</th></tr>
+<tr><td><span class="swatch" style="background:#d4b876"></span><strong>Gold</strong> <code>#d4b876</code></td><td>Things that matter</td><td>Hero number, primary CTA button, countdown text, milestone star, "This week" label</td></tr>
+<tr><td><span class="swatch" style="background:#888"></span>to <span class="swatch" style="background:#e0e0e0"></span><strong>Gray spectrum</strong></td><td>Everything else</td><td>Body text, dates, borders, secondary buttons, metadata, labels</td></tr>
+</table>
+
+<div class="rule">
+<strong>One gold element per screen.</strong> (Von Restorff Effect) If everything is gold, nothing stands out. The hero number is gold. The CTA button is gold. Dates, names, descriptions are gray. No green WhatsApp buttons, no blue links, no red badges. Gold and gray.
+</div>
+
+<h3>Dark / Light themes</h3>
+<table>
+<tr><th>Element</th><th>Dark</th><th>Light</th></tr>
+<tr><td>Page background</td><td><span class="swatch" style="background:#1a1a1a"></span><code>#1a1a1a</code></td><td><span class="swatch" style="background:#f5f0e8"></span><code>#f5f0e8</code></td></tr>
+<tr><td>Card background</td><td><span class="swatch" style="background:#222"></span><code>#222222</code></td><td><span class="swatch" style="background:#fff"></span><code>#ffffff</code></td></tr>
+<tr><td>Primary text</td><td><span class="swatch" style="background:#e0e0e0;border-color:#666"></span><code>#e0e0e0</code></td><td><span class="swatch" style="background:#1a1a1a"></span><code>#1a1a1a</code></td></tr>
+<tr><td>Gold accent</td><td colspan="2"><code>#d4b876</code> (same in both)</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>3. Typography</h2>
+
+<p>Three levels. Nothing else.</p>
+
+<table>
+<tr><th>Level</th><th>Size</th><th>Weight</th><th>Font</th><th>Color</th><th>Use</th></tr>
+<tr><td><strong>Hero</strong></td><td>2.5rem (40px) desktop<br>2rem (32px) mobile min</td><td>300</td><td>Monospace (Source Code Pro, Consolas)</td><td>Gold</td><td>The big number. One per screen.</td></tr>
+<tr><td><strong>Body</strong></td><td>1.1rem (17.6px)</td><td>400</td><td>Serif (EB Garamond, Georgia)</td><td>Primary text</td><td>Names, dates, descriptions, buttons, unit labels</td></tr>
+<tr><td><strong>Caption</strong></td><td>0.88rem (14px) min</td><td>400</td><td>Serif or Mono</td><td>Muted</td><td>Secondary info, metadata, hints. Never below 14px.</td></tr>
+</table>
+
+<div class="rule">
+<strong>Minimum text size: 14px (0.88rem).</strong> Apple HIG says 11pt minimum, but for readability on all devices, our floor is 14px. Body text is always 1.1rem (17.6px). Nothing is 12px or 13px.
+</div>
+
+<h3>Font families</h3>
+<ul>
+<li><strong>Words:</strong> <code>'EB Garamond', 'Georgia', 'Cambria', serif</code> &mdash; warm, literary, human</li>
+<li><strong>Numbers:</strong> <code>'Source Code Pro', 'Consolas', 'Monaco', monospace</code> &mdash; precise, technical, impressive</li>
+</ul>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>4. Spacing</h2>
+
+<p>Three values. Multiples of 8.</p>
+
+<table>
+<tr><th>Name</th><th>Value</th><th>Use</th></tr>
+<tr><td><strong>Small</strong></td><td>8px</td><td>Between related elements (label and value, icon and text)</td></tr>
+<tr><td><strong>Medium</strong></td><td>16px</td><td>Between components (card padding, section gaps)</td></tr>
+<tr><td><strong>Large</strong></td><td>32px</td><td>Between sections (above section headers, screen padding)</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>5. Component Catalog</h2>
+
+<h3>5.1 Hero Card</h3>
+<p>The weather-app glanceable element. One per screen. Dominates the top of Home.</p>
+
+<div class="demo-area">
+<div class="hero-num">20,000</div>
+<div class="hero-unit">days alive</div>
+<div class="hero-date">Thursday, June 18, 2026</div>
+<div class="hero-countdown">That's in 12 days!</div>
+<div style="display:flex;gap:12px;justify-content:center;margin-top:16px;">
+<button class="btn-gold" style="width:auto;flex:1;max-width:160px">Share</button>
+<button class="btn-gold" style="width:auto;flex:1;max-width:160px;background:#333;color:#aaa">Remind me</button>
+</div>
+</div>
+
+<p>Rules: hero number in monospace gold (2.5rem), unit in body serif italic, date in body gray, countdown in body gold italic bold. Two buttons: Share (gold) + Remind me (gray).</p>
+
+<h3>5.2 Milestone Cell</h3>
+<p>Two lines. Value + unit on line 1. Date + countdown on line 2. Tap to select for sharing.</p>
+
+<div class="demo-area">
+<div class="section-label">This week</div>
+<div class="milestone-cell">
+<div class="mc-left">
+<div class="mc-value">&#9733; 888 days</div>
+<div class="mc-date">Tuesday, Jun 10 &middot; in 4 days</div>
+</div>
+</div>
+<div class="milestone-cell">
+<div class="mc-left">
+<div class="mc-value">500 months</div>
+<div class="mc-date">Thursday, Jun 12 &middot; in 6 days</div>
+</div>
+</div>
+<div class="section-label">This month</div>
+<div class="milestone-cell">
+<div class="mc-left">
+<div class="mc-value">&#9733; 12,321 days</div>
+<div class="mc-date">Sunday, Jun 22 &middot; palindrome</div>
+</div>
+</div>
+</div>
+
+<p>Rules: value in monospace gold (1.1rem, bold for starred), date in caption muted. Star (&#9733;) for very special numbers. Time-chunked: "This week" / "This month" / "Later". Max 5-7 per chunk.</p>
+
+<h3>5.3 Share Flow</h3>
+<p>Bottom sheet modal. Two elements: pre-written message + Share button. Native OS share sheet.</p>
+
+<div class="demo-area" style="max-width:380px;margin:16px auto;">
+<p style="font-style:italic;color:#aaa;border-left:3px solid #d4b876;padding:10px 14px;margin:0 0 16px;font-size:1rem;line-height:1.5">&ldquo;Hey, did you know you turn exactly 20,000 days old on June 18th? That&rsquo;s worth celebrating!&rdquo;</p>
+<button class="btn-gold">Share</button>
+<button class="btn-gray">Share as image</button>
+</div>
+
+<h3>5.4 Add Person</h3>
+<p>Inline form. Name field + date fields. Always visible at bottom of Home.</p>
+
+<div class="demo-area" style="max-width:380px;margin:16px auto;">
+<div class="add-btn">+ Add someone to celebrate</div>
+</div>
+
+<h3>5.5 Empty State</h3>
+<p>Never show a blank screen. Every empty section teaches AND motivates.</p>
+
+<div class="demo-area" style="max-width:380px;margin:16px auto;">
+<div class="empty-state">Add a second person to discover combined milestones &mdash; like when your ages add up to 50,000 days.</div>
+</div>
+
+<h3>5.6 Buttons</h3>
+
+<div class="demo-area" style="max-width:380px;margin:16px auto;">
+<button class="btn-gold">Primary action</button>
+<button class="btn-gold" style="background:#333;color:#aaa;margin-top:8px">Secondary action</button>
+<button class="btn-gray">Skip / Maybe later</button>
+</div>
+
+<p>Rules: primary = gold bg, dark text, full-width, 14px+ padding. Secondary = dark bg, gray text. Skip = text-only, muted, small. Touch targets: minimum 44&times;44px.</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>6. Animations &amp; Transitions</h2>
+
+<table>
+<tr><th>What</th><th>Animation</th><th>Duration</th></tr>
+<tr><td><strong>Counter reveal</strong></td><td>Numbers roll up from 0 to target with ease-out-cubic. Gold glow pulse on completion. Sparkle particles float up.</td><td>1.5&ndash;2s (longer for bigger numbers)</td></tr>
+<tr><td><strong>Tab switch</strong></td><td>Instant crossfade. Maintain scroll position.</td><td>0ms (no animation)</td></tr>
+<tr><td><strong>Drill-down</strong> (milestone detail, person view)</td><td>Slide from right. Back arrow (&larr;) top-left.</td><td>300ms</td></tr>
+<tr><td><strong>Bottom sheet</strong> (share, add person)</td><td>Slide up from bottom. Drag-to-dismiss.</td><td>300ms</td></tr>
+<tr><td><strong>Full-screen modal</strong> (onboarding, settings page)</td><td>Slide up. Close (&times;) top-left.</td><td>300ms</td></tr>
+<tr><td><strong>Stagger fade-in</strong> (reveal supporting elements)</td><td>Name &rarr; unit &rarr; date &rarr; countdown appear sequentially after counter finishes.</td><td>0.3s delay between each, 0.5s each</td></tr>
+</table>
+
+<div class="rule">
+All transitions 300ms, 60fps. The counter reveal is the only "long" animation &mdash; it builds anticipation. Everything else is fast and responsive.
+</div>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>7. Accessibility</h2>
+
+<ul>
+<li>Contrast: 4.5:1 minimum (WCAG AA). Gold on dark bg = 7.2:1 &#10003;</li>
+<li>Touch targets: 44&times;44px minimum (Apple HIG)</li>
+<li>Text: never below 14px. Body 17.6px.</li>
+<li>Zoom: pinch-to-zoom enabled (<code>user-scalable=yes</code>)</li>
+<li>VoiceOver: all milestone values have <code>aria-label</code> with full text ("twenty thousand days")</li>
+<li>Reduced motion: respect <code>prefers-reduced-motion</code> &mdash; skip counter animation, show final value immediately</li>
+</ul>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>8. What We Protect</h2>
+
+<p>These elements are sacred. They define the app. Do not remove or significantly alter them without explicit founder approval:</p>
+
+<ul>
+<li>The billion-second hook (first onboarding screen)</li>
+<li>Counter animation on milestone reveal</li>
+<li>Pre-written share messages (1000+ templates, 6 languages)</li>
+<li>Column layout for per-person milestones (returning users)</li>
+<li>PWA capability (works offline, installable)</li>
+<li>21-language support with auto-detection</li>
+<li>Local-first data (no account required)</li>
+<li>Gold + gray color system</li>
+</ul>
+
+<p class="meta" style="margin-top:48px">End of document. Open in browser for rendered component examples.</p>
+
+</body>
+</html>
