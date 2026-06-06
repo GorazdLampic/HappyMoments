@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments UX Strategic Review v2 — Navigation &amp; Daily Use</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; max-width: 940px; margin: 0 auto; padding: 24px; line-height: 1.65; color: #1a1a1a; background: #fafafa; }
+h1 { font-size: 2rem; margin-bottom: 8px; }
+h2 { font-size: 1.45rem; margin-top: 48px; margin-bottom: 16px; color: #1a3c6e; border-bottom: 2px solid #1a3c6e; padding-bottom: 6px; }
+h3 { font-size: 1.15rem; margin-top: 28px; margin-bottom: 10px; color: #333; }
+p { margin-bottom: 14px; }
+.meta { color: #666; font-size: 0.95rem; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.92rem; }
+th { background: #1a3c6e; color: white; padding: 10px 12px; text-align: left; }
+td { padding: 10px 12px; border-bottom: 1px solid #ddd; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f5f2; }
+.quote { border-left: 4px solid #c9a84c; padding: 12px 20px; margin: 20px 0; background: #faf8f0; font-style: italic; }
+.insight { border-left: 4px solid #1a3c6e; padding: 14px 20px; margin: 20px 0; background: #f0f4fa; }
+.warn { border-left: 4px solid #c62828; padding: 14px 20px; margin: 20px 0; background: #fff5f5; }
+.ok { border-left: 4px solid #2e7d32; padding: 14px 20px; margin: 20px 0; background: #f0faf0; }
+.verdict { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+.yes { background: #e8f5e9; color: #2e7d32; }
+.no { background: #ffebee; color: #c62828; }
+.maybe { background: #fff3e0; color: #ef6c00; }
+ul, ol { margin: 8px 0 16px 24px; }
+li { margin-bottom: 6px; }
+.mockup { font-family: 'Courier New', monospace; background: #222; color: #e0e0e0; padding: 20px; border-radius: 12px; margin: 16px 0; line-height: 1.5; font-size: 0.88rem; white-space: pre; overflow-x: auto; }
+.mockup .gold { color: #d4b876; font-weight: bold; }
+.mockup .muted { color: #888; }
+.mockup .accent { color: #a0b8a0; }
+.cmp { display: flex; gap: 20px; margin: 16px 0; }
+.cmp > div { flex: 1; padding: 16px; border-radius: 8px; }
+.cmp .before { background: #ffebee; }
+.cmp .after { background: #e8f5e9; }
+.cmp h4 { margin-bottom: 8px; font-size: 0.95rem; }
+</style>
+</head>
+<body>
+
+<h1>HappyMoments UX Strategic Review v2</h1>
+<p class="meta">Focus: Navigation architecture &amp; onboarding-to-daily-use transition<br>June 2026 &middot; Based on NNGroup, Apple HIG, Material Design, Duolingo, Spotify, Headspace, Revolut, Instagram research</p>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>1. The Navigation Problem</h2>
+
+<h3>What we have now: 4 equal tabs</h3>
+<div class="mockup">  [ Personal ]  [ Team ]  [ Data ]  [ Settings ]</div>
+
+<h3>What's wrong with it</h3>
+<table>
+<tr><th>Problem</th><th>Evidence</th><th>Source</th></tr>
+<tr><td><strong>4 tabs feel equal</strong>, but they are NOT equal in value. 80% of the time users want Personal. Team, Data, Settings are 5-10% each.</td><td>Instagram removed Shop tab because usage was low. Facebook moved features into existing tabs when they didn't earn their place.</td><td>Instagram redesign 2023, Wroblewski</td></tr>
+<tr><td><strong>"Data" tab is confusing.</strong> What is "Data"? Is it my data? Privacy? Export? It's actually the people-management screen.</td><td>NNGroup: labels should describe benefits, not technical functions. "People don't care about features — they care about abilities."</td><td>NNGroup, UserOnboard</td></tr>
+<tr><td><strong>"Team" tab is empty for 1-person users.</strong> New users see an empty tab on their second visit, which signals "this app has nothing for me here."</td><td>Empty states with no guidance cause up to 40% first-week retention drop.</td><td>Mobbin, Toptal</td></tr>
+<tr><td><strong>Settings is rarely needed</strong> but takes 25% of the navigation real estate.</td><td>Apple, Google, Instagram, Spotify all put settings inside a profile/account tab, not as a primary tab.</td><td>Apple HIG, Material Design</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>2. Navigation Options: What the Research Says</h2>
+
+<div class="insight">
+<strong>Hard data from NNGroup:</strong> Hidden navigation (hamburger menu) causes 21% increase in perceived difficulty, 15-39% slowdown, and 20%+ drop in feature discoverability. Bottom tab bars win decisively. Optimal: 3-5 tabs. Never more than 5.
+</div>
+
+<h3>Option A: 3 tabs (radical simplicity)</h3>
+<div class="mockup">  [ <span class="gold">Home</span> ]    [ People ]    [ Profile ]</div>
+
+<table>
+<tr><th>Tab</th><th>What's in it</th><th>% of usage</th></tr>
+<tr><td><strong>Home</strong></td><td>Hero milestone + upcoming list + combined milestones + "Today's number"</td><td>70%</td></tr>
+<tr><td><strong>People</strong></td><td>Add/edit people, manage dates, see per-person milestones</td><td>20%</td></tr>
+<tr><td><strong>Profile</strong></td><td>Settings, theme, language, notifications, legal, account</td><td>10%</td></tr>
+</table>
+
+<p><strong>Pros:</strong> Maximum simplicity. "Home" gets full attention. Zero confusion about where to go.</p>
+<p><strong>Cons:</strong> Combined/team milestones buried inside Home — might feel crammed. People tab does double duty (add + view).</p>
+
+<h3>Option B: 4 tabs (current count, better names)</h3>
+<div class="mockup">  [ <span class="gold">Home</span> ]    [ Together ]    [ People ]    [ More ]</div>
+
+<table>
+<tr><th>Tab</th><th>What's in it</th><th>% of usage</th></tr>
+<tr><td><strong>Home</strong></td><td>Hero milestone + personal milestone list</td><td>60%</td></tr>
+<tr><td><strong>Together</strong></td><td>Combined milestones for families/couples/groups</td><td>15%</td></tr>
+<tr><td><strong>People</strong></td><td>Add/edit people and dates</td><td>15%</td></tr>
+<tr><td><strong>More</strong></td><td>Settings, theme, notifications, gift store, legal, export/import</td><td>10%</td></tr>
+</table>
+
+<p><strong>Pros:</strong> "Together" is a clear, warm label (better than "Team"). "More" is a known pattern (Instagram used it). Keeps combined milestones discoverable.</p>
+<p><strong>Cons:</strong> Still 4 tabs. "More" is a catch-all that some UX purists dislike.</p>
+
+<h3>Option C: 3 tabs + contextual access</h3>
+<div class="mockup">  [ <span class="gold">Home</span> ]    [ People ]    [ <span class="muted">☰</span> ]</div>
+
+<table>
+<tr><th>Tab</th><th>What's in it</th></tr>
+<tr><td><strong>Home</strong></td><td>Hero + personal + combined (interleaved timeline, not separate tab). "Together" milestones appear in the same list, marked with a family icon.</td></tr>
+<tr><td><strong>People</strong></td><td>Add/edit people. Tap a person → see their milestones.</td></tr>
+<tr><td><strong>☰ (menu)</strong></td><td>Settings, notifications, theme, gift store, legal, export</td></tr>
+</table>
+
+<p><strong>Pros:</strong> Combined milestones flow naturally into the main timeline — no separate tab to discover. Hamburger only for rarely-used settings (acceptable per NNGroup: "use hamburger for secondary items"). 2 real tabs + 1 utility.</p>
+<p><strong>Cons:</strong> Combined milestones might get lost in the main list. Hamburger for settings is OK per research, but some users won't find it.</p>
+
+<h3>Option D: Hub-and-spoke (app opens to a dashboard)</h3>
+<div class="mockup">  ┌──────────────────────────────┐
+  │  <span class="gold">★ Next milestone: 12 days</span>     │  ← Hero card
+  │     Mom turns 20,000 days     │
+  │     [Share]  [Remind me]      │
+  ├──────────────────────────────┤
+  │  This week  │  This month    │  ← Time-chunked list
+  │  ○ Dad: 888d │ ○ You: 12000d │
+  │  ○ Sis: 3000w│ ○ Wed: 5000d  │
+  ├──────────────────────────────┤
+  │  [👤 People]    [⚙ Settings] │  ← Cards, not tabs
+  │  [👨‍👩‍👧 Together] [🎁 Gifts]   │
+  └──────────────────────────────┘</div>
+
+<p><strong>Pros:</strong> Dashboard pattern (like Revolut Home). All features visible as cards. No tabs at all — each card opens a full-screen sub-view, user returns to hub. Strongest for feature discovery.</p>
+<p><strong>Cons:</strong> Requires more scrolling. Sub-views need clear "back to home" navigation. Not a standard mobile pattern — users might feel lost.</p>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>3. Recommendation: Option A or C</h2>
+
+<div class="ok">
+<strong>My recommendation: Option A (3 tabs)</strong> for the beta launch. It's the simplest, most opinionated structure. Home absorbs everything the user cares about on a daily basis. People is the "management" area. Profile catches the rest.
+<br><br>
+If combined/team milestones prove popular (track with analytics), promote to Option B by adding a "Together" tab later. <strong>It's easier to add a tab than to remove one.</strong>
+</div>
+
+<h3>How "Home" would work (the key question)</h3>
+
+<p>Home is a <strong>single scrollable screen</strong> with sections that appear based on what the user has:</p>
+
+<div class="mockup">  ┌──────────────────────────────────┐
+  │                                  │
+  │  <span class="gold">★ HERO MILESTONE</span>                 │  One card. The most exciting
+  │  <span class="gold">  Mom turns 20,000 days</span>          │  milestone coming up. Big number,
+  │  <span class="gold">  June 18 — in 12 days!</span>          │  share button, remind button.
+  │  <span class="gold">  [Share]  [Remind me]</span>           │
+  │                                  │
+  ├──────────────────────────────────┤
+  │                                  │
+  │  COMING UP                       │  Time-chunked milestone list.
+  │  <span class="accent">This week</span>                       │  Max 5-7 items per chunk.
+  │   Dad · 888 days · Tue          │  Tap any → share or details.
+  │   You · 500 months · Thu        │
+  │  <span class="accent">This month</span>                      │
+  │   Sister · 12,321 days · Jun 22 │
+  │   Wedding · 3,000 days · Jun 28 │
+  │  <span class="accent">Later</span>                           │
+  │   You · 1B seconds · Aug 14     │
+  │                                  │
+  ├──────────────────────────────────┤
+  │                                  │
+  │  <span class="muted">TOGETHER (if 2+ people)</span>         │  One combined milestone teaser.
+  │  <span class="muted">You + Mom = 38,547 days.</span>        │  "See more combined →"
+  │  <span class="muted">40,000 together in Nov 2030.</span>    │
+  │                                  │
+  ├──────────────────────────────────┤
+  │                                  │
+  │  <span class="muted">[+ Add someone to celebrate]</span>    │  Always visible at the bottom.
+  │                                  │
+  └──────────────────────────────────┘</div>
+
+<p>Key design decisions:</p>
+<ul>
+<li><strong>Hero card is weather-app style</strong> — one glanceable thing at the top. Answers "what's the most interesting milestone right now?"</li>
+<li><strong>Milestones are chunked by time</strong> (Miller's Law) — "This week" / "This month" / "Later" instead of a flat list of 50 items.</li>
+<li><strong>"Together" appears contextually</strong> — only shows when 2+ people exist. Not a separate tab, not a feature to discover — it just appears.</li>
+<li><strong>"Add someone" is always at the bottom</strong> — the growth action is persistent but unobtrusive.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>4. The Onboarding → Daily Use Bridge</h2>
+
+<div class="warn">
+<strong>The brutal numbers:</strong> 77% of users stop using an app within 3 days. Day 2-4 is the most critical retention window. If the user doesn't have a reason to return within 24 hours of their first session, they probably won't.
+</div>
+
+<h3>The current problem</h3>
+<p>After our onboarding, the user sees... the dashboard. With tabs. And no guidance. They think "cool, I saw my billion" and never come back. There's no hook pulling them to Day 2.</p>
+
+<h3>What needs to happen at the end of Session 1</h3>
+<ol>
+<li><strong>A concrete reason to return tomorrow.</strong> "Your next milestone is in X days — we'll remind you." Or: "Check back tomorrow — we'll show you something new."</li>
+<li><strong>A notification scheduled.</strong> If they enabled reminders: send the first one within 24 hours. Content: their next closest milestone. Make it personal: "Dad turns 888 days on Thursday."</li>
+<li><strong>An investment made.</strong> They added 1-2 people. Now they have data in the app. Losing it creates switching cost.</li>
+</ol>
+
+<h3>The first 7 days: a graduated experience</h3>
+
+<table>
+<tr><th>Day</th><th>What the user sees</th><th>What we introduce</th><th>Goal</th></tr>
+<tr><td><strong>Day 1</strong></td><td>Onboarding → hero reveal → add 1-2 people → share</td><td>Core: milestones + share</td><td>First share (activation)</td></tr>
+<tr><td><strong>Day 2</strong></td><td>Push notification: "Dad's 888 days is Thursday"</td><td>The notification proves the app watches for you</td><td>Return visit</td></tr>
+<tr><td><strong>Day 3</strong></td><td>Open app → hero card updated → "Coming up" list</td><td>Time-chunked list (This week/month/later)</td><td>Explore depth</td></tr>
+<tr><td><strong>Day 4-5</strong></td><td>If 2+ people: "Together" section appears with a teaser</td><td>Combined milestones — contextual, not forced</td><td>Discover team feature</td></tr>
+<tr><td><strong>Day 7</strong></td><td>If 3+ people: "You have 24 milestones coming this year"</td><td>The "depth" revelation — the app has ongoing value</td><td>Long-term retention</td></tr>
+</table>
+
+<h3>"Check and go" (30 sec) vs "Stay and explore" (5 min)</h3>
+
+<div class="insight">
+<strong>The answer is: design for "check and go" FIRST.</strong> If the user gets value in 5 seconds (hero card → "nothing today, Dad's milestone is Thursday"), they'll come back. If they have to scroll and explore to find value, they won't return daily.
+<br><br>
+The "stay and explore" mode is below the fold. It's there when they want it, but the app works perfectly as a 5-second glance.
+</div>
+
+<p>This mirrors how people use weather apps: open, see the temperature, close. But sometimes they scroll down to the hourly forecast. The hero card IS the temperature.</p>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>5. Screen Transitions: How to Move Within the App</h2>
+
+<h3>The rules (from Apple HIG, Material Design, NNGroup)</h3>
+
+<table>
+<tr><th>Transition type</th><th>When to use</th><th>Animation</th></tr>
+<tr><td><strong>Tab switch</strong></td><td>Switching between Home / People / Profile</td><td>Instant crossfade (no slide). Tabs maintain scroll position.</td></tr>
+<tr><td><strong>Push (drill-down)</strong></td><td>Tapping a milestone to see details. Tapping a person to see their milestones.</td><td>Slide from right. Back arrow (←) top-left to return.</td></tr>
+<tr><td><strong>Modal (bottom sheet)</strong></td><td>Share flow. Add person form. Quick actions.</td><td>Slide up from bottom. Drag-to-dismiss or close (×). Doesn't replace the screen — overlays it.</td></tr>
+<tr><td><strong>Full-screen modal</strong></td><td>Onboarding. Settings sub-pages. Gift store.</td><td>Slide up. Close (×) top-left. Used for focused tasks that don't need the tab bar.</td></tr>
+</table>
+
+<h3>Key principle: Flat, not deep</h3>
+
+<div class="quote">"Limit navigation to 2 levels maximum on mobile. Beyond that creates usability problems." — NNGroup</div>
+
+<p>For HappyMoments:</p>
+<ul>
+<li><strong>Level 1:</strong> Tab bar (Home / People / Profile) — always visible</li>
+<li><strong>Level 2:</strong> Detail views (milestone detail, person's milestones, settings sub-page) — push navigation with back arrow</li>
+<li><strong>Modals:</strong> Actions (share, add person, edit) — bottom sheets that overlay, don't replace</li>
+</ul>
+<p>Never deeper than 2 taps from any tab. Every screen has either a back arrow (←) or a close (×) — never ambiguous.</p>
+
+<h3>Tap paths (critical user journeys)</h3>
+
+<table>
+<tr><th>User wants to...</th><th>Path</th><th>Taps</th></tr>
+<tr><td>See what's coming up</td><td>Open app → Home (hero + list visible)</td><td><strong>0</strong> (it's right there)</td></tr>
+<tr><td>Share a milestone</td><td>Tap milestone → Share button (bottom sheet)</td><td><strong>2</strong></td></tr>
+<tr><td>Add a person</td><td>Tap "Add someone" (bottom of Home, or People tab) → form</td><td><strong>2</strong></td></tr>
+<tr><td>See combined milestones</td><td>Scroll down on Home → "Together" section → tap "See more"</td><td><strong>2</strong></td></tr>
+<tr><td>Change language</td><td>Profile tab → Language</td><td><strong>2</strong></td></tr>
+<tr><td>Enable notifications</td><td>Profile tab → Notifications toggle</td><td><strong>2</strong></td></tr>
+<tr><td>Order a gift</td><td>Tap milestone → Gift icon (or: Profile → Gift Store)</td><td><strong>2-3</strong></td></tr>
+</table>
+
+<p>Everything is <strong>≤ 3 taps</strong>. The most common actions (see milestones, share) are 0-2 taps.</p>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>6. Feature Discovery: When to Reveal What</h2>
+
+<div class="insight">
+<strong>Principle:</strong> Features appear when the user has the CONTEXT to understand them. Not on a timer, not in a tutorial — in the moment they become relevant.
+</div>
+
+<table>
+<tr><th>Feature</th><th>Appears when...</th><th>How it appears</th></tr>
+<tr><td>Hero milestone</td><td>Always (1+ person added)</td><td>Top of Home — the billboard</td></tr>
+<tr><td>Time-chunked list</td><td>Always (1+ person added)</td><td>Below hero on Home</td></tr>
+<tr><td>"Together" section</td><td>2+ people added</td><td>Appears at bottom of Home with a teaser card. Not a tab, not a badge — just appears.</td></tr>
+<tr><td>Share as image</td><td>User taps Share</td><td>Bottom sheet shows both text and image card options</td></tr>
+<tr><td>Gift suggestion</td><td>Milestone is within 14 days AND it's for another person</td><td>Small "Gift idea" link on the milestone card — contextual, not a banner</td></tr>
+<tr><td>Notifications prompt</td><td>End of first session, OR Day 2 if skipped</td><td>One-time prompt: "Want to know when milestones are near?"</td></tr>
+<tr><td>Quick Find calculator</td><td>3+ people added, OR user opens People tab</td><td>Search bar at top of People tab</td></tr>
+<tr><td>Number preferences</td><td>User goes to Profile → Advanced</td><td>Expander in Profile settings — hidden by default</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>7. Empty States: The Hidden Onboarding</h2>
+
+<div class="quote">"Empty states are the most overlooked aspect of UX design — and the most impactful for first-run retention." — Toptal</div>
+
+<p>Every section needs a meaningful empty state that teaches AND motivates:</p>
+
+<table>
+<tr><th>Section</th><th>Current empty state</th><th>Better</th></tr>
+<tr><td>Home (no people)</td><td>Full onboarding wizard</td><td class="verdict yes">OK — the wizard IS the empty state</td></tr>
+<tr><td>Home (1 person, no milestones soon)</td><td>"Add events first."</td><td>"Your next milestone is in 47 days. Add more people to find milestones sooner!"</td></tr>
+<tr><td>"Together" section</td><td>Empty Team tab</td><td>"Add a second person to discover combined milestones — like when your ages add up to 50,000 days."</td></tr>
+<tr><td>People tab (1 person)</td><td>Just the one person listed</td><td>"Your mom, your partner, your best friend — whose birthday do you know? Add them to find their hidden milestones."</td></tr>
+<tr><td>Notifications off</td><td>Toggle in settings</td><td>"Never miss a milestone. We'll tell you the day before."</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>8. Onboarding Flow (Revised)</h2>
+
+<p>Integrating the navigation and daily-use research, here's the revised onboarding:</p>
+
+<table>
+<tr><th>Screen</th><th>What user sees</th><th>What happens</th><th>Transition to next</th></tr>
+<tr><td><strong>1. Hook + Date</strong></td><td>"You have a billionth-second birthday. When is it?" + DD/MM/YYYY</td><td>Enter date, tap "Show me"</td><td>Counter animation starts</td></tr>
+<tr><td><strong>2. Your Reveal</strong></td><td>Big animated number + unit + date + emotional countdown</td><td>Wow moment. Counter rolls up.</td><td>After animation: "That's not all — see more"</td></tr>
+<tr><td><strong>3. Your Milestones</strong></td><td>"You have X milestones coming" — top 4-5, time-chunked</td><td>See the depth. Realize it's not just the billion.</td><td>"Now someone you care about →" / Skip</td></tr>
+<tr><td><strong>4. Add Someone</strong></td><td>"Who do you want to celebrate?" — name + date</td><td>Enter a second person. The app's real value starts.</td><td>"Find their milestones →" / Skip</td></tr>
+<tr><td><strong>5. Their Reveal + Share</strong></td><td>Their hero milestone + pre-written share message</td><td>The share moment. One tap to send.</td><td>After share/skip → summary</td></tr>
+<tr><td><strong>6. Welcome</strong></td><td>Stats + "Enable reminders" + "Go to milestones →"</td><td>Enable notifications. Enter the app.</td><td>→ Home tab (with hero card, coming up list, together section)</td></tr>
+</table>
+
+<p><strong>The critical bridge:</strong> Screen 6 → Home tab must feel seamless. The hero card on Home should show the SAME milestone they just saw in Screen 2 (their own) or Screen 5 (friend's). No disorientation. The onboarding deposits them into the exact state the daily app will show.</p>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>9. Summary of Decisions Needed</h2>
+
+<table>
+<tr><th>#</th><th>Decision</th><th>Options</th><th>My recommendation</th></tr>
+<tr><td>1</td><td><strong>How many tabs?</strong></td><td>3 (Home/People/Profile) or 4 (add Together)</td><td><span class="verdict yes">Start with 3. Add Together tab later if analytics show demand.</span></td></tr>
+<tr><td>2</td><td><strong>Where do combined milestones live?</strong></td><td>A: Separate tab. B: Section on Home. C: Only in person detail view.</td><td><span class="verdict yes">B — section on Home, appears when 2+ people exist.</span></td></tr>
+<tr><td>3</td><td><strong>How to organize milestones?</strong></td><td>A: Flat chronological list. B: Time-chunked (week/month/later). C: By person.</td><td><span class="verdict yes">B — time-chunked. Matches mental model: "what's coming soon?"</span></td></tr>
+<tr><td>4</td><td><strong>What's the "landing screen" for daily users?</strong></td><td>A: Hero card only. B: Hero + list. C: Full dashboard.</td><td><span class="verdict yes">B — hero card (weather-app glance) + chunked list below.</span></td></tr>
+<tr><td>5</td><td><strong>Where do Settings go?</strong></td><td>A: Tab. B: Hamburger. C: Profile tab with settings inside.</td><td><span class="verdict yes">C — Profile tab (like Instagram/Spotify). Settings are a sub-section, not a primary destination.</span></td></tr>
+<tr><td>6</td><td><strong>How to transition between screens?</strong></td><td>A: All tabs. B: Tabs + push. C: Tabs + modals.</td><td><span class="verdict yes">B+C — tabs for top-level, push for drill-down, bottom-sheet modals for actions (share, add).</span></td></tr>
+<tr><td>7</td><td><strong>How to handle Day 2 retention?</strong></td><td>A: Push notification with next milestone. B: Email. C: Nothing.</td><td><span class="verdict yes">A — push notification within 24 hours. "Dad turns 888 days on Thursday!"</span></td></tr>
+<tr><td>8</td><td><strong>When to show gift store?</strong></td><td>A: Tab. B: Banner in milestone list. C: Contextual link on milestone cards near their date.</td><td><span class="verdict yes">C — contextual. Small "Gift idea" appears only when milestone is ≤14 days away and it's for another person.</span></td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>10. What's Different from v1 of This Review</h2>
+
+<table>
+<tr><th>Topic</th><th>v1 said</th><th>v2 adds</th></tr>
+<tr><td>Navigation</td><td>"Simplify the dashboard"</td><td>Specific 3-tab architecture with mockups. Researched 7 apps' tab structures.</td></tr>
+<tr><td>Daily use</td><td>Not addressed</td><td>Hero card (weather-app model) + time-chunked list. "Check and go" vs "stay and explore."</td></tr>
+<tr><td>Transitions</td><td>Not addressed</td><td>Full transition model: tab switch, push, modal, bottom sheet. Max 2 levels deep. Every path ≤3 taps.</td></tr>
+<tr><td>Feature discovery</td><td>"Progressive disclosure"</td><td>Specific timing for each feature. Contextual triggers, not timers. Empty states as teachers.</td></tr>
+<tr><td>Day 2+ retention</td><td>Not addressed</td><td>7-day graduated experience. Push notification on Day 2. "Together" section appears contextually.</td></tr>
+<tr><td>Combined milestones</td><td>"Keep or kill Team tab?"</td><td>Neither — embed as a section on Home that appears when 2+ people exist.</td></tr>
+</table>
+
+<p class="meta" style="margin-top: 48px;">Full research in: docs/navigation-architecture-research.md &middot; docs/ux-research-strategic.md &middot; docs/ux-redesign-minimalist.md<br>Sources: NNGroup (10+ articles), Apple HIG, Material Design 3, Wroblewski, Duolingo Design Blog, Spotify Engineering, Instagram redesign analysis, Revolut/WeChat architecture studies, Mobbin, Toptal, UserGuiding, Appcues.</p>
+
+</body>
+</html>
