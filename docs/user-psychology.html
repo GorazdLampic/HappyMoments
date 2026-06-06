@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments User Psychology</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #1a1a1a; background: #fafafa; }
+h1 { font-size: 2rem; margin-bottom: 4px; }
+h2 { font-size: 1.4rem; margin-top: 48px; margin-bottom: 12px; color: #1a3c6e; border-bottom: 2px solid #1a3c6e; padding-bottom: 6px; }
+h3 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 8px; }
+p, li { font-size: 1rem; margin-bottom: 10px; }
+ul, ol { margin: 6px 0 14px 22px; }
+a { color: #1a3c6e; }
+.meta { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 0.92rem; }
+th { background: #1a3c6e; color: white; padding: 8px 12px; text-align: left; }
+td { padding: 8px 12px; border-bottom: 1px solid #ddd; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f5f2; }
+.rule { border-left: 4px solid #1a3c6e; padding: 12px 18px; margin: 16px 0; background: #f0f4fa; }
+.quote { border-left: 4px solid #d4b876; padding: 16px 20px; margin: 20px 0; background: #faf8f0; }
+.quote .sl { font-style: italic; font-size: 1.08rem; color: #333; margin-bottom: 8px; line-height: 1.5; }
+.quote .en { font-size: 1rem; color: #555; margin-bottom: 10px; line-height: 1.5; }
+.quote .implication { margin-top: 10px; }
+.quote .implication strong { color: #1a1a1a; }
+
+/* Hook Model flow diagram */
+.hook-flow { display: flex; align-items: center; justify-content: center; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+.hook-step { background: #1a3c6e; color: white; padding: 14px 22px; border-radius: 10px; font-weight: 600; font-size: 1rem; text-align: center; min-width: 130px; }
+.hook-arrow { font-size: 1.6rem; color: #d4b876; font-weight: bold; padding: 0 10px; }
+@media (max-width: 600px) {
+  .hook-flow { flex-direction: column; gap: 0; }
+  .hook-arrow { transform: rotate(90deg); padding: 4px 0; }
+}
+
+strong { font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>HappyMoments User Psychology</h1>
+<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the "why" behind every UX decision<br>
+Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (how it looks) &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> (the journey) &middot; <a href="navigation-architecture.html">navigation-architecture.html</a> (the structure)<br>
+Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>The Core Insight</h2>
+
+<div class="rule">
+<strong>"HappyMoments is a relationship tool disguised as a number calculator. It gives people reasons to celebrate and reconnect."</strong>
+</div>
+
+<p>The numbers are the excuse. The celebration is the point. The reconnection is the real value.</p>
+
+<p>Two use cases, equally important:</p>
+
+<table>
+<tr><th>Use case</th><th>Example</th><th>Emotional driver</th></tr>
+<tr><td><strong>Celebrate</strong></td><td>"Your daughter turns 5,000 days old next Tuesday!"</td><td>Joy, marking time, parental pride</td></tr>
+<tr><td><strong>Reconnect</strong></td><td>"Hey, I just found out you turn 15,000 days next week!"</td><td>The perfect non-awkward excuse to reach out</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Expert Feedback (Luka Renko + UX reviewer)</h2>
+
+<p>These quotes shape our design decisions:</p>
+
+<div class="quote">
+<p class="sl">"Mora&scaron; voditi uporabnika po to&ccaron;no &zcaron;eleni poti... ampak najprej mora&scaron; vedeti kaj ta pot sploh je."</p>
+<p class="en">You must guide the user on the exact desired path... but first you must know what that path is.</p>
+<p class="implication"><strong>Implication:</strong> The onboarding is a guided story with ONE path, not a choose-your-adventure. ME &rarr; FAMILY &rarr; FRIEND &rarr; dashboard. No branching.</p>
+</div>
+
+<div class="quote">
+<p class="sl">"Vsakič, ko uporabnik nekaj izpolni, mora imeti nek ob&ccaron;utek zadovoljstva. Nekaj se zgodi... kot nagrada."</p>
+<p class="en">Every time the user completes something, they must feel satisfaction. Something happens... like a reward.</p>
+<p class="implication"><strong>Implication:</strong> After entering birthday &rarr; counter animation. After adding a person &rarr; their milestone reveal. After sharing &rarr; "Sent!" confirmation. Never: enter data &rarr; nothing visible happens.</p>
+</div>
+
+<div class="quote">
+<p class="sl">"Ali naj uporabnik izbere le ENEGA dru&zcaron;inskega &ccaron;lana... Tako potem uporabnik ne dobi ob&ccaron;utka, da je to nek 'ra&ccaron;unovodski' program."</p>
+<p class="en">Should the user enter only ONE family member?... That way the user doesn't get the feeling that this is some 'accounting' program.</p>
+<p class="implication"><strong>Implication:</strong> During onboarding, enter ONE other person. Not a list. Not a form with "Add another." ONE person, ONE reveal, ONE share moment. The dashboard then motivates adding more &mdash; because the user now GETS IT.</p>
+</div>
+
+<div class="quote">
+<p class="sl">"Sedaj je odlo&ccaron;no preve&ccaron; teksta, slabo izbrani fonti."</p>
+<p class="en">Currently there is decidedly too much text, poorly chosen fonts.</p>
+<p class="implication"><strong>Implication:</strong> Three text levels only (hero/body/caption). No tiny text. Serif for warmth, mono for numbers. See <a href="ux-guidelines.html">ux-guidelines.html</a>.</p>
+</div>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>The Reward Map</h2>
+
+<p>Every user action has an immediate, visible reward. No action goes unrewarded.</p>
+
+<table>
+<tr><th>Action</th><th>Reward</th><th>Emotional feel</th></tr>
+<tr><td>Enter MY birthday</td><td>Counter animation &rarr; my milestone revealed</td><td>"I didn't know that about myself!"</td></tr>
+<tr><td>Enter THEIR birthday</td><td>Counter animation &rarr; their milestone revealed</td><td>"I should tell them!"</td></tr>
+<tr><td>Tap Share</td><td>Pre-written message ready, native share sheet opens</td><td>"That was easy"</td></tr>
+<tr><td>Share sent</td><td>Confirmation toast, analytics track</td><td>Social validation anticipation</td></tr>
+<tr><td>Return next day</td><td>Hero card updated, new countdown</td><td>"Time is moving, this matters"</td></tr>
+<tr><td>Add 2nd person</td><td>"Together" section appears on Home</td><td>"Wait, there's MORE?"</td></tr>
+<tr><td>Enable reminders</td><td>"Reminder set for [date]" confirmation</td><td>Peace of mind</td></tr>
+<tr><td>Milestone day arrives</td><td>Push notification + hero card celebration</td><td>"I remembered! I'm a good friend"</td></tr>
+</table>
+
+<div class="rule">
+<strong>Anti-pattern:</strong> Never show a data summary as a reward. "2 people tracked, 24 milestones found" is accounting. "Your mom turns 20,000 days in 12 days!" is a celebration.
+</div>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>The Hook Model (Nir Eyal)</h2>
+
+<div class="hook-flow">
+<div class="hook-step">Trigger</div>
+<div class="hook-arrow">&rarr;</div>
+<div class="hook-step">Action</div>
+<div class="hook-arrow">&rarr;</div>
+<div class="hook-step">Variable Reward</div>
+<div class="hook-arrow">&rarr;</div>
+<div class="hook-step">Investment</div>
+</div>
+
+<p>Applied to HappyMoments:</p>
+
+<table>
+<tr><th>Component</th><th>Implementation</th></tr>
+<tr><td><strong>Trigger</strong></td><td>Push notification: "Mom turns 20,000 days tomorrow!" (external). Opening app out of curiosity (internal).</td></tr>
+<tr><td><strong>Action</strong></td><td>Open app &rarr; see hero card (5-second glance).</td></tr>
+<tr><td><strong>Variable Reward</strong></td><td>Different milestone each time. Sometimes it's your number, sometimes someone else's. Sometimes a cosmic event. The VARIETY keeps it interesting.</td></tr>
+<tr><td><strong>Investment</strong></td><td>Share a milestone. Add another person. Enable reminders. Each investment increases value of the next trigger.</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Peak-End Rule (Daniel Kahneman)</h2>
+
+<p>People judge experiences by two moments: the <strong>peak</strong> and the <strong>end</strong>.</p>
+
+<table>
+<tr><th>Moment</th><th>HappyMoments implementation</th></tr>
+<tr><td><strong>Peak</strong></td><td>The counter animation rolling up to the big number. Gold glow. Sparkle particles. This is the moment that defines the product in the user's memory.</td></tr>
+<tr><td><strong>End</strong></td><td>Every session ends with anticipation, not a dead screen. "Your next milestone is in X days" or "Remind me" creates forward-looking positive emotion. Never end on: empty state, error, "no milestones today" with nothing else.</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>The 5 UX Principles We Follow</h2>
+
+<p>Distilled from 25 researched (see archive/ux-research-strategic.md for the full list). These 5 are the ones that most directly shape our decisions:</p>
+
+<h3>1. Value Before Identity (from Duolingo)</h3>
+<p>Deliver the product's value before asking for ANY user data. We don't ask for name, email, sign-in, or preferences before showing the first milestone. The ONLY input is birthday &mdash; and that IS the product.</p>
+
+<h3>2. One Thing Per Screen (from Apple HIG, Luke Wroblewski)</h3>
+<p>Each screen has ONE primary action. The hero card IS the screen. The reveal IS the screen. Don't add navigation, options, or secondary features that compete with the primary element.</p>
+
+<h3>3. Hick's Law (from Jon Yablonski)</h3>
+<p>More choices = more time = more drop-off. This is why we have 2 tabs, not 4. Why we show one hero card, not a grid of options. Why settings are hidden in Profile, not displayed as toggles on the main screen.</p>
+
+<h3>4. Emotional Framing (from Spotify Wrapped)</h3>
+<p>"788 hours finding yourself" beats "47,283 minutes listened." Numbers must tell a story. "20,000 days alive" should feel like an achievement, not a statistic. The countdown text uses emotional language: "That's this week!" not "7 days from now."</p>
+
+<h3>5. Design the Shareable Artifact First (from Spotify Wrapped team)</h3>
+<p>If it can't be screenshotted and posted, it won't go viral. Every milestone card, every reveal screen, every share message is designed to look good when shared. The share flow produces beautiful 9:16 image cards for Instagram/Stories, not just text.</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Anti-Patterns: What We Never Do</h2>
+
+<table>
+<tr><th>Anti-pattern</th><th>Why it's bad</th><th>What we do instead</th></tr>
+<tr><td>Show "X people tracked, Y milestones found"</td><td>Feels like a database report, not a celebration</td><td>Show the NEXT milestone: "Mom turns 20,000 days in 12 days!"</td></tr>
+<tr><td>Ask for sign-up before value</td><td>User hasn't experienced the product yet</td><td>Sign-up only after they have data worth saving (3+ people, Day 3+)</td></tr>
+<tr><td>Dump all milestones in a flat list</td><td>Overwhelming, no hierarchy, no story</td><td>Time-chunk: "This week" / "This month" / "Later", max 5-7 per chunk</td></tr>
+<tr><td>Show features the user hasn't earned</td><td>Confusing, empty tabs</td><td>Progressive: "Together" appears only when 2+ people exist</td></tr>
+<tr><td>Use tiny text for "important" info</td><td>Date and countdown ARE the actionable info</td><td>Body size (1.1rem) minimum for dates. Gold for countdowns.</td></tr>
+<tr><td>End session on a blank screen</td><td>No reason to return</td><td>Always show the next milestone with countdown</td></tr>
+<tr><td>Show all settings upfront</td><td>Overwhelming for new users</td><td>Profile icon &rarr; simple page. Number preferences behind "Advanced" expander.</td></tr>
+<tr><td>Use "Data" as a tab label</td><td>Technical, not user-benefiting</td><td>"People" &mdash; describes what's IN the tab, not the data type</td></tr>
+<tr><td>Show ugly numbers (25252525 min)</td><td>Breaks the magic &mdash; user thinks "why should I care?"</td><td>Coherence filter: only show numbers that make sense for each time unit</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Persona Archetypes</h2>
+
+<p>Four primary archetypes (distilled from 15 personas researched):</p>
+
+<h3>1. The Parent (age 30-50)</h3>
+<p><strong>Goal:</strong> Track children's milestones. Share with family.<br>
+<strong>Emotional driver:</strong> Parental pride, marking time passing, creating memories.<br>
+<strong>Key feature:</strong> Hero card showing their child's next milestone. "Your daughter turns 5,000 days old on..." &rarr; share to family WhatsApp group.<br>
+<strong>Retention:</strong> Milestone notifications for their children.</p>
+
+<h3>2. The Reconnector (age 25-45)</h3>
+<p><strong>Goal:</strong> Find an excuse to reach out to someone they've lost touch with.<br>
+<strong>Emotional driver:</strong> Longing, friendship, non-awkward excuse.<br>
+<strong>Key feature:</strong> Pre-written share message. "Hey, I just found out you turn 15,000 days next week!" &rarr; one-tap send.<br>
+<strong>Retention:</strong> App reminds them of friends' milestones they'd otherwise forget.</p>
+
+<h3>3. The Number Nerd (age 18-35)</h3>
+<p><strong>Goal:</strong> Discover mathematical patterns in time. Self-discovery.<br>
+<strong>Emotional driver:</strong> Intellectual curiosity, "cool factor," social currency.<br>
+<strong>Key feature:</strong> Fibonacci, palindromes, cosmic cycles, Pi connections.<br>
+<strong>Retention:</strong> There's always another interesting number coming.</p>
+
+<h3>4. The Family Organizer (age 35-60)</h3>
+<p><strong>Goal:</strong> Track the whole family, discover group milestones.<br>
+<strong>Emotional driver:</strong> Family identity, connection, celebration planning.<br>
+<strong>Key feature:</strong> Combined milestones ("Your family's combined age reaches 100,000 days!"). Multiple people.<br>
+<strong>Retention:</strong> The app becomes more valuable as more family members are added.</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Content Freshness: Why Users Return</h2>
+
+<p>The app must have something NEW on every visit:</p>
+
+<table>
+<tr><th>Frequency</th><th>What's new</th><th>Source</th></tr>
+<tr><td>Every day</td><td>Hero card countdown changes. "12 days" &rarr; "11 days" &rarr; "10 days"</td><td>Automatic (time passes)</td></tr>
+<tr><td>Every week</td><td>Different milestone becomes the hero (closest one rotates)</td><td>Automatic (milestone dates approach)</td></tr>
+<tr><td>Every month</td><td>New milestones enter the "Coming up" view</td><td>Automatic (year-long horizon)</td></tr>
+<tr><td>Each person added</td><td>~20 new milestones appear in the timeline</td><td>User-driven</td></tr>
+<tr><td>Each milestone shared</td><td>Social reactions create external reward loop</td><td>User-driven</td></tr>
+</table>
+
+<div class="rule">
+<strong>The fundamental retention insight:</strong> Unlike social media (which needs new content), HappyMoments generates fresh content AUTOMATICALLY from the passage of time. Every day, the countdown changes. Every week, a new milestone becomes the closest one. The user doesn't need to "do" anything &mdash; time creates value.
+</div>
+
+<p class="meta" style="margin-top:48px">End of document.</p>
+
+</body>
+</html>

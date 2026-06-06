@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments Navigation Architecture</title>
+<style>
+:root { --gold: #d4b876; --bg: #1a1a1a; --card: #222; --text: #e0e0e0; --muted: #888; --border: #333; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #1a1a1a; background: #fafafa; }
+h1 { font-size: 2rem; margin-bottom: 4px; }
+h2 { font-size: 1.4rem; margin-top: 48px; margin-bottom: 12px; color: #1a3c6e; border-bottom: 2px solid #1a3c6e; padding-bottom: 6px; }
+h3 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 8px; }
+p, li { font-size: 1rem; margin-bottom: 10px; }
+.meta { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 0.92rem; }
+th { background: #1a3c6e; color: white; padding: 8px 12px; text-align: left; }
+td { padding: 8px 12px; border-bottom: 1px solid #ddd; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f5f2; }
+.rule { border-left: 4px solid var(--gold); padding: 12px 18px; margin: 16px 0; background: #faf8f0; }
+ul, ol { margin: 6px 0 14px 22px; }
+code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+
+/* Mockup styling */
+.mockup { background: var(--card); color: var(--text); border-radius: 12px; padding: 24px; margin: 16px 0; font-family: -apple-system, 'Segoe UI', sans-serif; }
+.mockup .phone-frame { background: var(--bg); border-radius: 24px; overflow: hidden; max-width: 380px; margin: 0 auto; border: 2px solid #444; }
+.mockup .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; font-size: 0.75rem; color: var(--muted); }
+.mockup .app-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px 12px; }
+.mockup .app-title { font-size: 1.2rem; font-weight: 600; color: var(--text); }
+.mockup .profile-icon { width: 32px; height: 32px; border-radius: 50%; background: #444; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: var(--muted); }
+.mockup .screen-content { padding: 0 16px 16px; min-height: 120px; }
+.mockup .screen-placeholder { color: var(--muted); text-align: center; padding: 40px 16px; font-style: italic; font-size: 0.95rem; }
+.mockup .bottom-tabs { display: flex; border-top: 1px solid var(--border); }
+.mockup .tab { flex: 1; text-align: center; padding: 10px 0 12px; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+.mockup .tab.active { color: var(--gold); font-weight: 600; }
+.mockup .tab-icon { font-size: 1.2rem; display: block; margin-bottom: 2px; }
+
+/* Home screen mockup elements */
+.mockup .hero-card { background: #2a2a2a; border-radius: 12px; padding: 20px; margin-bottom: 16px; text-align: center; border: 1px solid #333; }
+.mockup .hero-star { color: var(--gold); font-size: 1rem; margin-bottom: 4px; }
+.mockup .hero-name { color: var(--muted); font-size: 0.9rem; margin-bottom: 8px; }
+.mockup .hero-num { font-family: 'Consolas', 'Source Code Pro', monospace; font-size: 2.2rem; font-weight: 300; color: var(--gold); margin-bottom: 4px; }
+.mockup .hero-unit { font-size: 0.95rem; font-style: italic; color: var(--text); margin-bottom: 8px; }
+.mockup .hero-date { font-size: 0.88rem; color: var(--muted); margin-bottom: 2px; }
+.mockup .hero-countdown { font-size: 0.88rem; color: var(--gold); font-style: italic; font-weight: 500; margin-bottom: 12px; }
+.mockup .hero-buttons { display: flex; gap: 8px; justify-content: center; }
+.mockup .btn-gold { background: var(--gold); color: var(--bg); border: none; padding: 8px 20px; border-radius: 6px; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
+.mockup .btn-secondary { background: #333; color: var(--muted); border: none; padding: 8px 20px; border-radius: 6px; font-size: 0.88rem; cursor: pointer; }
+.mockup .section-label { font-size: 0.78rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 0 6px; font-weight: 600; }
+.mockup .milestone-cell { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.mockup .mc-value { font-family: 'Consolas', monospace; font-size: 0.95rem; color: var(--gold); font-weight: 500; }
+.mockup .mc-person { font-size: 0.85rem; color: var(--text); }
+.mockup .mc-date { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.mockup .together-section { background: #2a2a2a; border-radius: 8px; padding: 14px; margin: 12px 0; border-left: 3px solid var(--gold); }
+.mockup .together-label { font-size: 0.78rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
+.mockup .together-value { font-family: 'Consolas', monospace; font-size: 1rem; color: var(--gold); }
+.mockup .together-detail { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+.mockup .together-link { font-size: 0.82rem; color: var(--gold); margin-top: 6px; display: block; }
+.mockup .add-card { display: block; text-align: center; padding: 12px; border: 2px dashed var(--border); border-radius: 8px; color: var(--muted); margin-top: 12px; font-size: 0.9rem; }
+.mockup .annotation { font-size: 0.78rem; color: var(--gold); text-align: right; font-style: italic; margin-top: -4px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<h1>HappyMoments Navigation Architecture</h1>
+<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
+Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
+Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture-research.md</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Navigation Model: 2 Tabs + Profile Icon</h2>
+
+<div class="mockup">
+<div class="phone-frame">
+<div class="status-bar">
+<span>9:41</span>
+<span>&#9679;&#9679;&#9679;&#9679; Wi-Fi &#128267;</span>
+</div>
+<div class="app-header">
+<span class="app-title">HappyMoments</span>
+<div class="profile-icon">&#128100;</div>
+</div>
+<div class="screen-placeholder">[ screen content ]</div>
+<div class="bottom-tabs">
+<div class="tab active"><span class="tab-icon">&#127968;</span> Home</div>
+<div class="tab"><span class="tab-icon">&#128101;</span> People</div>
+</div>
+</div>
+<p style="text-align:center;color:var(--muted);font-size:0.82rem;margin-top:12px;font-style:italic;">Profile icon (top-right) &middot; Bottom tabs: Home &amp; People</p>
+</div>
+
+<table>
+<tr><th>Element</th><th>What's in it</th><th>Usage</th></tr>
+<tr><td><strong>Home</strong> (bottom tab)</td><td>Hero card + time-chunked milestones + Together section + Add someone</td><td>70%</td></tr>
+<tr><td><strong>People</strong> (bottom tab)</td><td>Add/edit people, per-person milestone view</td><td>20%</td></tr>
+<tr><td><strong>&#128100; Profile</strong> (top-right icon)</td><td>Settings, theme, language, notifications, account, legal, export</td><td>10%</td></tr>
+</table>
+
+<h3>Why this structure</h3>
+<ul>
+<li><strong>2 bottom tabs, not 4:</strong> Hick's Law &mdash; fewer choices = less confusion. Research shows 3-5 tabs optimal, but HappyMoments has only 2 primary destinations. Profile is a settings area, not a daily destination &mdash; it goes top-right like Instagram/Spotify.</li>
+<li><strong>No "Team" tab:</strong> Combined milestones appear as a section ON the Home screen when 2+ people exist. Contextual, not forced.</li>
+<li><strong>No "Data" tab:</strong> "Data" was a confusing label. People management moves to "People" tab. Export/import moves to Profile.</li>
+<li><strong>Profile as top-right icon:</strong> Settings are used 10% of the time. They don't earn a bottom tab. The person icon (&#128100;) is a known pattern from Instagram, Spotify, YouTube.</li>
+</ul>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Home Screen Architecture</h2>
+
+<p>The daily landing screen. Designed for "check and go" (5 seconds) at the top, with "stay and explore" depth below the fold.</p>
+
+<div class="mockup">
+<div class="phone-frame" style="max-width:380px;margin:0 auto;">
+<div class="status-bar">
+<span>9:41</span>
+<span>&#9679;&#9679;&#9679;&#9679; Wi-Fi &#128267;</span>
+</div>
+<div class="app-header">
+<span class="app-title">HappyMoments</span>
+<div class="profile-icon">&#128100;</div>
+</div>
+<div class="screen-content">
+
+<!-- Hero Card -->
+<div class="annotation">&#8592; Glanceable (weather-app model)</div>
+<div class="hero-card">
+<div class="hero-star">&#9733;</div>
+<div class="hero-name">Mom</div>
+<div class="hero-num">20,000</div>
+<div class="hero-unit">days alive</div>
+<div class="hero-date">June 18 &mdash; in 12 days!</div>
+<div class="hero-buttons">
+<button class="btn-gold">Share</button>
+<button class="btn-secondary">Remind me</button>
+</div>
+</div>
+
+<!-- Coming Up -->
+<div class="section-label">Coming Up</div>
+
+<div class="annotation">&#8592; Time-chunked (Miller's Law: 5-7 per chunk)</div>
+<div style="font-size:0.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:6px 0 4px;font-weight:600;">This week</div>
+<div class="milestone-cell">
+<div>
+<div><span class="mc-person">Dad</span> &middot; <span class="mc-value">888 days</span></div>
+<div class="mc-date">Tuesday</div>
+</div>
+</div>
+<div class="milestone-cell">
+<div>
+<div><span class="mc-person">You</span> &middot; <span class="mc-value">500 months</span></div>
+<div class="mc-date">Thursday</div>
+</div>
+</div>
+
+<div style="font-size:0.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:10px 0 4px;font-weight:600;">This month</div>
+<div class="milestone-cell">
+<div>
+<div><span class="mc-person">Sister</span> &middot; <span class="mc-value">12,321 days</span></div>
+<div class="mc-date">Jun 22</div>
+</div>
+</div>
+<div class="milestone-cell">
+<div>
+<div><span class="mc-person">Wedding</span> &middot; <span class="mc-value">3,000 days</span></div>
+<div class="mc-date">Jun 28</div>
+</div>
+</div>
+
+<div style="font-size:0.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:10px 0 4px;font-weight:600;">Later</div>
+<div class="milestone-cell" style="border-bottom:none;">
+<div>
+<div><span class="mc-person">You</span> &middot; <span class="mc-value">1 billion seconds</span></div>
+<div class="mc-date">Aug 14</div>
+</div>
+</div>
+
+<!-- Together Section -->
+<div class="annotation" style="margin-top:16px;">&#8592; Contextual: appears when 2+ people added</div>
+<div class="together-section">
+<div class="together-label">Together</div>
+<div class="together-value">You + Mom = 38,547 days</div>
+<div class="together-detail">40,000 together in Nov 2030</div>
+<a class="together-link" href="#">See more combined &rarr;</a>
+</div>
+
+<!-- Add Someone -->
+<div class="add-card">+ Add someone to celebrate</div>
+
+</div>
+<div class="bottom-tabs">
+<div class="tab active"><span class="tab-icon">&#127968;</span> Home</div>
+<div class="tab"><span class="tab-icon">&#128101;</span> People</div>
+</div>
+</div>
+</div>
+
+<h3>Hero Card</h3>
+
+<p>The most important element. Like the temperature in a weather app &mdash; one glance tells you what matters.</p>
+
+<p><strong>Selection algorithm:</strong> Balance impressiveness &times; proximity.</p>
+
+<div class="rule">
+<code>heroScore = impressiveness &times; 0.6 + proximity &times; 0.4</code>
+</div>
+
+<h3>Impressiveness scoring</h3>
+
+<table>
+<tr><th>Milestone type</th><th>Score</th><th>Examples</th></tr>
+<tr><td>Birthday (upcoming)</td><td>150</td><td>48th birthday in 3 days</td></tr>
+<tr><td>Big milestone (power of 10)</td><td>120</td><td>1 billion seconds, 10,000 days</td></tr>
+<tr><td>Saturn return</td><td>110</td><td>1st Saturn return</td></tr>
+<tr><td>Round thousands in days</td><td>100</td><td>20,000 days</td></tr>
+<tr><td>Repdigit</td><td>90</td><td>11,111 days</td></tr>
+<tr><td>Cultural/sacred</td><td>80</td><td>888 days, 108 months</td></tr>
+<tr><td>Jupiter/Chiron return</td><td>70</td><td>Cosmic</td></tr>
+<tr><td>Palindrome in days</td><td>40</td><td>12,321 days</td></tr>
+<tr><td>Fibonacci</td><td>10</td><td>2,584 days (most people won't recognize)</td></tr>
+</table>
+
+<h3>Proximity scoring</h3>
+
+<table>
+<tr><th>Distance</th><th>Score</th></tr>
+<tr><td>Today</td><td>100</td></tr>
+<tr><td>This week (&le;7 days)</td><td>80-95</td></tr>
+<tr><td>This month (&le;30 days)</td><td>55-80</td></tr>
+<tr><td>This year (&le;365 days)</td><td>0-55</td></tr>
+<tr><td>Further</td><td>0</td></tr>
+</table>
+
+<div class="rule">
+<strong>Key rule:</strong> A billion seconds 6 months away CAN outscore a 2,584 (Fibonacci) in 3 days. Impressiveness matters more than proximity for truly remarkable numbers.
+</div>
+
+<h3>Time-Chunked Milestone List</h3>
+
+<p>Milestones grouped by: <strong>This week</strong> / <strong>This month</strong> / <strong>Later</strong></p>
+
+<p>Max 5-7 items per chunk (Miller's Law). If more exist, show "and X more" with expand.</p>
+
+<p>Each cell: milestone value (gold mono) + person name + date + countdown. Tap &rarr; share bottom sheet.</p>
+
+<h3>"Together" Section</h3>
+
+<p>Appears ONLY when 2+ people are added. Shows one combined milestone (the next round combined age). "See more combined &rarr;" link.</p>
+
+<p>This solves the "Team tab" problem: combined milestones are discoverable without a dedicated tab.</p>
+
+<h3>"Add Someone"</h3>
+
+<p>Dashed-border card at the bottom. Always visible. Tapping opens the People tab with the add form focused.</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Milestone Coherence Rules</h2>
+
+<p>Not all numbers are interesting in all units. Filter by what makes sense:</p>
+
+<table>
+<tr><th>Unit</th><th>Show</th><th>Don't show</th></tr>
+<tr><td><strong>seconds</strong></td><td>Round thousands, powers of 10, repdigits (11111111), Asian lucky (888888)</td><td>Palindromes, Fibonacci, alternating patterns</td></tr>
+<tr><td><strong>minutes</strong></td><td>Same as seconds</td><td>Same as seconds</td></tr>
+<tr><td><strong>hours</strong></td><td>Round hundreds, powers of 10, repdigits</td><td>Palindromes, Fibonacci, alternating</td></tr>
+<tr><td><strong>days</strong></td><td>Everything &mdash; palindromes, Fibonacci, powers, round numbers all work at human scale</td><td>Nothing filtered (days are the most natural unit)</td></tr>
+<tr><td><strong>weeks</strong></td><td>Round hundreds only</td><td>Everything else</td></tr>
+<tr><td><strong>months</strong></td><td>Round hundreds + cultural (108, 786, 888)</td><td>Everything else</td></tr>
+<tr><td><strong>years</strong></td><td>Everything (small numbers, all meaningful)</td><td>Nothing filtered</td></tr>
+</table>
+
+<h3>Unit display names</h3>
+
+<p>Full words in all views: "seconds", "minutes", "hours", "days", "weeks", "months", "years". Short forms ("s", "min", "hrs") only in very tight spaces (widgets, share cards).</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Tap Paths</h2>
+
+<p>Every action &le; 3 taps from any screen.</p>
+
+<table>
+<tr><th>User wants to...</th><th>Path</th><th>Taps</th></tr>
+<tr><td>See what's coming up</td><td>Open app &rarr; Home (hero + list visible)</td><td><strong>0</strong></td></tr>
+<tr><td>Share a milestone</td><td>Tap milestone &rarr; Share button (bottom sheet)</td><td><strong>2</strong></td></tr>
+<tr><td>Add a person</td><td>Tap "Add someone" (Home bottom) or People tab &rarr; form</td><td><strong>2</strong></td></tr>
+<tr><td>See combined milestones</td><td>Scroll Home &rarr; "Together" section &rarr; "See more"</td><td><strong>2</strong></td></tr>
+<tr><td>Change language</td><td>Profile icon (&#128100;) &rarr; Language</td><td><strong>2</strong></td></tr>
+<tr><td>Enable notifications</td><td>Profile icon &rarr; Notifications toggle</td><td><strong>2</strong></td></tr>
+<tr><td>See a person's milestones</td><td>People tab &rarr; tap person name</td><td><strong>2</strong></td></tr>
+<tr><td>Edit/delete a person</td><td>People tab &rarr; tap person &rarr; edit/delete</td><td><strong>3</strong></td></tr>
+<tr><td>Change theme</td><td>Profile icon &rarr; Theme toggle</td><td><strong>2</strong></td></tr>
+<tr><td>Gift suggestion</td><td>Tap milestone near its date &rarr; "Gift idea" link</td><td><strong>2-3</strong></td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Transition Model</h2>
+
+<table>
+<tr><th>Type</th><th>When</th><th>Animation</th></tr>
+<tr><td><strong>Tab switch</strong></td><td>Home &harr; People</td><td>Instant crossfade. Maintain scroll position.</td></tr>
+<tr><td><strong>Drill-down</strong></td><td>Tap person &rarr; their milestones. Tap "See more combined"</td><td>Slide from right. Back arrow (&larr;) top-left.</td></tr>
+<tr><td><strong>Bottom sheet</strong></td><td>Share flow. Add person form. Gift order.</td><td>Slide up from bottom. Drag-to-dismiss or &times; close.</td></tr>
+<tr><td><strong>Full-screen modal</strong></td><td>Profile/Settings sub-pages. Onboarding.</td><td>Slide up. Close (&times;) top-left.</td></tr>
+</table>
+
+<div class="rule">
+<strong>Max depth: 2 levels.</strong> Tab &rarr; detail view &rarr; done. Never deeper.
+</div>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Feature Discovery Timing</h2>
+
+<p>Features appear when the user has CONTEXT to understand them. Not on a timer.</p>
+
+<table>
+<tr><th>Feature</th><th>Appears when...</th><th>How</th></tr>
+<tr><td>Hero milestone</td><td>Always (1+ person)</td><td>Top of Home</td></tr>
+<tr><td>Time-chunked list</td><td>Always (1+ person)</td><td>Below hero</td></tr>
+<tr><td>"Together" section</td><td>2+ people added</td><td>Bottom of Home, auto-appears</td></tr>
+<tr><td>Share as image</td><td>User taps Share</td><td>Option in share bottom sheet</td></tr>
+<tr><td>Gift suggestion</td><td>Milestone is for another person AND has high impressiveness score</td><td>Small "Gift idea" text on milestone cell</td></tr>
+<tr><td>Notifications prompt</td><td>End of first session (onboarding Screen 5) OR Day 2</td><td>One-time inline prompt, not modal</td></tr>
+<tr><td>Number preferences</td><td>User opens Profile &rarr; Advanced</td><td>Expander in Profile, hidden by default</td></tr>
+<tr><td>Export/Import</td><td>Profile section</td><td>Always available, never promoted</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Empty States</h2>
+
+<p>Every section has a meaningful empty state that TEACHES and MOTIVATES.</p>
+
+<table>
+<tr><th>Section</th><th>Empty state copy</th></tr>
+<tr><td>Home (no people)</td><td>Onboarding wizard (see <a href="onboarding-flow.html">onboarding-flow.html</a>)</td></tr>
+<tr><td>Home (1 person, no milestones this week)</td><td>"Your next milestone is in X days. Add more people to find milestones sooner!"</td></tr>
+<tr><td>Together section (1 person)</td><td>"Add a second person to discover combined milestones &mdash; like when your ages add up to 50,000 days."</td></tr>
+<tr><td>People tab (1 person)</td><td>"Your mom, your partner, your best friend &mdash; whose birthday do you know?"</td></tr>
+<tr><td>Notifications off</td><td>"Never miss a milestone. We'll remind you the day before."</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>What Was Removed (and Why)</h2>
+
+<table>
+<tr><th>Removed</th><th>Reason</th></tr>
+<tr><td><strong>Team/Combined tab</strong></td><td>Section on Home instead. Contextual &gt; dedicated tab.</td></tr>
+<tr><td><strong>"Data" tab</strong></td><td>Renamed to "People" tab. Benefits, not technical terms.</td></tr>
+<tr><td><strong>Settings as bottom tab</strong></td><td>Moved to Profile (&#128100;) top-right. Used 10% of the time.</td></tr>
+<tr><td><strong>Person filter pills</strong></td><td>Columns already filter by person. Redundant UI.</td></tr>
+<tr><td><strong>Today highlight banner</strong></td><td>Hero card replaces it.</td></tr>
+<tr><td><strong>History facts banner</strong></td><td>Users came for THEIR milestones.</td></tr>
+<tr><td><strong>Highlights toggle</strong></td><td>Default view already shows best milestones.</td></tr>
+<tr><td><strong>Gift store as banner</strong></td><td>Contextual links on milestone cells instead.</td></tr>
+<tr><td><strong>Set switcher / Groups</strong></td><td>Complexity removed. One list of people.</td></tr>
+<tr><td><strong>6 themes</strong></td><td>2 themes: Dark and Light.</td></tr>
+<tr><td><strong>Consent banner</strong></td><td>Auto-accepted on first wizard tap. Legal link in Profile.</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Remind Me: Implementation</h2>
+
+<p>When user taps "Remind me" on a milestone:</p>
+<ol>
+<li>If notifications not enabled: prompt to enable (one-time)</li>
+<li>Schedule a local notification for 1 day before the milestone date</li>
+<li>Show confirmation: "Reminder set for [date]"</li>
+<li>Notification text: "[Name] turns [value] [unit] tomorrow! Time to celebrate."</li>
+</ol>
+
+<p>Calendar integration: offer "Add to calendar" as secondary option in share bottom sheet (Google Calendar, .ics download). Not a separate button on the milestone card.</p>
+
+<p class="meta" style="margin-top:48px">End of document. Open in browser for rendered mockups.</p>
+
+</body>
+</html>

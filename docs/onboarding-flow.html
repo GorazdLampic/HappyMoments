@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments Onboarding Flow</title>
+<style>
+:root { --gold: #d4b876; --bg: #222; --text: #e0e0e0; --muted: #888; --border: #333; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; line-height: 1.6; color: #1a1a1a; background: #fafafa; }
+h1 { font-size: 2rem; margin-bottom: 4px; }
+h2 { font-size: 1.4rem; margin-top: 48px; margin-bottom: 12px; color: #1a3c6e; border-bottom: 2px solid #1a3c6e; padding-bottom: 6px; }
+h3 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 8px; }
+p, li { font-size: 1rem; margin-bottom: 10px; }
+ul, ol { margin: 6px 0 14px 22px; }
+.meta { color: #666; font-size: 0.9rem; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 0.92rem; }
+th { background: #1a3c6e; color: white; padding: 8px 12px; text-align: left; }
+td { padding: 8px 12px; border-bottom: 1px solid #ddd; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f5f2; }
+.rule { border-left: 4px solid var(--gold); padding: 12px 18px; margin: 16px 0; background: #faf8f0; }
+code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+
+/* ── Phone mockup screens ── */
+.mockup {
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 24px;
+    padding: 24px;
+    margin: 16px auto;
+    max-width: 340px;
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 0 0 2px #333;
+}
+.mockup::before {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    margin: 0 auto 20px;
+}
+.mockup .screen-question {
+    font-size: 1.3rem;
+    line-height: 1.4;
+    margin-bottom: 24px;
+    color: var(--text);
+}
+.mockup .hero-num {
+    font-family: 'Source Code Pro', 'Consolas', 'Monaco', monospace;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--gold);
+    text-align: center;
+    margin: 16px 0 4px;
+    text-shadow: 0 0 24px rgba(212, 184, 118, 0.3);
+}
+.mockup .hero-unit {
+    font-size: 1.1rem;
+    text-align: center;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 16px;
+}
+.mockup .hero-date {
+    font-size: 1rem;
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+.mockup .hero-countdown {
+    font-size: 1rem;
+    text-align: center;
+    color: var(--gold);
+    font-style: italic;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+.mockup .hero-name {
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+.mockup .input-field {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #999;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    width: 100%;
+}
+.mockup .btn-gold {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 16px;
+    cursor: pointer;
+}
+.mockup .btn-skip {
+    display: block;
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 12px;
+    cursor: pointer;
+}
+.mockup .hint-text {
+    font-size: 0.85rem;
+    color: #777;
+    font-style: italic;
+    margin: 8px 0 4px;
+    line-height: 1.4;
+}
+.mockup .share-preview {
+    border-left: 3px solid var(--gold);
+    padding: 12px 14px;
+    margin: 16px 0;
+    font-style: italic;
+    color: #bbb;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    background: rgba(212, 184, 118, 0.05);
+    border-radius: 0 8px 8px 0;
+}
+.mockup .back-arrow {
+    color: #888;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+}
+
+/* ── Dashboard mockup (wider) ── */
+.mockup.dashboard {
+    max-width: 380px;
+}
+.mockup .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+.mockup .dash-header .app-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.mockup .dash-header .avatar {
+    width: 28px;
+    height: 28px;
+    background: #444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #aaa;
+}
+.mockup .hero-card {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+.mockup .hero-card .star {
+    color: var(--gold);
+    font-size: 0.85rem;
+}
+.mockup .hero-card .hero-card-title {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+.mockup .hero-card .hero-card-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+.mockup .hero-card .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+.mockup .hero-card .btn-small {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+}
+.mockup .hero-card .btn-small.gold {
+    background: var(--gold);
+    color: var(--bg);
+    font-weight: 600;
+}
+.mockup .hero-card .btn-small.gray {
+    background: #333;
+    color: #aaa;
+}
+.mockup .section-label {
+    font-size: 0.75rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 12px 0 6px;
+    font-weight: 600;
+}
+.mockup .section-divider {
+    font-size: 0.8rem;
+    color: #555;
+    text-align: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+}
+.mockup .milestone-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 0.85rem;
+}
+.mockup .milestone-row .ms-label {
+    color: var(--text);
+}
+.mockup .milestone-row .ms-value {
+    font-family: 'Source Code Pro', 'Consolas', monospace;
+    color: var(--gold);
+    font-size: 0.85rem;
+}
+.mockup .milestone-row .ms-date {
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+.mockup .together-section {
+    background: #2a2a2a;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 8px 0;
+}
+.mockup .together-section .together-value {
+    font-family: 'Source Code Pro', 'Consolas', monospace;
+    color: var(--gold);
+    font-size: 0.9rem;
+}
+.mockup .together-section .together-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 2px;
+}
+.mockup .add-person-btn {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 12px 0;
+}
+.mockup .tab-bar {
+    display: flex;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+    padding-top: 10px;
+}
+.mockup .tab-bar .tab {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    padding: 4px;
+}
+.mockup .tab-bar .tab.active {
+    color: var(--gold);
+}
+.mockup .reminder-prompt {
+    background: #2a2a2a;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 12px;
+    text-align: center;
+}
+.mockup .reminder-prompt .reminder-text {
+    font-size: 0.85rem;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+.mockup .reminder-prompt .btn-reminder {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+strong { font-weight: 600; }
+hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+</style>
+</head>
+<body>
+
+<h1>HappyMoments Onboarding Flow</h1>
+<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
+Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (visual specs), <a href="user-psychology.html">user-psychology.html</a> (why each decision)<br>
+Supersedes: archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Design Principles</h2>
+
+<ol>
+<li><strong>Every screen delivers a surprise.</strong> No screen is "setup."</li>
+<li><strong>User never does work without immediate reward.</strong> Enter date &rarr; instant wow.</li>
+<li><strong>Share is the natural next step</strong>, not a request.</li>
+<li><strong>Guide the user on the exact desired path</strong> (Luka Renko: "mora&scaron; voditi uporabnika po to&ccaron;no &zcaron;eleni poti").</li>
+<li><strong>After each input, a feeling of satisfaction</strong> &mdash; something happens as a reward. Never feel like accounting software.</li>
+</ol>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>The Journey: 5 Screens</h2>
+
+<div class="rule">
+<strong>Flow:</strong> ME &rarr; SOMEONE I LOVE &rarr; DASHBOARD<br>
+Each screen has: the user's ACTION, the app's REWARD, and the TRANSITION to next.
+</div>
+
+<!-- ── Screen 1 ── -->
+<h3>Screen 1: The Question + Your Date</h3>
+
+<div class="mockup">
+    <div class="screen-question">
+        You have a<br>
+        billionth-second<br>
+        birthday.
+    </div>
+    <div style="color:#ccc; font-size:1.1rem; margin-bottom:20px;">When is it?</div>
+    <div class="input-field">DD / MM / YYYY</div>
+    <div class="btn-gold">Show me</div>
+</div>
+
+<p><strong>Elements:</strong> 3 (question, date input, button)</p>
+<p><strong>User action:</strong> Type 8 digits (birthday)</p>
+<p><strong>Reward:</strong> Curiosity answered in 3 seconds</p>
+<p><strong>Psychology:</strong> Value before identity (Duolingo principle). No name, no email, no preferences.</p>
+<p><strong>Transition:</strong> Counter animation starts &rarr; slide to Screen 2</p>
+
+<div class="rule">
+<strong>What is NOT here:</strong> App name. Logo. Tagline. Language picker. Consent banner. Name field.
+</div>
+
+<!-- ── Screen 2 ── -->
+<h3>Screen 2: Your Reveal</h3>
+
+<div class="mockup">
+    <div class="hero-num">1,000,000,000</div>
+    <div class="hero-unit">seconds</div>
+    <div class="hero-date">Sunday, March 23, 2025</div>
+    <div class="hero-countdown">You passed it 1 year ago!</div>
+    <div class="btn-gold">Now someone I love &rarr;</div>
+</div>
+
+<p><strong>Elements:</strong> 4 (number, unit, date, emotional countdown) + 1 button</p>
+<p><strong>User action:</strong> Watch counter animation, absorb the result</p>
+<p><strong>Reward:</strong> Personal discovery &mdash; "I didn't know that about myself"</p>
+<p><strong>Psychology:</strong> Peak moment (Kahneman Peak-End Rule). The counter rolling up IS the product experience.</p>
+<p><strong>Transition:</strong> Button text is an empathy pivot: "Now someone I love &rarr;"</p>
+
+<p><strong>The number:</strong> Counter rolls from 0 to target (1.5&ndash;2s, ease-out-cubic). Gold glow on completion. Sparkle particles.</p>
+
+<p><strong>Emotional countdown rules:</strong></p>
+<ul>
+<li>Past, yesterday: "That was yesterday!"</li>
+<li>Past, recent: "You passed it X ago"</li>
+<li>Future, &le;7 days: "That's this week!"</li>
+<li>Future, &le;30 days: "Coming in just X days"</li>
+<li>Future, >30 days: "X months from now"</li>
+</ul>
+
+<p><strong>Milestone selection for reveal:</strong> Balance impressiveness &times; proximity. Prefer:</p>
+<ol>
+<li>Birthday (upcoming)</li>
+<li>Big milestones (billion seconds, 10K days) &mdash; highest wow factor</li>
+<li>Round thousands in days</li>
+<li>Saturn return</li>
+<li>Avoid: Fibonacci, palindromes, obscure patterns for the FIRST reveal</li>
+</ol>
+
+<!-- ── Screen 3 ── -->
+<h3>Screen 3: Someone You Love</h3>
+
+<div class="mockup">
+    <div class="back-arrow">&larr;</div>
+    <div class="screen-question" style="font-size:1.2rem;">
+        Who do you want<br>
+        to celebrate?
+    </div>
+    <div class="input-field">Their name</div>
+    <div class="input-field">DD / MM / YYYY</div>
+    <div class="hint-text">Mom, partner, best friend, child &mdash; anyone whose birthday you know.</div>
+    <div class="btn-gold">Find their milestones</div>
+    <div class="btn-skip">Skip for now</div>
+</div>
+
+<p><strong>Elements:</strong> 4 (question, name input, date input, hint) + 2 actions</p>
+<p><strong>User action:</strong> Enter a name and birthday for someone they care about</p>
+<p><strong>Reward:</strong> Transition from "my app" to "our app" &mdash; emotional investment</p>
+<p><strong>Psychology:</strong> Investment (Nir Eyal Hook Model). They now have data worth keeping.</p>
+<p><strong>Transition:</strong> Counter animation for the other person &rarr; Screen 4</p>
+
+<p><strong>Skip path:</strong> "Skip for now" (small, muted text) &rarr; jump to Screen 5 (dashboard). De-emphasized but always available.</p>
+
+<p><strong>Name matters here:</strong> For yourself, "Me" is fine. For another person, the name goes into the share message ("Hey Mom, did you know...").</p>
+
+<!-- ── Screen 4 ── -->
+<h3>Screen 4: Their Reveal + Share</h3>
+
+<div class="mockup">
+    <div class="hero-name">Mom turns</div>
+    <div class="hero-num">20,000</div>
+    <div class="hero-unit">days</div>
+    <div class="hero-date">Thursday, June 18, 2026</div>
+    <div class="hero-countdown">That's in 12 days!</div>
+    <div class="share-preview">&ldquo;Hey Mom, did you know you turn exactly 20,000 days old on June 18th?&rdquo;</div>
+    <div class="btn-gold">Send to Mom &rarr;</div>
+    <div class="btn-skip">Maybe later</div>
+</div>
+
+<p><strong>Elements:</strong> 4 (their name, number+unit, date+countdown) + share preview + 2 actions</p>
+<p><strong>User action:</strong> See the milestone, tap "Send to Mom &rarr;"</p>
+<p><strong>Reward:</strong> A reason to reach out RIGHT NOW. The share message is pre-written.</p>
+<p><strong>Psychology:</strong> This is THE viral moment. The user just discovered something personal and surprising about someone they love. Social validation awaits.</p>
+<p><strong>Transition:</strong> After share (or "maybe later") &rarr; Screen 5</p>
+
+<p><strong>Share button</strong> opens native OS share sheet (Web Share API on mobile, clipboard on desktop).</p>
+<p><strong>"Maybe later"</strong> &rarr; continue to dashboard. The seed is planted even if they don't share now.</p>
+
+<!-- ── Screen 5 ── -->
+<h3>Screen 5: Dashboard Landing</h3>
+
+<div class="mockup dashboard">
+    <div class="dash-header">
+        <span class="app-name">HappyMoments</span>
+        <div class="avatar">&#128100;</div>
+    </div>
+
+    <div class="hero-card">
+        <div><span class="star">&#9733;</span> <span class="hero-card-title">Mom turns 20,000 days</span></div>
+        <div class="hero-card-sub">June 18 &mdash; in 12 days!</div>
+        <div class="btn-row">
+            <div class="btn-small gold">Share</div>
+            <div class="btn-small gray">Remind me</div>
+        </div>
+    </div>
+
+    <div class="section-divider">&mdash;&mdash; Coming up &mdash;&mdash;</div>
+
+    <div class="section-label">This week</div>
+    <div class="milestone-row">
+        <span class="ms-label">You</span>
+        <span class="ms-value">500 months</span>
+        <span class="ms-date">Thu</span>
+    </div>
+
+    <div class="section-label">This month</div>
+    <div class="milestone-row">
+        <span class="ms-label">Mom</span>
+        <span class="ms-value">12,321 days</span>
+        <span class="ms-date">Jun 22</span>
+    </div>
+
+    <div class="section-divider">&mdash;&mdash; Together &mdash;&mdash;</div>
+
+    <div class="together-section">
+        <div class="together-value">You + Mom = 38,547 days</div>
+        <div class="together-sub">40,000 together in Nov 2030</div>
+    </div>
+
+    <div class="add-person-btn">+ Add someone to celebrate</div>
+
+    <div class="tab-bar">
+        <div class="tab active">Home</div>
+        <div class="tab">People</div>
+    </div>
+
+    <div class="reminder-prompt">
+        <div class="reminder-text">Want to know when milestones are near?</div>
+        <div class="btn-reminder">Enable reminders</div>
+    </div>
+</div>
+
+<p><strong>What happens:</strong> The hero card shows the SAME milestone they just saw on Screen 4 (or Screen 2 if they skipped). No disorientation &mdash; onboarding flows seamlessly into the daily app.</p>
+
+<p><strong>Reminders prompt:</strong> One-time prompt at the bottom. Not a modal. "Enable reminders" or dismiss by scrolling past. This is the retention hook &mdash; if they enable, they get a push notification within 24 hours with their next closest milestone.</p>
+
+<p><strong>"Together" section:</strong> Appears because they added 2 people. Shows one combined milestone as a teaser.</p>
+
+<div class="rule">
+<strong>This screen IS the daily app.</strong> After this, they're a daily user. The onboarding deposited them into exactly the state the app shows every day.
+</div>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Skip Paths</h2>
+
+<table>
+<tr><th>From</th><th>Skip action</th><th>Goes to</th></tr>
+<tr><td>Screen 3</td><td>"Skip for now"</td><td>Screen 5 (dashboard) &mdash; skip their reveal and share</td></tr>
+<tr><td>Screen 4</td><td>"Maybe later"</td><td>Screen 5 (dashboard) &mdash; skip sharing, keep the person</td></tr>
+</table>
+
+<p>No other skips. Screen 1 and 2 are mandatory (you can't skip entering YOUR birthday &mdash; that IS the product).</p>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Metrics</h2>
+
+<table>
+<tr><th>Screen</th><th>Success metric</th><th>Target</th></tr>
+<tr><td>1. Question + Date</td><td>Date entered</td><td>&gt;70% of page views</td></tr>
+<tr><td>2. Your Reveal</td><td>Tap "Now someone I love"</td><td>&gt;60% of reveals</td></tr>
+<tr><td>3. Add Someone</td><td>Name+date entered (not skipped)</td><td>&gt;50% of viewers</td></tr>
+<tr><td>4. Their Reveal + Share</td><td>Share initiated</td><td>&gt;20% of viewers</td></tr>
+<tr><td>5. Dashboard</td><td>Reminders enabled</td><td>&gt;30%</td></tr>
+</table>
+
+<p><strong>Overall funnel:</strong></p>
+<ul>
+<li>Page view &rarr; date entered: &gt;70%</li>
+<li>Date entered &rarr; 2nd person added: &gt;50%</li>
+<li>Date entered &rarr; share initiated: &gt;15%</li>
+<li>Date entered &rarr; reminders enabled: &gt;25%</li>
+</ul>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Day 2&ndash;7 Retention Bridge</h2>
+
+<table>
+<tr><th>Day</th><th>What happens</th><th>Goal</th></tr>
+<tr><td><strong>Day 1</strong></td><td>Onboarding &rarr; hero reveal &rarr; add person &rarr; share</td><td>First share (activation)</td></tr>
+<tr><td><strong>Day 2</strong></td><td>Push notification: "Mom's 20,000 days is in 11 days"</td><td>Return visit</td></tr>
+<tr><td><strong>Day 3</strong></td><td>Open app &rarr; hero card updated &rarr; time-chunked list</td><td>Explore depth</td></tr>
+<tr><td><strong>Day 4&ndash;5</strong></td><td>If 2+ people: "Together" section with teaser</td><td>Discover combined milestones</td></tr>
+<tr><td><strong>Day 7</strong></td><td>"You have 24 milestones coming this year"</td><td>Long-term retention</td></tr>
+</table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>A/B Test Candidates</h2>
+
+<h3>Screen 1 hook text:</h3>
+<ul>
+<li><strong>A:</strong> "You have a billionth-second birthday. When is it?"</li>
+<li><strong>B:</strong> "Your best friend has a hidden milestone coming. Enter your birthday first."</li>
+<li><strong>C:</strong> "How many special number milestones do you have in the next year?"</li>
+</ul>
+
+<h3>Screen 4 share message:</h3>
+<ul>
+<li><strong>A:</strong> "Hey [name], did you know you turn exactly [value] [unit] old on [date]?"</li>
+<li><strong>B:</strong> "[name]! You have a hidden milestone coming: [value] [unit] on [date]. Let's celebrate!"</li>
+<li><strong>C:</strong> "I just found out something cool about your birthday. Check happymoments.app"</li>
+</ul>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Implementation Notes</h2>
+
+<h3>State management</h3>
+<ul>
+<li>Screen 1: saves date to localStorage on "Show me" tap</li>
+<li>Screen 3: saves second person to appData on "Find their milestones" tap</li>
+<li>Screen 5: sets <code>hm_onboarded = 1</code> &rarr; next app open goes straight to dashboard</li>
+</ul>
+
+<h3>Analytics events</h3>
+<ul>
+<li><code>onboard_date_entered</code> (Screen 1 &rarr; 2)</li>
+<li><code>onboard_reveal_seen</code> (Screen 2 viewed)</li>
+<li><code>onboard_empathy_tapped</code> (Screen 2 &rarr; 3, "Now someone I love")</li>
+<li><code>onboard_add_person</code> (Screen 3 submitted)</li>
+<li><code>onboard_skip_person</code> (Screen 3 skipped)</li>
+<li><code>onboard_share_initiated</code> (Screen 4 share tapped)</li>
+<li><code>onboard_share_skipped</code> (Screen 4 "maybe later")</li>
+<li><code>onboard_reminders_enabled</code> (Screen 5)</li>
+<li><code>onboard_complete</code> (Screen 5 &rarr; daily use)</li>
+</ul>
+
+<h3>Hidden elements during onboarding</h3>
+<ul>
+<li>Main app header (shown after onboarding)</li>
+<li>Language picker (shown after onboarding, auto-detected from browser)</li>
+<li>Tab navigation (shown on Screen 5)</li>
+<li>Consent banner (auto-accepted on first tap)</li>
+</ul>
+
+<p class="meta" style="margin-top:48px">End of document. Open in browser for rendered screen mockups.</p>
+
+</body>
+</html>
