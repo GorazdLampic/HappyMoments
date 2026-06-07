@@ -280,6 +280,10 @@ function init() {
         selectedPersonIds = appData.events.map(e => e.id);
         renderMilestonesTab();
         switchTab('me');
+        // Show resume banner if onboarding was interrupted
+        if (localStorage.getItem('hm_onboard_resume')) {
+            setTimeout(() => showOnboardingResumeBanner(), 300);
+        }
     }
 
     // Init notifications
@@ -1222,6 +1226,7 @@ function wizardNext(step) {
 
     // Auto-trigger combined milestone rendering when reaching Screen 7
     // Navigate, scroll to top
+    _lastWizardStep = step;
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     const nextStep = document.getElementById('wizardStep' + step);
     if (nextStep) {
@@ -2386,7 +2391,46 @@ function wizardFinish() {
     renderMilestonesTab();
     switchTab('me');
     window.scrollTo(0, 0);
+
+    // Track onboarding progress — if user exits early, show resume banner
+    const onboardStep = _lastWizardStep || 4;
+    if (onboardStep < 8) {
+        localStorage.setItem('hm_onboard_resume', String(onboardStep + 1));
+        showOnboardingResumeBanner();
+    }
     localStorage.setItem('hm_onboarded', '1');
+}
+
+// Track which step we're on for resume
+let _lastWizardStep = 0;
+
+function showOnboardingResumeBanner() {
+    const resumeStep = localStorage.getItem('hm_onboard_resume');
+    if (!resumeStep) return;
+    const existing = document.getElementById('onboardResumeBanner');
+    if (existing) existing.remove();
+
+    const banner = document.createElement('div');
+    banner.id = 'onboardResumeBanner';
+    banner.style.cssText = 'padding:12px 16px;background:rgba(212,184,118,0.1);border:1px solid rgba(212,184,118,0.3);border-radius:8px;margin:8px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;';
+    banner.innerHTML = `
+        <span style="flex:1;color:var(--text);font-size:0.9rem;">Continue setting up your groups</span>
+        <span style="color:var(--warning);font-weight:600;font-size:0.85rem;">Continue &rarr;</span>
+    `;
+    banner.onclick = function() {
+        banner.remove();
+        localStorage.removeItem('hm_onboard_resume');
+        // Re-enter onboarding at the saved step
+        onboardingSection.classList.remove('hidden');
+        tabNav.classList.add('hidden');
+        const header = document.getElementById('appHeader');
+        if (header) header.style.display = 'none';
+        wizardNext(parseInt(resumeStep, 10));
+    };
+
+    const app = document.getElementById('app') || document.body;
+    const firstTab = document.getElementById('milestonesTab');
+    if (firstTab) firstTab.insertBefore(banner, firstTab.firstChild);
 }
 
 function handleStart() {
@@ -5492,16 +5536,18 @@ function renderEventSetsHTML() {
     return allSets.map(set => {
         const isCurrent = set.id === currentSetId;
         const eventCount = set.events.length;
+        const memberNames = set.events.slice(0, 4).map(e => e.name).join(', ');
+        const moreCount = set.events.length > 4 ? ` +${set.events.length - 4}` : '';
         return `
-            <div class="event-set-item ${isCurrent ? 'current' : ''}">
+            <div class="event-set-item ${isCurrent ? 'current' : ''}" onclick="${!isCurrent ? `switchToSet('${set.id}')` : ''}" style="cursor:pointer;">
                 <div class="event-set-info">
-                    <strong>${set.name}${isCurrent ? ' (active)' : ''}</strong>
-                    <span class="event-set-count">${eventCount} date${eventCount !== 1 ? 's' : ''}</span>
+                    <strong>${escapeHtml(set.name)}</strong>
+                    ${isCurrent ? '<span style="color:var(--warning);font-size:0.7rem;font-weight:600;margin-left:6px;">ACTIVE</span>' : ''}
+                    <div style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">${escapeHtml(memberNames)}${moreCount}</div>
                 </div>
                 <div class="event-set-actions">
-                    <button class="btn-small btn-edit" onclick="renameSet('${set.id}')">Edit</button>
-                    ${!isCurrent ? `<button class="btn-small" onclick="switchToSet('${set.id}')">Switch</button>` : ''}
-                    ${allSets.length > 1 ? `<button class="btn-danger-small" onclick="deleteSet('${set.id}')">x</button>` : ''}
+                    <button class="btn-small btn-edit" onclick="event.stopPropagation();renameSet('${set.id}')" title="Rename">&#9998;</button>
+                    ${allSets.length > 1 ? `<button class="btn-danger-small" onclick="event.stopPropagation();deleteSet('${set.id}')" title="Delete">&times;</button>` : ''}
                 </div>
             </div>
         `;
