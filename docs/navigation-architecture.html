@@ -91,17 +91,29 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <table>
 <tr><th>Element</th><th>What's in it</th><th>Usage</th></tr>
-<tr><td><strong>Home</strong> (bottom tab)</td><td>Hero card + time-chunked milestones + Together section + Add someone</td><td>70%</td></tr>
-<tr><td><strong>People</strong> (bottom tab)</td><td>Add/edit people, per-person milestone view</td><td>20%</td></tr>
+<tr><td><strong>Home</strong> (bottom tab)</td><td>Sub-toggle at top: <strong>Me</strong> (personal milestones) | <strong>Together</strong> (combined milestones). Hero card + time-chunked list below.</td><td>70%</td></tr>
+<tr><td><strong>People</strong> (bottom tab)</td><td>Add/edit people, per-person milestone view, groups</td><td>20%</td></tr>
 <tr><td><strong>&#128100; Profile</strong> (top-right icon)</td><td>Settings, theme, language, notifications, account, legal, export</td><td>10%</td></tr>
 </table>
 
+<h3>v1.1 Update: Home has a Me/Together sub-toggle</h3>
+
+<div class="rule">
+<strong>Lesson learned (v1.0 &rarr; v1.1):</strong> Mixing personal and combined milestones on one scrollable screen was too crowded on mobile. Users couldn't distinguish "my milestones" from "our milestones." The fix: a simple toggle at the top of Home &mdash; <strong>Me</strong> shows only YOUR milestones, <strong>Together</strong> shows combined milestones for groups. This is like how many apps use a segmented control (e.g., Apple Music's "Library" vs "Listen Now", or a messaging app's "Chats" vs "Groups").
+</div>
+
+<p>The Home tab now works like this:</p>
+<ul>
+<li><strong>Me</strong> (default): Hero card + time-chunked list of YOUR milestones only. Clean, focused, personal.</li>
+<li><strong>Together</strong>: Combined milestones for all your people &mdash; when your ages add up to special numbers. Only meaningful when 2+ people are added.</li>
+</ul>
+
 <h3>Why this structure</h3>
 <ul>
-<li><strong>2 bottom tabs, not 4:</strong> Hick's Law &mdash; fewer choices = less confusion. Research shows 3-5 tabs optimal, but HappyMoments has only 2 primary destinations. Profile is a settings area, not a daily destination &mdash; it goes top-right like Instagram/Spotify.</li>
-<li><strong>No "Team" tab:</strong> Combined milestones appear as a section ON the Home screen when 2+ people exist. Contextual, not forced.</li>
-<li><strong>No "Data" tab:</strong> "Data" was a confusing label. People management moves to "People" tab. Export/import moves to Profile.</li>
-<li><strong>Profile as top-right icon:</strong> Settings are used 10% of the time. They don't earn a bottom tab. The person icon (&#128100;) is a known pattern from Instagram, Spotify, YouTube.</li>
+<li><strong>2 bottom tabs, not 3 or 4:</strong> Hick's Law &mdash; fewer choices = less confusion. The sub-toggle inside Home provides the separation without adding a third tab.</li>
+<li><strong>Me/Together toggle, not a third tab:</strong> "Together" only makes sense when 2+ people exist. It shouldn't have equal weight in the nav. A toggle inside Home makes it discoverable but secondary.</li>
+<li><strong>"People" tab for management:</strong> Add/edit people, view per-person milestones. This is a "do" tab, not a "view" tab.</li>
+<li><strong>Profile as top-right icon:</strong> Settings are used 10% of the time. They don't earn a bottom tab.</li>
 </ul>
 
 <div class="rule">
