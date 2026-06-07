@@ -1490,6 +1490,9 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                         step.classList.remove('reveal-counting');
                         step.classList.add('reveal-done');
                     }
+                    // Reveal milestone list below hero (if exists)
+                    const moreList = document.getElementById('friendMoreList');
+                    if (moreList) setTimeout(() => { moreList.style.opacity = '1'; }, 300);
                 });
             }, 300);
         } else if (step) {
@@ -1497,6 +1500,8 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
             setTimeout(() => {
                 step.classList.remove('reveal-counting');
                 step.classList.add('reveal-done');
+                const moreList = document.getElementById('friendMoreList');
+                if (moreList) setTimeout(() => { moreList.style.opacity = '1'; }, 300);
             }, 500);
         }
     }
@@ -1543,7 +1548,7 @@ function wizardShowMyMore() {
     // Fallback: if no non-cosmic milestones, include all upcoming
     if (upcoming.length === 0) upcoming = milestones.filter(m => m.timeUntil > 0);
     const count = upcoming.length;
-    upcoming = upcoming.slice(0, 4);
+    upcoming = upcoming.slice(0, 6);
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
 
     let listHtml = '';
@@ -1593,7 +1598,7 @@ function wizardShowTheirMore() {
             if (!ms.some(m => m.unit === c.unit && m.value === c.value)) ms.push(c);
         });
     }
-    const upcoming = ms.filter(m => m.timeUntil > 0 && !m.isCosmic).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 4);
+    const upcoming = ms.filter(m => m.timeUntil > 0 && !m.isCosmic).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 6);
 
     let html = `<h2 class="wizard-question">${escapeHtml(friendEvent.name)}'s milestones</h2>`;
     html += '<div class="wizard-milestone-list">';
@@ -1975,12 +1980,13 @@ function wizardDiscoverFriendV2() {
         });
     }
     let upcoming = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
-        .sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 3);
-    if (upcoming.length === 0) upcoming = ms.filter(m => m.timeUntil > 0).slice(0, 3);
+        .sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 6);
+    if (upcoming.length === 0) upcoming = ms.filter(m => m.timeUntil > 0).slice(0, 6);
 
     const moreEl = document.getElementById('wizardFriendMore');
     if (moreEl && upcoming.length > 0) {
-        let html = '<div style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;">';
+        // Hidden initially — revealed after counter animation finishes
+        let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
         html += '<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More milestones</div>';
         upcoming.forEach(m => {
             const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
@@ -3819,21 +3825,24 @@ function homeShareMilestone(idx) {
 }
 
 function showSharePreview(message, recipientName) {
+    // Copy to clipboard immediately so it's ready when user picks Viber/WhatsApp
+    navigator.clipboard.writeText(message).catch(() => {});
+
     // Remove existing preview if any
     const existing = document.getElementById('sharePreviewModal');
     if (existing) existing.remove();
 
     const modal = document.createElement('div');
     modal.id = 'sharePreviewModal';
-    modal.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--card-bg,#222);border-top:2px solid var(--warning,#d4b876);padding:16px 20px;box-shadow:0 -4px 20px rgba(0,0,0,0.4);';
+    modal.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--card-bg,#222);border-top:2px solid var(--warning,#d4b876);padding:16px 20px;box-shadow:0 -4px 20px rgba(0,0,0,0.4);border-radius:16px 16px 0 0;';
     modal.innerHTML = `
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;">Message to share:</p>
-        <p style="font-size:0.9rem;color:var(--text);font-style:italic;margin-bottom:12px;line-height:1.4;">${escapeHtml(message)}</p>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">This will be shared (already copied):</p>
+        <p style="font-size:0.95rem;color:var(--text);margin-bottom:14px;line-height:1.5;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--warning,#d4b876);">${escapeHtml(message)}</p>
         <div style="display:flex;gap:8px;">
-            <button onclick="doShare('${message.replace(/'/g, "\\'")}'); document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:10px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;">Share</button>
-            <button onclick="navigator.clipboard.writeText('${message.replace(/'/g, "\\'")}').then(()=>showToast('Copied!','success')); document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:10px;border-radius:8px;background:var(--border,#333);color:var(--text);border:none;cursor:pointer;">Copy</button>
-            <button onclick="document.getElementById('sharePreviewModal').remove();" style="padding:10px 14px;border-radius:8px;background:none;color:var(--text-muted);border:1px solid var(--border,#333);cursor:pointer;">Cancel</button>
+            <button onclick="doShare('${message.replace(/'/g, "\\'")}'); document.getElementById('sharePreviewModal').remove();" style="flex:2;padding:12px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;font-size:0.95rem;">Send via app</button>
+            <button onclick="document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:12px;border-radius:8px;background:none;color:var(--text-muted);border:1px solid var(--border,#333);cursor:pointer;font-size:0.85rem;">Close</button>
         </div>
+        <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">Text is in your clipboard — paste it anywhere</p>
     `;
     document.body.appendChild(modal);
 }
