@@ -1531,6 +1531,7 @@ function wizardDiscoverV5() {
     // Show reveal (screen 2)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep2')?.classList.add('wizard-step-active');
+    _lastWizardStep = 2;
     window.scrollTo(0, 0);
 
     onboardingSection.classList.remove('hidden');
@@ -1573,6 +1574,7 @@ function wizardShowMyMore() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep3')?.classList.add('wizard-step-active');
+    _lastWizardStep = 3;
     window.scrollTo(0, 0);
 }
 
@@ -1748,13 +1750,13 @@ function wizardDiscoverFriend() {
     if (friendM) {
         let shareMsg;
         if (isRole) {
-            // For roles: "Did you know you turn exactly 20,000 days onJune 18th?"
-            const val = friendM.value.toLocaleString();
-            const unit = friendM.isCosmic ? (friendM.description || friendM.unitName) : friendM.unitName;
+            const displayText = friendM.isCosmic
+                ? (friendM.description || friendM.unitName)
+                : (friendM.value.toLocaleString() + ' ' + friendM.unitName);
             const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
             const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
             const dateStr2 = friendM.date.toLocaleDateString(locale, dateOpts);
-            shareMsg = `Did you know you turn exactly ${val} ${unit} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 happymoments.app`;
+            shareMsg = `Did you know you reach ${displayText} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 happymoments.app`;
         } else {
             shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
         }
@@ -1805,13 +1807,7 @@ function wizardShareFriend() {
     if (!m) return;
     const friendName = window._wizardFriendName || 'your friend';
     const message = window._wizardFriendShareMsg || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
-    if (navigator.share) {
-        navigator.share({ title: 'HappyMoment for ' + friendName, text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied! Send it to ' + friendName, 'success');
-        }).catch(() => {});
-    }
+    showSharePreview(message, friendName);
     _track('onboard_share_initiated', { value: m.value, unit: m.unit });
     // Stay on current screen — user taps Continue when ready
 }
@@ -2009,6 +2005,7 @@ function wizardDiscoverFriendV2() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
+    _lastWizardStep = 5;
     window.scrollTo(0, 0);
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
@@ -2070,6 +2067,7 @@ function wizardShowCombinedAndName() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    _lastWizardStep = 6;
     window.scrollTo(0, 0);
 }
 
@@ -2091,6 +2089,7 @@ function wizardGoToGroupBuilder() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
+    _lastWizardStep = 7;
     window.scrollTo(0, 0);
 }
 
@@ -2250,6 +2249,7 @@ function wizardShowGroupReveal() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
+    _lastWizardStep = 8;
     window.scrollTo(0, 0);
 }
 
@@ -2304,28 +2304,19 @@ function wizardBuildShareScreen() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep9')?.classList.add('wizard-step-active');
+    _lastWizardStep = 9;
     window.scrollTo(0, 0);
 }
 
 function wizardShareForPerson(name, message) {
-    if (navigator.share) {
-        navigator.share({ title: 'HappyMoment for ' + name, text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied! Send it to ' + name, 'success');
-        }).catch(() => {});
-    }
+    showSharePreview(message, name);
     _track('onboard_share_person', { name: name });
 }
 
 function wizardShareGroup() {
     const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
     const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at happymoments.app';
-    if (navigator.share) {
-        navigator.share({ title: 'HappyMoments \u2014 ' + groupName, text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => showToast('Copied!', 'success')).catch(() => {});
-    }
+    showSharePreview(message, groupName);
     _track('onboard_share_group');
 }
 
@@ -2352,6 +2343,7 @@ function wizardCreateAnotherGroup() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    _lastWizardStep = 6;
     window.scrollTo(0, 0);
 }
 
@@ -2394,6 +2386,7 @@ function wizardCreateGroupAndBuild() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
+    _lastWizardStep = 7;
     window.scrollTo(0, 0);
 }
 
@@ -3838,7 +3831,10 @@ function renderHomeScreen() {
 function homeShareMilestone(idx) {
     const m = allMilestonesFlat[idx];
     if (!m) return;
-    const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : `${m.eventName}: ${m.value.toLocaleString()} ${m.unitName}`;
+    const fallbackText = m.isCosmic
+        ? `${m.eventName}: ${m.description || m.unitName}`
+        : `${m.eventName}: ${m.value.toLocaleString()} ${m.unitName}`;
+    const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : fallbackText;
     // Show preview before sharing
     showSharePreview(message, m.eventName);
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
@@ -3942,8 +3938,8 @@ function renderMilestonesTab() {
         }
     }
 
-    // Render hero milestone card above the list
-    renderHeroMilestone();
+    // Hero card disabled — all milestones shown equally in the time-chunked list
+    // renderHeroMilestone();
 
     if (_mostSpecialMode) {
         renderMostSpecialMilestones();
