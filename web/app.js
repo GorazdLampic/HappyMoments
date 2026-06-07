@@ -3041,8 +3041,20 @@ function renderHomeScreen() {
     function renderChunk(label, items, maxShow) {
         if (items.length === 0) return '';
         maxShow = maxShow || 7;
+        // Cosmic milestones never first — sort non-cosmic before cosmic, then by proximity
+        const sorted = [...items].sort((a, b) => {
+            if (a.isCosmic && !b.isCosmic) return 1;
+            if (!a.isCosmic && b.isCosmic) return -1;
+            return a.timeUntil - b.timeUntil;
+        });
+        // Limit max cosmic items per chunk to 1
+        let cosmicCount = 0;
+        const filtered = sorted.filter(m => {
+            if (m.isCosmic) { cosmicCount++; return cosmicCount <= 1; }
+            return true;
+        });
         let html = `<div class="time-chunk-label">${label}</div>`;
-        items.slice(0, maxShow).forEach((m, i) => {
+        filtered.slice(0, maxShow).forEach((m, i) => {
             const val = m.value.toLocaleString(locale);
             const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
             // Add year if milestone is in a different year
@@ -3109,8 +3121,8 @@ function renderHomeScreen() {
             const cands = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
             let bestT = 0, bestD = Infinity;
             cands.forEach(s => { const t = Math.ceil(totalDays / s) * s; const d = t - totalDays; if (d > 0 && d < bestD) { bestD = d; bestT = t; } });
-            contentEl.innerHTML = `<p class="together-teaser">Together you are <strong>${totalDays.toLocaleString(locale)} days</strong>.<br>
-                <strong>${bestT.toLocaleString(locale)} days</strong> together in ${bestD.toLocaleString(locale)} days.</p>`;
+            contentEl.innerHTML = `<p class="together-teaser">
+                <strong>${bestT.toLocaleString(locale)} days</strong> together in ${bestD.toLocaleString(locale)} days</p>`;
         }
     } else if (togetherEl) {
         togetherEl.style.display = 'none';
