@@ -40,7 +40,7 @@ strong { font-weight: 600; }
 <body>
 
 <h1>HappyMoments User Psychology</h1>
-<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the "why" behind every UX decision<br>
+<p class="meta">Version 1.2 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the "why" behind every UX decision<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (how it looks) &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> (the journey) &middot; <a href="navigation-architecture.html">navigation-architecture.html</a> (the structure)<br>
 Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 
@@ -184,6 +184,25 @@ Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 <tr><td><strong>Peak</strong></td><td>The counter animation rolling up to the big number. Gold glow. Sparkle particles. This is the moment that defines the product in the user's memory.</td></tr>
 <tr><td><strong>End</strong></td><td>Every session ends with anticipation, not a dead screen. "Your next milestone is in X days" or "Remind me" creates forward-looking positive emotion. Never end on: empty state, error, "no milestones today" with nothing else.</td></tr>
 </table>
+
+<!-- ═════════════════════════════════════════════ -->
+<h2>Gradual Reveal Principle (v1.2)</h2>
+
+<div class="rule" style="border-left-color:#1a3c6e;">
+<strong>One hero at a time. User controls depth.</strong><br><br>
+The onboarding (and daily use) should never dump all milestones on screen at once. Instead:<br>
+<ol style="margin:12px 0 0 20px;">
+<li><strong>Show ONE best milestone</strong> &mdash; the hero. Counter animation, gold, sparkle.</li>
+<li><strong>Offer "see more"</strong> &mdash; user taps to expand and see 3-4 more. This is optional.</li>
+<li><strong>Offer "share" alongside "continue"</strong> &mdash; at every step, the user can share THIS milestone or move to the next person/section.</li>
+<li><strong>Repeat for each person</strong> &mdash; their hero, then optionally more.</li>
+<li><strong>End with combined milestone</strong> &mdash; one teaser showing "together you are X days."</li>
+</ol>
+<br>
+<strong>Why:</strong> Showing 20 milestones at once is overwhelming (Miller's Law). Showing one at a time with "want more?" creates anticipation (Spotify Wrapped model). The user feels in control of the depth.
+<br><br>
+<strong>On mobile:</strong> This is especially critical. A phone screen fits ~4 milestone rows. If all milestones for all people are shown together, the user scrolls endlessly without understanding what belongs to whom. Separation by person + "see more" toggle fixes this.
+</div>
 
 <!-- ═════════════════════════════════════════════ -->
 <h2>The 5 UX Principles We Follow</h2>

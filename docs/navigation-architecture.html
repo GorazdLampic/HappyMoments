@@ -63,7 +63,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em;
 <body>
 
 <h1>HappyMoments Navigation Architecture</h1>
-<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
+<p class="meta">Version 1.2 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture-research.md</p>
 
@@ -91,29 +91,29 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <table>
 <tr><th>Element</th><th>What's in it</th><th>Usage</th></tr>
-<tr><td><strong>Home</strong> (bottom tab)</td><td>Sub-toggle at top: <strong>Me</strong> (personal milestones) | <strong>Together</strong> (combined milestones). Hero card + time-chunked list below.</td><td>70%</td></tr>
-<tr><td><strong>People</strong> (bottom tab)</td><td>Add/edit people, per-person milestone view, groups</td><td>20%</td></tr>
+<tr><td><strong>Home</strong> (bottom tab)</td><td>Sub-toggle: <strong>&#11088; Me</strong> | <strong>&#128101; Group</strong>. Me = your personal milestones. Group = combined milestones. Hero card + time-chunked list below.</td><td>70%</td></tr>
+<tr><td><strong>People</strong> (bottom tab)</td><td>Add/edit people, per-person milestone view, create/manage groups</td><td>20%</td></tr>
 <tr><td><strong>&#128100; Profile</strong> (top-right icon)</td><td>Settings, theme, language, notifications, account, legal, export</td><td>10%</td></tr>
 </table>
 
-<h3>v1.1 Update: Home has a Me/Together sub-toggle</h3>
+<h3>v1.2 Update: Home has a Me / &#128101; sub-toggle</h3>
 
 <div class="rule">
-<strong>Lesson learned (v1.0 &rarr; v1.1):</strong> Mixing personal and combined milestones on one scrollable screen was too crowded on mobile. Users couldn't distinguish "my milestones" from "our milestones." The fix: a simple toggle at the top of Home &mdash; <strong>Me</strong> shows only YOUR milestones, <strong>Together</strong> shows combined milestones for groups. This is like how many apps use a segmented control (e.g., Apple Music's "Library" vs "Listen Now", or a messaging app's "Chats" vs "Groups").
+<strong>Lesson learned (v1.0 &rarr; v1.2):</strong> Mixing personal and combined milestones on one scrollable screen was too crowded on mobile. Users couldn't distinguish "my milestones" from "our milestones." The fix: a segmented control at the top of Home &mdash; <strong>&#11088; Me</strong> and a <strong>&#128101; group icon</strong> (no text needed &mdash; the icon of multiple people is universally understood). This follows the pattern of messaging apps that separate individual chats from group chats with icons.
 </div>
 
 <p>The Home tab now works like this:</p>
 <ul>
-<li><strong>Me</strong> (default): Hero card + time-chunked list of YOUR milestones only. Clean, focused, personal.</li>
-<li><strong>Together</strong>: Combined milestones for all your people &mdash; when your ages add up to special numbers. Only meaningful when 2+ people are added.</li>
+<li><strong>&#11088; Me</strong> (default): Hero card + time-chunked list of YOUR personal milestones only. Clean, focused, personal. Each milestone shows person name + number + date.</li>
+<li><strong>&#128101; (group icon)</strong>: Combined milestones for your groups &mdash; when ages add up to special numbers. Only shown when 2+ people exist. The icon communicates "group/together" without using the word "Together" or "Team" which users found confusing.</li>
 </ul>
 
 <h3>Why this structure</h3>
 <ul>
-<li><strong>2 bottom tabs, not 3 or 4:</strong> Hick's Law &mdash; fewer choices = less confusion. The sub-toggle inside Home provides the separation without adding a third tab.</li>
-<li><strong>Me/Together toggle, not a third tab:</strong> "Together" only makes sense when 2+ people exist. It shouldn't have equal weight in the nav. A toggle inside Home makes it discoverable but secondary.</li>
-<li><strong>"People" tab for management:</strong> Add/edit people, view per-person milestones. This is a "do" tab, not a "view" tab.</li>
-<li><strong>Profile as top-right icon:</strong> Settings are used 10% of the time. They don't earn a bottom tab.</li>
+<li><strong>2 bottom tabs + 1 sub-toggle:</strong> Hick's Law &mdash; the bottom nav stays simple (2 tabs). The sub-toggle inside Home provides Me vs Group separation without adding a third bottom tab.</li>
+<li><strong>Icon, not text:</strong> The &#128101; group-of-people icon is self-explanatory. No need for labels like "Together" or "Team" &mdash; the icon communicates the concept instantly. (Don Norman: "Every element must communicate its purpose without labels.")</li>
+<li><strong>"People" tab for management:</strong> Add/edit people, view per-person milestones, create groups. This is the "manage" area.</li>
+<li><strong>Profile as top-right icon:</strong> Settings used 10% of the time &mdash; doesn't earn a bottom tab.</li>
 </ul>
 
 <div class="rule">

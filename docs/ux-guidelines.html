@@ -41,7 +41,7 @@ ul { margin: 6px 0 14px 22px; }
 <body>
 
 <h1>HappyMoments UX Guidelines</h1>
-<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
+<p class="meta">Version 1.2 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
 Cross-references: <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="navigation-architecture.html">navigation-architecture.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html</p>
 
@@ -262,7 +262,9 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 
 <h3>Default-off patterns</h3>
 <div class="rule">
-<strong>v1.1 Update:</strong> Fibonacci and powers-of-2 are OFF by default. Numbers like 17,711 (Fibonacci) and 65,536 (2^16) are not recognizable to most users &mdash; they look random. These patterns are available as an opt-in in Profile &rarr; Advanced settings, for math enthusiasts who will appreciate them.
+<strong>v1.2 Update:</strong><br>
+<strong>Fibonacci:</strong> OFF by default. Numbers like 17,711 or 46,368 are not recognizable &mdash; they look random. Available as opt-in in Profile &rarr; Advanced.<br><br>
+<strong>Powers of 2:</strong> Show up to 2<sup>10</sup> = 1,024 only. Everyone knows 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024. These should be displayed with their power notation: "128 days (2<sup>7</sup>)" or "512 hours (2<sup>9</sup>)". Beyond 1,024 (2,048, 4,096, 8,192...) &mdash; OFF by default, available in Advanced.
 </div>
 
 <h3>Coherence filter reminder</h3>

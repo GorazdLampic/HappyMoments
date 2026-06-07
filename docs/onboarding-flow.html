@@ -316,7 +316,7 @@ hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
 <body>
 
 <h1>HappyMoments Onboarding Flow</h1>
-<p class="meta">Version 1.0 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
+<p class="meta">Version 1.2 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (visual specs), <a href="user-psychology.html">user-psychology.html</a> (why each decision)<br>
 Supersedes: archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md</p>
 
@@ -332,11 +332,12 @@ Supersedes: archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md
 </ol>
 
 <!-- ═════════════════════════════════════════════ -->
-<h2>The Journey: 5 Screens</h2>
+<h2>The Journey: 7 Steps (5 screens + 2 expandable)</h2>
 
 <div class="rule">
-<strong>Flow:</strong> ME &rarr; SOMEONE I LOVE &rarr; DASHBOARD<br>
-Each screen has: the user's ACTION, the app's REWARD, and the TRANSITION to next.
+<strong>v1.2 Flow:</strong> MY date &rarr; MY hero milestone &rarr; (expand: more of mine) &rarr; THEIR date &rarr; THEIR hero milestone &rarr; (expand: more of theirs) &rarr; MILESTONE PREVIEW with share/add options<br><br>
+Each step has: the user's ACTION, the app's REWARD, and TWO transitions: go deeper OR move forward. The user is never forced &mdash; always in control of pacing.<br><br>
+<strong>Key principle (Luka Renko):</strong> First ME, then one OTHER person, then optionally a GROUP. At each step the user can share that specific milestone or continue.
 </div>
 
 <!-- ── Screen 1 ── -->
@@ -374,7 +375,8 @@ Each screen has: the user's ACTION, the app's REWARD, and the TRANSITION to next
     <div class="hero-unit">seconds</div>
     <div class="hero-date">Sunday, March 23, 2025</div>
     <div class="hero-countdown">You passed it 1 year ago!</div>
-    <div class="btn-gold">Now someone I love &rarr;</div>
+    <div class="btn-gold">See more of my milestones</div>
+    <div class="btn-gold" style="background:#333;color:#aaa;margin-top:8px;">Now check someone you know &rarr;</div>
 </div>
 
 <p><strong>Elements:</strong> 4 (number, unit, date, emotional countdown) + 2 buttons</p>
@@ -423,7 +425,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 </div>
 
 <!-- ── Screen 3 ── -->
-<h3>Screen 3: Someone You Love</h3>
+<h3>Screen 3: Someone You Know</h3>
 
 <div class="mockup">
     <div class="back-arrow">&larr;</div>
@@ -469,7 +471,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div class="hero-countdown">That's in 12 days!</div>
     <div class="share-preview">&ldquo;Hey Mom, did you know you turn exactly 20,000 days old on June 18th?&rdquo;</div>
     <div class="btn-gold">Send to Mom &rarr;</div>
-    <div class="btn-skip">Maybe later</div>
+    <div class="btn-gold" style="background:#333;color:#aaa;margin-top:8px;">Explore all milestones &rarr;</div>
 </div>
 
 <p><strong>Elements:</strong> 4 (their name, number+unit, date+countdown) + share preview + 2 actions</p>
@@ -482,40 +484,39 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <p><strong>"Maybe later"</strong> &rarr; continue to dashboard. The seed is planted even if they don't share now.</p>
 
 <!-- ── Screen 5 ── -->
-<h3>Screen 5: Dashboard Landing</h3>
+<h3>Screen 5: Milestone Preview + Actions</h3>
 
 <div class="mockup dashboard">
-    <div class="dash-header">
-        <span class="app-name">HappyMoments</span>
-        <div class="avatar">&#128100;</div>
-    </div>
+    <div style="font-size:1.1rem;color:var(--text);text-align:center;margin-bottom:16px;">Your milestones</div>
 
-    <div class="hero-card">
-        <div><span class="star">&#9733;</span> <span class="hero-card-title">Mom turns 20,000 days</span></div>
-        <div class="hero-card-sub">June 18 &mdash; in 12 days!</div>
-        <div class="btn-row">
-            <div class="btn-small gold">Share</div>
-            <div class="btn-small gray">Remind me</div>
-        </div>
-    </div>
-
-    <div class="section-divider">&mdash;&mdash; Coming up &mdash;&mdash;</div>
-
-    <div class="section-label">This week</div>
+    <div style="font-size:0.8rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:8px 0 4px;font-weight:600;">Me</div>
     <div class="milestone-row">
-        <span class="ms-label">You</span>
-        <span class="ms-value">500 months</span>
-        <span class="ms-date">Thu</span>
+        <span class="ms-value">&#9733; 1,000,000,000 seconds</span>
+        <span class="ms-date">Mar 23</span>
     </div>
-
-    <div class="section-label">This month</div>
     <div class="milestone-row">
-        <span class="ms-label">Mom</span>
-        <span class="ms-value">12,321 days</span>
-        <span class="ms-date">Jun 22</span>
+        <span class="ms-value">12,000 days</span>
+        <span class="ms-date">Jul 14</span>
+    </div>
+    <div class="milestone-row">
+        <span class="ms-value">Saturn return</span>
+        <span class="ms-date">Nov 22</span>
     </div>
 
-    <div class="section-divider">&mdash;&mdash; Together &mdash;&mdash;</div>
+    <div style="font-size:0.8rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:12px 0 4px;font-weight:600;">Mom</div>
+    <div class="milestone-row">
+        <span class="ms-value">&#9733; 20,000 days</span>
+        <span class="ms-date">Jun 18</span>
+    </div>
+    <div class="milestone-row">
+        <span class="ms-value">100,000,000 seconds</span>
+        <span class="ms-date">Nov 23</span>
+    </div>
+
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+        <div class="btn-small gold" style="text-align:center;padding:12px;border-radius:8px;">Tap the most interesting and share &rarr;</div>
+        <div class="btn-small gray" style="text-align:center;padding:12px;border-radius:8px;border:1px solid #444;">Add more people &rarr;</div>
+    </div>
 
     <div class="together-section">
         <div class="together-value">You + Mom = 38,547 days</div>
