@@ -1357,8 +1357,9 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
             if (m.isBigMilestone) score += 120; // billion seconds, 10K days — wow factor
             if (m.value >= 1000 && m.value % 1000 === 0) score += 100; // round thousands
             if (s.length >= 3 && new Set(s).size === 1) score += 90; // repdigit (11111)
-            if (m.isCosmic && m.isSaturnReturn) score += 110; // Saturn return — widely known
-            if (m.isCosmic && m.isVerySpecialCosmic) score += 70; // Jupiter/Chiron
+            if (m.isCosmic && m.isSaturnReturn) score += 60; // Saturn return — interesting but not dominant
+            if (m.isCosmic && m.isVerySpecialCosmic) score += 20; // Jupiter/Chiron — low priority
+            if (m.isCosmic && !m.isSaturnReturn && !m.isVerySpecialCosmic) score += 5; // Mercury/Mars/etc — very low
 
             // DEPRIORITIZE obscure patterns for onboarding reveal
             if (m.type === 'fibonacci') score += 10; // low — people don't know 2584
@@ -1559,15 +1560,21 @@ function wizardShowCombined() {
             totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
             names.push(e.name);
         });
-        const nextRound = Math.ceil(totalDays / 10000) * 10000;
-        const daysUntilRound = nextRound - totalDays;
+        // Find the closest nice round number (try 1000, 5000, 10000 increments)
+        const candidates = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
+        let bestTarget = 0, bestDist = Infinity;
+        candidates.forEach(step => {
+            const target = Math.ceil(totalDays / step) * step;
+            const dist = target - totalDays;
+            if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
+        });
         const namesStr = names.join(' + ');
 
         el.innerHTML = `
             <h2 class="wizard-question">${escapeHtml(namesStr)}</h2>
             <p class="wizard-inspo-question" style="font-size:1.4rem;margin:8px 0;">${totalDays.toLocaleString(locale)} days together</p>
             <p style="color:var(--warning);font-style:italic;text-align:center;font-size:1.1rem;margin-bottom:8px;">
-                ${nextRound.toLocaleString(locale)} together in ${daysUntilRound.toLocaleString(locale)} days
+                ${bestTarget.toLocaleString(locale)} together in ${bestDist.toLocaleString(locale)} days
             </p>
         `;
     } else {
@@ -1606,12 +1613,15 @@ function wizardDiscover() {
 
 // --- Role chip selection (Screen 3) ---
 function wizardSelectRole(btn, role) {
-    // Deselect all chips, select this one
     document.querySelectorAll('.wizard-role-chip').forEach(c => c.classList.remove('selected'));
     btn.classList.add('selected');
-    // Set the friend name to the role label
     const nameInput = document.getElementById('friendName');
     if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
+    // Update buttons with the person's name
+    const showBtn = document.getElementById('wizardShowTheirBtn');
+    if (showBtn) showBtn.textContent = `Show ${role}'s milestone`;
+    const moreBtn = document.getElementById('wizardSeeMoreTheirBtn');
+    if (moreBtn) moreBtn.textContent = `See more of ${role}'s milestones`;
     // Focus the date field
     const dayField = document.getElementById('friendDay');
     if (dayField) setTimeout(() => dayField.focus(), 200);
@@ -2837,7 +2847,7 @@ function findHeroMilestone() {
 
         // Cosmic milestone bonus (Saturn return = very important)
         if (m.isCosmic) {
-            rScore += m.isSaturnReturn ? 120 : (m.isVerySpecialCosmic ? 70 : 30);
+            rScore += m.isSaturnReturn ? 60 : (m.isVerySpecialCosmic ? 20 : 5);
         }
 
         // Very special bonus
@@ -2991,17 +3001,36 @@ function renderHomeScreen() {
             });
         }
         milestones.forEach(m => { m.eventName = e.name; m.eventId = e.id; });
+        // Include future milestones
         all = all.concat(milestones.filter(m => m.timeUntil > 0));
+        // Include recently passed milestones (≤7 days ago, or ≤30 days for very impressive)
+        milestones.filter(m => m.timeUntil <= 0 && m.timeUntil > -30 * 24*60*60*1000).forEach(m => {
+            const daysAgo = Math.abs(m.timeUntil) / (24*60*60*1000);
+            const isVeryImpressive = m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0) ||
+                (String(m.value).length >= 8 && new Set(String(m.value)).size <= 2);
+            if (daysAgo <= 7 || (isVeryImpressive && daysAgo <= 30)) {
+                m.recentlyPassed = true;
+                all.push(m);
+            }
+        });
     });
 
-    all.sort((a, b) => a.timeUntil - b.timeUntil);
+    // Sort: recently passed first (by recency), then future (by proximity)
+    all.sort((a, b) => {
+        if (a.recentlyPassed && !b.recentlyPassed) return -1;
+        if (!a.recentlyPassed && b.recentlyPassed) return 1;
+        if (a.recentlyPassed && b.recentlyPassed) return b.timeUntil - a.timeUntil; // most recent first
+        return a.timeUntil - b.timeUntil;
+    });
     allMilestonesFlat = all;
 
     // Chunk by time
+    const recentlyPassed = all.filter(m => m.recentlyPassed);
+    const future = all.filter(m => !m.recentlyPassed);
     const week = [], month = [], later = [];
     const weekMs = 7 * 24 * 60 * 60 * 1000;
     const monthMs = 30 * 24 * 60 * 60 * 1000;
-    all.forEach(m => {
+    future.forEach(m => {
         if (m.timeUntil <= weekMs) week.push(m);
         else if (m.timeUntil <= monthMs) month.push(m);
         else later.push(m);
@@ -3022,8 +3051,14 @@ function renderHomeScreen() {
             const dateOpts = showYear
                 ? { month: 'short', day: 'numeric', year: 'numeric' }
                 : { weekday: 'short', month: 'short', day: 'numeric' };
-            const dateStr = m.date.toLocaleDateString(locale, dateOpts);
-            const isSpecial = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
+            let dateStr;
+            if (m.recentlyPassed) {
+                const daysAgo = Math.round(Math.abs(m.timeUntil) / (24*60*60*1000));
+                dateStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo}d ago`;
+            } else {
+                dateStr = m.date.toLocaleDateString(locale, dateOpts);
+            }
+            const isSpecial = m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0);
             html += `<div class="time-chunk-item" onclick="homeShareMilestone(${all.indexOf(m)})">
                 <div class="tc-left">
                     <span class="tc-value ${isSpecial ? 'starred' : ''}">${isSpecial ? '\u2605 ' : ''}${val} ${unit}</span>
@@ -3044,6 +3079,10 @@ function renderHomeScreen() {
     const nextYear = later.filter(m => m.date.getFullYear() > thisYear);
 
     let html = '';
+    // Recently passed milestones (you just missed these!)
+    if (recentlyPassed.length > 0) {
+        html += renderChunk('Just passed', recentlyPassed, 3);
+    }
     html += renderChunk('This week', week, 3);
     html += renderChunk('This month', month, 3);
     html += renderChunk(laterThisYear.length > 0 ? 'Later this year' : 'Coming up', laterThisYear, 3);
@@ -3066,10 +3105,12 @@ function renderHomeScreen() {
             appData.events.forEach(e => {
                 totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
             });
-            const nextRound = Math.ceil(totalDays / 10000) * 10000;
-            const daysUntilRound = nextRound - totalDays;
+            // Find closest nice round number
+            const cands = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
+            let bestT = 0, bestD = Infinity;
+            cands.forEach(s => { const t = Math.ceil(totalDays / s) * s; const d = t - totalDays; if (d > 0 && d < bestD) { bestD = d; bestT = t; } });
             contentEl.innerHTML = `<p class="together-teaser">Together you are <strong>${totalDays.toLocaleString(locale)} days</strong>.<br>
-                <strong>${nextRound.toLocaleString(locale)} days</strong> together in ${daysUntilRound} days.</p>`;
+                <strong>${bestT.toLocaleString(locale)} days</strong> together in ${bestD.toLocaleString(locale)} days.</p>`;
         }
     } else if (togetherEl) {
         togetherEl.style.display = 'none';
@@ -3368,7 +3409,7 @@ function renderPersonColumns() {
         milestones.forEach(m => {
             // Cosmic milestones get a fixed score (not based on roundnessScore of small return numbers)
             const rScore = m.isCosmic
-                ? (m.isSaturnReturn ? 150 : (m.isVerySpecialCosmic ? 80 : 40))
+                ? (m.isSaturnReturn ? 60 : (m.isVerySpecialCosmic ? 20 : 5))
                 : roundnessScore(m.value);
             const daysAway = m.timeUntil / (24 * 60 * 60 * 1000);
             // Proximity score: closer = higher (max ~100 for today, ~0 for 365d away)
@@ -4768,8 +4809,8 @@ function updateSetSwitcher() {
     options += '<option value="__new__">+ New Group</option>';
     currentSetSelect.innerHTML = options;
 
-    // Always show the switcher
-    setSwitcher.classList.remove('hidden');
+    // Hide the set switcher — simplified UI, sets managed in People tab
+    setSwitcher.classList.add('hidden');
 
     // Update sets list in settings
     renderEventSetsList();
