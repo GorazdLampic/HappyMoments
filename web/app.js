@@ -886,11 +886,11 @@ function switchTab(tabName) {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    // Show/hide tab content — Home shows milestones only (Together section is embedded), People shows events
+    // Show/hide tab content
     milestonesTab.classList.toggle('hidden', tabName !== 'milestones');
-    combinedTab.classList.add('hidden'); // Old combined tab always hidden — replaced by Together section on Home
+    combinedTab.classList.add('hidden');
     eventsTab.classList.toggle('hidden', tabName !== 'events');
-    if (settingsTab) settingsTab.classList.add('hidden'); // Settings always hidden (in profile panel)
+    if (settingsTab) settingsTab.classList.toggle('hidden', tabName !== 'settings');
 
     // Clear selection state on tab switch
     selectedMilestone = null;
@@ -3620,13 +3620,13 @@ function renderHomeScreen() {
                 dateStr = m.date.toLocaleDateString(locale, dateOpts);
             }
             const isSpecial = m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0);
-            html += `<div class="time-chunk-item" onclick="homeShareMilestone(${all.indexOf(m)})">
+            html += `<div class="time-chunk-item">
                 <div class="tc-left">
                     <span class="tc-value ${isSpecial ? 'starred' : ''}">${isSpecial ? '\u2605 ' : ''}${val} ${unit}</span>
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>
-                <span class="tc-share-btn">\u2197</span>
+                <button class="tc-share-btn" onclick="event.stopPropagation();homeShareMilestone(${all.indexOf(m)})">Share</button>
             </div>`;
         });
         if (items.length > maxShow) {
@@ -3694,11 +3694,12 @@ function homeShareMilestone(idx) {
 }
 
 function renderMilestonesTab() {
-    // Render the new Home screen
+    // Render the new Home screen — no single hero, all milestones equal
     renderHomeScreen();
 
-    // Also render hero milestone
-    renderHeroMilestone();
+    // Hero card hidden — milestones from all people shown equally in the list
+    const heroEl = document.getElementById('heroMilestone');
+    if (heroEl) heroEl.style.display = 'none';
 
     // Legacy: keep old columns for compatibility but don't show
     if (appData.events.length === 0) {
