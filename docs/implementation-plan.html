@@ -39,12 +39,15 @@ Based on: <a href="ux-guidelines.html">ux-guidelines.html</a>, <a href="onboardi
 <strong>Principle:</strong> Each phase produces a deployable version. No "big bang" rewrite. Each phase makes the app better on its own, even if the later phases never happen. Test with real users after each phase.
 </div>
 
+<p><strong>v1.3 — Updated after v21 testing.</strong> Phases 1-4 were completed but revealed issues. This update defines the remaining work.</p>
+
 <table>
-<tr><th>Phase</th><th>What changes</th><th>Effort</th><th>Impact</th><th>Can ship alone?</th></tr>
-<tr><td><span class="phase">1</span> Onboarding</td><td>5-screen flow with role chips, inspirational examples, past/future handling</td><td><span class="hours">3-4 hrs</span></td><td>First impression, activation rate, share rate</td><td>Yes</td></tr>
-<tr><td><span class="phase">2</span> Navigation</td><td>2 tabs + profile icon, bottom bar, tab styling</td><td><span class="hours">3-4 hrs</span></td><td>Daily use clarity, feature discovery</td><td>Yes</td></tr>
-<tr><td><span class="phase">3</span> Home screen</td><td>Hero card + time-chunked list + Together section + empty states</td><td><span class="hours">4-6 hrs</span></td><td>Daily engagement, retention, "check and go"</td><td>Yes</td></tr>
-<tr><td><span class="phase">4</span> Polish</td><td>Typography to 3 levels, gold-only accents, hero scoring fix, share as image</td><td><span class="hours">2-3 hrs</span></td><td>Visual quality, shareability, number ranking</td><td>Yes</td></tr>
+<tr><th>Phase</th><th>What changes</th><th>Effort</th><th>Impact</th><th>Status</th></tr>
+<tr><td><span class="phase">1-4</span></td><td>Initial UX redesign: onboarding, 2-tab nav, home screen, polish</td><td>Done</td><td>Done</td><td>Shipped v21</td></tr>
+<tr><td><span class="phase">5</span> Onboarding v2</td><td>7-screen gradual reveal: MY hero &rarr; more of mine &rarr; THEIR hero &rarr; more of theirs &rarr; combined &rarr; dashboard. Share/Remind/Continue at each step.</td><td><span class="hours">2-3 hrs</span></td><td>Better activation, gradual depth, share rate</td><td>Next</td></tr>
+<tr><td><span class="phase">6</span> Navigation v2</td><td>Icon-only bottom tabs (&#127968; &#128101;). Me/&#128101; sub-toggle on Home. Less content per screen (3-4 items max).</td><td><span class="hours">1-2 hrs</span></td><td>Cleaner mobile, Me vs Group separation</td><td>Next</td></tr>
+<tr><td><span class="phase">7</span> Number quality</td><td>Fibonacci OFF by default. Powers-of-2 only up to 2<sup>10</sup>=1024, shown as "128 (2<sup>7</sup>)". Remove "old" from all messages. Filter near-round days (1001-1005).</td><td><span class="hours">1 hr</span></td><td>Only beautiful numbers shown</td><td>Next</td></tr>
+<tr><td><span class="phase">8</span> Legacy cleanup</td><td>Remove all old UI bleeding (combined tab, TAB_HINTS, old share card, column footer). Fix returning-user init (done in v20).</td><td><span class="hours">Done</span></td><td>Done</td><td>Shipped v20</td></tr>
 </table>
 
 <p><strong>Total estimated: 12-17 hours across 3-5 sessions.</strong></p>

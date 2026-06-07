@@ -82,8 +82,8 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 </div>
 <div class="screen-placeholder">[ screen content ]</div>
 <div class="bottom-tabs">
-<div class="tab active"><span class="tab-icon">&#127968;</span> Home</div>
-<div class="tab"><span class="tab-icon">&#128101;</span> People</div>
+<div class="tab active"><span class="tab-icon">&#127968;</span></div>
+<div class="tab"><span class="tab-icon">&#128101;</span></div>
 </div>
 </div>
 <p style="text-align:center;color:var(--muted);font-size:0.82rem;margin-top:12px;font-style:italic;">Profile icon (top-right) &middot; Bottom tabs: Home &amp; People</p>
@@ -119,8 +119,8 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <div class="rule">
 <strong>Tab visual design:</strong> The bottom tabs must be visually distinct from content &mdash; the user must immediately recognize them as tappable navigation. Use:<br>
 &bull; A thin top border separating the tab bar from content (1px, <code>var(--border)</code>)<br>
-&bull; Icons above text labels (Home icon + "Home", People icon + "People")<br>
-&bull; Active tab: gold icon + gold text. Inactive: gray icon + gray text.<br>
+&bull; Icons ONLY &mdash; no text labels (&#127968; home, &#128101; people). Icons are universally understood. Text labels add clutter.<br>
+&bull; Active tab: gold icon. Inactive: gray icon.<br>
 &bull; Fixed at bottom of viewport (sticky), never scrolls away.<br>
 &bull; Tab bar height: 56px (Apple HIG minimum 49pt, Material Design 80dp &mdash; 56px is a good compromise).<br>
 This follows the iOS tab bar convention that billions of users already know.
@@ -211,8 +211,8 @@ This follows the iOS tab bar convention that billions of users already know.
 
 </div>
 <div class="bottom-tabs">
-<div class="tab active"><span class="tab-icon">&#127968;</span> Home</div>
-<div class="tab"><span class="tab-icon">&#128101;</span> People</div>
+<div class="tab active"><span class="tab-icon">&#127968;</span></div>
+<div class="tab"><span class="tab-icon">&#128101;</span></div>
 </div>
 </div>
 </div>
@@ -261,7 +261,7 @@ This follows the iOS tab bar convention that billions of users already know.
 
 <p>Milestones grouped by: <strong>This week</strong> / <strong>This month</strong> / <strong>Later</strong></p>
 
-<p>Max 5-7 items per chunk (Miller's Law). If more exist, show "and X more" with expand.</p>
+<p>Max <strong>3-4 items per chunk on mobile</strong> (a phone screen fits ~4 milestone rows above the fold). Show "and X more" with expand for the rest. On desktop, up to 7. The goal: the first screenful shows hero card + 3-4 milestones. No scrolling needed to understand what's on this page.</p>
 
 <p>Each cell: milestone value (gold mono) + person name + date + countdown. Tap &rarr; share bottom sheet.</p>
 
