@@ -63,7 +63,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em;
 <body>
 
 <h1>HappyMoments Navigation Architecture</h1>
-<p class="meta">Version 1.2 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
+<p class="meta">Version 1.4 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture-research.md</p>
 
@@ -233,14 +233,20 @@ This follows the iOS tab bar convention that billions of users already know.
 <tr><th>Milestone type</th><th>Score</th><th>Examples</th></tr>
 <tr><td>Birthday (upcoming)</td><td>150</td><td>48th birthday in 3 days</td></tr>
 <tr><td>Big milestone (power of 10)</td><td>120</td><td>1 billion seconds, 10,000 days</td></tr>
-<tr><td>Saturn return</td><td>110</td><td>1st Saturn return</td></tr>
 <tr><td>Round thousands in days</td><td>100</td><td>20,000 days</td></tr>
 <tr><td>Repdigit</td><td>90</td><td>11,111 days</td></tr>
 <tr><td>Cultural/sacred</td><td>80</td><td>888 days, 108 months</td></tr>
-<tr><td>Jupiter/Chiron return</td><td>70</td><td>Cosmic</td></tr>
+<tr><td>Saturn return</td><td>60</td><td>1st Saturn return (cosmic, but secondary to numbers)</td></tr>
+<tr><td>Alternating (8+ digits)</td><td>50</td><td>25,252,525 minutes</td></tr>
 <tr><td>Palindrome in days</td><td>40</td><td>12,321 days</td></tr>
-<tr><td>Fibonacci</td><td>10</td><td>2,584 days (most people won't recognize)</td></tr>
+<tr><td>Jupiter/Chiron return</td><td>20</td><td>Cosmic, low priority</td></tr>
+<tr><td>Fibonacci</td><td>10</td><td>OFF by default</td></tr>
+<tr><td>Mercury/Mars/Venus/Moon return</td><td>5</td><td>Very low &mdash; never show as hero or first in list</td></tr>
 </table>
+
+<div class="rule">
+<strong>v1.4 Rule: Cosmic milestones are NEVER first.</strong> In any milestone list (hero card, time-chunked list, onboarding reveal), a "normal" number milestone must always come before any cosmic/planetary milestone. Cosmic milestones are interesting but secondary &mdash; 28,282,828 minutes is more impressive than "28th Mars return." Users can still see cosmic milestones, just never as the #1 item.
+</div>
 
 <h3>Proximity scoring</h3>
 
