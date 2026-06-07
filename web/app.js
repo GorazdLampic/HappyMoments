@@ -1495,6 +1495,7 @@ function wizardDiscoverV5() {
     // Show reveal (screen 2)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep2')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
 
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
@@ -1537,6 +1538,7 @@ function wizardShowMyMore() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep3')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
 }
 
 // --- v7 Onboarding: Screen 5 → 6 (show THEIR milestones) ---
@@ -1973,6 +1975,7 @@ function wizardDiscoverFriendV2() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
 }
@@ -2289,8 +2292,10 @@ function wizardCreateAnotherGroup() {
 
     // Update button to go to group builder
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
-    if (addMoreBtn) addMoreBtn.textContent = 'Add people to this group \u2192';
-    addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
+    if (addMoreBtn) {
+        addMoreBtn.textContent = 'Add people to this group \u2192';
+        addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
+    }
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
@@ -2358,6 +2363,7 @@ function wizardFinish() {
     renderPersonFilter();
     renderMilestonesTab();
     switchTab('me');
+    window.scrollTo(0, 0);
     localStorage.setItem('hm_onboarded', '1');
 }
 
@@ -3761,12 +3767,10 @@ function renderMilestonesTab() {
 
     // Legacy: keep old columns for compatibility but don't show
     if (appData.events.length === 0) {
-        const heroEl = document.getElementById('heroMilestone');
-        if (heroEl) heroEl.style.display = 'none';
         return;
     }
 
-    allMilestonesFlat = [];
+    // NOTE: allMilestonesFlat is already set by renderHomeScreen() — do NOT reset it here
 
     // Show "Today" highlight — personal milestones + history facts
     const todayBox = document.getElementById('todayHighlight');
