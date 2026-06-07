@@ -1225,9 +1225,10 @@ function wizardNext(step) {
     if (!localStorage.getItem('happymoments_consent')) acceptConsent();
 
     // Auto-trigger combined milestone rendering when reaching Screen 7
-    // Navigate, scroll to top
+    // Navigate, scroll to top, ensure settings hidden
     _lastWizardStep = step;
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
     const nextStep = document.getElementById('wizardStep' + step);
     if (nextStep) {
         nextStep.classList.add('wizard-step-active');
@@ -1492,7 +1493,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     }
                     // Reveal milestone list below hero (if exists)
                     const moreList = document.getElementById('friendMoreList');
-                    if (moreList) setTimeout(() => { moreList.style.opacity = '1'; }, 300);
+                    if (moreList) setTimeout(() => { moreList.style.opacity = '1'; }, 1500);
                 });
             }, 300);
         } else if (step) {
@@ -2111,7 +2112,8 @@ function wizardRenderGroupMembers() {
 
     // Show continue button when 3+ members (Me + 2 others)
     const btn = document.getElementById('groupContinueBtn');
-    if (btn) btn.style.display = _wizardGroupMembers.length >= 3 ? '' : 'none';
+    // Show continue once there are 2+ members (Me + at least 1 other)
+    if (btn) btn.style.display = _wizardGroupMembers.length >= 2 ? '' : 'none';
 }
 
 function wizardSelectRoleGroup(btn, role) {
@@ -2212,14 +2214,32 @@ function wizardShowGroupReveal() {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
 
+    // Build individual member milestones for "more"
+    let moreMsHtml = '';
+    appData.events.forEach(e => {
+        if (e.name === 'Me') return;
+        const d = e.date instanceof Date ? e.date : new Date(e.date);
+        const ms2 = typeof findAllUpcomingMilestones === 'function'
+            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
+        const best2 = ms2.filter(x => x.timeUntil > 0 && !x.isCosmic)
+            .sort((a, b) => a.timeUntil - b.timeUntil)[0];
+        if (best2) {
+            const val2 = best2.value.toLocaleString(locale);
+            const unit2 = best2.unitName || '';
+            const ds2 = best2.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            moreMsHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${escapeHtml(e.name)}: ${val2} ${unit2}</span><span class="wizard-milestone-date">${ds2}</span></div>`;
+        }
+    });
+
     el.innerHTML = `
-        <p style="font-size:1.1rem;color:var(--text);text-align:center;margin-bottom:4px;font-weight:600;">${escapeHtml(groupName)}</p>
+        <p style="font-size:1.1rem;color:var(--text);text-align:center;margin-bottom:4px;font-weight:600;">${escapeHtml(groupName)} <span onclick="wizardNext(7)" style="cursor:pointer;color:var(--text-muted);font-size:0.85rem;">&#9998;</span></p>
         <div class="wizard-reveal-number-wrap">
             <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
         </div>
         <div class="wizard-reveal-unit">days combined</div>
         <div class="wizard-reveal-date">${dateDisplay}</div>
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
+        ${moreMsHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">Individual milestones</div><div class="wizard-milestone-list">${moreMsHtml}</div></div>` : ''}
     `;
 
     _track('onboard_group_reveal', { members: appData.events.length });
@@ -3848,13 +3868,15 @@ function showSharePreview(message, recipientName) {
 }
 
 function doShare(message) {
-    if (navigator.share) {
-        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied to clipboard!', 'success');
-        }).catch(() => {});
-    }
+    // Copy to clipboard and let user paste — gives them control to edit before sending
+    navigator.clipboard.writeText(message).then(() => {
+        showToast('Text copied! Open your app and paste it.', 'success');
+    }).catch(() => {
+        // Fallback: use native share (less control but works)
+        if (navigator.share) {
+            navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+        }
+    });
 }
 
 function renderMilestonesTab() {
@@ -5732,7 +5754,16 @@ function handleAddSetFromPeopleTab() {
     const input = document.getElementById('newSetName2');
     const name = input ? input.value.trim() : '';
     if (!name) { showToast('Please enter a group name', 'error'); return; }
-    const newSet = { id: 'set_' + Date.now(), name: name, events: [], connections: {}, comboTypes: { sum: true, ratio: true, duration: true } };
+
+    // Auto-add "Me" from first set
+    const firstSet = allSets[0];
+    const meEvent = firstSet ? firstSet.events.find(e => e.name === 'Me') || firstSet.events[0] : null;
+    const meClone = meEvent ? {
+        id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        name: meEvent.name, type: meEvent.type, date: new Date(meEvent.date)
+    } : null;
+
+    const newSet = { id: 'set_' + Date.now(), name: name, events: meClone ? [meClone] : [], connections: {}, comboTypes: { sum: true, ratio: true, duration: true } };
     allSets.push(newSet);
     input.value = '';
     currentSetId = newSet.id;
@@ -5740,8 +5771,9 @@ function handleAddSetFromPeopleTab() {
     saveData();
     renderEventSetsList();
     renderPeopleTabGroups();
+    renderEventsTab();
     updateSetSwitcher();
-    showToast(`Group "${name}" created`, 'success');
+    showToast(`Group "${name}" created with you in it`, 'success');
 }
 
 function renderPeopleTabGroups() {
