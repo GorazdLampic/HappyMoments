@@ -1217,6 +1217,15 @@ function validateDateFields(dateStr) {
 }
 
 // ============================================================
+// Helper: ensure clean wizard state (hide all non-wizard content)
+function _wizardEnsureClean() {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    const profilePanel = document.getElementById('profilePanel');
+    if (profilePanel) profilePanel.classList.add('hidden');
+    onboardingSection.classList.remove('hidden');
+    tabNav.classList.add('hidden');
+}
+
 // ONBOARDING WIZARD (9-screen team flow)
 // ============================================================
 
@@ -1227,8 +1236,8 @@ function wizardNext(step) {
     // Auto-trigger combined milestone rendering when reaching Screen 7
     // Navigate, scroll to top, ensure settings hidden
     _lastWizardStep = step;
+    _wizardEnsureClean();
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
     const nextStep = document.getElementById('wizardStep' + step);
     if (nextStep) {
         nextStep.classList.add('wizard-step-active');
@@ -1511,6 +1520,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
 
 // --- v5 Onboarding: Screen 1 → 2 (enter date → show billion reveal) ---
 function wizardDiscoverV5() {
+    _wizardEnsureClean();
     const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const name = document.getElementById('birthName')?.value?.trim() || 'Me';
     const dateStr = buildDateFromFields('birth');
@@ -1955,6 +1965,7 @@ let _wizardGroupMembers = [];
 
 // --- Screen 4→5: Discover friend, show hero + milestones on one screen ---
 function wizardDiscoverFriendV2() {
+    _wizardEnsureClean();
     const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const name = document.getElementById('friendName')?.value?.trim();
     const dateStr = buildDateFromFields('friend');
@@ -2013,6 +2024,7 @@ function wizardDiscoverFriendV2() {
 
 // --- Screen 6: Combined milestone + name your group ---
 function wizardShowCombinedAndName() {
+    _wizardEnsureClean();
     const el = document.getElementById('wizardCombinedAndName');
     if (!el) return;
 
@@ -2046,6 +2058,22 @@ function wizardShowCombinedAndName() {
     const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? 'Family'
         : (lastPerson && lastPerson.name === 'Friend' ? 'Friends' : 'My Group');
 
+    // Build individual milestones for each person
+    let memberMsHtml = '';
+    appData.events.forEach(e => {
+        const d = e.date instanceof Date ? e.date : new Date(e.date);
+        const ms2 = typeof findAllUpcomingMilestones === 'function'
+            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
+        const best2 = ms2.filter(x => x.timeUntil > 0 && !x.isCosmic)
+            .sort((a, b) => a.timeUntil - b.timeUntil)[0];
+        if (best2) {
+            const val2 = best2.value.toLocaleString(locale);
+            const unit2 = best2.unitName || '';
+            const ds2 = best2.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            memberMsHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${escapeHtml(e.name)}: ${val2} ${unit2}</span><span class="wizard-milestone-date">${ds2}</span></div>`;
+        }
+    });
+
     el.innerHTML = `
         <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${escapeHtml(namesStr)} together</p>
         <div class="wizard-reveal-number-wrap">
@@ -2054,7 +2082,8 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-unit">days combined</div>
         <div class="wizard-reveal-date">${dateDisplay}</div>
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
-        <div style="border-top:1px solid var(--border,#333);margin-top:16px;padding-top:12px;">
+        ${memberMsHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">Individual milestones</div><div class="wizard-milestone-list">${memberMsHtml}</div></div>` : ''}
+        <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
             <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off">
         </div>
@@ -2073,6 +2102,7 @@ function wizardShowCombinedAndName() {
 
 // --- Screen 7: Group builder (Me + Person 2 pre-filled) ---
 function wizardGoToGroupBuilder() {
+    _wizardEnsureClean();
     const groupName = document.getElementById('groupName')?.value?.trim() || 'Family';
 
     // Rename the current set
@@ -2188,6 +2218,7 @@ function wizardAddGroupMember() {
 
 // --- Screen 8: Group combined milestone reveal ---
 function wizardShowGroupReveal() {
+    _wizardEnsureClean();
     const el = document.getElementById('wizardGroupReveal');
     if (!el) return;
 
@@ -2255,6 +2286,7 @@ function wizardShowGroupReveal() {
 
 // --- Screen 9: Share screen — show each person's best milestone with share buttons ---
 function wizardBuildShareScreen() {
+    _wizardEnsureClean();
     const el = document.getElementById('wizardShareScreen');
     if (!el) return;
 
@@ -3841,10 +3873,9 @@ function homeShareMilestone(idx) {
 }
 
 function showSharePreview(message, recipientName) {
-    // Copy to clipboard immediately so it's ready when user picks Viber/WhatsApp
+    // Copy to clipboard and show the text in a dismissible bottom sheet
     navigator.clipboard.writeText(message).catch(() => {});
 
-    // Remove existing preview if any
     const existing = document.getElementById('sharePreviewModal');
     if (existing) existing.remove();
 
@@ -3852,27 +3883,15 @@ function showSharePreview(message, recipientName) {
     modal.id = 'sharePreviewModal';
     modal.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--card-bg,#222);border-top:2px solid var(--warning,#d4b876);padding:16px 20px;box-shadow:0 -4px 20px rgba(0,0,0,0.4);border-radius:16px 16px 0 0;';
     modal.innerHTML = `
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">This will be shared (already copied):</p>
-        <p style="font-size:0.95rem;color:var(--text);margin-bottom:14px;line-height:1.5;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--warning,#d4b876);">${escapeHtml(message)}</p>
-        <div style="display:flex;gap:8px;">
-            <button onclick="doShare('${message.replace(/'/g, "\\'")}'); document.getElementById('sharePreviewModal').remove();" style="flex:2;padding:12px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;font-size:0.95rem;">Send via app</button>
-            <button onclick="document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:12px;border-radius:8px;background:none;color:var(--text-muted);border:1px solid var(--border,#333);cursor:pointer;font-size:0.85rem;">Close</button>
-        </div>
-        <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:8px;">Text is in your clipboard — paste it anywhere</p>
+        <p style="font-size:0.8rem;color:var(--warning,#d4b876);margin-bottom:6px;font-weight:600;">Copied to clipboard!</p>
+        <p style="font-size:0.9rem;color:var(--text);margin-bottom:12px;line-height:1.5;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--warning,#d4b876);">${escapeHtml(message)}</p>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;">Open WhatsApp, Viber, or any app and paste. You can edit the text before sending.</p>
+        <button onclick="document.getElementById('sharePreviewModal').remove();" style="width:100%;padding:12px;border-radius:8px;background:var(--border,#333);color:var(--text);border:none;cursor:pointer;font-size:0.9rem;">Got it</button>
     `;
     document.body.appendChild(modal);
-}
 
-function doShare(message) {
-    // Copy to clipboard and let user paste — gives them control to edit before sending
-    navigator.clipboard.writeText(message).then(() => {
-        showToast('Text copied! Open your app and paste it.', 'success');
-    }).catch(() => {
-        // Fallback: use native share (less control but works)
-        if (navigator.share) {
-            navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
-        }
-    });
+    // Auto-dismiss after 8 seconds
+    setTimeout(() => { const m = document.getElementById('sharePreviewModal'); if (m) m.remove(); }, 8000);
 }
 
 function renderMilestonesTab() {
