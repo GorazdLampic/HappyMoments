@@ -2021,8 +2021,8 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-date">${dateDisplay}</div>
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
         <div style="border-top:1px solid var(--border,#333);margin-top:16px;padding-top:12px;">
-            <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">This is the start of your first group</p>
-            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="Group name" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off">
+            <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
+            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off">
         </div>
     `;
 
@@ -2188,6 +2188,10 @@ function wizardShowGroupReveal() {
 
     _track('onboard_group_reveal', { members: appData.events.length });
 
+    // Update share button with group name
+    const shareBtn8 = document.getElementById('wizardShareBtn8');
+    if (shareBtn8) shareBtn8.textContent = 'Share ' + groupName + ' milestones \u2192';
+
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
     window.scrollTo(0, 0);
@@ -2270,8 +2274,37 @@ function wizardShareGroup() {
 }
 
 function wizardCreateAnotherGroup() {
+    // Ask for group name via the combined screen (Screen 6) repurposed
+    const el = document.getElementById('wizardCombinedAndName');
+    if (!el) return;
+
+    el.innerHTML = `
+        <h2 class="wizard-question">Create another group</h2>
+        <p style="color:var(--text-muted);text-align:center;font-size:0.9rem;margin-bottom:16px;">A group for friends, colleagues, or another circle</p>
+        <div style="margin-top:12px;">
+            <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your new group</p>
+            <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off">
+        </div>
+    `;
+
+    // Update button to go to group builder
+    const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
+    if (addMoreBtn) addMoreBtn.textContent = 'Add people to this group \u2192';
+    addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
+}
+
+function wizardCreateGroupAndBuild() {
+    const groupName = document.getElementById('groupName')?.value?.trim() || 'Friends';
     saveData();
-    const meEvent = appData.events[0];
+
+    // Get "Me" from the first set
+    const firstSet = allSets[0];
+    const meEvent = firstSet ? firstSet.events[0] : null;
+
     const newSetId = 'set_' + Date.now();
     const meClone = meEvent ? {
         id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
@@ -2279,7 +2312,7 @@ function wizardCreateAnotherGroup() {
     } : null;
 
     allSets.push({
-        id: newSetId, name: 'Friends',
+        id: newSetId, name: groupName,
         events: meClone ? [meClone] : [],
         connections: {},
         comboTypes: { sum: true, ratio: true, duration: true }
@@ -2287,11 +2320,19 @@ function wizardCreateAnotherGroup() {
     currentSetId = newSetId;
     loadCurrentSet();
 
-    // Re-use Screen 7 group builder for the new group
+    // Show group builder with the new group
     const title = document.getElementById('groupBuilderTitle');
-    if (title) title.textContent = 'Friends';
+    if (title) title.textContent = groupName;
     _wizardGroupMembers = [...appData.events];
     wizardRenderGroupMembers();
+
+    // Clear the form fields
+    const nameInput = document.getElementById('groupPersonName');
+    if (nameInput) nameInput.value = '';
+    ['groupDay', 'groupMonth', 'groupYear'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep7')?.classList.add('wizard-step-active');

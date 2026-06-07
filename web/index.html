@@ -188,7 +188,7 @@
                     <!-- Milestones list populated by wizardDiscoverFriendV2() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShowCombinedAndName()">Show what you share together &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardShowCombinedAndName()">Check what you share together &rarr;</button>
                     <button class="wizard-btn-secondary" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Share a milestone</button>
                 </div>
             </div>
@@ -214,15 +214,17 @@
                         <!-- Me + Person 2 pre-filled by wizardGoToGroupBuilder() -->
                     </div>
                     <div id="groupAddForm">
-                        <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="off">
-                        <div class="wizard-date-fields" style="margin-top:12px;">
-                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)">
-                            <span class="wizard-date-sep">/</span>
-                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupMonth" placeholder="MM" maxlength="2" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'groupYear', 2)">
-                            <span class="wizard-date-sep">/</span>
-                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field">
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="off" style="flex:1;">
+                            <div class="wizard-date-fields" style="flex:1.2;margin:0;">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.2em;">
+                                <span class="wizard-date-sep">/</span>
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupMonth" placeholder="MM" maxlength="2" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'groupYear', 2)" style="width:2.2em;">
+                                <span class="wizard-date-sep">/</span>
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.2em;">
+                            </div>
                         </div>
-                        <button class="wizard-btn-secondary" onclick="wizardAddGroupMember()" style="margin-top:12px;width:100%;">Add to group</button>
+                        <button class="wizard-btn-secondary" onclick="wizardAddGroupMember()" style="margin-top:10px;width:100%;">+ Add</button>
                     </div>
                 </div>
                 <button class="wizard-btn" onclick="wizardShowGroupReveal()" id="groupContinueBtn" style="display:none;">See group milestones &rarr;</button>
@@ -236,7 +238,7 @@
                     <!-- Populated by wizardShowGroupReveal() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardBuildShareScreen()">Share milestones with your people &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardBuildShareScreen()" id="wizardShareBtn8">Share milestones &rarr;</button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()">Create another group</button>
                 </div>
             </div>
