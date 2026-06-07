@@ -1194,14 +1194,12 @@ function wizardNext(step) {
     if (!localStorage.getItem('happymoments_consent')) acceptConsent();
 
     // Auto-trigger combined milestone rendering when reaching Screen 7
-    // No special triggers — just navigate
-
-    // Hide all steps
+    // Navigate, scroll to top
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     const nextStep = document.getElementById('wizardStep' + step);
     if (nextStep) {
         nextStep.classList.add('wizard-step-active');
-        // Focus first input if present
+        window.scrollTo(0, 0);
         const input = nextStep.querySelector('input:not([type="hidden"])');
         if (input) setTimeout(() => { input.focus(); input.select(); }, 300);
     }
@@ -1643,15 +1641,22 @@ function wizardSelectRole(btn, role) {
     document.querySelectorAll('.wizard-role-chip').forEach(c => c.classList.remove('selected'));
     btn.classList.add('selected');
     const nameInput = document.getElementById('friendName');
-    if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
-    // Update buttons with the person's name
     const showBtn = document.getElementById('wizardShowTheirBtn');
-    if (showBtn) showBtn.textContent = `Show ${role}'s milestone`;
-    const moreBtn = document.getElementById('wizardSeeMoreTheirBtn');
-    if (moreBtn) moreBtn.textContent = `See more of ${role}'s milestones`;
-    // Focus the date field
-    const dayField = document.getElementById('friendDay');
-    if (dayField) setTimeout(() => dayField.focus(), 200);
+    // Child/Friend: always ask for actual name
+    if (role === 'Child' || role === 'Friend') {
+        if (nameInput) {
+            nameInput.classList.remove('hidden');
+            nameInput.value = '';
+            nameInput.placeholder = role === 'Child' ? "Child\u2019s name" : "Friend\u2019s name";
+            setTimeout(() => nameInput.focus(), 200);
+        }
+        if (showBtn) showBtn.textContent = 'Show milestone';
+    } else {
+        if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
+        if (showBtn) showBtn.textContent = `Show ${role}\u2019s milestone`;
+        const dayField = document.getElementById('friendDay');
+        if (dayField) setTimeout(() => dayField.focus(), 200);
+    }
 }
 
 function wizardSelectOther() {
@@ -1715,6 +1720,7 @@ function wizardDiscoverFriend() {
     // Show friend reveal (screen 5)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
 
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
@@ -2014,6 +2020,7 @@ function wizardShowCombinedAndName() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
 }
 
 // --- Screen 7: Group builder (Me + Person 2 pre-filled) ---
@@ -2034,6 +2041,7 @@ function wizardGoToGroupBuilder() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
 }
 
 function wizardRenderGroupMembers() {
@@ -2061,9 +2069,18 @@ function wizardSelectRoleGroup(btn, role) {
     document.querySelectorAll('#wizardRoleChipsGroup .wizard-role-chip').forEach(c => c.classList.remove('selected'));
     btn.classList.add('selected');
     const nameInput = document.getElementById('groupPersonName');
-    if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
-    const dayField = document.getElementById('groupDay');
-    if (dayField) setTimeout(() => dayField.focus(), 200);
+    if (role === 'Child' || role === 'Friend') {
+        if (nameInput) {
+            nameInput.classList.remove('hidden');
+            nameInput.value = '';
+            nameInput.placeholder = role === 'Child' ? "Child\u2019s name" : "Friend\u2019s name";
+            setTimeout(() => nameInput.focus(), 200);
+        }
+    } else {
+        if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
+        const dayField = document.getElementById('groupDay');
+        if (dayField) setTimeout(() => dayField.focus(), 200);
+    }
 }
 
 function wizardSelectOtherGroup() {
@@ -2161,6 +2178,7 @@ function wizardShowGroupReveal() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
 }
 
 function wizardShareGroup() {
@@ -2200,6 +2218,7 @@ function wizardCreateAnotherGroup() {
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
 }
 
 function wizardFinish() {
