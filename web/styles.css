@@ -774,11 +774,12 @@ body {
     left: 0;
     right: 0;
     display: flex;
-    background: var(--bg-page);
-    border-top: 1px solid var(--border);
+    background: var(--card-bg, #222);
+    border-top: 2px solid var(--border);
     z-index: 500;
-    height: 56px;
+    height: 60px;
     padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
 }
 
 .tab-btn-bottom {
@@ -787,23 +788,23 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 3px;
     background: none;
     border: none;
     cursor: pointer;
     color: var(--text-muted);
     padding: 8px 0;
     transition: color 0.2s;
+    position: relative;
 }
 .tab-label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    margin-top: 1px;
+    letter-spacing: 0.03em;
 }
 .tab-btn-bottom.active .tab-label {
     color: var(--warning);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* Me / Group sub-toggle on Home tab */
@@ -842,13 +843,23 @@ body {
 .tab-btn-bottom.active {
     color: var(--warning);
 }
+.tab-btn-bottom.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: var(--warning);
+    border-radius: 0 0 3px 3px;
+}
 .tab-btn-bottom.active svg {
     stroke: var(--warning);
 }
 
 /* Body padding for bottom tab bar */
 #app {
-    padding-bottom: 70px;
+    padding-bottom: 76px;
 }
 
 /* ============================================================
