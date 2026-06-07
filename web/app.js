@@ -224,7 +224,7 @@ function init() {
     if (window.location.search.includes('reset')) {
         localStorage.clear();
         sessionStorage.clear();
-        // Unregister service worker to clear cached assets
+        // Unregister service worker
         if (navigator.serviceWorker) {
             navigator.serviceWorker.getRegistrations().then(regs => {
                 regs.forEach(r => r.unregister());
@@ -234,7 +234,9 @@ function init() {
         if (window.caches) {
             caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
         }
-        window.history.replaceState({}, '', window.location.pathname);
+        // Reload without ?reset to get a clean start
+        window.location.replace(window.location.pathname);
+        return; // Stop init — page will reload
     }
 
     loadDarkMode();
