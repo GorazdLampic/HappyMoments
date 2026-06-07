@@ -1194,7 +1194,7 @@ function wizardNext(step) {
     if (!localStorage.getItem('happymoments_consent')) acceptConsent();
 
     // Auto-trigger combined milestone rendering when reaching Screen 7
-    if (step === 4) wizardInitTeam(1);
+    // No special triggers — just navigate
 
     // Hide all steps
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
@@ -1896,76 +1896,193 @@ function wizardAddPerson4() {
 }
 
 // ============================================================
-// TEAM-BASED ONBOARDING (screens 4-7)
+// v2 ONBOARDING: organic flow (screens 4-8)
+// Me → one person → combined → name group → add more → group reveal
 // ============================================================
 
-let _wizardTeamMembers = { 1: [], 2: [] };
+let _wizardGroupMembers = [];
 
-function wizardInitTeam(teamNum) {
-    // Pre-fill "Me" from appData.events[0]
-    const meEvent = appData.events[0];
-    if (meEvent && _wizardTeamMembers[teamNum].length === 0) {
-        _wizardTeamMembers[teamNum] = [meEvent];
+// --- Screen 4→5: Discover friend, show hero + milestones on one screen ---
+function wizardDiscoverFriendV2() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
+    const name = document.getElementById('friendName')?.value?.trim();
+    const dateStr = buildDateFromFields('friend');
+
+    if (!name) { showToast('Tap a role or enter a name', 'error'); return; }
+    if (!dateStr) { showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error'); return; }
+
+    // Create event and show hero reveal
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendHero', 'wizardStep5');
+    if (!ok) return;
+
+    // Also render milestones list below the hero
+    const friendEvent = appData.events[appData.events.length - 1];
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const ms = typeof findAllUpcomingMilestones === 'function'
+        ? findAllUpcomingMilestones(friendEvent.date, 20, 730, appSettings) : [];
+    if (typeof findBigMilestones === 'function') {
+        findBigMilestones(friendEvent.date, appSettings).forEach(b => {
+            if (!ms.some(m => m.value === b.value && m.unit === b.unit)) ms.push(b);
+        });
     }
-    wizardRenderTeamMembers(teamNum);
+    let upcoming = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
+        .sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 3);
+    if (upcoming.length === 0) upcoming = ms.filter(m => m.timeUntil > 0).slice(0, 3);
+
+    const moreEl = document.getElementById('wizardFriendMore');
+    if (moreEl && upcoming.length > 0) {
+        let html = '<div style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;">';
+        html += '<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More milestones</div>';
+        upcoming.forEach(m => {
+            const val = m.value.toLocaleString(locale);
+            const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
+            const ds = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            html += `<div class="wizard-milestone-row">
+                <span class="wizard-milestone-value" style="white-space:nowrap;">${val} ${unit}</span>
+                <span class="wizard-milestone-date">${ds}</span>
+            </div>`;
+        });
+        html += '</div>';
+        moreEl.innerHTML = html;
+    }
+
+    window._wizardFriendName = name;
+    const shareBtn = document.getElementById('wizardShareFriendBtn');
+    if (shareBtn) shareBtn.textContent = 'Share a milestone with ' + name;
+
+    _track('onboard_add_person', { event_count: appData.events.length });
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
+    onboardingSection.classList.remove('hidden');
+    tabNav.classList.add('hidden');
 }
 
-function wizardRenderTeamMembers(teamNum) {
-    const members = _wizardTeamMembers[teamNum] || [];
-    const el = document.getElementById('team' + teamNum + 'Members');
+// --- Screen 6: Combined milestone + name your group ---
+function wizardShowCombinedAndName() {
+    const el = document.getElementById('wizardCombinedAndName');
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const now = new Date();
+
+    let totalDays = 0;
+    const names = [];
+    appData.events.forEach(e => {
+        totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
+        names.push(e.name);
+    });
+
+    const candidates = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
+    let bestTarget = 0, bestDist = Infinity;
+    candidates.forEach(step => {
+        const target = Math.ceil(totalDays / step) * step;
+        const dist = target - totalDays;
+        if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
+    });
+
+    const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
+    const dateDisplay = targetDate.toLocaleDateString(locale, {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
+    const namesStr = names.join(' and ');
+
+    // Auto-suggest group name based on role
+    const FAMILY_ROLES = ['Mom', 'Dad', 'Partner', 'Sister', 'Brother', 'Child'];
+    const lastPerson = appData.events[appData.events.length - 1];
+    const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? 'Family'
+        : (lastPerson && lastPerson.name === 'Friend' ? 'Friends' : 'My Group');
+
+    el.innerHTML = `
+        <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${escapeHtml(namesStr)} together</p>
+        <div class="wizard-reveal-number-wrap">
+            <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
+        </div>
+        <div class="wizard-reveal-unit">days combined</div>
+        <div class="wizard-reveal-date">${dateDisplay}</div>
+        <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
+        <div style="border-top:1px solid var(--border,#333);margin-top:16px;padding-top:12px;">
+            <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">This is the start of your first group</p>
+            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="Group name" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off">
+        </div>
+    `;
+
+    const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
+    if (addMoreBtn) addMoreBtn.textContent = 'Add more people to ' + suggestedName + ' \u2192';
+
+    _track('onboard_combined_reveal', { event_count: appData.events.length });
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+}
+
+// --- Screen 7: Group builder (Me + Person 2 pre-filled) ---
+function wizardGoToGroupBuilder() {
+    const groupName = document.getElementById('groupName')?.value?.trim() || 'Family';
+
+    // Rename the current set
+    const currentSet = allSets.find(s => s.id === currentSetId);
+    if (currentSet) currentSet.name = groupName;
+    saveData();
+
+    const title = document.getElementById('groupBuilderTitle');
+    if (title) title.textContent = groupName;
+
+    // Pre-fill member list with existing events
+    _wizardGroupMembers = [...appData.events];
+    wizardRenderGroupMembers();
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
+}
+
+function wizardRenderGroupMembers() {
+    const el = document.getElementById('groupMembers');
+    if (!el) return;
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     let html = '';
-    members.forEach(m => {
+    _wizardGroupMembers.forEach(m => {
         const d = m.date instanceof Date ? m.date : new Date(m.date);
         const dateStr = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
         html += `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <span style="color:var(--warning, #d4b876);">\u2713</span>
+            <span style="color:var(--warning,#d4b876);">\u2713</span>
             <span style="flex:1;color:var(--text);">${escapeHtml(m.name)}</span>
             <span style="color:var(--text-muted);font-size:0.85rem;">${dateStr}</span>
         </div>`;
     });
     el.innerHTML = html;
 
-    // Show "See group milestones" button when 2+ members
-    const btn = document.getElementById('team' + teamNum + 'ContinueBtn');
-    if (btn) btn.style.display = members.length >= 2 ? '' : 'none';
+    // Show continue button when 3+ members (Me + 2 others)
+    const btn = document.getElementById('groupContinueBtn');
+    if (btn) btn.style.display = _wizardGroupMembers.length >= 3 ? '' : 'none';
 }
 
-function wizardSelectRoleTeam(btn, role, teamNum) {
-    document.querySelectorAll('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+function wizardSelectRoleGroup(btn, role) {
+    document.querySelectorAll('#wizardRoleChipsGroup .wizard-role-chip').forEach(c => c.classList.remove('selected'));
     btn.classList.add('selected');
-    const nameInput = document.getElementById('team' + teamNum + 'PersonName');
+    const nameInput = document.getElementById('groupPersonName');
     if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
-    const dayField = document.getElementById('team' + teamNum + 'Day');
+    const dayField = document.getElementById('groupDay');
     if (dayField) setTimeout(() => dayField.focus(), 200);
 }
 
-function wizardSelectOtherTeam(teamNum) {
-    document.querySelectorAll('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-chip').forEach(c => c.classList.remove('selected'));
-    document.querySelector('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-other')?.classList.add('selected');
-    const nameInput = document.getElementById('team' + teamNum + 'PersonName');
+function wizardSelectOtherGroup() {
+    document.querySelectorAll('#wizardRoleChipsGroup .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelector('#wizardRoleChipsGroup .wizard-role-other')?.classList.add('selected');
+    const nameInput = document.getElementById('groupPersonName');
     if (nameInput) { nameInput.classList.remove('hidden'); nameInput.value = ''; setTimeout(() => nameInput.focus(), 200); }
 }
 
-function wizardAddTeamMember(teamNum) {
+function wizardAddGroupMember() {
     const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
-    const name = document.getElementById('team' + teamNum + 'PersonName')?.value?.trim();
-    const dateStr = buildDateFromFields('team' + teamNum);
+    const name = document.getElementById('groupPersonName')?.value?.trim();
+    const dateStr = buildDateFromFields('group');
 
-    if (!name) {
-        showToast('Tap a role or enter a name', 'error');
-        return;
-    }
-    if (!dateStr) {
-        showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error');
-        return;
-    }
+    if (!name) { showToast('Tap a role or enter a name', 'error'); return; }
+    if (!dateStr) { showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error'); return; }
     if (!validateDateFields(dateStr)) return;
     const date = parseLocalDate(dateStr);
 
-    // Add to appData events (prevent duplicates)
     let newEvent;
     const existing = appData.events.find(e => e.name === name && e.date.getTime() === date.getTime());
     if (existing) {
@@ -1976,7 +2093,6 @@ function wizardAddTeamMember(teamNum) {
             name: name, type: 'birthday', date: date
         };
         appData.events.push(newEvent);
-        // Auto-connect with all existing events
         appData.events.forEach(e => {
             if (e.id !== newEvent.id) {
                 const key = typeof getConnectionKey === 'function' ? getConnectionKey(e.id, newEvent.id) : '';
@@ -1986,120 +2102,104 @@ function wizardAddTeamMember(teamNum) {
         saveData();
     }
 
-    // Track in team member list
-    const members = _wizardTeamMembers[teamNum];
-    if (!members.some(m => m.id === newEvent.id)) {
-        members.push(newEvent);
+    if (!_wizardGroupMembers.some(m => m.id === newEvent.id)) {
+        _wizardGroupMembers.push(newEvent);
     }
-    wizardRenderTeamMembers(teamNum);
+    wizardRenderGroupMembers();
 
-    // Clear form for next entry
-    const nameInput = document.getElementById('team' + teamNum + 'PersonName');
+    // Clear form
+    const nameInput = document.getElementById('groupPersonName');
     if (nameInput) { nameInput.value = ''; nameInput.classList.add('hidden'); }
     ['Day', 'Month', 'Year'].forEach(f => {
-        const el = document.getElementById('team' + teamNum + f);
+        const el = document.getElementById('group' + f);
         if (el) el.value = '';
     });
-    document.querySelectorAll('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('#wizardRoleChipsGroup .wizard-role-chip').forEach(c => c.classList.remove('selected'));
 
     showToast(name + ' added!', 'success');
-    _track('onboard_add_team_member', { team: teamNum, event_count: appData.events.length });
+    _track('onboard_add_group_member', { event_count: appData.events.length });
 }
 
-function wizardShowTeamMilestones(teamNum) {
-    const members = _wizardTeamMembers[teamNum] || [];
-    const revealId = teamNum === 1 ? 'wizardTeam1Reveal' : 'wizardTeam2Reveal';
-    const el = document.getElementById(revealId);
+// --- Screen 8: Group combined milestone reveal ---
+function wizardShowGroupReveal() {
+    const el = document.getElementById('wizardGroupReveal');
     if (!el) return;
-
-    // Rename current set to the team name
-    const teamName = document.getElementById('team' + teamNum + 'Name')?.value?.trim() || (teamNum === 1 ? 'Family' : 'Friends');
-    const currentSet = allSets.find(s => s.id === currentSetId);
-    if (currentSet) currentSet.name = teamName;
-    saveData();
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     const now = new Date();
+    const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
 
-    if (members.length >= 2) {
-        let totalDays = 0;
-        const names = [];
-        members.forEach(e => {
-            totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
-            names.push(e.name);
-        });
+    let totalDays = 0;
+    appData.events.forEach(e => {
+        totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
+    });
 
-        const candidates = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
-        let bestTarget = 0, bestDist = Infinity;
-        candidates.forEach(step => {
-            const target = Math.ceil(totalDays / step) * step;
-            const dist = target - totalDays;
-            if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
-        });
+    const candidates = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
+    let bestTarget = 0, bestDist = Infinity;
+    candidates.forEach(step => {
+        const target = Math.ceil(totalDays / step) * step;
+        const dist = target - totalDays;
+        if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
+    });
 
-        const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
-        const dateDisplay = targetDate.toLocaleDateString(locale, {
-            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-        });
+    const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
+    const dateDisplay = targetDate.toLocaleDateString(locale, {
+        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
 
-        el.innerHTML = `
-            <p style="font-size:1.1rem;color:var(--text);text-align:center;margin-bottom:4px;font-weight:600;">${escapeHtml(teamName)}</p>
-            <div class="wizard-reveal-number-wrap">
-                <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
-            </div>
-            <div class="wizard-reveal-unit">days combined</div>
-            <div class="wizard-reveal-date">${dateDisplay}</div>
-            <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
-        `;
-    } else {
-        el.innerHTML = `
-            <h2 class="wizard-question">Your milestones are ready!</h2>
-            <p style="color:var(--text-muted);text-align:center;font-style:italic;">Add more people to see combined milestones.</p>
-        `;
-    }
+    el.innerHTML = `
+        <p style="font-size:1.1rem;color:var(--text);text-align:center;margin-bottom:4px;font-weight:600;">${escapeHtml(groupName)}</p>
+        <div class="wizard-reveal-number-wrap">
+            <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
+        </div>
+        <div class="wizard-reveal-unit">days combined</div>
+        <div class="wizard-reveal-date">${dateDisplay}</div>
+        <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
+    `;
 
-    _track('onboard_team_reveal', { team: teamNum, members: members.length });
+    _track('onboard_group_reveal', { members: appData.events.length });
 
-    // Navigate to the reveal screen
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep' + (teamNum === 1 ? 5 : 7))?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
 }
 
-function wizardStartSecondTeam() {
-    // Save current set (team 1)
-    const team1Name = document.getElementById('team1Name')?.value?.trim() || 'Family';
-    const currentSet = allSets.find(s => s.id === currentSetId);
-    if (currentSet) currentSet.name = team1Name;
+function wizardShareGroup() {
+    const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
+    const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at happymoments.app';
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoments \u2014 ' + groupName, text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => showToast('Copied!', 'success')).catch(() => {});
+    }
+    _track('onboard_share_group');
+}
+
+function wizardCreateAnotherGroup() {
     saveData();
-
-    // Find "Me" event
     const meEvent = appData.events[0];
-
-    // Create new set for team 2
     const newSetId = 'set_' + Date.now();
     const meClone = meEvent ? {
         id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
-        name: meEvent.name, type: meEvent.type,
-        date: new Date(meEvent.date)
+        name: meEvent.name, type: meEvent.type, date: new Date(meEvent.date)
     } : null;
 
-    const newSet = {
+    allSets.push({
         id: newSetId, name: 'Friends',
         events: meClone ? [meClone] : [],
         connections: {},
         comboTypes: { sum: true, ratio: true, duration: true }
-    };
-    allSets.push(newSet);
+    });
     currentSetId = newSetId;
     loadCurrentSet();
 
-    // Init team 2 member tracking with "Me"
-    _wizardTeamMembers[2] = appData.events.length > 0 ? [appData.events[0]] : [];
-    wizardRenderTeamMembers(2);
+    // Re-use Screen 7 group builder for the new group
+    const title = document.getElementById('groupBuilderTitle');
+    if (title) title.textContent = 'Friends';
+    _wizardGroupMembers = [...appData.events];
+    wizardRenderGroupMembers();
 
-    // Navigate to screen 6
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
 }
 
 function wizardFinish() {
