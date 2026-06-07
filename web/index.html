@@ -664,9 +664,26 @@
         });
     </script>
 
+    <!-- Reset handler — runs BEFORE any cached JS to ensure clean reset -->
+    <script>
+        if (window.location.search.includes('reset')) {
+            localStorage.clear();
+            sessionStorage.clear();
+            Promise.all([
+                navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(function(regs) {
+                    return Promise.all(regs.map(function(r) { return r.unregister(); }));
+                }) : Promise.resolve(),
+                window.caches ? caches.keys().then(function(keys) {
+                    return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+                }) : Promise.resolve()
+            ]).finally(function() {
+                window.location.replace(window.location.pathname);
+            });
+        }
+    </script>
     <!-- Service Worker Registration for PWA -->
     <script>
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && !window.location.search.includes('reset')) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(reg => console.log('HappyMoments: Service Worker registered'))

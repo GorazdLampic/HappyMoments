@@ -224,19 +224,20 @@ function init() {
     if (window.location.search.includes('reset')) {
         localStorage.clear();
         sessionStorage.clear();
-        // Unregister service worker
-        if (navigator.serviceWorker) {
-            navigator.serviceWorker.getRegistrations().then(regs => {
-                regs.forEach(r => r.unregister());
-            });
-        }
-        // Clear caches
-        if (window.caches) {
-            caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-        }
-        // Reload without ?reset to get a clean start
-        window.location.replace(window.location.pathname);
-        return; // Stop init — page will reload
+
+        // Unregister ALL service workers and clear ALL caches, then reload
+        Promise.all([
+            navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(regs =>
+                Promise.all(regs.map(r => r.unregister()))
+            ) : Promise.resolve(),
+            window.caches ? caches.keys().then(keys =>
+                Promise.all(keys.map(k => caches.delete(k)))
+            ) : Promise.resolve()
+        ]).finally(() => {
+            // Force reload from network (bypass any remaining cache)
+            window.location.replace(window.location.pathname);
+        });
+        return; // Stop init — page will reload after cleanup
     }
 
     loadDarkMode();
