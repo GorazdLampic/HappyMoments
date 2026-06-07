@@ -279,7 +279,7 @@ function init() {
         // Render the dashboard
         selectedPersonIds = appData.events.map(e => e.id);
         renderMilestonesTab();
-        switchTab('milestones');
+        switchTab('me');
     }
 
     // Init notifications
@@ -886,29 +886,48 @@ function switchTab(tabName) {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    // Show/hide tab content
-    milestonesTab.classList.toggle('hidden', tabName !== 'milestones');
-    combinedTab.classList.add('hidden');
-    eventsTab.classList.toggle('hidden', tabName !== 'events');
-    if (settingsTab) settingsTab.classList.toggle('hidden', tabName !== 'settings');
-
-    // Clear selection state on tab switch
+    // Clear selection state
     selectedMilestone = null;
     selectedCombinedMilestone = null;
     if (sharePreviewEl) sharePreviewEl.textContent = '';
     if (combinedSharePreviewEl) combinedSharePreviewEl.textContent = '';
 
-    if (tabName === 'milestones') {
+    // "Me" tab: individual milestones
+    if (tabName === 'me' || tabName === 'milestones') {
+        milestonesTab.classList.remove('hidden');
+        combinedTab.classList.add('hidden');
+        eventsTab.classList.add('hidden');
+        if (settingsTab) settingsTab.classList.add('hidden');
+        switchHomeView('me');
         renderPersonFilter();
         renderMilestonesTab();
     }
-    else if (tabName === 'combined') renderCombinedTab();
-    else if (tabName === 'events') {
+    // "Together" tab: group/combined milestones
+    else if (tabName === 'together' || tabName === 'combined') {
+        milestonesTab.classList.remove('hidden');
+        combinedTab.classList.add('hidden');
+        eventsTab.classList.add('hidden');
+        if (settingsTab) settingsTab.classList.add('hidden');
+        switchHomeView('group');
+        renderMilestonesTab();
+    }
+    // "Manage" tab: people, groups, settings
+    else if (tabName === 'manage' || tabName === 'events') {
+        milestonesTab.classList.add('hidden');
+        combinedTab.classList.add('hidden');
+        eventsTab.classList.remove('hidden');
+        if (settingsTab) settingsTab.classList.remove('hidden');
         renderEventsTab();
         renderPeopleTabGroups();
+        if (typeof loadSettingsUI === 'function') loadSettingsUI();
     }
+    // Legacy: settings-only
     else if (tabName === 'settings') {
-        loadSettingsUI();
+        milestonesTab.classList.add('hidden');
+        combinedTab.classList.add('hidden');
+        eventsTab.classList.add('hidden');
+        if (settingsTab) settingsTab.classList.remove('hidden');
+        if (typeof loadSettingsUI === 'function') loadSettingsUI();
     }
 
     // Show first-visit tab hint
@@ -2297,7 +2316,7 @@ function wizardFinish() {
     selectedPersonIds = appData.events.map(e => e.id);
     renderPersonFilter();
     renderMilestonesTab();
-    switchTab('milestones');
+    switchTab('me');
     localStorage.setItem('hm_onboarded', '1');
 }
 
