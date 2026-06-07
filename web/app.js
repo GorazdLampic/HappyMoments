@@ -950,16 +950,24 @@ function switchHomeView(view) {
         if (groupView) groupView.style.display = '';
         if (toggleMe) toggleMe.classList.remove('active');
         if (toggleGroup) toggleGroup.classList.add('active');
-        // Render combined milestones into the group view
+        // Show group name with edit pencil
         const content = document.getElementById('groupMilestonesContent');
-        if (content && typeof renderCombinedTab === 'function') {
-            // Trigger combined tab render — it populates combinedMilestonesContent
-            renderCombinedTab();
-            // Move the content into group view
-            const combinedContent = document.getElementById('combinedMilestonesContent');
-            if (combinedContent) {
-                content.innerHTML = combinedContent.innerHTML;
+        const currentSet = allSets.find(s => s.id === currentSetId);
+        const gName = currentSet ? currentSet.name : 'My Group';
+        if (content) {
+            // Render group header + combined milestones
+            let headerHtml = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;">
+                <span style="font-size:1.1rem;font-weight:600;color:var(--text);">${escapeHtml(gName)}</span>
+                <button onclick="switchTab('manage')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;" title="Edit group">&#9998;</button>
+            </div>`;
+            if (typeof renderCombinedTab === 'function') {
+                renderCombinedTab();
+                const combinedContent = document.getElementById('combinedMilestonesContent');
+                if (combinedContent) {
+                    headerHtml += combinedContent.innerHTML;
+                }
             }
+            content.innerHTML = headerHtml;
         }
         if (content && content.innerHTML.trim() === '') {
             content.innerHTML = '<p style="text-align:center;padding:32px;color:var(--text-muted);font-style:italic;">Add 2 or more people to discover combined milestones.</p>';
@@ -1427,15 +1435,26 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         }
 
         // Build reveal HTML — clean, spacious, large type
-        revealEl.innerHTML = `
-            <div class="wizard-reveal-number-wrap">
-                <div class="wizard-reveal-sparkle"></div>
-                <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
-            </div>
-            <div class="wizard-reveal-unit">${m.isCosmic ? escapeHtml(m.description) : escapeHtml(m.unitName)}</div>
-            <div class="wizard-reveal-date">${dateDisplay}</div>
-            <div class="wizard-reveal-countdown">${countdownText}</div>
-        `;
+        if (m.isCosmic) {
+            // Cosmic: show description as text (no animated number)
+            revealEl.innerHTML = `
+                <div class="wizard-reveal-number-wrap">
+                    <div class="wizard-reveal-number" id="${revealElId}Number" style="font-size:1.4rem;">${escapeHtml(m.description)}</div>
+                </div>
+                <div class="wizard-reveal-date">${dateDisplay}</div>
+                <div class="wizard-reveal-countdown">${countdownText}</div>
+            `;
+        } else {
+            revealEl.innerHTML = `
+                <div class="wizard-reveal-number-wrap">
+                    <div class="wizard-reveal-sparkle"></div>
+                    <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
+                </div>
+                <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
+                <div class="wizard-reveal-date">${dateDisplay}</div>
+                <div class="wizard-reveal-countdown">${countdownText}</div>
+            `;
+        }
 
         // Store for sharing (keyed so we can have both user and friend)
         if (revealElId === 'wizardReveal') {
@@ -1455,9 +1474,9 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
             step.classList.remove('reveal-done');
         }
 
-        // Start counter animation after a brief pause for the step transition
+        // Start counter animation (skip for cosmic — already shows text)
         const numberEl = document.getElementById(revealElId + 'Number');
-        if (numberEl) {
+        if (numberEl && !m.isCosmic) {
             const targetValue = m.value;
             const duration = targetValue >= 1000000 ? 2000 : targetValue >= 10000 ? 1700 : 1500;
             setTimeout(() => {
@@ -1468,6 +1487,12 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     }
                 });
             }, 300);
+        } else if (step) {
+            // Cosmic: immediately show as done
+            setTimeout(() => {
+                step.classList.remove('reveal-counting');
+                step.classList.add('reveal-done');
+            }, 500);
         }
     }
     return true;
@@ -1519,11 +1544,10 @@ function wizardShowMyMore() {
     let listHtml = '';
     upcoming.forEach(m => {
         const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
-        const val = m.value.toLocaleString(locale);
-        const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
-        const isBig = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
+        const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         listHtml += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
-            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
+            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${displayText}</span>
             <span class="wizard-milestone-date">${dateStr}</span>
         </div>`;
     });
@@ -1569,12 +1593,11 @@ function wizardShowTheirMore() {
     let html = `<h2 class="wizard-question">${escapeHtml(friendEvent.name)}'s milestones</h2>`;
     html += '<div class="wizard-milestone-list">';
     upcoming.forEach(m => {
-        const val = m.value.toLocaleString(locale);
-        const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
         const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
-        const isBig = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
+        const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         html += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
-            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
+            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${displayText}</span>
             <span class="wizard-milestone-date">${dateStr}</span>
         </div>`;
     });
@@ -1955,11 +1978,10 @@ function wizardDiscoverFriendV2() {
         let html = '<div style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;">';
         html += '<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More milestones</div>';
         upcoming.forEach(m => {
-            const val = m.value.toLocaleString(locale);
-            const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
+            const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
             const ds = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
             html += `<div class="wizard-milestone-row">
-                <span class="wizard-milestone-value" style="white-space:nowrap;">${val} ${unit}</span>
+                <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
                 <span class="wizard-milestone-date">${ds}</span>
             </div>`;
         });
@@ -3747,6 +3769,32 @@ function homeShareMilestone(idx) {
     const m = allMilestonesFlat[idx];
     if (!m) return;
     const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : `${m.eventName}: ${m.value.toLocaleString()} ${m.unitName}`;
+    // Show preview before sharing
+    showSharePreview(message, m.eventName);
+    _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
+}
+
+function showSharePreview(message, recipientName) {
+    // Remove existing preview if any
+    const existing = document.getElementById('sharePreviewModal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'sharePreviewModal';
+    modal.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--card-bg,#222);border-top:2px solid var(--warning,#d4b876);padding:16px 20px;box-shadow:0 -4px 20px rgba(0,0,0,0.4);';
+    modal.innerHTML = `
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;">Message to share:</p>
+        <p style="font-size:0.9rem;color:var(--text);font-style:italic;margin-bottom:12px;line-height:1.4;">${escapeHtml(message)}</p>
+        <div style="display:flex;gap:8px;">
+            <button onclick="doShare('${message.replace(/'/g, "\\'")}'); document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:10px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;">Share</button>
+            <button onclick="navigator.clipboard.writeText('${message.replace(/'/g, "\\'")}').then(()=>showToast('Copied!','success')); document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:10px;border-radius:8px;background:var(--border,#333);color:var(--text);border:none;cursor:pointer;">Copy</button>
+            <button onclick="document.getElementById('sharePreviewModal').remove();" style="padding:10px 14px;border-radius:8px;background:none;color:var(--text-muted);border:1px solid var(--border,#333);cursor:pointer;">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function doShare(message) {
     if (navigator.share) {
         navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
     } else {
@@ -3754,7 +3802,6 @@ function homeShareMilestone(idx) {
             showToast('Copied to clipboard!', 'success');
         }).catch(() => {});
     }
-    _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
 }
 
 function renderMilestonesTab() {
