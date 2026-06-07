@@ -387,8 +387,8 @@ const DEFAULT_SETTINGS = {
         palindromes: true,
         sequential: true,
         scientific: true,
-        fibonacci: true,
-        powers2: true,
+        fibonacci: false,
+        powers2: true,  // filtered to ≤1024 in generation
         lucky: false
     },
     constants: {
@@ -485,9 +485,9 @@ function generateAllSpecialNumbers(settings) {
         ROUND_NUMBERS.forEach(n => numbers.add(n));
     }
 
-    // Powers of 2
+    // Powers of 2 — only up to 2^10 = 1024 by default
     if (settings.patterns.powers2 !== false) {
-        POWERS_OF_TWO.forEach(n => numbers.add(n));
+        POWERS_OF_TWO.filter(n => n <= 1024).forEach(n => numbers.add(n));
     }
 
     // Fibonacci
@@ -564,9 +564,11 @@ function classifyNumber(num, settings) {
     }
 
     // Power of 2
-    if (POWERS_OF_TWO.includes(num)) {
+    if (POWERS_OF_TWO.includes(num) && num <= 1024) {
         const exp = Math.round(Math.log2(num));
-        types.push({ type: 'power_of_2', description: `2^${exp}` });
+        const superscripts = '\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079';
+        const supStr = String(exp).split('').map(d => superscripts[parseInt(d)]).join('');
+        types.push({ type: 'power_of_2', description: `2${supStr}` });
     }
 
     // Nice round number (multiple of 500 or 1000)

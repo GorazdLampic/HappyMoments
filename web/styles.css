@@ -784,18 +784,44 @@ body {
 .tab-btn-bottom {
     flex: 1;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
     background: none;
     border: none;
     cursor: pointer;
     color: var(--text-muted);
-    font-family: var(--font-serif);
-    font-size: 0.75rem;
-    padding: 6px 0;
+    padding: 10px 0;
     transition: color 0.2s;
+}
+
+/* Me / Group sub-toggle on Home tab */
+.home-sub-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    max-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.sub-toggle-btn {
+    flex: 1;
+    padding: 8px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+.sub-toggle-btn.active {
+    background: rgba(212, 184, 118, 0.15);
+    color: var(--warning);
+    font-weight: 600;
 }
 .tab-btn-bottom svg {
     stroke: var(--text-muted);

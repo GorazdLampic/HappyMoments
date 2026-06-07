@@ -895,7 +895,41 @@ function switchTab(tabName) {
     }
 
     // Show first-visit tab hint
-    // TAB_HINTS removed — legacy from old 4-tab UI
+}
+
+// ── Home sub-toggle: Me / Group ──
+function switchHomeView(view) {
+    const meView = document.getElementById('homeViewMe');
+    const groupView = document.getElementById('homeViewGroup');
+    const toggleMe = document.getElementById('toggleMe');
+    const toggleGroup = document.getElementById('toggleGroup');
+
+    if (view === 'me') {
+        if (meView) meView.style.display = '';
+        if (groupView) groupView.style.display = 'none';
+        if (toggleMe) toggleMe.classList.add('active');
+        if (toggleGroup) toggleGroup.classList.remove('active');
+    } else {
+        if (meView) meView.style.display = 'none';
+        if (groupView) groupView.style.display = '';
+        if (toggleMe) toggleMe.classList.remove('active');
+        if (toggleGroup) toggleGroup.classList.add('active');
+        // Render combined milestones into the group view
+        const content = document.getElementById('groupMilestonesContent');
+        if (content && typeof renderCombinedTab === 'function') {
+            // Trigger combined tab render — it populates combinedMilestonesContent
+            renderCombinedTab();
+            // Move the content into group view
+            const combinedContent = document.getElementById('combinedMilestonesContent');
+            if (combinedContent) {
+                content.innerHTML = combinedContent.innerHTML;
+            }
+        }
+        if (content && content.innerHTML.trim() === '') {
+            content.innerHTML = '<p style="text-align:center;padding:32px;color:var(--text-muted);font-style:italic;">Add 2 or more people to discover combined milestones.</p>';
+        }
+    }
+    _track('home_view_switched', { view });
 }
 
 // ============================================================
@@ -1139,13 +1173,11 @@ function validateDateFields(dateStr) {
 // ============================================================
 
 function wizardNext(step) {
-    // Auto-accept consent on first wizard interaction (no tap needed)
-    if (!localStorage.getItem('happymoments_consent')) {
-        acceptConsent();
-    }
-    // Hide lang picker during onboarding — user starts in browser language
-    const langPicker = document.getElementById('langPicker');
-    if (langPicker) langPicker.style.display = 'none';
+    // Auto-accept consent on first wizard interaction
+    if (!localStorage.getItem('happymoments_consent')) acceptConsent();
+
+    // Auto-trigger combined milestone rendering when reaching Screen 7
+    if (step === 7) { wizardShowCombined(); return; }
 
     // Hide all steps
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
@@ -1431,15 +1463,14 @@ function wizardDiscoverV5() {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
 }
 
-// --- v5 Onboarding: Screen 2 → 3 (show more milestones list) ---
-function wizardShowMore() {
-    _track('onboard_more_tapped');
-    const el = document.getElementById('wizardMoreMilestones');
+// --- v7 Onboarding: Screen 2 → 3 (show more of MY milestones) ---
+function wizardShowMyMore() {
+    _track('onboard_my_more');
+    const el = document.getElementById('wizardMyMore');
     if (!el) return;
 
-    // Get milestones already computed
     const milestones = allMilestonesFlat || [];
-    const upcoming = milestones.filter(m => m.timeUntil > 0).slice(0, 5);
+    const upcoming = milestones.filter(m => m.timeUntil > 0).slice(0, 4);
     const count = milestones.filter(m => m.timeUntil > 0).length;
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
 
@@ -1466,52 +1497,91 @@ function wizardShowMore() {
     document.getElementById('wizardStep3')?.classList.add('wizard-step-active');
 }
 
-// --- v5 Onboarding: Go to milestone preview (screen 5) ---
-function wizardGoToSummary() {
-    const el = document.getElementById('wizardSummary');
-    if (el) {
-        const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-        // Gather top milestones per person for a preview
-        let previewHtml = '<h2 class="wizard-question">Your milestones</h2>';
+// --- v7 Onboarding: Screen 5 → 6 (show THEIR milestones) ---
+function wizardShowTheirMore() {
+    _track('onboard_their_more');
+    const el = document.getElementById('wizardTheirMore');
+    if (!el) return;
 
-        appData.events.forEach(e => {
-            const ms = typeof findAllUpcomingMilestones === 'function'
-                ? findAllUpcomingMilestones(e.date, 20, 730, appSettings) : [];
-            if (typeof findBigMilestones === 'function') {
-                findBigMilestones(e.date, appSettings).forEach(b => {
-                    if (!ms.some(m => m.value === b.value && m.unit === b.unit)) ms.push(b);
-                });
-            }
-            if (typeof findCosmicMilestones === 'function') {
-                findCosmicMilestones(e.date).forEach(c => {
-                    if (!ms.some(m => m.unit === c.unit && m.value === c.value)) ms.push(c);
-                });
-            }
-            const upcoming = ms.filter(m => m.timeUntil > 0).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 3);
+    // Get milestones for the friend (last added person)
+    const friendEvent = appData.events[appData.events.length - 1];
+    if (!friendEvent) { wizardNext(7); return; }
 
-            if (upcoming.length > 0) {
-                previewHtml += `<div class="wizard-preview-person">${escapeHtml(e.name)}</div>`;
-                upcoming.forEach(m => {
-                    const val = m.value.toLocaleString(locale);
-                    const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
-                    const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
-                    const isSpecial = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
-                    previewHtml += `<div class="wizard-preview-row">
-                        <span class="wizard-preview-val ${isSpecial ? 'starred' : ''}">${isSpecial ? '\u2605 ' : ''}${val} ${unit}</span>
-                        <span class="wizard-preview-date">${dateStr}</span>
-                    </div>`;
-                });
-            }
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const ms = typeof findAllUpcomingMilestones === 'function'
+        ? findAllUpcomingMilestones(friendEvent.date, 20, 730, appSettings) : [];
+    if (typeof findBigMilestones === 'function') {
+        findBigMilestones(friendEvent.date, appSettings).forEach(b => {
+            if (!ms.some(m => m.value === b.value && m.unit === b.unit)) ms.push(b);
         });
+    }
+    if (typeof findCosmicMilestones === 'function') {
+        findCosmicMilestones(friendEvent.date).forEach(c => {
+            if (!ms.some(m => m.unit === c.unit && m.value === c.value)) ms.push(c);
+        });
+    }
+    const upcoming = ms.filter(m => m.timeUntil > 0).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 4);
 
-        el.innerHTML = previewHtml;
+    let html = `<h2 class="wizard-question">${escapeHtml(friendEvent.name)}'s milestones</h2>`;
+    html += '<div class="wizard-milestone-list">';
+    upcoming.forEach(m => {
+        const val = m.value.toLocaleString(locale);
+        const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
+        const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+        const isBig = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
+        html += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
+            <span class="wizard-milestone-value">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
+            <span class="wizard-milestone-date">${dateStr}</span>
+        </div>`;
+    });
+    html += '</div>';
+    el.innerHTML = html;
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+}
+
+// --- v7 Onboarding: Screen 7 (combined milestone + dashboard landing) ---
+function wizardShowCombined() {
+    const el = document.getElementById('wizardCombined');
+    if (!el) return;
+
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const now = new Date();
+
+    if (appData.events.length >= 2) {
+        let totalDays = 0;
+        const names = [];
+        appData.events.forEach(e => {
+            totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
+            names.push(e.name);
+        });
+        const nextRound = Math.ceil(totalDays / 10000) * 10000;
+        const daysUntilRound = nextRound - totalDays;
+        const namesStr = names.join(' + ');
+
+        el.innerHTML = `
+            <h2 class="wizard-question">${escapeHtml(namesStr)}</h2>
+            <p class="wizard-inspo-question" style="font-size:1.4rem;margin:8px 0;">${totalDays.toLocaleString(locale)} days together</p>
+            <p style="color:var(--warning);font-style:italic;text-align:center;font-size:1.1rem;margin-bottom:8px;">
+                ${nextRound.toLocaleString(locale)} together in ${daysUntilRound.toLocaleString(locale)} days
+            </p>
+        `;
+    } else {
+        el.innerHTML = `
+            <h2 class="wizard-question">Your milestones are ready!</h2>
+            <p style="color:var(--text-muted);text-align:center;font-style:italic;font-size:1.1rem;">Add more people to discover combined milestones.</p>
+        `;
     }
 
     _track('onboard_complete', { event_count: appData.events.length });
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
 }
+
+// Legacy alias
+function wizardGoToSummary() { wizardShowCombined(); }
 
 // --- v5 Onboarding: Enable reminders from summary ---
 function wizardEnableReminders() {
@@ -1568,7 +1638,7 @@ function wizardDiscoverFriend() {
         return;
     }
 
-    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep4');
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendReveal', 'wizardStep5');
     if (!ok) return;
 
     // Build share preview message — adjust for role-based names
@@ -1578,7 +1648,7 @@ function wizardDiscoverFriend() {
     if (friendM) {
         let shareMsg;
         if (isRole) {
-            // For roles: "Did you know you turn exactly 20,000 days old on June 18th?"
+            // For roles: "Did you know you turn exactly 20,000 days onJune 18th?"
             const val = friendM.value.toLocaleString();
             const unit = friendM.isCosmic ? (friendM.description || friendM.unitName) : friendM.unitName;
             const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
@@ -1602,9 +1672,9 @@ function wizardDiscoverFriend() {
 
     _track('onboard_add_person', { event_count: appData.events.length });
 
-    // Show friend reveal (screen 4)
+    // Show friend reveal (screen 5)
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep4')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep5')?.classList.add('wizard-step-active');
 
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
@@ -2515,7 +2585,7 @@ function getEventMilestoneDescription(event, milestone) {
                 const tmpl = _t('turns_age') || '{name} turns {value}!';
                 return tmpl.replace('{name}', name).replace('{value}', value);
             }
-            const tmpl2 = _t('is_old') || '{name} will be {value} {unit} old';
+            const tmpl2 = _t('is_old') || '{name} turns {value} {unit}';
             return tmpl2.replace('{name}', name).replace('{value}', value).replace('{unit}', unit);
         case 'beginning':
         case 'milestone':
@@ -2971,9 +3041,9 @@ function renderHomeScreen() {
     const nextYear = later.filter(m => m.date.getFullYear() > thisYear);
 
     let html = '';
-    html += renderChunk('This week', week, 5);
-    html += renderChunk('This month', month, 5);
-    html += renderChunk(laterThisYear.length > 0 ? 'Later this year' : 'Coming up', laterThisYear, 5);
+    html += renderChunk('This week', week, 3);
+    html += renderChunk('This month', month, 3);
+    html += renderChunk(laterThisYear.length > 0 ? 'Later this year' : 'Coming up', laterThisYear, 3);
     if (nextYear.length > 0) {
         html += renderChunk('Next year', nextYear, 3);
     }
@@ -4026,7 +4096,7 @@ function generateChallengeMessage(m) {
 
     const link = 'https://happymoments.app';
     const templates = [
-        `I just discovered something fun — ${name} will be ${val} ${unit} old on ${dateStr}! Have you checked YOUR special numbers? ${link}`,
+        `I just discovered something fun — ${name} will be ${val} ${unit} on${dateStr}! Have you checked YOUR special numbers? ${link}`,
         `Fun fact: ${name} hits ${val} ${unit} on ${dateStr}! Want to find your own special number milestones? ${link}`,
         `${val} ${unit} — that's ${name}'s next milestone on ${dateStr}! Curious about yours? ${link}`,
     ];
@@ -4096,7 +4166,7 @@ function quickShare(idx) {
 }
 
 function shareAppLink() {
-    const text = 'Discover when you turn 1 billion seconds old, 10,000 days, or hit a Fibonacci birthday. Track milestones for everyone you love!\n\nhttps://happymoments.app';
+    const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\nhttps://happymoments.app';
     if (navigator.share) {
         navigator.share({ title: 'HappyMoments', text }).catch(() => {});
     } else {
@@ -4154,7 +4224,7 @@ function generateShareMessage(m) {
         if (m.isBirthday) {
             msg = m.fullDescription.replace(/[🎂🎉]\s*/g, '') + ` on ${dateStr} (${countdown} from now)!`;
         } else {
-            msg = `${m.eventName} will be ${val} ${m.unitName} old on ${dateStr} — just ${countdown} away!`;
+            msg = `${m.eventName} will be ${val} ${m.unitName} on${dateStr} — just ${countdown} away!`;
         }
     }
     return msg + getAppShareLink(m);

@@ -89,25 +89,22 @@
             <button id="renameCurrentSetBtn" class="btn-rename-set" title="Rename this set">✏️</button>
         </div>
 
-        <!-- Bottom Tab Navigation — 2 tabs: Home + People -->
+        <!-- Bottom Tab Navigation — 2 icon-only tabs -->
         <nav id="tabNav" class="tab-nav-bottom hidden">
             <button class="tab-btn-bottom active" data-tab="milestones" onclick="switchTab('milestones')">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span>Home</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </button>
             <button class="tab-btn-bottom" data-tab="events" onclick="switchTab('events')">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <span>People</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </button>
         </nav>
 
         <!-- Onboarding Wizard -->
         <section id="onboarding" class="onboarding-wizard">
 
-            <!-- ═══ ONBOARDING v6: 5-screen value-first journey ═══ -->
-            <!-- Flow: Inspiration+Date → Your Reveal → Someone You Love → Their Reveal+Share → Dashboard -->
+            <!-- ═══ ONBOARDING v7: 7-screen gradual reveal ═══ -->
 
-            <!-- Screen 1: Inspirational examples + Your Date -->
+            <!-- Screen 1: Inspiration + Your Date -->
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content wizard-content-centered">
                     <div class="wizard-inspiration">
@@ -128,21 +125,32 @@
                 <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscoverV5()">Show me</button>
             </div>
 
-            <!-- Screen 2: Your Reveal (counter animation) -->
+            <!-- Screen 2: YOUR Hero Reveal -->
             <div class="wizard-step" id="wizardStep2">
                 <div class="wizard-content" id="wizardReveal">
                     <!-- Populated by wizardDiscoverV5() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardNext(3)">Now check someone you know &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardShowMyMore()">See more of my milestones</button>
+                    <button class="wizard-btn-secondary" onclick="wizardNext(4)">Now check someone you know &rarr;</button>
                 </div>
             </div>
 
-            <!-- Screen 3: Someone You Love (role chips + date) -->
+            <!-- Screen 3: More of YOUR milestones -->
             <div class="wizard-step" id="wizardStep3">
+                <div class="wizard-content" id="wizardMyMore">
+                    <!-- Populated by wizardShowMyMore() -->
+                </div>
+                <div class="wizard-actions">
+                    <button class="wizard-btn" onclick="wizardNext(4)">Now check someone you know &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Screen 4: Add someone (role chips + date) -->
+            <div class="wizard-step" id="wizardStep4">
                 <button class="wizard-back" onclick="wizardNext(2)">&larr;</button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question">Now someone you care about</h2>
+                    <h2 class="wizard-question">Now someone you know</h2>
                     <div class="wizard-role-chips" id="wizardRoleChips">
                         <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Mom')">Mom</button>
                         <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Dad')">Dad</button>
@@ -164,49 +172,65 @@
                     <input type="hidden" id="friendDate">
                 </div>
                 <button class="wizard-btn" onclick="wizardDiscoverFriend()">Show their milestone</button>
-                <button class="wizard-skip" onclick="wizardGoToSummary()">Skip for now</button>
+                <button class="wizard-skip" onclick="wizardFinish()">Skip for now</button>
             </div>
 
-            <!-- Screen 4: Their Reveal + Share prompt -->
-            <div class="wizard-step" id="wizardStep4">
+            <!-- Screen 5: THEIR Hero Reveal -->
+            <div class="wizard-step" id="wizardStep5">
                 <div class="wizard-content" id="wizardFriendReveal">
                     <!-- Populated by wizardDiscoverFriend() -->
                 </div>
-                <div class="wizard-actions" id="wizardShareActions">
-                    <div class="wizard-share-message" id="wizardSharePreview">
-                        <!-- Populated with pre-written share message -->
-                    </div>
-                    <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Send to them &rarr;</button>
-                    <button class="wizard-btn-secondary" onclick="wizardGoToSummary()">Explore all milestones &rarr;</button>
+                <div class="wizard-actions">
+                    <button class="wizard-btn" onclick="wizardShowTheirMore()">See more of their milestones</button>
+                    <button class="wizard-btn-secondary" onclick="wizardNext(7)">Continue &rarr;</button>
                 </div>
             </div>
 
-            <!-- Screen 5: Milestone preview + actions -->
-            <div class="wizard-step" id="wizardStep5">
-                <div class="wizard-content" id="wizardSummary">
-                    <!-- Populated by wizardGoToSummary() with milestone previews -->
+            <!-- Screen 6: THEIR milestones list (share/remind/continue) -->
+            <div class="wizard-step" id="wizardStep6">
+                <div class="wizard-content" id="wizardTheirMore">
+                    <!-- Populated by wizardShowTheirMore() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardFinish()">Tap the most interesting and share &rarr;</button>
+                    <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Share</button>
+                    <button class="wizard-btn-secondary" onclick="wizardEnableReminders()">Remind me</button>
+                    <button class="wizard-btn-secondary" onclick="wizardNext(7)">Continue &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Screen 7: Combined milestone + dashboard landing -->
+            <div class="wizard-step" id="wizardStep7">
+                <div class="wizard-content" id="wizardCombined">
+                    <!-- Populated by wizardShowCombined() -->
+                </div>
+                <div class="wizard-actions">
+                    <button class="wizard-btn" onclick="wizardFinish()">Explore all milestones &rarr;</button>
                     <button class="wizard-btn-secondary" onclick="wizardFinish()">Add more people &rarr;</button>
                 </div>
             </div>
 
-            <!-- Legacy screen IDs (kept for compatibility) -->
-            <div class="wizard-step" id="wizardStep7"></div>
+            <!-- Legacy -->
             <div class="wizard-step" id="wizardStep8"></div>
 
         </section>
 
         <!-- Home Tab Content -->
         <section id="milestonesTab" class="tab-content hidden">
-            <!-- Person Filter — tap to see one person's milestones -->
-            <div id="personFilter" class="person-filter">
-                <!-- Dynamically populated with person buttons -->
+            <!-- Me / Group sub-toggle -->
+            <div class="home-sub-toggle" id="homeSubToggle">
+                <button class="sub-toggle-btn active" onclick="switchHomeView('me')" id="toggleMe">&#11088; Me</button>
+                <button class="sub-toggle-btn" onclick="switchHomeView('group')" id="toggleGroup">&#128101;</button>
             </div>
 
-            <!-- Hero Milestone Card (weather-app style) -->
-            <div id="heroMilestone" class="hero-milestone" style="display:none;"></div>
+            <!-- Me view (default) -->
+            <div id="homeViewMe">
+                <!-- Person Filter — tap to see one person's milestones -->
+                <div id="personFilter" class="person-filter">
+                    <!-- Dynamically populated with person buttons -->
+                </div>
+
+                <!-- Hero Milestone Card -->
+                <div id="heroMilestone" class="hero-milestone" style="display:none;"></div>
 
             <!-- Time-chunked milestone list -->
             <div id="timeChunkedList" class="time-chunked-list">
@@ -219,10 +243,22 @@
                 <div id="togetherContent"></div>
             </div>
 
-            <!-- Add someone — always at bottom -->
+            <!-- Add someone — always at bottom of Me view -->
             <div class="home-add-person" onclick="switchTab('events'); setTimeout(() => { const el = document.getElementById('newEventName'); if(el) el.focus(); }, 200);">
                 <strong>+ Add a friend or family member</strong><br>
                 <span style="font-size:0.9rem;color:var(--text-muted);">Discover their milestones &mdash; find a reason to connect</span>
+            </div>
+            </div><!-- end homeViewMe -->
+
+            <!-- Group view (combined milestones) -->
+            <div id="homeViewGroup" style="display:none;">
+                <div id="groupMilestonesContent">
+                    <!-- Populated by switchHomeView('group') — reuses renderCombinedTab -->
+                </div>
+                <div class="home-add-person" onclick="switchTab('events');">
+                    <strong>+ Create a group</strong><br>
+                    <span style="font-size:0.9rem;color:var(--text-muted);">Family, friends, colleagues &mdash; see combined milestones</span>
+                </div>
             </div>
 
             <!-- Hidden elements (kept for JS compatibility) -->
