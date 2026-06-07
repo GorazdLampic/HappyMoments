@@ -146,23 +146,20 @@
                 </div>
             </div>
 
-            <!-- Screen 4: Add ONE person -->
+            <!-- Screen 4: Add ONE person — name input on top, role hints below -->
             <div class="wizard-step" id="wizardStep4">
                 <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
-                    <div class="wizard-role-chips" id="wizardRoleChips">
-                        <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Partner')">Partner</button>
-                        <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Mom')">Mom</button>
-                        <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Dad')">Dad</button>
-                        <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Sister')">Sister</button>
-                        <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Brother')">Brother</button>
-                        <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Friend')">Friend</button>
-                        <button class="wizard-role-chip" onclick="wizardSelectRole(this, 'Child')">Child</button>
-                        <button class="wizard-role-chip wizard-role-other" onclick="wizardSelectOther()">Other...</button>
+                    <input type="text" id="friendName" class="wizard-input" placeholder="Name or role (e.g. Mom, Ana, Partner)" autocomplete="off" style="margin-bottom:8px;">
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Partner';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Partner</button>
+                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Mom';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Mom</button>
+                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Dad';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Dad</button>
+                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Sister';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Sister</button>
+                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Brother';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Brother</button>
                     </div>
-                    <input type="text" id="friendName" class="wizard-input wizard-other-input hidden" placeholder="Their name" autocomplete="off">
-                    <div class="wizard-date-fields" style="margin-top: 16px;">
+                    <div class="wizard-date-fields">
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="friendDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'friendMonth', 2)">
                         <span class="wizard-date-sep">/</span>
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="friendMonth" placeholder="MM" maxlength="2" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'friendYear', 2)">
@@ -211,17 +208,7 @@
                         <!-- Me + Person 2 pre-filled by wizardGoToGroupBuilder() -->
                     </div>
                     <div id="groupAddForm">
-                        <div class="wizard-role-chips" id="wizardRoleChipsGroup">
-                            <button class="wizard-role-chip" onclick="wizardSelectRoleGroup(this, 'Mom')">Mom</button>
-                            <button class="wizard-role-chip" onclick="wizardSelectRoleGroup(this, 'Dad')">Dad</button>
-                            <button class="wizard-role-chip" onclick="wizardSelectRoleGroup(this, 'Partner')">Partner</button>
-                            <button class="wizard-role-chip" onclick="wizardSelectRoleGroup(this, 'Sister')">Sister</button>
-                            <button class="wizard-role-chip" onclick="wizardSelectRoleGroup(this, 'Brother')">Brother</button>
-                            <button class="wizard-role-chip" onclick="wizardSelectRoleGroup(this, 'Friend')">Friend</button>
-                            <button class="wizard-role-chip" onclick="wizardSelectRoleGroup(this, 'Child')">Child</button>
-                            <button class="wizard-role-chip wizard-role-other" onclick="wizardSelectOtherGroup()">Other...</button>
-                        </div>
-                        <input type="text" id="groupPersonName" class="wizard-input wizard-other-input hidden" placeholder="Their name" autocomplete="off">
+                        <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="off">
                         <div class="wizard-date-fields" style="margin-top:12px;">
                             <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)">
                             <span class="wizard-date-sep">/</span>
@@ -236,16 +223,26 @@
                 <button class="wizard-skip" onclick="wizardFinish()">Skip for now</button>
             </div>
 
-            <!-- Screen 8: Group milestones + share + new group -->
+            <!-- Screen 8: Group milestones + new group option -->
             <div class="wizard-step" id="wizardStep8">
                 <button class="wizard-back" onclick="wizardNext(7)">&larr;</button>
                 <div class="wizard-content" id="wizardGroupReveal">
                     <!-- Populated by wizardShowGroupReveal() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardFinish()">Explore all milestones &rarr;</button>
-                    <button class="wizard-btn-secondary" onclick="wizardShareGroup()">Share group milestones</button>
+                    <button class="wizard-btn" onclick="wizardBuildShareScreen()">Share milestones with your people &rarr;</button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()">Create another group</button>
+                </div>
+            </div>
+
+            <!-- Screen 9: Share — the last step before daily use -->
+            <div class="wizard-step" id="wizardStep9">
+                <button class="wizard-back" onclick="wizardNext(8)">&larr;</button>
+                <div class="wizard-content" id="wizardShareScreen">
+                    <!-- Populated by wizardBuildShareScreen() -->
+                </div>
+                <div class="wizard-actions">
+                    <button class="wizard-btn" onclick="wizardFinish()">Go to my dashboard &rarr;</button>
                 </div>
             </div>
 
@@ -256,7 +253,7 @@
             <!-- Me / Group sub-toggle -->
             <div class="home-sub-toggle" id="homeSubToggle">
                 <button class="sub-toggle-btn active" onclick="switchHomeView('me')" id="toggleMe">&#11088; Me</button>
-                <button class="sub-toggle-btn" onclick="switchHomeView('group')" id="toggleGroup">&#128101;</button>
+                <button class="sub-toggle-btn" onclick="switchHomeView('group')" id="toggleGroup">&#128106;</button>
             </div>
 
             <!-- Me view (default) -->

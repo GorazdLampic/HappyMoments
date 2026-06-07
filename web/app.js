@@ -2181,6 +2181,70 @@ function wizardShowGroupReveal() {
     window.scrollTo(0, 0);
 }
 
+// --- Screen 9: Share screen — show each person's best milestone with share buttons ---
+function wizardBuildShareScreen() {
+    const el = document.getElementById('wizardShareScreen');
+    if (!el) return;
+
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    let html = '<h2 class="wizard-question">Tell your people</h2>';
+    html += '<p style="color:var(--text-muted);text-align:center;font-size:0.9rem;margin-bottom:16px;">Each person has a milestone worth sharing</p>';
+
+    // For each person (skip "Me"), find their best upcoming milestone
+    appData.events.forEach(e => {
+        if (e.name === 'Me') return;
+        const d = e.date instanceof Date ? e.date : new Date(e.date);
+        const ms = typeof findAllUpcomingMilestones === 'function'
+            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
+        let best = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
+            .sort((a, b) => {
+                let sa = 0, sb = 0;
+                if (a.value >= 1000 && a.value % 1000 === 0) sa += 100;
+                if (b.value >= 1000 && b.value % 1000 === 0) sb += 100;
+                if (a.isBigMilestone) sa += 80;
+                if (b.isBigMilestone) sb += 80;
+                sa += Math.max(0, 50 - a.timeUntil / (24*60*60*1000) * 0.15);
+                sb += Math.max(0, 50 - b.timeUntil / (24*60*60*1000) * 0.15);
+                return sb - sa;
+            })[0];
+        if (!best && ms.length > 0) best = ms.filter(m => m.timeUntil > 0)[0];
+        if (best) {
+            const val = best.value.toLocaleString(locale);
+            const unit = best.unitName || best.unit || '';
+            const ds = best.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
+            html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:8px;">
+                <div style="flex:1;">
+                    <div style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</div>
+                    <div style="color:var(--text-muted);font-size:0.8rem;white-space:nowrap;">${val} ${unit} &middot; ${ds}</div>
+                </div>
+                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${escapeHtml(e.name)}', '${shareText.replace(/'/g, "\\'")}')" style="padding:6px 12px;font-size:0.8rem;white-space:nowrap;">Share</button>
+            </div>`;
+        }
+    });
+
+    if (appData.events.length <= 1) {
+        html += '<p style="color:var(--text-muted);text-align:center;font-style:italic;">Add people to share their milestones!</p>';
+    }
+
+    el.innerHTML = html;
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep9')?.classList.add('wizard-step-active');
+    window.scrollTo(0, 0);
+}
+
+function wizardShareForPerson(name, message) {
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoment for ' + name, text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Copied! Send it to ' + name, 'success');
+        }).catch(() => {});
+    }
+    _track('onboard_share_person', { name: name });
+}
+
 function wizardShareGroup() {
     const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
     const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at happymoments.app';
