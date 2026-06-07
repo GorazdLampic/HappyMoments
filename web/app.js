@@ -1746,25 +1746,19 @@ function wizardShare() {
 
 // --- Screen 5: Share friend's milestone, then go to summary ---
 function wizardShareFriend() {
-    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
     const m = window._wizardFriendMilestone;
-    if (m) {
-        const friendName = window._wizardFriendName || 'your friend';
-        const message = window._wizardFriendShareMsg || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
-        if (navigator.share) {
-            navigator.share({ title: 'HappyMoment for ' + friendName, text: message })
-                .then(() => wizardNext(7))
-                .catch(() => wizardNext(7));
-        } else {
-            navigator.clipboard.writeText(message).then(() => {
-                showToast('Copied! Send it to ' + friendName, 'success');
-                setTimeout(() => wizardNext(7), 1500);
-            }).catch(() => wizardNext(7));
-        }
-        _track('onboard_share_initiated', { value: m.value, unit: m.unit });
+    if (!m) return;
+    const friendName = window._wizardFriendName || 'your friend';
+    const message = window._wizardFriendShareMsg || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoment for ' + friendName, text: message }).catch(() => {});
     } else {
-        wizardNext(7);
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Copied! Send it to ' + friendName, 'success');
+        }).catch(() => {});
     }
+    _track('onboard_share_initiated', { value: m.value, unit: m.unit });
+    // Stay on current screen — user taps Continue when ready
 }
 
 function wizardAddAnother() {
@@ -2124,14 +2118,13 @@ function wizardAddGroupMember() {
     }
     wizardRenderGroupMembers();
 
-    // Clear form
+    // Clear form for next entry — keep name field visible
     const nameInput = document.getElementById('groupPersonName');
-    if (nameInput) { nameInput.value = ''; nameInput.classList.add('hidden'); }
+    if (nameInput) { nameInput.value = ''; nameInput.focus(); }
     ['Day', 'Month', 'Year'].forEach(f => {
         const el = document.getElementById('group' + f);
         if (el) el.value = '';
     });
-    document.querySelectorAll('#wizardRoleChipsGroup .wizard-role-chip').forEach(c => c.classList.remove('selected'));
 
     showToast(name + ' added!', 'success');
     _track('onboard_add_group_member', { event_count: appData.events.length });
@@ -2213,12 +2206,13 @@ function wizardBuildShareScreen() {
             const unit = best.unitName || best.unit || '';
             const ds = best.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
             const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
-            html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:8px;">
-                <div style="flex:1;">
-                    <div style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</div>
-                    <div style="color:var(--text-muted);font-size:0.8rem;white-space:nowrap;">${val} ${unit} &middot; ${ds}</div>
+            html += `<div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
+                    <span style="color:var(--text-muted);font-size:0.8rem;">${val} ${unit} &middot; ${ds}</span>
                 </div>
-                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${escapeHtml(e.name)}', '${shareText.replace(/'/g, "\\'")}')" style="padding:6px 12px;font-size:0.8rem;white-space:nowrap;">Share</button>
+                <div style="color:var(--text-muted);font-size:0.8rem;font-style:italic;padding:6px 10px;border-left:2px solid var(--warning,#d4b876);margin-bottom:8px;">${escapeHtml(shareText)}</div>
+                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${escapeHtml(e.name)}', '${shareText.replace(/'/g, "\\'")}')" style="padding:6px 12px;font-size:0.8rem;width:100%;">Share with ${escapeHtml(e.name)}</button>
             </div>`;
         }
     });
@@ -3587,6 +3581,7 @@ function renderHomeScreen() {
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     const thisYear = new Date().getFullYear();
+    let _globalCosmicShown = 0; // max 1 cosmic across ALL chunks
     function renderChunk(label, items, maxShow) {
         if (items.length === 0) return '';
         maxShow = maxShow || 7;
@@ -3596,17 +3591,20 @@ function renderHomeScreen() {
             if (!a.isCosmic && b.isCosmic) return -1;
             return a.timeUntil - b.timeUntil;
         });
-        // Limit max cosmic items per chunk to 1
-        let cosmicCount = 0;
+        // Max 1 cosmic across entire list
         const filtered = sorted.filter(m => {
-            if (m.isCosmic) { cosmicCount++; return cosmicCount <= 1; }
+            if (m.isCosmic) { _globalCosmicShown++; return _globalCosmicShown <= 1; }
             return true;
         });
         let html = `<div class="time-chunk-label">${label}</div>`;
         filtered.slice(0, maxShow).forEach((m, i) => {
-            const val = m.value.toLocaleString(locale);
-            const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
-            // Add year if milestone is in a different year
+            // For cosmic: show description only (avoids "200 200th Mercury return")
+            let displayText;
+            if (m.isCosmic) {
+                displayText = m.description || m.unitName;
+            } else {
+                displayText = m.value.toLocaleString(locale) + ' ' + m.unitName;
+            }
             const mYear = m.date.getFullYear();
             const showYear = mYear !== thisYear;
             const dateOpts = showYear
@@ -3619,10 +3617,10 @@ function renderHomeScreen() {
             } else {
                 dateStr = m.date.toLocaleDateString(locale, dateOpts);
             }
-            const isSpecial = m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0);
+            const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
             html += `<div class="time-chunk-item">
                 <div class="tc-left">
-                    <span class="tc-value ${isSpecial ? 'starred' : ''}">${isSpecial ? '\u2605 ' : ''}${val} ${unit}</span>
+                    <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>

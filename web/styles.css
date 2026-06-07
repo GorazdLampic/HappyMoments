@@ -796,8 +796,14 @@ body {
     transition: color 0.2s;
 }
 .tab-label {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
+    font-weight: 500;
     letter-spacing: 0.02em;
+    margin-top: 1px;
+}
+.tab-btn-bottom.active .tab-label {
+    color: var(--warning);
+    font-weight: 600;
 }
 
 /* Me / Group sub-toggle on Home tab */
