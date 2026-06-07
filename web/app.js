@@ -27,11 +27,22 @@ function parseLocalDate(dateStr) {
 function autoAdvance(field, nextFieldId, maxLen) {
     // Strip non-digits
     field.value = field.value.replace(/[^0-9]/g, '');
-    if (field.value.length >= maxLen) {
+    const val = parseInt(field.value, 10);
+    const maxVal = parseInt(field.max, 10);
+
+    // Advance on length >= maxLen, OR on unambiguous single digits:
+    // Day field (max=31): val >= 4 means 4-9 (can't be 40+)
+    // Month field (max=12): val >= 2 means 2-9 (can't be 20+)
+    let shouldAdvance = field.value.length >= maxLen;
+    if (!shouldAdvance && maxLen === 2 && val > 0) {
+        if (maxVal === 31 && val >= 4) shouldAdvance = true;
+        if (maxVal === 12 && val >= 2) shouldAdvance = true;
+    }
+
+    if (shouldAdvance) {
         const next = document.getElementById(nextFieldId);
         if (next) next.focus();
     }
-    // Sync to hidden date field
     syncDateFields(field);
 }
 
@@ -251,10 +262,13 @@ function init() {
     const isReturningUser = appData.events.length > 0 || localStorage.getItem('hm_onboarded');
 
     if (isNewUser) {
-        // New user: hide header + tabs, show onboarding wizard
+        // New user: hide header + tabs + all tab content, show onboarding wizard
         const header = document.getElementById('appHeader');
         if (header) header.style.display = 'none';
         tabNav.classList.add('hidden');
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+        const profilePanel = document.getElementById('profilePanel');
+        if (profilePanel) profilePanel.classList.add('hidden');
     } else if (isReturningUser) {
         // Returning user: show everything, hide onboarding
         const header = document.getElementById('appHeader');
@@ -1172,7 +1186,7 @@ function validateDateFields(dateStr) {
 }
 
 // ============================================================
-// ONBOARDING WIZARD (8-screen flow)
+// ONBOARDING WIZARD (9-screen team flow)
 // ============================================================
 
 function wizardNext(step) {
@@ -1180,7 +1194,7 @@ function wizardNext(step) {
     if (!localStorage.getItem('happymoments_consent')) acceptConsent();
 
     // Auto-trigger combined milestone rendering when reaching Screen 7
-    if (step === 7) { wizardShowCombined(); return; }
+    if (step === 4) wizardInitTeam(1);
 
     // Hide all steps
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
@@ -1409,6 +1423,9 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         // Store for sharing (keyed so we can have both user and friend)
         if (revealElId === 'wizardReveal') {
             window._wizardMilestone = m;
+        } else if (revealElId === 'wizardPerson3Reveal') {
+            window._wizardPerson3Milestone = m;
+            window._wizardPerson3Name = name;
         } else {
             window._wizardFriendMilestone = m;
             window._wizardFriendName = name;
@@ -1474,8 +1491,11 @@ function wizardShowMyMore() {
     if (!el) return;
 
     const milestones = allMilestonesFlat || [];
-    const upcoming = milestones.filter(m => m.timeUntil > 0).slice(0, 4);
-    const count = milestones.filter(m => m.timeUntil > 0).length;
+    let upcoming = milestones.filter(m => m.timeUntil > 0 && !m.isCosmic);
+    // Fallback: if no non-cosmic milestones, include all upcoming
+    if (upcoming.length === 0) upcoming = milestones.filter(m => m.timeUntil > 0);
+    const count = upcoming.length;
+    upcoming = upcoming.slice(0, 4);
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
 
     let listHtml = '';
@@ -1485,14 +1505,15 @@ function wizardShowMyMore() {
         const unit = m.isCosmic ? (m.description || m.unitName) : m.unitName;
         const isBig = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
         listHtml += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
-            <span class="wizard-milestone-value">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
+            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
             <span class="wizard-milestone-date">${dateStr}</span>
         </div>`;
     });
 
-    const moreCount = Math.max(0, count - 5);
+    const moreCount = Math.max(0, count - 4);
+    const heading = count > 0 ? `You have ${count} milestones coming` : 'Your milestones are being calculated';
     el.innerHTML = `
-        <h2 class="wizard-question">You have ${count} milestones coming</h2>
+        <h2 class="wizard-question">${heading}</h2>
         <div class="wizard-milestone-list">${listHtml}</div>
         ${moreCount > 0 ? `<p class="wizard-more-hint">...and ${moreCount} more</p>` : ''}
     `;
@@ -1524,7 +1545,7 @@ function wizardShowTheirMore() {
             if (!ms.some(m => m.unit === c.unit && m.value === c.value)) ms.push(c);
         });
     }
-    const upcoming = ms.filter(m => m.timeUntil > 0).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 4);
+    const upcoming = ms.filter(m => m.timeUntil > 0 && !m.isCosmic).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 4);
 
     let html = `<h2 class="wizard-question">${escapeHtml(friendEvent.name)}'s milestones</h2>`;
     html += '<div class="wizard-milestone-list">';
@@ -1534,7 +1555,7 @@ function wizardShowTheirMore() {
         const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
         const isBig = m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0);
         html += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
-            <span class="wizard-milestone-value">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
+            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${val} ${unit}</span>
             <span class="wizard-milestone-date">${dateStr}</span>
         </div>`;
     });
@@ -1546,7 +1567,7 @@ function wizardShowTheirMore() {
 }
 
 // --- v7 Onboarding: Screen 7 (combined milestone + dashboard landing) ---
-function wizardShowCombined() {
+function wizardShowCombined(isRefresh) {
     const el = document.getElementById('wizardCombined');
     if (!el) return;
 
@@ -1569,13 +1590,19 @@ function wizardShowCombined() {
             if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
         });
         const namesStr = names.join(' + ');
+        const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
+        const dateDisplay = targetDate.toLocaleDateString(locale, {
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+        });
 
         el.innerHTML = `
-            <h2 class="wizard-question">${escapeHtml(namesStr)}</h2>
-            <p class="wizard-inspo-question" style="font-size:1.4rem;margin:8px 0;">${totalDays.toLocaleString(locale)} days together</p>
-            <p style="color:var(--warning);font-style:italic;text-align:center;font-size:1.1rem;margin-bottom:8px;">
-                ${bestTarget.toLocaleString(locale)} together in ${bestDist.toLocaleString(locale)} days
-            </p>
+            <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${escapeHtml(namesStr)} together</p>
+            <div class="wizard-reveal-number-wrap">
+                <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
+            </div>
+            <div class="wizard-reveal-unit">days combined</div>
+            <div class="wizard-reveal-date">${dateDisplay}</div>
+            <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
         `;
     } else {
         el.innerHTML = `
@@ -1584,10 +1611,10 @@ function wizardShowCombined() {
         `;
     }
 
-    _track('onboard_complete', { event_count: appData.events.length });
+    if (!isRefresh) _track('onboard_complete', { event_count: appData.events.length });
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
+    document.getElementById('wizardStep9')?.classList.add('wizard-step-active');
 }
 
 // Legacy alias
@@ -1720,17 +1747,17 @@ function wizardShareFriend() {
         const message = window._wizardFriendShareMsg || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
         if (navigator.share) {
             navigator.share({ title: 'HappyMoment for ' + friendName, text: message })
-                .then(() => wizardGoToSummary())
-                .catch(() => wizardGoToSummary());
+                .then(() => wizardNext(7))
+                .catch(() => wizardNext(7));
         } else {
             navigator.clipboard.writeText(message).then(() => {
                 showToast('Copied! Send it to ' + friendName, 'success');
-                setTimeout(() => wizardGoToSummary(), 1500);
-            }).catch(() => wizardGoToSummary());
+                setTimeout(() => wizardNext(7), 1500);
+            }).catch(() => wizardNext(7));
         }
         _track('onboard_share_initiated', { value: m.value, unit: m.unit });
     } else {
-        wizardGoToSummary();
+        wizardNext(7);
     }
 }
 
@@ -1743,13 +1770,352 @@ function wizardAddAnother() {
     wizardNext(4);
 }
 
+// --- Screen 7: Add Person 3 (role chips + date) ---
+function wizardSelectRole3(btn, role) {
+    document.querySelectorAll('#wizardRoleChips3 .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    btn.classList.add('selected');
+    const nameInput = document.getElementById('person3Name');
+    if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
+    const dayField = document.getElementById('person3Day');
+    if (dayField) setTimeout(() => dayField.focus(), 200);
+}
+
+function wizardSelectOther3() {
+    document.querySelectorAll('#wizardRoleChips3 .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelector('#wizardRoleChips3 .wizard-role-other')?.classList.add('selected');
+    const nameInput = document.getElementById('person3Name');
+    if (nameInput) { nameInput.classList.remove('hidden'); nameInput.value = ''; setTimeout(() => nameInput.focus(), 200); }
+}
+
+function wizardDiscoverPerson3() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
+    const name = document.getElementById('person3Name')?.value?.trim();
+    const dateStr = buildDateFromFields('person3');
+
+    if (!name) {
+        showToast('Tap a role or enter a name', 'error');
+        return;
+    }
+    if (!dateStr) {
+        showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error');
+        return;
+    }
+
+    const ok = _wizardCreateAndReveal(name, dateStr, 'wizardPerson3Reveal', 'wizardStep8');
+    if (!ok) return;
+
+    _track('onboard_add_person3', { event_count: appData.events.length });
+
+    // Show Person 3 reveal (screen 8)
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
+
+    onboardingSection.classList.remove('hidden');
+    tabNav.classList.add('hidden');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+}
+
+function wizardSharePerson3() {
+    const m = window._wizardPerson3Milestone;
+    if (m) {
+        const name = window._wizardPerson3Name || 'your friend';
+        const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
+        if (navigator.share) {
+            navigator.share({ title: 'HappyMoment for ' + name, text: message })
+                .then(() => wizardNext(9))
+                .catch(() => wizardNext(9));
+        } else {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast('Copied! Send it to ' + name, 'success');
+                setTimeout(() => wizardNext(9), 1500);
+            }).catch(() => wizardNext(9));
+        }
+        _track('onboard_share_person3', { value: m.value, unit: m.unit });
+    } else {
+        wizardNext(9);
+    }
+}
+
+// --- Screen 9: Optional Person 4 (inline on combined screen) ---
+function wizardShowPerson4Form() {
+    const section = document.getElementById('wizardPerson4Section');
+    const btn = document.getElementById('wizardAddMoreBtn');
+    if (section) section.style.display = '';
+    if (btn) btn.style.display = 'none';
+    const dayField = document.getElementById('person4Day');
+    if (dayField) setTimeout(() => dayField.focus(), 300);
+}
+
+function wizardSelectRole4(btn, role) {
+    document.querySelectorAll('#wizardRoleChips4 .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    btn.classList.add('selected');
+    const nameInput = document.getElementById('person4Name');
+    if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
+    const dayField = document.getElementById('person4Day');
+    if (dayField) setTimeout(() => dayField.focus(), 200);
+}
+
+function wizardSelectOther4() {
+    document.querySelectorAll('#wizardRoleChips4 .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelector('#wizardRoleChips4 .wizard-role-other')?.classList.add('selected');
+    const nameInput = document.getElementById('person4Name');
+    if (nameInput) { nameInput.classList.remove('hidden'); nameInput.value = ''; setTimeout(() => nameInput.focus(), 200); }
+}
+
+function wizardAddPerson4() {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
+    const name = document.getElementById('person4Name')?.value?.trim();
+    const dateStr = buildDateFromFields('person4');
+
+    if (!name) {
+        showToast('Tap a role or enter a name', 'error');
+        return;
+    }
+    if (!dateStr) {
+        showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error');
+        return;
+    }
+    if (!validateDateFields(dateStr)) return;
+    const date = parseLocalDate(dateStr);
+
+    // Add to events (prevent duplicates)
+    if (!appData.events.some(e => e.name === name && e.date.getTime() === date.getTime())) {
+        appData.events.push({
+            id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            name: name, type: 'birthday', date: date
+        });
+        saveData();
+    }
+
+    _track('onboard_add_person4', { event_count: appData.events.length });
+
+    // Hide the form, refresh combined milestone display
+    document.getElementById('wizardPerson4Section').style.display = 'none';
+    showToast(name + ' added to your team!', 'success');
+    wizardShowCombined(true);
+}
+
+// ============================================================
+// TEAM-BASED ONBOARDING (screens 4-7)
+// ============================================================
+
+let _wizardTeamMembers = { 1: [], 2: [] };
+
+function wizardInitTeam(teamNum) {
+    // Pre-fill "Me" from appData.events[0]
+    const meEvent = appData.events[0];
+    if (meEvent && _wizardTeamMembers[teamNum].length === 0) {
+        _wizardTeamMembers[teamNum] = [meEvent];
+    }
+    wizardRenderTeamMembers(teamNum);
+}
+
+function wizardRenderTeamMembers(teamNum) {
+    const members = _wizardTeamMembers[teamNum] || [];
+    const el = document.getElementById('team' + teamNum + 'Members');
+    if (!el) return;
+
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    let html = '';
+    members.forEach(m => {
+        const d = m.date instanceof Date ? m.date : new Date(m.date);
+        const dateStr = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
+        html += `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
+            <span style="color:var(--warning, #d4b876);">\u2713</span>
+            <span style="flex:1;color:var(--text);">${escapeHtml(m.name)}</span>
+            <span style="color:var(--text-muted);font-size:0.85rem;">${dateStr}</span>
+        </div>`;
+    });
+    el.innerHTML = html;
+
+    // Show "See group milestones" button when 2+ members
+    const btn = document.getElementById('team' + teamNum + 'ContinueBtn');
+    if (btn) btn.style.display = members.length >= 2 ? '' : 'none';
+}
+
+function wizardSelectRoleTeam(btn, role, teamNum) {
+    document.querySelectorAll('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    btn.classList.add('selected');
+    const nameInput = document.getElementById('team' + teamNum + 'PersonName');
+    if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
+    const dayField = document.getElementById('team' + teamNum + 'Day');
+    if (dayField) setTimeout(() => dayField.focus(), 200);
+}
+
+function wizardSelectOtherTeam(teamNum) {
+    document.querySelectorAll('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelector('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-other')?.classList.add('selected');
+    const nameInput = document.getElementById('team' + teamNum + 'PersonName');
+    if (nameInput) { nameInput.classList.remove('hidden'); nameInput.value = ''; setTimeout(() => nameInput.focus(), 200); }
+}
+
+function wizardAddTeamMember(teamNum) {
+    const _t = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t : (k => k);
+    const name = document.getElementById('team' + teamNum + 'PersonName')?.value?.trim();
+    const dateStr = buildDateFromFields('team' + teamNum);
+
+    if (!name) {
+        showToast('Tap a role or enter a name', 'error');
+        return;
+    }
+    if (!dateStr) {
+        showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error');
+        return;
+    }
+    if (!validateDateFields(dateStr)) return;
+    const date = parseLocalDate(dateStr);
+
+    // Add to appData events (prevent duplicates)
+    let newEvent;
+    const existing = appData.events.find(e => e.name === name && e.date.getTime() === date.getTime());
+    if (existing) {
+        newEvent = existing;
+    } else {
+        newEvent = {
+            id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            name: name, type: 'birthday', date: date
+        };
+        appData.events.push(newEvent);
+        // Auto-connect with all existing events
+        appData.events.forEach(e => {
+            if (e.id !== newEvent.id) {
+                const key = typeof getConnectionKey === 'function' ? getConnectionKey(e.id, newEvent.id) : '';
+                if (key) appData.connections[key] = true;
+            }
+        });
+        saveData();
+    }
+
+    // Track in team member list
+    const members = _wizardTeamMembers[teamNum];
+    if (!members.some(m => m.id === newEvent.id)) {
+        members.push(newEvent);
+    }
+    wizardRenderTeamMembers(teamNum);
+
+    // Clear form for next entry
+    const nameInput = document.getElementById('team' + teamNum + 'PersonName');
+    if (nameInput) { nameInput.value = ''; nameInput.classList.add('hidden'); }
+    ['Day', 'Month', 'Year'].forEach(f => {
+        const el = document.getElementById('team' + teamNum + f);
+        if (el) el.value = '';
+    });
+    document.querySelectorAll('#wizardRoleChipsTeam' + teamNum + ' .wizard-role-chip').forEach(c => c.classList.remove('selected'));
+
+    showToast(name + ' added!', 'success');
+    _track('onboard_add_team_member', { team: teamNum, event_count: appData.events.length });
+}
+
+function wizardShowTeamMilestones(teamNum) {
+    const members = _wizardTeamMembers[teamNum] || [];
+    const revealId = teamNum === 1 ? 'wizardTeam1Reveal' : 'wizardTeam2Reveal';
+    const el = document.getElementById(revealId);
+    if (!el) return;
+
+    // Rename current set to the team name
+    const teamName = document.getElementById('team' + teamNum + 'Name')?.value?.trim() || (teamNum === 1 ? 'Family' : 'Friends');
+    const currentSet = allSets.find(s => s.id === currentSetId);
+    if (currentSet) currentSet.name = teamName;
+    saveData();
+
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const now = new Date();
+
+    if (members.length >= 2) {
+        let totalDays = 0;
+        const names = [];
+        members.forEach(e => {
+            totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
+            names.push(e.name);
+        });
+
+        const candidates = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
+        let bestTarget = 0, bestDist = Infinity;
+        candidates.forEach(step => {
+            const target = Math.ceil(totalDays / step) * step;
+            const dist = target - totalDays;
+            if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
+        });
+
+        const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
+        const dateDisplay = targetDate.toLocaleDateString(locale, {
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+        });
+
+        el.innerHTML = `
+            <p style="font-size:1.1rem;color:var(--text);text-align:center;margin-bottom:4px;font-weight:600;">${escapeHtml(teamName)}</p>
+            <div class="wizard-reveal-number-wrap">
+                <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
+            </div>
+            <div class="wizard-reveal-unit">days combined</div>
+            <div class="wizard-reveal-date">${dateDisplay}</div>
+            <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
+        `;
+    } else {
+        el.innerHTML = `
+            <h2 class="wizard-question">Your milestones are ready!</h2>
+            <p style="color:var(--text-muted);text-align:center;font-style:italic;">Add more people to see combined milestones.</p>
+        `;
+    }
+
+    _track('onboard_team_reveal', { team: teamNum, members: members.length });
+
+    // Navigate to the reveal screen
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep' + (teamNum === 1 ? 5 : 7))?.classList.add('wizard-step-active');
+}
+
+function wizardStartSecondTeam() {
+    // Save current set (team 1)
+    const team1Name = document.getElementById('team1Name')?.value?.trim() || 'Family';
+    const currentSet = allSets.find(s => s.id === currentSetId);
+    if (currentSet) currentSet.name = team1Name;
+    saveData();
+
+    // Find "Me" event
+    const meEvent = appData.events[0];
+
+    // Create new set for team 2
+    const newSetId = 'set_' + Date.now();
+    const meClone = meEvent ? {
+        id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        name: meEvent.name, type: meEvent.type,
+        date: new Date(meEvent.date)
+    } : null;
+
+    const newSet = {
+        id: newSetId, name: 'Friends',
+        events: meClone ? [meClone] : [],
+        connections: {},
+        comboTypes: { sum: true, ratio: true, duration: true }
+    };
+    allSets.push(newSet);
+    currentSetId = newSetId;
+    loadCurrentSet();
+
+    // Init team 2 member tracking with "Me"
+    _wizardTeamMembers[2] = appData.events.length > 0 ? [appData.events[0]] : [];
+    wizardRenderTeamMembers(2);
+
+    // Navigate to screen 6
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+}
+
 function wizardFinish() {
     // Dismiss wizard, show the normal dashboard
     onboardingSection.classList.add('hidden');
     tabNav.classList.remove('hidden');
-    // Restore header
     const header = document.getElementById('appHeader');
     if (header) header.style.display = '';
+
+    // Switch to first set (primary group) for dashboard landing
+    if (allSets.length > 1 && currentSetId !== allSets[0].id) {
+        saveData();
+        currentSetId = allSets[0].id;
+        loadCurrentSet();
+    }
+
     updateSetSwitcher();
     selectedPersonIds = appData.events.map(e => e.id);
     renderPersonFilter();

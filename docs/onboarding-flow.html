@@ -316,9 +316,9 @@ hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
 <body>
 
 <h1>HappyMoments Onboarding Flow</h1>
-<p class="meta">Version 1.4 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
+<p class="meta">Version 1.5 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (visual specs), <a href="user-psychology.html">user-psychology.html</a> (why each decision)<br>
-Supersedes: archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md</p>
+Supersedes: v1.4 (individual person-adding), archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md</p>
 
 <!-- ═════════════════════════════════════════════ -->
 <h2>Design Principles</h2>
@@ -332,28 +332,31 @@ Supersedes: archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md
 </ol>
 
 <!-- ═════════════════════════════════════════════ -->
-<h2>The Journey: Onboarding Ends at First TEAM</h2>
+<h2>The Journey: Group-Based Onboarding</h2>
 
 <div class="rule">
-<strong>v1.4 &mdash; the user doesn't reach the dashboard until they have a team (3-4 people):</strong><br><br>
+<strong>v1.5 &mdash; group-based onboarding. Users build named groups (Family, Friends) instead of adding people one by one:</strong><br><br>
 1. Inspiration + MY date<br>
-2. MY hero milestone &rarr; <strong>continue</strong> (primary) / see more / share<br>
-3. Add PERSON 2 (role chips + date)<br>
-4. PERSON 2's best milestones &rarr; continue / share<br>
-5. "One more for team milestones!" &mdash; add PERSON 3<br>
-6. PERSON 3's best milestone &rarr; continue / share<br>
-7. TEAM combined milestone (the payoff &mdash; "together you are X!")<br>
-8. Optional: "Make your team stronger" &mdash; add PERSON 4<br>
-9. Dashboard landing &mdash; rich content (3-4 people, team milestones ready)<br><br>
+2. MY hero milestone &rarr; see more / <strong>build your first group</strong><br>
+3. (optional) More of MY milestones &rarr; build your first group<br>
+4. <strong>Build your first group</strong> &mdash; name it (default "Family"), "Me" pre-filled, add 2-3 members on ONE screen (role chips + date, growing member list). "See group milestones" appears after 2+ members.<br>
+5. GROUP 1 combined milestone reveal (nice target number + individual highlights) &rarr; <strong>Create another group</strong> / Explore all<br>
+6. <strong>Create another group</strong> (optional) &mdash; name it (default "Friends"), "Me" pre-filled in new set, add members same way<br>
+7. GROUP 2 combined milestone reveal &rarr; Explore all milestones &rarr; Dashboard<br><br>
 
-<strong>Why extend to a team:</strong> With only 2 people, the dashboard is sparse. With 3-4, milestone density increases dramatically and combined milestones become genuinely interesting. The onboarding IS the activation &mdash; a user with 3+ people is far more likely to return.<br><br>
+<strong>Why groups instead of individual adding:</strong><br>
+&bull; Users immediately understand the "group" concept &mdash; Family vs Friends vs Work<br>
+&bull; Adding 3+ people on one screen is faster than one-per-screen with reveals<br>
+&bull; The group milestone reveal is the payoff &mdash; "Your Family has 50,000 days combined!"<br>
+&bull; Creating a 2nd group shows the power of separate milestone views<br>
+&bull; Maps directly to the data model (sets) so the dashboard is pre-organized<br><br>
 
 <strong>Key rules:</strong><br>
-&bull; CONTINUE is always the first/primary button (we want progress, not dead-ends).<br>
-&bull; Share/Remind are secondary, never forced.<br>
-&bull; Cosmic milestones NEVER first in any list. Always a "normal" number first.<br>
-&bull; Skip available at each "add person" step but de-emphasized.<br>
-&bull; "Recently passed" nice milestones show if ≤7 days ago.
+&bull; Cosmic milestones NEVER appear in onboarding lists or highlights.<br>
+&bull; "Me" is always pre-filled as first member in every group.<br>
+&bull; Skip available at group-building steps but de-emphasized.<br>
+&bull; No Remind me / Appearance in onboarding &mdash; those belong in Settings.<br>
+&bull; On finish, switch to first group (primary) for dashboard landing.
 </div>
 
 <!-- ── Screen 1 ── -->
