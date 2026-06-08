@@ -2358,18 +2358,25 @@ function wizardShowCombinedAndName() {
     const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? 'Family'
         : (lastPerson && lastPerson.name === 'Friend' ? 'Friends' : 'My Group');
 
-    // Build more combined milestones — nearest 6 across all units
-    let moreCombinedHtml = '';
+    // Build more combined milestones — show 3, rest expandable
     const shown = new Set([hero ? hero.value + '_' + hero.unit : '']);
-    let count = 0;
+    const combinedList = [];
     goodMs.forEach(m => {
         const key = m.value + '_' + m.unit;
-        if (count >= 6 || shown.has(key)) return;
+        if (shown.has(key)) return;
         shown.add(key);
+        combinedList.push(m);
+    });
+    const TOP6 = 3;
+    let moreCombinedHtml = '';
+    combinedList.slice(0, TOP6).forEach(m => {
         const displayText = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
-        const ds = formatMilestoneDate(m.date);
-        moreCombinedHtml += wizardMilestoneRow(displayText, ds, namesStr);
-        count++;
+        moreCombinedHtml += wizardMilestoneRow(displayText, formatMilestoneDate(m.date), namesStr);
+    });
+    let extraCombinedHtml = '';
+    combinedList.slice(TOP6).forEach(m => {
+        const displayText = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        extraCombinedHtml += wizardMilestoneRow(displayText, formatMilestoneDate(m.date), namesStr);
     });
 
     el.innerHTML = `
@@ -2380,7 +2387,7 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
         <div class="wizard-reveal-date">${dateDisplay}</div>
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
-        ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div></div>` : ''}
+        ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
             <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
@@ -2573,8 +2580,7 @@ function wizardShowGroupReveal() {
     });
 
     el.innerHTML = `
-        <h2 class="wizard-question">A reason to reach out</h2>
-        <p style="color:var(--text-muted);text-align:center;font-size:0.88rem;margin-bottom:14px;">Each person has a milestone worth sharing</p>
+        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Now you know something worth telling them</h2>
         ${individualHtml || '<p style="color:var(--text-muted);text-align:center;font-style:italic;">Add people to see their milestones</p>'}
     `;
 
@@ -2637,9 +2643,17 @@ function wizardShowTeamMilestones() {
         cnt++;
     });
 
+    const teamSubtitles = [
+        'A reason to gather and celebrate what you share.',
+        'The perfect excuse for a reunion.',
+        'When this number arrives, get everyone together.',
+        'A milestone only your group can claim.'
+    ];
+    const teamSubtitle = teamSubtitles[Math.floor(Math.random() * teamSubtitles.length)];
+
     el.innerHTML = `
-        <h2 class="wizard-question">Celebrate together</h2>
-        <p style="color:var(--text-muted);text-align:center;font-size:0.88rem;margin-bottom:14px;">${escapeHtml(groupName)} has team milestones worth a party</p>
+        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Some milestones belong to all of you</h2>
+        <p style="color:var(--text-muted);text-align:center;font-size:0.88rem;margin-bottom:14px;">${teamSubtitle}</p>
         ${hero ? `
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number" style="font-size:2.2rem;">${hero.value.toLocaleString(locale)}</div>
