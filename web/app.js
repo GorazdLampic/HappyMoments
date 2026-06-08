@@ -2569,13 +2569,7 @@ function wizardShowGroupReveal() {
             const val = best.value.toLocaleString(locale);
             const unit = best.unitName || best.unit || '';
             const ds = formatMilestoneDate(best.date);
-            individualHtml += `<div style="padding:10px 0;border-bottom:1px solid var(--border,#333);">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
-                    <span style="color:var(--text-muted);font-size:0.82rem;">${ds}</span>
-                </div>
-                <div style="font-family:var(--font-mono,monospace);color:var(--warning,#d4b876);font-size:1rem;margin-top:2px;">${val} ${unit}</div>
-            </div>`;
+            individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, ds, e.name);
         }
     });
 
@@ -2643,17 +2637,16 @@ function wizardShowTeamMilestones() {
         cnt++;
     });
 
-    const teamSubtitles = [
-        'A reason to gather and celebrate what you share.',
-        'The perfect excuse for a reunion.',
-        'When this number arrives, get everyone together.',
-        'A milestone only your group can claim.'
+    const teamHeadings = [
+        'Some milestones belong to all of you \u2014 a reason to gather and celebrate.',
+        'Some milestones belong to all of you \u2014 the perfect excuse for a reunion.',
+        'Some milestones belong to all of you \u2014 when this number arrives, get everyone together.',
+        'Some milestones belong to all of you \u2014 a milestone only your group can claim.'
     ];
-    const teamSubtitle = teamSubtitles[Math.floor(Math.random() * teamSubtitles.length)];
+    const teamHeading = teamHeadings[Math.floor(Math.random() * teamHeadings.length)];
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Some milestones belong to all of you</h2>
-        <p style="color:var(--text-muted);text-align:center;font-size:0.88rem;margin-bottom:14px;">${teamSubtitle}</p>
+        <h2 class="wizard-question" style="font-size:1.15rem;line-height:1.4;">${teamHeading}</h2>
         ${hero ? `
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number" style="font-size:2.2rem;">${hero.value.toLocaleString(locale)}</div>
