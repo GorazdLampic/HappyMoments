@@ -4141,13 +4141,13 @@ function renderHomeScreen() {
     let html = '';
     // Recently passed milestones (you just missed these!)
     if (recentlyPassed.length > 0) {
-        html += renderChunk('Just passed', recentlyPassed, 3);
+        html += renderChunk('Just passed', recentlyPassed, 2);
     }
-    html += renderChunk('This week', week, 3);
-    html += renderChunk('This month', month, 3);
-    html += renderChunk(laterThisYear.length > 0 ? 'Later this year' : 'Coming up', laterThisYear, 3);
+    html += renderChunk('This week', week, 2);
+    html += renderChunk('This month', month, 2);
+    html += renderChunk(laterThisYear.length > 0 ? 'Later this year' : 'Coming up', laterThisYear, 2);
     if (nextYear.length > 0) {
-        html += renderChunk('Next year', nextYear, 3);
+        html += renderChunk('Next year', nextYear, 2);
     }
 
     if (html === '') {

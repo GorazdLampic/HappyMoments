@@ -829,8 +829,9 @@ function nicenessGrade(num) {
 // ageMonths: age of the person in months (used to set the threshold).
 // Returns true if the number is "nice enough" to show at this age.
 function passesAdaptiveFilter(num, ageMonths) {
-    // Smooth linear decay: 80 at birth → 30 at age 40 (month 480), clamp at 30 after
-    // Threshold 30 filters bland multiples of 10 (grade 20) but keeps multiples of 50+ (grade 32+)
-    const threshold = ageMonths >= 480 ? 30 : Math.round(80 - (50 * ageMonths / 480));
+    // Smooth linear decay: 80 at birth → 50 at age 40 (month 480), clamp at 50 after
+    // Threshold 50 keeps only visually striking numbers: patterns, repdigits, palindromes,
+    // multiples of 500+, powers, cultural numbers. Filters bland 100s/250s.
+    const threshold = ageMonths >= 480 ? 50 : Math.round(80 - (30 * ageMonths / 480));
     return nicenessGrade(num) >= threshold;
 }
