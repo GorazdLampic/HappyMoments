@@ -3553,7 +3553,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     .share-message-preview p { font-size: var(--font-size-sm); padding-left: var(--space-lg); }
     .cmi-value { font-size: var(--font-size-xl); }
     .person-filter { padding: var(--space-sm) 0; gap: 6px; }
-    .person-filter-btn { padding: 8px 14px; min-height: 36px; font-size: var(--font-size-xs); }
+    .person-filter-btn { padding: 8px 14px; min-height: 36px; font-size: var(--font-size-sm); }
     .milestones-vertical-list { max-height: 420px; }
     .milestone-item-vertical { padding: var(--space-sm) var(--space-md); gap: var(--space-md); }
     .miv-left { min-width: 72px; max-width: 110px; padding-right: var(--space-sm); }

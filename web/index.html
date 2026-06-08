@@ -114,8 +114,8 @@
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content wizard-content-centered">
                     <div class="wizard-inspiration">
-                        <p class="wizard-inspo-line">Luka just discovered he turned<br><strong>1,000,000,000 seconds</strong> last month.</p>
-                        <p class="wizard-inspo-line">Sara and Maja have been friends for exactly<br><strong>10,000 days</strong> &mdash; that called for a dinner</p>
+                        <p class="wizard-inspo-line">Peter sent Ana a message &mdash; she turns<br><strong>7,777 days</strong> next Tuesday. They hadn't spoken since high school.</p>
+                        <p class="wizard-inspo-line">Tina invited her class to a reunion &mdash;<br>it had been exactly <strong>100,000 hours</strong> since graduation.</p>
                     </div>
                     <p class="wizard-inspo-question">What about you?</p>
                     <input type="hidden" id="birthName" value="Me">
@@ -157,7 +157,8 @@
                 <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
-                    <input type="text" id="friendName" class="wizard-input" placeholder="Name or role (e.g. Mom, Ana, Partner)" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:8px;">
+                    <input type="text" id="friendName" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:8px;">
+                    <p style="color:var(--text-muted,#888);font-size:0.78rem;margin-bottom:6px;">or choose:</p>
                     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
                         <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Partner';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Partner</button>
                         <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Mom';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Mom</button>
@@ -252,7 +253,7 @@
                 </div>
                 <div class="wizard-actions">
                     <button class="wizard-btn" onclick="wizardFinish()">Go to my dashboard &rarr;</button>
-                    <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Add another group (Friends, Colleagues&hellip;)</button>
+                    <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Start a new team &mdash; Friends, Colleagues&hellip;</button>
                     <p id="wizardTabGuide" style="margin-top:16px;color:var(--text-muted);font-size:0.78rem;text-align:center;line-height:1.5;">
                         <strong style="color:var(--text);">Me</strong> &mdash; personal milestones &nbsp;&middot;&nbsp;
                         <strong style="color:var(--text);">Together</strong> &mdash; group milestones &nbsp;&middot;&nbsp;

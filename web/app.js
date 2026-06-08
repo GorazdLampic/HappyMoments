@@ -2363,6 +2363,7 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div></div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
+            <p style="color:var(--text-muted);text-align:center;font-size:0.8rem;font-style:italic;margin-bottom:10px;">The Novak family crosses 200,000 days together next month &mdash; now they have a reason to celebrate.</p>
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
             <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
@@ -2493,6 +2494,10 @@ function wizardAddGroupMember() {
 
     showToast(name + ' added!', 'success');
     _track('onboard_add_group_member', { event_count: appData.events.length });
+
+    // Scroll form into view so next entry is immediately visible
+    const form = document.getElementById('groupAddForm');
+    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // --- Screen 8: Group combined milestone reveal ---
@@ -4138,7 +4143,7 @@ function renderHomeScreen() {
     }
 
     if (html === '') {
-        html = '<p class="empty-text" style="padding:24px;text-align:center;font-style:italic;color:var(--text-muted);">Your next milestone is coming. Add more people to find milestones sooner!</p>';
+        html = '<p class="empty-text" style="padding:24px;text-align:center;font-style:italic;color:var(--text-muted);">Add more people &mdash; each birthday unlocks new milestones here.</p>';
     }
     listEl.innerHTML = html;
 

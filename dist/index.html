@@ -34,11 +34,11 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq5ovbby"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq5ovbby"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq5pozjr"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq5pozjr"></script>
 
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
-    <link rel="stylesheet" href="styles.css?v=mq5ovbby">
+    <link rel="stylesheet" href="styles.css?v=mq5pozjr">
 </head>
 <body>
     <div id="app">
@@ -114,8 +114,8 @@
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content wizard-content-centered">
                     <div class="wizard-inspiration">
-                        <p class="wizard-inspo-line">Luka just discovered he turned<br><strong>1,000,000,000 seconds</strong> last month.</p>
-                        <p class="wizard-inspo-line">Sara and Maja have been friends for exactly<br><strong>10,000 days</strong> &mdash; that called for a dinner</p>
+                        <p class="wizard-inspo-line">Peter sent Ana a message &mdash; she turns<br><strong>7,777 days</strong> next Tuesday. They hadn't spoken since high school.</p>
+                        <p class="wizard-inspo-line">Tina invited her class to a reunion &mdash;<br>it had been exactly <strong>100,000 hours</strong> since graduation.</p>
                     </div>
                     <p class="wizard-inspo-question">What about you?</p>
                     <input type="hidden" id="birthName" value="Me">
@@ -157,7 +157,8 @@
                 <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
-                    <input type="text" id="friendName" class="wizard-input" placeholder="Name or role (e.g. Mom, Ana, Partner)" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:8px;">
+                    <input type="text" id="friendName" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:8px;">
+                    <p style="color:var(--text-muted,#888);font-size:0.78rem;margin-bottom:6px;">or choose:</p>
                     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
                         <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Partner';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Partner</button>
                         <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Mom';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Mom</button>
@@ -252,7 +253,7 @@
                 </div>
                 <div class="wizard-actions">
                     <button class="wizard-btn" onclick="wizardFinish()">Go to my dashboard &rarr;</button>
-                    <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Add another group (Friends, Colleagues&hellip;)</button>
+                    <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Start a new team &mdash; Friends, Colleagues&hellip;</button>
                     <p id="wizardTabGuide" style="margin-top:16px;color:var(--text-muted);font-size:0.78rem;text-align:center;line-height:1.5;">
                         <strong style="color:var(--text);">Me</strong> &mdash; personal milestones &nbsp;&middot;&nbsp;
                         <strong style="color:var(--text);">Together</strong> &mdash; group milestones &nbsp;&middot;&nbsp;
@@ -546,7 +547,7 @@
             <a href="legal.html" target="_blank" data-i18n="terms_privacy">Terms &amp; Privacy</a>
             <span class="footer-sep">&middot;</span>
             <span class="footer-copy">HappyMoments &copy; 2026 Quantum Wave Ltd</span>
-            <div class="app-version" id="appVersion">Build: v55 &middot; 2026-06-08 20:54 UTC</div>
+            <div class="app-version" id="appVersion">Build: v55 &middot; 2026-06-08 21:17 UTC</div>
         </footer>
 
         <!-- Auth Modal -->
@@ -656,20 +657,20 @@
         </div>
     </div>
 
-    <script defer src="notifications.js?v=mq5ovbby"></script>
-    <script defer src="historyFacts.js?v=mq5ovbby"></script>
-    <script defer src="i18n.js?v=mq5ovbby"></script>
-    <script defer src="specialNumbers.js?v=mq5ovbby"></script>
-    <script defer src="milestoneCalculator.js?v=mq5ovbby"></script>
-    <script defer src="combinations.js?v=mq5ovbby"></script>
-    <script defer src="shareMessages.js?v=mq5ovbby"></script>
-    <script defer src="giftStore.js?v=mq5ovbby"></script>
-    <script defer src="dataProtection.js?v=mq5ovbby"></script>
-    <script defer src="imageCard.js?v=mq5ovbby"></script>
-    <script defer src="checkout.js?v=mq5ovbby"></script>
-    <script defer src="analytics.js?v=mq5ovbby"></script>
-    <script defer src="auth.js?v=mq5ovbby"></script>
-    <script defer src="app.js?v=mq5ovbby"></script>
+    <script defer src="notifications.js?v=mq5pozjr"></script>
+    <script defer src="historyFacts.js?v=mq5pozjr"></script>
+    <script defer src="i18n.js?v=mq5pozjr"></script>
+    <script defer src="specialNumbers.js?v=mq5pozjr"></script>
+    <script defer src="milestoneCalculator.js?v=mq5pozjr"></script>
+    <script defer src="combinations.js?v=mq5pozjr"></script>
+    <script defer src="shareMessages.js?v=mq5pozjr"></script>
+    <script defer src="giftStore.js?v=mq5pozjr"></script>
+    <script defer src="dataProtection.js?v=mq5pozjr"></script>
+    <script defer src="imageCard.js?v=mq5pozjr"></script>
+    <script defer src="checkout.js?v=mq5pozjr"></script>
+    <script defer src="analytics.js?v=mq5pozjr"></script>
+    <script defer src="auth.js?v=mq5pozjr"></script>
+    <script defer src="app.js?v=mq5pozjr"></script>
 
     <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
     <script>
