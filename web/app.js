@@ -2170,8 +2170,10 @@ function wizardDiscoverFriendV2() {
     const name = document.getElementById('friendName')?.value?.trim();
     const dateStr = buildDateFromFields('friend');
 
-    if (!name) { showToast('Tap a role or enter a name', 'error'); return; }
-    if (!dateStr) { showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error'); return; }
+    console.log('[wizardDiscoverFriendV2] name:', name, 'dateStr:', dateStr);
+
+    if (!name) { showToast('Enter a name first', 'error'); return; }
+    if (!dateStr) { showToast('Enter a valid date (DD/MM/YYYY)', 'error'); return; }
 
     // Create event and show hero reveal
     const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendHero', 'wizardStep5');
