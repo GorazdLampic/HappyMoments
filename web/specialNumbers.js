@@ -78,14 +78,14 @@ const ROUND_NUMBERS = (() => {
     for (let n = 10000; n <= 50000; n += 250) nums.add(n);
     // 50000-200000: every 1000 (hours)
     for (let n = 50000; n <= 200000; n += 1000) nums.add(n);
-    // 200000-1M: every 5000 (hours — 5Kh ≈ 208d gap)
-    for (let n = 200000; n <= 1000000; n += 5000) nums.add(n);
+    // 200000-1M: every 10000 (hours — 10Kh ≈ 417d gap, only truly round like 420K, 430K)
+    for (let n = 200000; n <= 1000000; n += 10000) nums.add(n);
     // 1M-3M: every 10000 (hours at ages 48-137 — 10Kh ≈ 417d gap)
     for (let n = 1000000; n <= 3000000; n += 10000) nums.add(n);
     // 1M-10M: every 50K (minutes — 50K min ≈ 35d gap)
     for (let n = 1000000; n <= 10000000; n += 50000) nums.add(n);
-    // 10M-100M: every 100K (minutes at 20-60y — 100K min ≈ 69d gap)
-    for (let n = 10000000; n <= 100000000; n += 100000) nums.add(n);
+    // 10M-100M: every 500K (minutes at 20-60y — 500K min ≈ 347d gap, prefer patterns over bland rounds)
+    for (let n = 10000000; n <= 100000000; n += 500000) nums.add(n);
     // 100M-1B: every 5M (seconds — 5M sec ≈ 58d gap, less noise)
     for (let n = 100000000; n <= 1000000000; n += 5000000) nums.add(n);
     // 1B-5B: every 10M (seconds at 30-160y — 10M sec ≈ 116d gap, only truly round)

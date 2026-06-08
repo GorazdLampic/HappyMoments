@@ -542,6 +542,10 @@ async function toggleNotifications(enabled) {
     if (enabled) {
         await NOTIF.enable();
         _track('notifications_enabled', {});
+        showToast('Reminders enabled!', 'success');
+        // Hide the toggle row, show confirmation — keeps settings clean
+        const toggleRow = document.getElementById('notifToggle')?.closest('.toggle-option');
+        if (toggleRow) toggleRow.innerHTML = '<span style="color:var(--warning,#d4b876);font-size:0.85rem;">Reminders on &check;</span>';
     } else {
         NOTIF.disable();
         _track('notifications_disabled', {});
@@ -2663,7 +2667,7 @@ function wizardCreateAnotherGroup() {
     if (!el) return;
 
     el.innerHTML = `
-        <h2 class="wizard-question">Create another group</h2>
+        <h2 class="wizard-question">Start a new team</h2>
         <p style="color:var(--text-muted);text-align:center;font-size:0.9rem;margin-bottom:16px;">A group for friends, colleagues, or another circle</p>
         <div style="margin-top:12px;">
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your new group</p>
@@ -2677,6 +2681,10 @@ function wizardCreateAnotherGroup() {
         addMoreBtn.textContent = 'Add people to this group \u2192';
         addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
     }
+
+    // Fix back button: should go to Screen 8 (where "Create another group" was), not Screen 5
+    const backBtn = document.querySelector('#wizardStep6 .wizard-back');
+    if (backBtn) backBtn.setAttribute('onclick', 'wizardNext(8)');
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep6')?.classList.add('wizard-step-active');

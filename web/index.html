@@ -96,7 +96,7 @@
                 <span class="tab-label">Me</span>
             </button>
             <button class="tab-btn-bottom" data-tab="together" onclick="switchTab('together')">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="7" r="3"/><circle cx="12" cy="7" r="3"/><circle cx="18.5" cy="7" r="3"/><path d="M2 21v-1.5a3.5 3.5 0 0 1 7 0V21"/><path d="M8.5 21v-1.5a3.5 3.5 0 0 1 7 0V21"/><path d="M15 21v-1.5a3.5 3.5 0 0 1 7 0V21"/></svg>
                 <span class="tab-label">Together</span>
             </button>
             <button class="tab-btn-bottom" data-tab="manage" onclick="switchTab('manage')">
@@ -114,8 +114,8 @@
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content wizard-content-centered">
                     <div class="wizard-inspiration">
-                        <p class="wizard-inspo-line">Peter sent Ana a message &mdash; she turns<br><strong>7,777 days</strong> next Tuesday. They hadn't spoken since high school.</p>
-                        <p class="wizard-inspo-line">Tina invited her class to a reunion &mdash;<br>it had been exactly <strong>100,000 hours</strong> since graduation.</p>
+                        <p class="wizard-inspo-line">Luka just discovered he turned<br><strong>1,000,000,000 seconds</strong> last month.</p>
+                        <p class="wizard-inspo-line">Sara and Maja have been friends for exactly<br><strong>10,000 days</strong> &mdash; that called for a dinner.</p>
                     </div>
                     <p class="wizard-inspo-question">What about you?</p>
                     <input type="hidden" id="birthName" value="Me">
@@ -176,7 +176,6 @@
                     <input type="hidden" id="friendDate">
                 </div>
                 <button class="wizard-btn" onclick="wizardDiscoverFriendV2()" id="wizardShowTheirBtn">Show milestones</button>
-                <button class="wizard-skip" onclick="wizardFinish()">Skip for now</button>
             </div>
 
             <!-- Screen 5: Their reveal + milestones (merged) -->
@@ -229,7 +228,6 @@
                     </div>
                 </div>
                 <button class="wizard-btn" onclick="wizardShowGroupReveal()" id="groupContinueBtn" style="display:none;">See group milestones &rarr;</button>
-                <button class="wizard-skip" onclick="wizardFinish()">Skip for now</button>
             </div>
 
             <!-- Screen 8: Group milestones + new group option -->
