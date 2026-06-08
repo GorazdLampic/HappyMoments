@@ -68,8 +68,8 @@ const ROUND_NUMBERS = (() => {
     // 100-500: every 10 (months coverage)
     for (let n = 100; n <= 500; n += 10) nums.add(n);
     for (let n = 100; n <= 500; n += 25) nums.add(n);
-    // 500-1000: every 10 (months at ages 40-83)
-    for (let n = 500; n <= 1000; n += 10) nums.add(n);
+    // 500-1000: every 50 (months at ages 40-83 — every 50 months ≈ 4y gap, filtered by niceness)
+    for (let n = 500; n <= 1000; n += 50) nums.add(n);
     // 500-2000: every 50 (weeks)
     for (let n = 500; n <= 2000; n += 50) nums.add(n);
     // 2000-10000: every 50 (weeks — 50 weeks ≈ 350d max gap)
@@ -86,10 +86,10 @@ const ROUND_NUMBERS = (() => {
     for (let n = 1000000; n <= 10000000; n += 50000) nums.add(n);
     // 10M-100M: every 100K (minutes at 20-60y — 100K min ≈ 69d gap)
     for (let n = 10000000; n <= 100000000; n += 100000) nums.add(n);
-    // 100M-1B: every 1M (seconds — 1M sec ≈ 11.6d gap)
-    for (let n = 100000000; n <= 1000000000; n += 1000000) nums.add(n);
-    // 1B-5B: every 2.5M (seconds at 30-160y — 2.5M sec ≈ 29d gap)
-    for (let n = 1000000000; n <= 5000000000; n += 2500000) nums.add(n);
+    // 100M-1B: every 5M (seconds — 5M sec ≈ 58d gap, less noise)
+    for (let n = 100000000; n <= 1000000000; n += 5000000) nums.add(n);
+    // 1B-5B: every 10M (seconds at 30-160y — 10M sec ≈ 116d gap, only truly round)
+    for (let n = 1000000000; n <= 5000000000; n += 10000000) nums.add(n);
     // 5B-15B: every 100M (combined milestones)
     for (let n = 5000000000; n <= 15000000000; n += 100000000) nums.add(n);
     // Very large for big combined milestones
@@ -806,7 +806,10 @@ function nicenessGrade(num) {
     }
     if ([888, 8888, 9999, 5201314, 1314, 520, 168, 786, 108].includes(num)) return 55;
     if (s.length >= 4 && s === s.split('').reverse().join('')) return 52;
-    if (s.length >= 6 && new Set(s).size === 2) return 50; // alternating 6+ digits
+    // Long alternating patterns are visually striking (1919191919 > 19100000)
+    if (s.length >= 10 && new Set(s).size === 2) return 85; // 10-digit alternating
+    if (s.length >= 8 && new Set(s).size === 2) return 75;  // 8-digit alternating
+    if (s.length >= 6 && new Set(s).size === 2) return 50;  // 6-digit alternating
 
     // Tier 4 (30-49): filler — something to show
     if (num % 250 === 0) return 42;
@@ -826,7 +829,8 @@ function nicenessGrade(num) {
 // ageMonths: age of the person in months (used to set the threshold).
 // Returns true if the number is "nice enough" to show at this age.
 function passesAdaptiveFilter(num, ageMonths) {
-    // Smooth linear decay: 80 at birth → 5 at age 40 (month 480), clamp at 5 after
-    const threshold = ageMonths >= 480 ? 5 : Math.round(80 - (75 * ageMonths / 480));
+    // Smooth linear decay: 80 at birth → 30 at age 40 (month 480), clamp at 30 after
+    // Threshold 30 filters bland multiples of 10 (grade 20) but keeps multiples of 50+ (grade 32+)
+    const threshold = ageMonths >= 480 ? 30 : Math.round(80 - (50 * ageMonths / 480));
     return nicenessGrade(num) >= threshold;
 }

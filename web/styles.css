@@ -892,9 +892,11 @@ body {
 .time-chunk-item:hover { background: var(--bg-hover); }
 .time-chunk-item:active { background: var(--bg-elevated); }
 .time-chunk-item.tc-selected {
-    background: rgba(212, 184, 118, 0.1);
-    border-left: 3px solid var(--warning);
-    padding-left: calc(var(--space-sm) - 3px);
+    background: rgba(212, 184, 118, 0.18);
+    border-left: 4px solid var(--warning);
+    padding-left: calc(var(--space-sm) - 4px);
+    box-shadow: 0 0 12px rgba(212, 184, 118, 0.15);
+    border-radius: 8px;
 }
 
 .tc-left { flex: 1; min-width: 0; }
@@ -2742,8 +2744,10 @@ body {
     background: rgba(212, 184, 118, 0.1);
 }
 .wizard-milestone-row.ms-selected {
-    background: rgba(212, 184, 118, 0.1);
-    border-left: 3px solid var(--warning);
+    background: rgba(212, 184, 118, 0.18);
+    border-left: 4px solid var(--warning);
+    box-shadow: 0 0 12px rgba(212, 184, 118, 0.15);
+    border-radius: 8px;
 }
 
 .wizard-milestone-star {
