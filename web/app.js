@@ -761,20 +761,20 @@ function setupEventListeners() {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
 
-    // Events tab
-    addEventBtn.addEventListener('click', handleAddEvent);
-    newEventNameInput.addEventListener('keypress', e => {
+    // Events tab (elements may be hidden)
+    if (addEventBtn) addEventBtn.addEventListener('click', handleAddEvent);
+    if (newEventNameInput) newEventNameInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') handleAddEvent();
     });
-    newEventDateInput.addEventListener('keypress', e => {
+    if (newEventDateInput) newEventDateInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') handleAddEvent();
     });
 
     // Edit modal
-    saveEditBtn.addEventListener('click', handleSaveEdit);
-    cancelEditBtn.addEventListener('click', closeEditModal);
-    deleteEditBtn.addEventListener('click', handleDeleteEdit);
-    editModal.addEventListener('click', e => {
+    if (saveEditBtn) saveEditBtn.addEventListener('click', handleSaveEdit);
+    if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
+    if (deleteEditBtn) deleteEditBtn.addEventListener('click', handleDeleteEdit);
+    if (editModal) editModal.addEventListener('click', e => {
         if (e.target === editModal) closeEditModal();
     });
 

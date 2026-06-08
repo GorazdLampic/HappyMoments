@@ -485,9 +485,9 @@ function generateAllSpecialNumbers(settings) {
         ROUND_NUMBERS.forEach(n => numbers.add(n));
     }
 
-    // Powers of 2 — include up to maxValue (was capped at 1024, now uncapped)
+    // Powers of 2 — include all reasonable powers (up to 2^30 ~ 1 billion)
     if (settings.patterns.powers2 !== false) {
-        POWERS_OF_TWO.filter(n => n <= maxValue).forEach(n => numbers.add(n));
+        POWERS_OF_TWO.filter(n => n <= 1073741824).forEach(n => numbers.add(n));
     }
 
     // Fibonacci
