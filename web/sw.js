@@ -3,7 +3,7 @@
  * Enables offline functionality and app-like experience
  */
 
-const CACHE_NAME = 'happymoments-v70';
+const CACHE_NAME = 'happymoments-v71';
 const urlsToCache = [
   './',
   './index.html',

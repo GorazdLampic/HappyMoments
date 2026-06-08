@@ -2593,9 +2593,17 @@ function wizardShowGroupReveal() {
         return;
     }
 
+    const reachOutHints = [
+        'A perfect excuse to send a message today.',
+        'They have no idea this number is coming.',
+        'Imagine their face when you tell them.'
+    ];
+    const reachOutHint = reachOutHints[Math.floor(Math.random() * reachOutHints.length)];
+
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Now you know something worth telling them</h2>
         ${individualHtml}
+        <p style="color:var(--text-muted);font-size:0.82rem;font-style:italic;text-align:center;margin-top:12px;">${reachOutHint}</p>
     `;
 
     _track('onboard_group_reveal_individual', { members: newMemberCount });
@@ -2784,21 +2792,29 @@ function wizardCreateAnotherGroup() {
     const el = document.getElementById('wizardCombinedAndName');
     if (!el) return;
 
+    const groupExamples = [
+        'Your university class is 100,000 hours since graduation \u2014 time for a reunion?',
+        'Your office team crosses 50,000 combined days next month \u2014 reason for cake.',
+        'Your childhood friends hit 10,000 days of friendship \u2014 did anyone notice?',
+        'Your neighbours\u2019 kids turn 5,000 days this summer \u2014 block party material.'
+    ];
+    const groupExample = groupExamples[Math.floor(Math.random() * groupExamples.length)];
+
     el.innerHTML = `
-        <h2 class="wizard-question">Start a new team</h2>
-        <p style="color:var(--text-muted);text-align:center;font-size:0.9rem;margin-bottom:16px;">A group for friends, colleagues, or another circle</p>
-        <div style="margin-top:12px;">
-            <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your new group</p>
-            <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
-        </div>
+        <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;font-style:italic;margin-bottom:20px;line-height:1.5;">${groupExample}</p>
+        <p style="color:var(--text);text-align:center;font-size:1rem;margin-bottom:8px;">Name your new team</p>
+        <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
     `;
 
-    // Update button to go to group builder
+    // Update buttons for "create another group" context
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
     if (addMoreBtn) {
-        addMoreBtn.textContent = 'Add people to this group \u2192';
+        addMoreBtn.textContent = 'Add people \u2192';
         addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
     }
+    // Hide "Explore milestones now" — it's a leak in this context
+    const exploreBtn = addMoreBtn?.nextElementSibling;
+    if (exploreBtn && exploreBtn.textContent.includes('Explore')) exploreBtn.style.display = 'none';
 
     // Fix back button: should go to Screen 8 (where "Create another group" was), not Screen 5
     const backBtn = document.querySelector('#wizardStep6 .wizard-back');
