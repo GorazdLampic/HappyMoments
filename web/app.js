@@ -1804,8 +1804,11 @@ function wizardShowMyMore() {
     if (!el) return;
 
     const milestones = allMilestonesFlat || [];
-    let upcoming = milestones.filter(m => m.timeUntil > 0 && !m.isCosmic);
-    // Fallback: if no non-cosmic milestones, include all upcoming
+    // If the hero reveal was cosmic, include it in the list so user sees it again
+    const heroMs = window._wizardMilestone;
+    const heroCosmic = heroMs && heroMs.isCosmic;
+    let upcoming = milestones.filter(m => m.timeUntil > 0 && (!m.isCosmic || (heroCosmic && m.value === heroMs.value && m.unit === heroMs.unit)));
+    // Fallback: if nothing, include all upcoming
     if (upcoming.length === 0) upcoming = milestones.filter(m => m.timeUntil > 0);
     const count = upcoming.length;
     upcoming = upcoming.slice(0, 8);
