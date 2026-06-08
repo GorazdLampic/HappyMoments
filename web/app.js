@@ -2566,8 +2566,8 @@ function wizardShowGroupReveal() {
     if (shareBtn8) shareBtn8.textContent = 'Share ' + groupName + ' milestones \u2192';
 
     // Hide "Create another group" if user already has 2+ groups
-    const createAnotherBtn = document.querySelector('#wizardStep8 .wizard-actions .wizard-btn:last-child');
-    if (createAnotherBtn && createAnotherBtn.textContent.includes('another group')) {
+    const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
+    if (createAnotherBtn) {
         createAnotherBtn.style.display = allSets.length >= 2 ? 'none' : '';
     }
 
@@ -2616,7 +2616,7 @@ function wizardBuildShareScreen() {
                     <span style="color:var(--text-muted);font-size:0.8rem;">${val} ${unit} &middot; ${ds}</span>
                 </div>
                 <div style="color:var(--text-muted);font-size:0.8rem;font-style:italic;padding:6px 10px;border-left:2px solid var(--warning,#d4b876);margin-bottom:8px;">${escapeHtml(shareText)}</div>
-                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${escapeHtml(e.name)}', '${shareText.replace(/'/g, "\\'")}')" style="padding:6px 12px;font-size:0.8rem;width:100%;">Share with ${escapeHtml(e.name)}</button>
+                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:6px 12px;font-size:0.8rem;width:100%;">Share with ${escapeHtml(e.name)}</button>
             </div>`;
         }
     });
@@ -2682,9 +2682,9 @@ function wizardCreateGroupAndBuild() {
     const groupName = document.getElementById('groupName')?.value?.trim() || 'Friends';
     saveData();
 
-    // Get "Me" from the first set
+    // Get "Me" from the first set (consistent with other paths)
     const firstSet = allSets[0];
-    const meEvent = firstSet ? firstSet.events[0] : null;
+    const meEvent = firstSet ? (firstSet.events.find(e => e.name === 'Me') || firstSet.events[0]) : null;
 
     const newSetId = 'set_' + Date.now();
     const meClone = meEvent ? {
@@ -2700,6 +2700,7 @@ function wizardCreateGroupAndBuild() {
     });
     currentSetId = newSetId;
     loadCurrentSet();
+    saveData();
 
     // Show group builder with the new group
     const title = document.getElementById('groupBuilderTitle');
@@ -4006,13 +4007,17 @@ function renderHomeScreen() {
     if (appData.events.length === 0) {
         listEl.innerHTML = '<p class="empty-text" style="padding:32px;text-align:center;font-style:italic;color:var(--text-muted);">Enter a birthday to discover hidden milestones.</p>';
         if (togetherEl) togetherEl.style.display = 'none';
+        allMilestonesFlat = [];
         return;
     }
 
-    // Gather all milestones across all people
+    // Gather milestones for selected people (respects person filter)
+    const filteredEvents = selectedPersonIds && selectedPersonIds.length > 0
+        ? appData.events.filter(e => selectedPersonIds.includes(e.id))
+        : appData.events;
     let all = [];
     const now = new Date();
-    appData.events.forEach(e => {
+    filteredEvents.forEach(e => {
         const milestones = typeof findAllUpcomingMilestones === 'function'
             ? findAllUpcomingMilestones(e.date, 30, 365, appSettings) : [];
         if (typeof findBigMilestones === 'function') {
@@ -6546,6 +6551,21 @@ window.handlePasswordReset = handlePasswordReset;
 window.togglePasswordVisibility = togglePasswordVisibility;
 window.resendVerification = resendVerification;
 window.toggleProfilePanel = toggleProfilePanel;
+window.handleSignOut = handleSignOut;
+window.handleDeleteAccount = handleDeleteAccount;
+window.handleAddSetFromPeopleTab = handleAddSetFromPeopleTab;
+window.selectLanguage = selectLanguage;
+window.acceptDeepLink = acceptDeepLink;
+window.confirmRename = confirmRename;
+window.handleUpgrade = handleUpgrade;
+window.heroRemind = heroRemind;
+window.heroShare = heroShare;
+window.quickShare = quickShare;
+window.saveDisplayName = saveDisplayName;
+window.showUpgradePrompt = showUpgradePrompt;
+window.toggleColumnExpand = toggleColumnExpand;
+window.wizardDiscover = wizardDiscover;
+window.wizardShareForPerson = wizardShareForPerson;
 
 // ============================================================
 // PREMIUM GATE

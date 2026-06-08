@@ -21,6 +21,7 @@ const urlsToCache = [
   './auth.js',
   './notifications.js',
   './i18n.js',
+  './historyFacts.js',
   './legal.html',
   './landing.html',
   './manifest.json',
