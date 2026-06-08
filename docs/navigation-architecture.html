@@ -63,7 +63,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em;
 <body>
 
 <h1>HappyMoments Navigation Architecture</h1>
-<p class="meta">Version 2.1 &middot; v52 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
+<p class="meta">Version 2.2 &middot; v55 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture-research.md, v1.4 (2-tab model)</p>
 
@@ -205,11 +205,13 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <h3>Person Filter</h3>
 
-<p>Row of person buttons at top of Me tab. "All" selected by default. Tap a person to filter milestones to just that person. Tap again to show all.</p>
+<p>Row of person buttons at top of Me tab. "All" selected by default. Tap a person to filter milestones to just that person. Tap again to show all. The milestone list updates immediately to show only the selected person's milestones (v55 fix: filter is now applied to the actual milestone rendering, not just the UI buttons).</p>
 
 <h3>Together Tab</h3>
 
 <p>Combined/group milestones live on their own tab (not a section on Me tab). When 2+ groups exist, group sub-tabs appear at the top of the Together tab. Group name has pencil icon &rarr; tapping opens the full-screen group editor.</p>
+
+<p><strong>Second-group nudge (v55):</strong> When only 1 group exists, the Together tab shows a "Got another circle?" card with a "+ New group" button. This encourages users to create a second group (Friends, Colleagues, etc.) for richer combined milestones. The nudge disappears automatically once 2+ groups exist.</p>
 
 <h3>Edit Tab</h3>
 
@@ -221,7 +223,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 </ol>
 <p>Removed (v52, per Matej Guid's UX review): Invite Friends, Send Feedback, Save Settings button, Reset All Data. These added visual weight without clear user benefit at this stage.</p>
 
-<p>Version number (e.g., "v51") is displayed in the app footer at the bottom of the Edit tab.</p>
+<p>Version number and build timestamp displayed in the app footer at the bottom of the Edit tab.</p>
 
 <h3>Group Editor (Full-Screen Overlay)</h3>
 
@@ -372,7 +374,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <li><strong>Date formatting:</strong> ordinal suffixes ("Sep 7th"), year only if different from current year</li>
 </ul>
 
-<p class="meta" style="margin-top:48px">End of document. v52. Open in browser for rendered mockups.</p>
+<p class="meta" style="margin-top:48px">End of document. v55. Open in browser for rendered mockups.</p>
 
 </body>
 </html>

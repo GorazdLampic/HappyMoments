@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments — Milestone Density per Month (Age 0–33)</title>
+<style>
+:root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --gold: #d4b876;
+    --purple: #6366f1;
+    --green: #4ade80;
+    --red: #f87171;
+    --orange: #fb923c;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+h1 { font-size: 1.5rem; color: var(--gold); margin-bottom: 4px; }
+h2 { font-size: 1.1rem; color: var(--purple); margin: 24px 0 8px; }
+.subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 16px; }
+
+.controls {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+}
+.controls label { font-size: 0.78rem; color: var(--muted); display: block; margin-bottom: 2px; }
+.controls input, .controls select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+}
+.controls button {
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 7px 18px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+.controls button:hover { filter: brightness(1.15); }
+
+.filter-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.filter-btn {
+    padding: 5px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+.filter-btn:hover { border-color: var(--purple); color: var(--text); }
+.filter-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+canvas { border-radius: 10px; display: block; margin-bottom: 16px; }
+
+.stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+}
+.stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+}
+.stat-box .sl { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; }
+.stat-box .sv { color: var(--gold); font-weight: 700; font-family: monospace; }
+
+/* Tooltip */
+#tooltip {
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    pointer-events: none;
+    display: none;
+    z-index: 100;
+    max-width: 340px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+#tooltip .tt-month { color: var(--gold); font-weight: 700; margin-bottom: 4px; }
+#tooltip .tt-count { color: var(--text); margin-bottom: 6px; }
+#tooltip .tt-list { color: var(--cyan); font-size: 0.78rem; font-family: monospace; }
+#tooltip .tt-unit { color: var(--purple); font-size: 0.75rem; }
+
+/* Table below */
+.month-table-wrap {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+.month-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+.month-table th {
+    position: sticky;
+    top: 0;
+    background: var(--surface2);
+    color: var(--gold);
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-size: 0.75rem;
+}
+.month-table td {
+    padding: 5px 10px;
+    border-bottom: 1px solid rgba(42,42,58,0.4);
+}
+.month-table tr:hover { background: var(--surface); }
+.mt-month { color: var(--gold); font-weight: 600; min-width: 60px; }
+.mt-age { color: var(--muted); min-width: 60px; }
+.mt-count { font-weight: 700; font-family: monospace; min-width: 40px; }
+.mt-bar { height: 14px; border-radius: 3px; display: inline-block; vertical-align: middle; }
+.mt-top { color: var(--cyan); font-size: 0.75rem; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<h1>Milestone Engine — Density Analysis</h1>
+<p class="subtitle">Strategic document #5 — How many "happy numbers" land in each month of life?<br>
+Used to tune the adaptive filter and number density. This document is expected to evolve.<br>
+<span style="color:var(--gold)">Accuracy note:</span> Months and years use calendar-accurate arithmetic (leap years handled). Seconds, minutes, hours, days, weeks use exact elapsed milliseconds via JavaScript Date. Current version assumes birth time at midnight (00:00). Precise birth-time input is on the premium feature backlog.</p>
+
+<div class="controls">
+    <div>
+        <label>Birthday</label>
+        <input type="date" id="birthday" value="1992-06-08">
+    </div>
+    <div>
+        <label>Months</label>
+        <input type="number" id="max-months" value="720" min="12" max="1200" style="width:70px">
+    </div>
+    <button onclick="run()">Run</button>
+</div>
+
+<div class="filter-modes">
+    <span style="font-size:0.78rem;color:var(--muted);align-self:center;margin-right:4px;font-weight:600;">Filter:</span>
+    <button class="filter-btn" data-mode="none" onclick="setFilter('none')">None (raw)</button>
+    <button class="filter-btn active" data-mode="adaptive" onclick="setFilter('adaptive')">Adaptive</button>
+    <button class="filter-btn" data-mode="new" onclick="setFilter('new')">Proposed (fixed)</button>
+    <button class="filter-btn" data-mode="old" onclick="setFilter('old')">Current engine</button>
+</div>
+
+<h2>Full Range: Month 1 to <span id="range-label">400</span></h2>
+<div class="stats-row" id="stats-row"></div>
+<canvas id="chart" width="1460" height="400"></canvas>
+
+<h2>Zoomed: Age 20–60</h2>
+<p class="subtitle">Same data, months 240–720 — own Y-axis scale so the detail is visible. Red dots = empty months.</p>
+<div class="stats-row" id="stats-row-zoom"></div>
+<canvas id="chart-zoom" width="1460" height="400"></canvas>
+
+<div id="tooltip"></div>
+
+<h2>Month-by-Month Data (age 20–60)</h2>
+<div id="table-area"></div>
+
+<script>
+// ============================================================
+// ENGINE (same as analysis tool)
+// ============================================================
+const POWERS_OF_TEN = [10,100,1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000];
+const ROUND_NUMBERS = (() => {
+    const nums = new Set();
+    for(let n=10;n<=100;n+=10) nums.add(n);
+    [25,50,75].forEach(n=>nums.add(n));
+    for(let n=100;n<=500;n+=10) nums.add(n);
+    for(let n=100;n<=500;n+=25) nums.add(n);
+    for(let n=500;n<=1000;n+=10) nums.add(n);
+    for(let n=500;n<=2000;n+=50) nums.add(n);
+    for(let n=2000;n<=10000;n+=100) nums.add(n);
+    for(let n=10000;n<=50000;n+=500) nums.add(n);
+    for(let n=50000;n<=200000;n+=1000) nums.add(n);
+    for(let n=200000;n<=1000000;n+=5000) nums.add(n);
+    for(let n=1000000;n<=10000000;n+=50000) nums.add(n);
+    for(let n=10000000;n<=100000000;n+=100000) nums.add(n);  // 100K steps (69d gap in minutes)
+    for(let n=100000000;n<=1000000000;n+=1000000) nums.add(n);  // 1M steps (11.6d gap in seconds)
+    for(let n=1000000000;n<=5000000000;n+=2500000) nums.add(n);  // 2.5M steps (~29d gap in seconds)
+    for(let n=5000000000;n<=15000000000;n+=100000000) nums.add(n);
+    return [...nums].sort((a,b)=>a-b);
+})();
+const FIBONACCI = (() => { const f=[1,1]; while(f[f.length-1]<1e11) f.push(f[f.length-1]+f[f.length-2]); return f.filter(n=>n>=5); })();
+const POWERS_OF_TWO = (() => { const p=[]; for(let i=3;i<=40;i++) p.push(Math.pow(2,i)); return p; })();
+const POW2_SET = new Set(POWERS_OF_TWO);
+const FIB_SET = new Set(FIBONACCI);
+const SCIENTIFIC_CONSTANTS = {
+    pi:{name:'Pi (π)',numbers:[314,3141,31415,314159,3141592,31415926,314159265]},
+    e:{name:"Euler's e",numbers:[271,2718,27182,271828,2718281,27182818]},
+    phi:{name:'Golden Ratio (φ)',numbers:[161,1618,16180,161803,1618033,16180339]},
+    sqrt2:{name:'√2',numbers:[141,1414,14142,141421,1414213,14142135]},
+    c:{name:'Speed of Light',numbers:[299,2997,29979,299792,2997924,29979245,299792458,300000000]}
+};
+const TIME_UNITS = {
+    seconds:{name:'sec',full:'seconds',ms:1000,max:15000000000},
+    minutes:{name:'min',full:'minutes',ms:60000,max:200000000},
+    hours:{name:'hrs',full:'hours',ms:3600000,max:3000000},
+    days:{name:'days',full:'days',ms:86400000,max:50000},
+    weeks:{name:'wks',full:'weeks',ms:604800000,max:7000},
+    months:{name:'mo',full:'months',ms:2629746000,max:1500},
+    years:{name:'yrs',full:'years',ms:31557600000,max:150}
+};
+
+function genRepdigits(){const r=[];for(let l=2;l<=11;l++)for(let d=1;d<=9;d++){const n=parseInt(String(d).repeat(l));if(n<=Number.MAX_SAFE_INTEGER)r.push(n);}return r;}
+function genPalindromes(){return[121,12321,1234321,123454321,12345654321,131,13531,1357531,135797531,242,24642,2468642,101,1001,10001,100001,1000001,10000001,100000001,1000000001,10101,1010101,101010101,7654567,9876789,12344321];}
+function genSequentials(){const s=[];for(let l=5;l<=9;l++){let a='',d='';for(let i=1;i<=l;i++)a+=i;for(let i=9;i>=9-l+1;i--)d+=i;s.push(parseInt(a),parseInt(d));}[23456,34567,45678,56789,98765,87654,76543,65432,54321].forEach(n=>s.push(n));return[...new Set(s)];}
+function genAlternating(){const a=[];for(let d1=1;d1<=9;d1++)for(let d2=0;d2<=9;d2++){if(d1===d2)continue;for(let len=4;len<=10;len+=2){let p='';for(let i=0;i<len;i++)p+=(i%2===0)?d1:d2;a.push(parseInt(p));}}return[...new Set(a)];}
+function genAsian(){return[88,99,108,168,188,288,388,520,521,666,786,888,999,1008,1088,1188,1314,1688,1888,2888,3888,5201314,6666,8888,9999,10008,10088,88888,99999];}
+
+function buildMasterSet(){
+    const nums=new Set();
+    POWERS_OF_TEN.forEach(n=>nums.add(n));
+    ROUND_NUMBERS.forEach(n=>nums.add(n));
+    POWERS_OF_TWO.filter(n=>n<=1073741824).forEach(n=>nums.add(n));
+    FIBONACCI.forEach(n=>nums.add(n));
+    genRepdigits().forEach(n=>nums.add(n));
+    genPalindromes().forEach(n=>nums.add(n));
+    genSequentials().forEach(n=>nums.add(n));
+    genAlternating().forEach(n=>nums.add(n));
+    for(const c of Object.values(SCIENTIFIC_CONSTANTS)) c.numbers.forEach(n=>nums.add(n));
+    genAsian().forEach(n=>nums.add(n));
+    return[...nums].sort((a,b)=>a-b);
+}
+
+function classifyNum(num){
+    const s=String(num),tags=[];
+    if(POWERS_OF_TEN.includes(num))tags.push('10^'+(s.length-1));
+    if(POW2_SET.has(num)){const exp=Math.round(Math.log2(num));tags.push('2^'+exp);}
+    if(FIB_SET.has(num))tags.push('Fib');
+    if(ROUND_NUMBERS.includes(num)&&!POWERS_OF_TEN.includes(num)){
+        if(num>=1e9)tags.push((num/1e9)+'B');else if(num>=1e6)tags.push((num/1e6)+'M');else if(num>=1000)tags.push((num/1000)+'K');
+        else if(num%100===0)tags.push('Round');else if(num%10===0)tags.push('~Round');
+    }
+    if(s.length>=2&&new Set(s).size===1)tags.push('Rep');
+    if(s.length>=3&&s===s.split('').reverse().join('')&&new Set(s).size>1)tags.push('Palin');
+    if(s.length>=5&&'123456789'.includes(s))tags.push('Asc');
+    if(s.length>=5&&'987654321'.includes(s))tags.push('Desc');
+    if(s.length>=4){let a=true;const d1=s[0],d2=s[1];if(d1!==d2){for(let i=0;i<s.length;i++){if(s[i]!==(i%2===0?d1:d2)){a=false;break;}}if(a)tags.push('Alt');}};
+    for(const c of Object.values(SCIENTIFIC_CONSTANTS))if(c.numbers.includes(num))tags.push(c.name);
+    const asian={88:'8×2',108:'Sacred',168:'一路发',520:'我爱你',888:'888',1314:'一生一世',8888:'8888',786:'786'};
+    if(asian[num])tags.push(asian[num]);
+    return tags.length?tags.join('·'):'Spc';
+}
+
+// Filters
+function isPow10(n){if(n<10)return false;while(n>=10){if(n%10!==0)return false;n/=10;}return n===1;}
+function isRepdigit(n){const s=String(n);return s.length>=2&&new Set(s).size===1;}
+function isPalin(n){const s=String(n);return s.length>=3&&s===s.split('').reverse().join('');}
+
+// Compute a "niceness" score for a number (0-100). Used by adaptive filter.
+// Separate from roundnessScore: this is a fast pass/fail tier, not display ranking.
+function nicenessGrade(num) {
+    const s = String(num);
+    // Tier 1 (90-100): the absolute best — anyone would understand
+    if (POWERS_OF_TEN.includes(num)) return 100;
+    if (num >= 1000000 && num % 1000000 === 0) return 95; // 3M, 5M
+    if (s.length >= 4 && new Set(s).size === 1) return 92; // 1111, 22222, 333333
+    if (num >= 1000000000 && num % 100000000 === 0) return 90; // 1.1B, 1.5B
+
+    // Tier 2 (70-89): very nice — most people would appreciate
+    if (num >= 100000 && num % 100000 === 0) return 85; // 500K, 300K
+    if (POW2_SET.has(num) && Math.log2(num) >= 20) return 82; // 2^20+
+    if (s.length >= 3 && new Set(s).size === 1) return 80; // 111, 222
+    if (num >= 10000 && num % 10000 === 0) return 78; // 20K, 50K
+    if (s.length >= 5 && s === s.split('').reverse().join('')) {
+        // Mountain palindrome bonus
+        const half = s.slice(0, Math.ceil(s.length/2));
+        let mtn = true;
+        for (let i=1;i<half.length;i++) if (parseInt(half[i])<=parseInt(half[i-1])) {mtn=false;break;}
+        if (mtn) return 78; // 12321, 1234321
+        return 72;
+    }
+    if (num >= 1000 && num % 1000 === 0) return 72; // 3K, 12K
+    if (s.length >= 5 && ('123456789'.includes(s)||'987654321'.includes(s))) return 72; // 12345, 98765
+
+    // Tier 3 (50-69): nice enough — nerds and curious people
+    if (num >= 1000 && num % 500 === 0) return 65; // 1500, 2500
+    if (POW2_SET.has(num)) return 62; // 2^10 through 2^19
+    if (FIB_SET.has(num) && num >= 1000) return 60;
+    if (Object.values(SCIENTIFIC_CONSTANTS).some(c=>c.numbers.includes(num)) && s.length>=4) return 58; // Pi, e, φ (4+ digits)
+    if ([888,8888,9999,5201314,1314,520,168,786,108].includes(num)) return 55; // cultural
+    if (s.length >= 4 && s === s.split('').reverse().join('')) return 52; // 4-digit palindromes
+    if (s.length >= 6 && new Set(s).size === 2) return 50; // 6+ digit alternating
+
+    // Tier 4 (30-49): filler — not exciting but something
+    if (num % 250 === 0) return 42;
+    if (num % 100 === 0) return 35;
+    if (num % 50 === 0) return 32;
+    if (FIB_SET.has(num)) return 30;
+
+    // Tier 5 (10-29): scraping the barrel
+    if (num % 10 === 0) return 20;
+    if (s.length >= 4 && new Set(s).size === 2) return 15; // short alternating
+    if (s === s.split('').reverse().join('') && s.length >= 3) return 12; // 3-digit palindrome
+
+    return 5; // everything else
+}
+
+function passesFilter(num, unitKey, mode, ageMonths) {
+    if (mode === 'none') return true;
+    const s = String(num);
+    const isRoundK=num%1000===0||isPow10(num);
+    const isRep=isRepdigit(num);
+    const isPal=isPalin(num);
+    const isPow2=POW2_SET.has(num);
+    const isAsianKey=[888,8888,88888,888888,9999,99999,999999,1314,5201314,520,168,108,786].includes(num);
+    const isFibBig=FIB_SET.has(num)&&s.length>=5;
+    const isSeqBig=s.length>=5&&('123456789'.includes(s)||'987654321'.includes(s));
+    const isSci4=Object.values(SCIENTIFIC_CONSTANTS).some(c=>c.numbers.includes(num))&&s.length>=4;
+
+    if (mode === 'old') {
+        if(unitKey==='seconds'||unitKey==='minutes')return isRoundK||isRep||(s.length>=8&&new Set(s).size===2)||[888,8888,88888,888888,8888888,9999,99999,999999,1314,5201314].includes(num);
+        if(unitKey==='hours')return num<=100||num%100===0||isPow10(num)||isRep;
+        if(unitKey==='weeks')return num<=100||num%100===0||isPow10(num);
+        if(unitKey==='months')return num<=12||num%50===0||isPow10(num)||[108,786,888,1008,1314].includes(num);
+        if(unitKey==='days'){if(num>1000&&num<10000&&num%1000>0&&num%1000<=5)return false;}
+        return true;
+    }
+
+    if (mode === 'new') {
+        const isRound100=num%100===0;
+        if(unitKey==='seconds'||unitKey==='minutes')return isRoundK||isRep||isPal||isPow2||isFibBig||isSeqBig||isSci4||isAsianKey||(s.length>=6&&new Set(s).size===2)||(num>=100000&&isRound100);
+        if(unitKey==='hours')return num<=100||isRound100||isPow10(num)||isRep||isPal||isSeqBig||isPow2||isSci4;
+        if(unitKey==='weeks')return num<=100||isRound100||num%250===0||isPow10(num)||isRep||isPal||isPow2||isAsianKey;
+        if(unitKey==='months')return num<=12||num%25===0||isPow10(num)||isRep||isPal||[108,786,888,1008,1314].includes(num)||isAsianKey;
+        if(unitKey==='days'){if(num>1000&&num<50000&&num%1000>0&&num%1000<=5)return false;}
+        return true;
+    }
+
+    if (mode === 'adaptive') {
+        // Smooth linear decay: threshold = 80 at birth → 5 at age 40+
+        // No sudden jumps — gradual opening as candidates thin out.
+        const am = ageMonths || 0;
+        // Piecewise linear: (0→80), (480→5), clamp at 5 for 40y+
+        const threshold = am >= 480 ? 5 : Math.round(80 - (75 * am / 480));
+
+        return nicenessGrade(num) >= threshold;
+    }
+
+    return true;
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let filterMode = 'adaptive';
+let monthData = []; // [{month, age, count, byUnit, topItems}]
+
+function setFilter(mode) {
+    filterMode = mode;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    run();
+}
+
+// ============================================================
+// MAIN
+// ============================================================
+function run() {
+    const birthdayStr = document.getElementById('birthday').value;
+    const maxMonths = parseInt(document.getElementById('max-months').value) || 400;
+    if (!birthdayStr) return;
+
+    const birthday = new Date(birthdayStr + 'T00:00:00');
+    const masterSet = buildMasterSet();
+    const birthdayMs = birthday.getTime();
+
+    monthData = [];
+
+    // For each month of life, count milestones that land in that ~30-day window
+    for (let m = 1; m <= maxMonths; m++) {
+        // Month boundaries: birthday + m months, birthday + (m+1) months
+        const monthStart = addMonths(birthday, m);
+        const monthEnd = addMonths(birthday, m + 1);
+        const monthStartMs = monthStart.getTime();
+        const monthEndMs = monthEnd.getTime();
+
+        const byUnit = {};
+        const topItems = [];
+        let count = 0;
+
+        for (const [unitKey, cfg] of Object.entries(TIME_UNITS)) {
+            const elStart = (monthStartMs - birthdayMs) / cfg.ms;
+            const elEnd = (monthEndMs - birthdayMs) / cfg.ms;
+
+            // Binary search
+            let lo = 0, hi = masterSet.length;
+            while (lo < hi) { const mid = (lo+hi)>>1; if (masterSet[mid] <= elStart) lo=mid+1; else hi=mid; }
+
+            let unitCount = 0;
+            for (let idx = lo; idx < masterSet.length; idx++) {
+                const num = masterSet[idx];
+                if (num > elEnd || num > cfg.max) break;
+                if (!passesFilter(num, unitKey, filterMode, m)) continue;
+                unitCount++;
+                topItems.push({ value: num, unit: cfg.name, type: classifyNum(num) });
+            }
+            byUnit[unitKey] = unitCount;
+            count += unitCount;
+        }
+
+        // Sort top items by value descending (bigger = more impressive)
+        topItems.sort((a, b) => b.value - a.value);
+
+        const ageYears = Math.floor(m / 12);
+        const ageMonths = m % 12;
+
+        monthData.push({
+            month: m,
+            age: ageYears + 'y' + (ageMonths > 0 ? ageMonths + 'm' : ''),
+            count,
+            byUnit,
+            topItems: topItems.slice(0, 5)
+        });
+    }
+
+    document.getElementById('range-label').textContent = maxMonths;
+    renderStats();
+    renderChart();
+    renderZoom();
+    renderTable();
+}
+
+function addMonths(date, n) {
+    const r = new Date(date);
+    r.setMonth(r.getMonth() + n);
+    if (r.getDate() !== date.getDate()) r.setDate(0);
+    return r;
+}
+
+// ============================================================
+// STATS HELPER
+// ============================================================
+function renderStatsFor(data, elId) {
+    const counts = data.map(d => d.count);
+    const total = counts.reduce((a, b) => a + b, 0);
+    const max = Math.max(...counts);
+    const min = Math.min(...counts);
+    const avg = (total / counts.length).toFixed(1);
+    const zeros = counts.filter(c => c === 0).length;
+    const maxMonth = data.find(d => d.count === max);
+    const peakAge = maxMonth ? maxMonth.age : '';
+    const startAge = data[0] ? data[0].age : '';
+    const endAge = data[data.length - 1] ? data[data.length - 1].age : '';
+
+    document.getElementById(elId).innerHTML = `
+        <div class="stat-box"><div class="sl">Range</div><div class="sv">${startAge} — ${endAge}</div></div>
+        <div class="stat-box"><div class="sl">Total</div><div class="sv">${total.toLocaleString()}</div></div>
+        <div class="stat-box"><div class="sl">Avg/mo</div><div class="sv">${avg}</div></div>
+        <div class="stat-box"><div class="sl">Peak</div><div class="sv">${max} (${peakAge})</div></div>
+        <div class="stat-box"><div class="sl">Min</div><div class="sv">${min}</div></div>
+        <div class="stat-box"><div class="sl">Empty</div><div class="sv" style="color:${zeros>0?'var(--red)':'var(--green)'}">${zeros} / ${data.length}</div></div>
+        <div class="stat-box"><div class="sl">Filter</div><div class="sv">${filterMode}</div></div>
+    `;
+}
+
+function renderStats() {
+    renderStatsFor(monthData, 'stats-row');
+}
+
+// ============================================================
+// GENERIC CHART RENDERER
+// ============================================================
+function drawChart(canvasId, data, title, yearStart) {
+    yearStart = yearStart || 0;
+    const cvs = document.getElementById(canvasId);
+    const ctx = cvs.getContext('2d');
+    const W = cvs.width, H = cvs.height;
+    const pad = { top: 30, right: 20, bottom: 50, left: 50 };
+    const plotW = W - pad.left - pad.right;
+    const plotH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#1a1a22';
+    ctx.fillRect(0, 0, W, H);
+
+    const counts = data.map(d => d.count);
+    const maxCount = Math.max(...counts, 1);
+    const barW = plotW / counts.length;
+
+    // Grid lines
+    ctx.strokeStyle = '#2a2a3a';
+    ctx.lineWidth = 0.5;
+    const gridSteps = Math.min(maxCount, 10);
+    for (let i = 0; i <= gridSteps; i++) {
+        const y = pad.top + plotH - (i / gridSteps) * plotH;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(W - pad.right, y);
+        ctx.stroke();
+        ctx.fillStyle = '#888899';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(Math.round(i / gridSteps * maxCount), pad.left - 6, y + 3);
+    }
+
+    // Year markers
+    ctx.fillStyle = '#888899';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    const firstMonth = data[0] ? data[0].month : 1;
+    const yrStep = counts.length > 300 ? 5 : (counts.length > 120 ? 2 : 1);
+    for (let yr = Math.ceil(yearStart / yrStep) * yrStep; ; yr += yrStep) {
+        const m = yr * 12 - firstMonth + 1;
+        if (m < 0) continue;
+        if (m >= counts.length) break;
+        const x = pad.left + m * barW + barW / 2;
+        ctx.fillText(yr + 'y', x, H - pad.bottom + 16);
+        ctx.strokeStyle = '#333344';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top);
+        ctx.lineTo(x, pad.top + plotH);
+        ctx.stroke();
+    }
+
+    // Axis labels
+    ctx.fillStyle = '#888899';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Age', W / 2, H - 6);
+    ctx.save();
+    ctx.translate(14, pad.top + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Milestones / month', 0, 0);
+    ctx.restore();
+
+    // Color scale
+    function barColor(count) {
+        if (count === 0) return '#2a2a3a';
+        const t = Math.min(count / Math.max(maxCount * 0.6, 1), 1);
+        return `rgb(${Math.round(60+t*152)},${Math.round(60+t*124)},${Math.round(100+t*18)})`;
+    }
+
+    // Draw bars
+    for (let i = 0; i < counts.length; i++) {
+        const c = counts[i];
+        const barH = (c / maxCount) * plotH;
+        const x = pad.left + i * barW;
+        const y = pad.top + plotH - barH;
+        ctx.fillStyle = barColor(c);
+        ctx.fillRect(x + 0.5, y, Math.max(barW - 1, 1), barH);
+
+        // Mark empty months with a red dot
+        if (c === 0) {
+            ctx.fillStyle = '#f8717166';
+            ctx.fillRect(x + 0.5, pad.top + plotH - 2, Math.max(barW - 1, 1), 2);
+        }
+    }
+
+    // Title
+    ctx.fillStyle = '#d4b876';
+    ctx.font = 'bold 13px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(title, pad.left, 18);
+
+    // Store geometry for tooltip
+    cvs._chartData = data;
+    cvs._chartPad = pad;
+    cvs._barW = barW;
+    cvs._plotH = plotH;
+    cvs._maxCount = maxCount;
+}
+
+function renderChart() {
+    drawChart('chart', monthData, 'Full range: milestones per month (filter: ' + filterMode + ')', 0);
+}
+
+function renderZoom() {
+    const zoomData = monthData.filter(d => d.month >= 240 && d.month <= 720); // age 20–60
+    renderStatsFor(zoomData, 'stats-row-zoom');
+    drawChart('chart-zoom', zoomData, 'Age 20+ zoomed: milestones per month (filter: ' + filterMode + ')', 20);
+}
+
+// ============================================================
+// TOOLTIP (shared for both charts)
+// ============================================================
+const tooltip = document.getElementById('tooltip');
+
+function attachTooltip(canvasId) {
+    const cvs = document.getElementById(canvasId);
+    cvs.addEventListener('mousemove', (e) => {
+        const rect = cvs.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pad = cvs._chartPad;
+        const data = cvs._chartData;
+        if (!pad || !data) return;
+
+        const barIdx = Math.floor((x - pad.left) / cvs._barW);
+        if (barIdx < 0 || barIdx >= data.length || x < pad.left) {
+            tooltip.style.display = 'none';
+            return;
+        }
+
+        const d = data[barIdx];
+        let unitBreakdown = Object.entries(d.byUnit)
+            .filter(([_, c]) => c > 0)
+            .map(([u, c]) => `<span class="tt-unit">${TIME_UNITS[u].full}: ${c}</span>`)
+            .join(' &nbsp; ');
+
+        let topList = d.topItems.map(t =>
+            `${t.value.toLocaleString()} ${t.unit} <span style="color:var(--muted)">${t.type}</span>`
+        ).join('<br>');
+
+        tooltip.innerHTML = `
+            <div class="tt-month">Month ${d.month} (age ${d.age})</div>
+            <div class="tt-count">${d.count} milestone${d.count !== 1 ? 's' : ''}</div>
+            ${unitBreakdown ? '<div style="margin-bottom:4px">' + unitBreakdown + '</div>' : ''}
+            ${topList ? '<div class="tt-list">' + topList + '</div>' : ''}
+        `;
+        tooltip.style.display = 'block';
+        let tx = e.clientX + 14;
+        let ty = e.clientY - 10;
+        if (tx + 350 > window.innerWidth) tx = e.clientX - 360;
+        if (ty + 200 > window.innerHeight) ty = e.clientY - 200;
+        tooltip.style.left = tx + 'px';
+        tooltip.style.top = ty + 'px';
+    });
+    cvs.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+}
+
+attachTooltip('chart');
+attachTooltip('chart-zoom');
+
+// ============================================================
+// TABLE (age 20+ only — full range is in the chart)
+// ============================================================
+function renderTable() {
+    const zoomData = monthData.filter(d => d.month >= 240 && d.month <= 720);
+    const maxCount = Math.max(...zoomData.map(d => d.count), 1);
+
+    let html = '<div class="month-table-wrap"><table class="month-table"><thead><tr>';
+    html += '<th>Month</th><th>Age</th><th>Count</th><th style="width:200px"></th><th>Top milestones</th>';
+    html += '</tr></thead><tbody>';
+
+    zoomData.forEach(d => {
+        const pct = (d.count / maxCount) * 100;
+        const barCol = d.count === 0 ? '#2a2a3a' : (d.count >= maxCount * 0.7 ? '#d4b876' : '#6366f1');
+        const topStr = d.topItems.slice(0, 3).map(t => t.value.toLocaleString() + ' ' + t.unit).join(', ');
+
+        html += `<tr>
+            <td class="mt-month">${d.month}</td>
+            <td class="mt-age">${d.age}</td>
+            <td class="mt-count" style="color:${d.count===0?'var(--red)':'var(--green)'}">${d.count}</td>
+            <td><div class="mt-bar" style="width:${Math.max(pct, 1)}%;background:${barCol}"></div></td>
+            <td class="mt-top">${topStr || '<span style="color:var(--muted)">—</span>'}</td>
+        </tr>`;
+    });
+
+    html += '</tbody></table></div>';
+    document.getElementById('table-area').innerHTML = html;
+}
+
+// Auto-run
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+} else {
+    setTimeout(run, 0);
+}
+</script>
+</body>
+</html>

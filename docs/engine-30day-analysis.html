@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments — Milestone Landscape (Age 34, 2 months)</title>
+<style>
+:root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --gold: #d4b876;
+    --purple: #6366f1;
+    --green: #4ade80;
+    --red: #f87171;
+    --orange: #fb923c;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+h1 { font-size: 1.6rem; color: var(--gold); margin-bottom: 4px; }
+h2 { font-size: 1.2rem; color: var(--purple); margin: 28px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+h3 { font-size: 1rem; color: var(--gold); margin: 16px 0 6px; }
+.subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+
+.controls {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+}
+.controls label { font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 3px; }
+.controls input, .controls select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+.controls button {
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+.controls button:hover { filter: brightness(1.15); }
+
+/* Filter mode selector */
+.filter-modes {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.filter-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.filter-btn:hover { border-color: var(--purple); color: var(--text); }
+.filter-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+.filter-label { font-size: 0.8rem; color: var(--muted); align-self: center; margin-right: 4px; font-weight: 600; }
+
+/* Stats */
+.stats-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-size: 0.85rem;
+}
+.stat-item .stat-label { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.stat-item .stat-value { color: var(--gold); font-weight: 700; font-size: 1.05rem; font-family: 'Fira Code', monospace; }
+
+/* Highlight callout */
+.callout {
+    background: linear-gradient(135deg, rgba(212,184,118,0.1), rgba(99,102,241,0.08));
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+.callout strong { color: var(--gold); }
+.callout code { background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--cyan); font-size: 0.85rem; }
+
+/* Full table */
+.full-table-wrap {
+    max-height: 600px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.full-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+.full-table th {
+    position: sticky;
+    top: 0;
+    background: var(--surface2);
+    color: var(--gold);
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--border);
+    font-size: 0.78rem;
+    z-index: 2;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+.full-table th:hover { color: var(--text); }
+.full-table th .sort-arrow { margin-left: 4px; font-size: 0.7rem; }
+.full-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    white-space: nowrap;
+}
+.full-table tr:hover { background: var(--surface); }
+.full-table tr.row-star { background: rgba(212,184,118,0.06); }
+.full-table tr.row-pow2 { background: rgba(96,165,250,0.06); }
+.ft-value { color: var(--cyan); font-weight: 700; font-family: 'Fira Code', monospace; }
+.ft-unit { color: var(--purple); }
+.ft-type { color: var(--muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+.ft-score { color: var(--green); font-family: monospace; text-align: right; }
+.ft-rscore { color: var(--orange); font-family: monospace; text-align: right; }
+.ft-date { color: var(--muted); }
+.ft-day { color: var(--gold); font-weight: 600; text-align: center; min-width: 40px; }
+.ft-binary { color: var(--blue); font-family: monospace; font-size: 0.72rem; }
+
+/* Unit filter pills */
+.unit-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.unit-pill {
+    padding: 4px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.unit-pill:hover { border-color: var(--purple); }
+.unit-pill.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+/* Day cards (condensed) */
+.day-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+}
+.day-card.has-star { border-color: var(--gold); }
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+.day-label { font-weight: 700; color: var(--gold); font-size: 0.85rem; }
+.day-date { color: var(--muted); font-size: 0.78rem; }
+.ms-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 0;
+    font-size: 0.8rem;
+}
+.ms-rank {
+    width: 18px; height: 18px; line-height: 18px; text-align: center;
+    border-radius: 50%; font-size: 0.68rem; font-weight: 700; flex-shrink: 0;
+}
+.rank-1 { background: rgba(212,184,118,0.25); color: var(--gold); }
+.rank-2 { background: rgba(99,102,241,0.2); color: var(--purple); }
+.rank-3 { background: rgba(136,136,153,0.2); color: var(--muted); }
+.ms-val { color: var(--cyan); font-weight: 700; font-family: 'Fira Code', monospace; min-width: 100px; font-size: 0.82rem; }
+.ms-unit { color: var(--purple); min-width: 40px; font-size: 0.78rem; }
+.ms-type { color: var(--muted); font-size: 0.75rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-sc { color: var(--green); font-family: monospace; font-size: 0.75rem; min-width: 30px; text-align: right; }
+
+.note {
+    background: rgba(99,102,241,0.08);
+    border-left: 3px solid var(--purple);
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+}
+.tab-bar {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+}
+.tab-btn {
+    padding: 8px 20px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 600; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+@media (max-width: 800px) {
+    .day-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<h1>Milestone Landscape Explorer</h1>
+<p class="subtitle">Every "nice number" in a 2-month window &mdash; no filters, all units, full raw data</p>
+
+<div class="callout">
+    <strong>2<sup>30</sup> = 1,073,741,824 seconds</strong> falls at age ~34 years 9 days. That's <code>100000000000000000000000000000000</code> in binary &mdash; the "binary billion". A perfect geek milestone that the current engine includes but labels poorly.
+</div>
+
+<div class="controls">
+    <div>
+        <label>Birthday</label>
+        <input type="date" id="birthday" value="1992-06-08">
+    </div>
+    <div>
+        <label>Age start (years)</label>
+        <input type="number" id="age-years" value="34" min="1" max="120" style="width:70px">
+    </div>
+    <div>
+        <label>Range (days)</label>
+        <input type="number" id="range-days" value="62" min="7" max="180" style="width:70px">
+    </div>
+    <div>
+        <label>Top N per day</label>
+        <select id="top-n">
+            <option value="3" selected>3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+    <button onclick="runAnalysis()">Run Analysis</button>
+</div>
+
+<div class="filter-modes">
+    <span class="filter-label">Coherence filter:</span>
+    <button class="filter-btn" data-mode="none" onclick="setFilterMode('none')">None (raw)</button>
+    <button class="filter-btn" data-mode="old" onclick="setFilterMode('old')">Current engine</button>
+    <button class="filter-btn active" data-mode="new" onclick="setFilterMode('new')">Proposed (loosened)</button>
+</div>
+
+<div id="stats-area"></div>
+
+<div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('full-table', this)">Full Table</button>
+    <button class="tab-btn" onclick="showTab('day-cards', this)">Day-by-Day Cards</button>
+    <button class="tab-btn" onclick="showTab('by-unit', this)">By Unit</button>
+</div>
+
+<div id="tab-full-table" class="tab-content active">
+    <div class="unit-pills" id="unit-pills"></div>
+    <div id="full-table-area"></div>
+</div>
+
+<div id="tab-day-cards" class="tab-content">
+    <div id="day-grid" class="day-grid"></div>
+</div>
+
+<div id="tab-by-unit" class="tab-content">
+    <div id="by-unit-area"></div>
+</div>
+
+<script>
+// ============================================================
+// ENGINE
+// ============================================================
+const POWERS_OF_TEN = [10,100,1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000];
+
+// DENSE round numbers — designed so NO unit goes >90 days without a milestone
+// Density scaled per magnitude: smaller numbers need tighter steps
+const ROUND_NUMBERS = (() => {
+    const nums = new Set();
+    // 10-100: every 10 (for months, years)
+    for (let n=10;n<=100;n+=10) nums.add(n);
+    // also 25, 50, 75
+    [25,50,75].forEach(n=>nums.add(n));
+    // 100-500: every 10 (for months: 400→410 = 10 months gap max ≈ 300 days)
+    for (let n=100;n<=500;n+=10) nums.add(n);
+    // Also every 25 for slightly nicer numbers
+    for (let n=100;n<=500;n+=25) nums.add(n);
+    // 500-1000: every 10 (for months: covers ages 40-83, max gap = 10 months)
+    for (let n=500;n<=1000;n+=10) nums.add(n);
+    // 500-2000: every 50 (for weeks: 1750→1800 = 50 weeks ≈ 1 year gap)
+    for (let n=500;n<=2000;n+=50) nums.add(n);
+    // 2000-10000: every 100 (for weeks/days: 100 weeks ≈ 2 years)
+    for (let n=2000;n<=10000;n+=100) nums.add(n);
+    // 10000-50000: every 500 (for days: 500 days ≈ 1.4 years)
+    for (let n=10000;n<=50000;n+=500) nums.add(n);
+    // 50000-200000: every 1000
+    for (let n=50000;n<=200000;n+=1000) nums.add(n);
+    // 200000-1M: every 5000 (for hours: 5000h ≈ 208 days)
+    for (let n=200000;n<=1000000;n+=5000) nums.add(n);
+    // 1M-10M: every 50K (for minutes: 50K min ≈ 35 days)
+    for (let n=1000000;n<=10000000;n+=50000) nums.add(n);
+    // 10M-100M: every 500K (for minutes: 500K min ≈ 347 days)
+    for (let n=10000000;n<=100000000;n+=500000) nums.add(n);
+    // 100M-1B: every 5M
+    for (let n=100000000;n<=1000000000;n+=5000000) nums.add(n);
+    // 1B-5B: every 50M
+    for (let n=1000000000;n<=5000000000;n+=50000000) nums.add(n);
+    // 5B-15B: every 500M
+    for (let n=5000000000;n<=15000000000;n+=500000000) nums.add(n);
+    return [...nums].sort((a,b)=>a-b);
+})();
+
+const FIBONACCI = (() => { const f=[1,1]; while(f[f.length-1]<100000000000) f.push(f[f.length-1]+f[f.length-2]); return f.filter(n=>n>=5); })();
+const POWERS_OF_TWO = (() => { const p=[]; for(let i=3;i<=40;i++) p.push(Math.pow(2,i)); return p; })();
+const POW2_SET = new Set(POWERS_OF_TWO);
+const FIB_SET = new Set(FIBONACCI);
+const SCIENTIFIC_CONSTANTS = {
+    pi: { name:'Pi (π)', numbers:[314,3141,31415,314159,3141592,31415926,314159265] },
+    e: { name:"Euler's e", numbers:[271,2718,27182,271828,2718281,27182818] },
+    phi: { name:'Golden Ratio (φ)', numbers:[161,1618,16180,161803,1618033,16180339] },
+    sqrt2: { name:'√2', numbers:[141,1414,14142,141421,1414213,14142135] },
+    c: { name:'Speed of Light', numbers:[299,2997,29979,299792,2997924,29979245,299792458,300000000] }
+};
+
+const TIME_UNITS = {
+    seconds: { name:'sec', full:'seconds', ms:1000, max:15000000000 },
+    minutes: { name:'min', full:'minutes', ms:60000, max:200000000 },
+    hours:   { name:'hrs', full:'hours', ms:3600000, max:3000000 },
+    days:    { name:'days', full:'days', ms:86400000, max:50000 },
+    weeks:   { name:'wks', full:'weeks', ms:604800000, max:7000 },
+    months:  { name:'mo', full:'months', ms:2629746000, max:1500 },
+    years:   { name:'yrs', full:'years', ms:31557600000, max:150 }
+};
+
+function genRepdigits() {
+    const r=[];
+    for(let len=2;len<=11;len++) for(let d=1;d<=9;d++) { const n=parseInt(String(d).repeat(len)); if(n<=Number.MAX_SAFE_INTEGER) r.push(n); }
+    return r;
+}
+function genPalindromes() {
+    // Mountain + structured only (Gorazd's rule)
+    return [121,12321,1234321,123454321,12345654321,131,13531,1357531,135797531,242,24642,2468642,101,1001,10001,100001,1000001,10000001,100000001,1000000001,10101,1010101,101010101,7654567,9876789,12344321];
+}
+function genSequentials() {
+    // 5+ digits only (Gorazd's rule)
+    const s=[];
+    for(let l=5;l<=9;l++){let a='',d='';for(let i=1;i<=l;i++)a+=i;for(let i=9;i>=9-l+1;i--)d+=i;s.push(parseInt(a),parseInt(d));}
+    [23456,34567,45678,56789,98765,87654,76543,65432,54321].forEach(n=>s.push(n));
+    return[...new Set(s)];
+}
+function genAlternating() {
+    const a=[];
+    for(let d1=1;d1<=9;d1++) for(let d2=0;d2<=9;d2++){
+        if(d1===d2)continue;
+        for(let len=4;len<=10;len+=2){let p='';for(let i=0;i<len;i++)p+=(i%2===0)?d1:d2;a.push(parseInt(p));}
+    }
+    return[...new Set(a)];
+}
+function genAsian() { return [88,99,108,168,188,288,388,520,521,666,786,888,999,1008,1088,1188,1314,1688,1888,2888,3888,5201314,6666,8888,9999,10008,10088,88888,99999]; }
+
+function buildMasterSet() {
+    const nums = new Set();
+    POWERS_OF_TEN.forEach(n=>nums.add(n));
+    ROUND_NUMBERS.forEach(n=>nums.add(n));
+    POWERS_OF_TWO.filter(n=>n<=1073741824).forEach(n=>nums.add(n));
+    FIBONACCI.forEach(n=>nums.add(n));
+    genRepdigits().forEach(n=>nums.add(n));
+    genPalindromes().forEach(n=>nums.add(n));
+    genSequentials().forEach(n=>nums.add(n));
+    genAlternating().forEach(n=>nums.add(n));
+    for(const c of Object.values(SCIENTIFIC_CONSTANTS)) c.numbers.forEach(n=>nums.add(n));
+    genAsian().forEach(n=>nums.add(n));
+    return[...nums].sort((a,b)=>a-b);
+}
+
+function classifyNum(num) {
+    const s = String(num);
+    const tags = [];
+    if (POWERS_OF_TEN.includes(num)) tags.push('10^' + (s.length-1));
+    if (POW2_SET.has(num)) {
+        const exp = Math.round(Math.log2(num));
+        tags.push('2^'+exp);
+        if (exp >= 20) tags.push('binary round');
+    }
+    if (FIB_SET.has(num)) tags.push('Fibonacci');
+    if (ROUND_NUMBERS.includes(num) && !POWERS_OF_TEN.includes(num)) {
+        if      (num>=1000000000) tags.push((num/1000000000)+'B');
+        else if (num>=1000000) tags.push((num/1000000)+'M');
+        else if (num>=1000) tags.push((num/1000)+'K');
+        else if (num % 100 === 0) tags.push('Round ' + num);
+        else if (num % 50 === 0) tags.push('Round ~' + num);
+        else if (num % 10 === 0) tags.push(num + ' (round-ish)');
+        else tags.push('Round');
+    }
+    if (s.length>=2 && new Set(s).size===1) tags.push('Repdigit');
+    if (s.length>=3 && s===s.split('').reverse().join('') && new Set(s).size>1) tags.push('Palindrome');
+    if (s.length>=3 && '123456789'.includes(s)) tags.push('Ascending');
+    if (s.length>=3 && '987654321'.includes(s)) tags.push('Descending');
+    if (s.length>=4) { let alt=true; const d1=s[0],d2=s[1]; if(d1!==d2){for(let i=0;i<s.length;i++){if(s[i]!==(i%2===0?d1:d2)){alt=false;break;}}if(alt)tags.push('Alternating');} }
+    for(const[k,c] of Object.entries(SCIENTIFIC_CONSTANTS)) if(c.numbers.includes(num)) tags.push(c.name);
+    const asian = {88:'Lucky 8×2',99:'Lucky 9×2',108:'Sacred 108',168:'一路发',520:'我爱你',521:'我爱你',888:'Triple 8',1314:'一生一世',5201314:'我爱你forever',8888:'Quad 8',9999:'Quad 9',786:'Sacred 786',1008:'Sacred 1008',666:'Lucky 6×3',6666:'Lucky 6×4'};
+    if(asian[num]) tags.push(asian[num]);
+    return tags.length ? tags.join(' · ') : 'Special';
+}
+
+function roundnessScore(num) {
+    let score = 0;
+    const s = String(num);
+    if (POWERS_OF_TEN.includes(num)) return 100 + s.length * 10;
+    const tz = s.length - s.replace(/0+$/,'').length;
+    score += tz * 15;
+
+    // Divisibility hierarchy — how "round" does it feel?
+    if      (num % 1000000 === 0) score += 70;
+    else if (num % 500000 === 0)  score += 55;
+    else if (num % 100000 === 0)  score += 45;
+    else if (num % 50000 === 0)   score += 38;
+    else if (num % 25000 === 0)   score += 32;
+    else if (num % 10000 === 0)   score += 28;
+    else if (num % 5000 === 0)    score += 22;
+    else if (num % 2500 === 0)    score += 18;
+    else if (num % 1000 === 0)    score += 15;
+    else if (num % 500 === 0)     score += 10;
+    else if (num % 250 === 0)     score += 6;
+    else if (num % 100 === 0)     score += 3;
+    else if (num % 50 === 0)      score += 2;
+    else if (num % 10 === 0)      score += 1; // 410, 580 — filler, low score
+
+    // Single non-zero digit (5000, 3000000)
+    const digits = s.replace(/0+$/,'');
+    if (digits.length === 1 && tz >= 2) score += 25;
+    // Two leading digits with trailing zeros (25000, 12000)
+    else if (digits.length === 2 && tz >= 3) score += 15;
+
+    // Repdigit
+    if (s.length >= 3 && new Set(s).size === 1) score += 20 + s.length * 3;
+    // Palindrome (mountain bonus)
+    if (s === s.split('').reverse().join('') && s.length >= 3) {
+        score += 10;
+        const half = s.slice(0, Math.ceil(s.length / 2));
+        let isMountain = true;
+        for (let i = 1; i < half.length; i++) if (parseInt(half[i]) <= parseInt(half[i-1])) { isMountain = false; break; }
+        if (isMountain && s.length >= 5) score += 25;
+    }
+    if (FIB_SET.has(num)) score += 8;
+    // Powers of 2
+    if (POW2_SET.has(num)) {
+        const exp = Math.round(Math.log2(num));
+        score += exp >= 20 ? 50 : (exp >= 10 ? 25 : 12);
+    }
+    for (const c of Object.values(SCIENTIFIC_CONSTANTS)) if (c.numbers.includes(num)) { score += 12; break; }
+    // Alternating patterns (1212, 252525, 1515151515)
+    if (s.length >= 4) {
+        let alt = true; const d1=s[0],d2=s[1];
+        if (d1!==d2) { for(let i=0;i<s.length;i++){if(s[i]!==(i%2===0?d1:d2)){alt=false;break;}} }
+        else alt = false;
+        if (alt) score += 5 + s.length * 3; // 4-digit: 17, 6-digit: 23, 10-digit: 35
+    }
+    if ([888,8888,9999,5201314,88888,99999].includes(num)) score += 25;
+    else if ([88,99,108,168,520,1314,786].includes(num)) score += 15;
+    return score;
+}
+
+// --- Coherence filters ---
+function isPow10(n){if(n<10)return false;while(n>=10){if(n%10!==0)return false;n/=10;}return n===1;}
+function isRepdigit(n){const s=String(n);return s.length>=2&&new Set(s).size===1;}
+function isPalin(n){const s=String(n);return s.length>=3&&s===s.split('').reverse().join('');}
+
+function passesFilter(num, unitKey, mode) {
+    if (mode === 'none') return true; // NO FILTER — raw
+
+    const s = String(num);
+    const isRoundK = num%1000===0 || isPow10(num);
+    const isRep = isRepdigit(num);
+    const isPal = isPalin(num);
+    const isAlt8 = s.length>=8 && new Set(s).size===2;
+    const isAsianKey = [888,8888,88888,888888,8888888,9999,99999,999999,1314,5201314,520,168,108,786].includes(num);
+    const isPow2 = POW2_SET.has(num);
+    const isFibBig = FIB_SET.has(num) && s.length>=5;
+    const isSeqBig = s.length>=5 && ('123456789'.includes(s)||'987654321'.includes(s));
+    const isSci4 = Object.values(SCIENTIFIC_CONSTANTS).some(c=>c.numbers.includes(num)) && s.length>=4;
+
+    if (mode === 'old') {
+        // Current engine rules (original — many gaps)
+        if (unitKey==='seconds'||unitKey==='minutes') return isRoundK||isRep||(s.length>=8&&new Set(s).size===2)||[888,8888,88888,888888,8888888,9999,99999,999999,1314,5201314].includes(num);
+        if (unitKey==='hours') return num<=100||num%100===0||isPow10(num)||isRep;
+        if (unitKey==='weeks') return num<=100||num%100===0||isPow10(num);
+        if (unitKey==='months') return num<=12||num%50===0||isPow10(num)||[108,786,888,1008,1314].includes(num);
+        if (unitKey==='days') { if(num>1000&&num<10000&&num%1000>0&&num%1000<=5) return false; }
+        return true;
+    }
+
+    if (mode === 'new') {
+        // Loosened + denser rules
+        const isRound500 = num % 500 === 0;
+        const isRound250 = num % 250 === 0;
+        const isRound100 = num % 100 === 0;
+
+        if (unitKey==='seconds'||unitKey==='minutes') {
+            // Allow: round K, repdigit, palindrome, powers of 2, big Fibonacci, big sequential, science, Asian, round 100K+
+            return isRoundK||isRep||isPal||isPow2||isFibBig||isSeqBig||isSci4||isAsianKey||(s.length>=6&&new Set(s).size===2)||(num>=100000&&isRound100);
+        }
+        if (unitKey==='hours') {
+            // Allow: round 100, repdigit, palindrome, pow2, sequential, science
+            return num<=100||isRound100||isPow10(num)||isRep||isPal||isSeqBig||isPow2||isSci4;
+        }
+        if (unitKey==='weeks') {
+            // KEY FIX: weeks were way too restrictive. Allow round 100s, 250s, repdigits, palindromes, pow2
+            return num<=100||isRound100||isRound250||isPow10(num)||isRep||isPal||isPow2||isAsianKey;
+        }
+        if (unitKey==='months') {
+            // Allow round 25s (was 50s), cultural numbers, repdigits
+            return num<=12||num%25===0||isPow10(num)||isRep||isPal||[108,786,888,1008,1314].includes(num)||isAsianKey;
+        }
+        if (unitKey==='days') {
+            // All patterns pass except trivially-near-round (1001-1005 etc.)
+            if (num>1000&&num<50000&&num%1000>0&&num%1000<=5) return false;
+            return true;
+        }
+        return true;
+    }
+
+    return true;
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let currentFilterMode = 'new';
+let allResults = []; // flat array of all milestones in range
+let sortCol = 'day';
+let sortDir = 1;
+let activeUnits = new Set(['seconds','minutes','hours','days','weeks','months','years']);
+
+function setFilterMode(mode) {
+    currentFilterMode = mode;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    runAnalysis();
+}
+function showTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    if (btn) btn.classList.add('active');
+}
+function toggleUnit(unitKey) {
+    if (activeUnits.has(unitKey)) activeUnits.delete(unitKey); else activeUnits.add(unitKey);
+    renderFullTable();
+    document.querySelectorAll('.unit-pill').forEach(p => p.classList.toggle('active', activeUnits.has(p.dataset.unit)));
+}
+
+// ============================================================
+// ANALYSIS
+// ============================================================
+function runAnalysis() {
+    const birthdayStr = document.getElementById('birthday').value;
+    const ageYears = parseInt(document.getElementById('age-years').value)||34;
+    const rangeDays = parseInt(document.getElementById('range-days').value)||62;
+    const topN = parseInt(document.getElementById('top-n').value)||3;
+    if (!birthdayStr) return;
+
+    const birthday = new Date(birthdayStr+'T00:00:00');
+    const rangeStart = new Date(birthday);
+    rangeStart.setFullYear(rangeStart.getFullYear() + ageYears);
+
+    const masterSet = buildMasterSet();
+    allResults = [];
+
+    // Pre-compute: for each unit, find the relevant slice of masterSet
+    // masterSet is sorted, so we can binary-search the range
+    const rangeEndDate = new Date(rangeStart.getTime() + rangeDays * 86400000);
+    const birthdayMs = birthday.getTime();
+    const rangeStartMs = rangeStart.getTime();
+
+    for (const [unitKey, cfg] of Object.entries(TIME_UNITS)) {
+        const elapsedAtRangeStart = (rangeStartMs - birthdayMs) / cfg.ms;
+        const elapsedAtRangeEnd = ((rangeStartMs + rangeDays * 86400000) - birthdayMs) / cfg.ms;
+
+        // Binary search for first number > elapsedAtRangeStart
+        let lo = 0, hi = masterSet.length;
+        while (lo < hi) { const mid = (lo + hi) >> 1; if (masterSet[mid] <= elapsedAtRangeStart) lo = mid + 1; else hi = mid; }
+
+        for (let idx = lo; idx < masterSet.length; idx++) {
+            const num = masterSet[idx];
+            if (num > elapsedAtRangeEnd || num > cfg.max) break;
+            if (!passesFilter(num, unitKey, currentFilterMode)) continue;
+
+            // Calculate which day this falls on
+            const hitMs = birthdayMs + num * cfg.ms;
+            const dayOffset = Math.floor((hitMs - rangeStartMs) / 86400000);
+            if (dayOffset < 0 || dayOffset >= rangeDays) continue;
+
+            const dayStartMs = rangeStartMs + dayOffset * 86400000;
+            const hitDate = new Date(hitMs);
+            const rScore = roundnessScore(num);
+
+            allResults.push({
+                value: num,
+                unitKey,
+                unit: cfg.name,
+                unitFull: cfg.full,
+                type: classifyNum(num),
+                date: hitDate,
+                rScore,
+                day: dayOffset + 1,
+                dayDate: new Date(dayStartMs),
+                isPow2: POW2_SET.has(num),
+                isBigRound: rScore >= 80
+            });
+        }
+    }
+
+    // Stats
+    const elSec = Math.floor((rangeStart - birthday) / 1000);
+    document.getElementById('stats-area').innerHTML = `
+        <div class="stats-banner">
+            <div class="stat-item"><div class="stat-label">Age</div><div class="stat-value">${ageYears}y</div></div>
+            <div class="stat-item"><div class="stat-label">Seconds</div><div class="stat-value">${elSec.toLocaleString()}</div></div>
+            <div class="stat-item"><div class="stat-label">Days</div><div class="stat-value">${Math.floor(elSec/86400).toLocaleString()}</div></div>
+            <div class="stat-item"><div class="stat-label">Weeks</div><div class="stat-value">${Math.floor(elSec/604800).toLocaleString()}</div></div>
+            <div class="stat-item"><div class="stat-label">Master set</div><div class="stat-value">${masterSet.length.toLocaleString()}</div></div>
+            <div class="stat-item"><div class="stat-label">Results (${currentFilterMode})</div><div class="stat-value">${allResults.length.toLocaleString()}</div></div>
+            <div class="stat-item"><div class="stat-label">Filter</div><div class="stat-value" style="color:${currentFilterMode==='none'?'var(--red)':currentFilterMode==='new'?'var(--green)':'var(--orange)'}">${currentFilterMode==='none'?'OFF':currentFilterMode==='old'?'Current':'Proposed'}</div></div>
+        </div>
+    `;
+
+    // Check for 2^30
+    const pow2_30 = allResults.find(r => r.value === 1073741824);
+    if (pow2_30) {
+        document.getElementById('stats-area').innerHTML += `
+            <div class="callout"><strong>2<sup>30</sup> = 1,073,741,824 seconds</strong> lands on <strong>Day ${pow2_30.day}</strong> (${pow2_30.date.toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}) — rScore ${pow2_30.rScore}</div>
+        `;
+    }
+
+    // "Nearest misses" — for each unit, find the closest special numbers just outside the window
+    let missesHtml = '<h3 style="color:var(--orange);margin-top:12px;">Nearest misses per unit (just outside the ' + rangeDays + '-day window)</h3>';
+    missesHtml += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px;margin-bottom:16px;">';
+    for (const [unitKey, cfg] of Object.entries(TIME_UNITS)) {
+        const elStart = (rangeStartMs - birthdayMs) / cfg.ms;
+        const elEnd = ((rangeStartMs + rangeDays * 86400000) - birthdayMs) / cfg.ms;
+        // Next special number AFTER the window
+        const nextAfter = masterSet.find(n => n > elEnd && n <= cfg.max);
+        // Last special number BEFORE the window
+        let prevBefore = null;
+        for (let i = masterSet.length - 1; i >= 0; i--) {
+            if (masterSet[i] <= elStart && masterSet[i] <= cfg.max) { prevBefore = masterSet[i]; break; }
+        }
+        const hitsInRange = allResults.filter(r => r.unitKey === unitKey).length;
+
+        let nextInfo = 'none';
+        let nextDaysAway = '';
+        if (nextAfter) {
+            const daysToNext = ((nextAfter - elEnd) * cfg.ms) / 86400000;
+            nextDaysAway = '+' + Math.round(daysToNext) + 'd';
+            nextInfo = nextAfter.toLocaleString() + ' (' + classifyNum(nextAfter) + ')';
+        }
+        let prevInfo = 'none';
+        let prevDaysAgo = '';
+        if (prevBefore) {
+            const daysSincePrev = ((elStart - prevBefore) * cfg.ms) / 86400000;
+            prevDaysAgo = '-' + Math.round(daysSincePrev) + 'd ago';
+            prevInfo = prevBefore.toLocaleString() + ' (' + classifyNum(prevBefore) + ')';
+        }
+
+        const bgCol = hitsInRange > 0 ? 'rgba(74,222,128,0.06)' : 'rgba(248,113,113,0.06)';
+        missesHtml += `<div style="background:${bgCol};border:1px solid var(--border);border-radius:8px;padding:10px;font-size:0.8rem;">
+            <div style="font-weight:700;color:var(--gold);margin-bottom:4px;">${cfg.full} <span style="color:var(--muted);font-weight:400;">(${hitsInRange} in range, elapsed: ${Math.floor(elStart).toLocaleString()})</span></div>
+            <div style="color:var(--muted);">Last passed: <span style="color:var(--cyan)">${prevInfo}</span> <span style="color:var(--red)">${prevDaysAgo}</span></div>
+            <div style="color:var(--muted);">Next up: <span style="color:var(--cyan)">${nextInfo}</span> <span style="color:var(--green)">${nextDaysAway}</span></div>
+        </div>`;
+    }
+    missesHtml += '</div>';
+    document.getElementById('stats-area').innerHTML += missesHtml;
+
+    // Unit pills
+    const pillsEl = document.getElementById('unit-pills');
+    const unitCounts = {};
+    allResults.forEach(r => { unitCounts[r.unitKey] = (unitCounts[r.unitKey]||0) + 1; });
+    pillsEl.innerHTML = Object.entries(TIME_UNITS).map(([k,v]) =>
+        `<button class="unit-pill ${activeUnits.has(k)?'active':''}" data-unit="${k}" onclick="toggleUnit('${k}')">${v.full} (${unitCounts[k]||0})</button>`
+    ).join('');
+
+    renderFullTable();
+    renderDayCards(topN);
+    renderByUnit();
+}
+
+function renderFullTable() {
+    const filtered = allResults.filter(r => activeUnits.has(r.unitKey));
+    // Sort
+    const sorted = [...filtered].sort((a, b) => {
+        let va, vb;
+        switch(sortCol) {
+            case 'value': va=a.value; vb=b.value; break;
+            case 'unit': va=a.unitFull; vb=b.unitFull; return sortDir*(va<vb?-1:va>vb?1:0);
+            case 'type': va=a.type; vb=b.type; return sortDir*(va<vb?-1:va>vb?1:0);
+            case 'score': va=a.rScore; vb=b.rScore; break;
+            case 'date': va=a.date.getTime(); vb=b.date.getTime(); break;
+            case 'day': default: va=a.day*1000000+a.rScore; vb=b.day*1000000+b.rScore; break;
+        }
+        return sortDir * ((va||0) - (vb||0));
+    });
+
+    let html = `<div class="full-table-wrap"><table class="full-table">
+        <thead><tr>
+            <th onclick="sortTable('day')">Day ${sortArrow('day')}</th>
+            <th onclick="sortTable('value')">Number ${sortArrow('value')}</th>
+            <th onclick="sortTable('unit')">Unit ${sortArrow('unit')}</th>
+            <th onclick="sortTable('type')">Type ${sortArrow('type')}</th>
+            <th onclick="sortTable('date')">Date ${sortArrow('date')}</th>
+            <th onclick="sortTable('score')">rScore ${sortArrow('score')}</th>
+        </tr></thead><tbody>`;
+
+    sorted.forEach(r => {
+        const rowClass = r.isPow2 ? 'row-pow2' : (r.isBigRound ? 'row-star' : '');
+        html += `<tr class="${rowClass}">
+            <td class="ft-day">${r.day}</td>
+            <td class="ft-value">${r.value.toLocaleString()}${r.isPow2 ? ' <span class="ft-binary">[2^'+Math.round(Math.log2(r.value))+']</span>' : ''}</td>
+            <td class="ft-unit">${r.unitFull}</td>
+            <td class="ft-type">${r.type}</td>
+            <td class="ft-date">${r.date.toLocaleDateString('en',{month:'short',day:'numeric'})} ${r.date.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'})}</td>
+            <td class="ft-rscore">${r.rScore}</td>
+        </tr>`;
+    });
+
+    html += '</tbody></table></div>';
+    html += `<div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">${sorted.length} milestones shown. Blue rows = powers of 2. Gold rows = rScore &ge; 80.</div>`;
+    document.getElementById('full-table-area').innerHTML = html;
+}
+
+function sortTable(col) {
+    if (sortCol === col) sortDir *= -1;
+    else { sortCol = col; sortDir = col==='score' ? -1 : 1; }
+    renderFullTable();
+}
+function sortArrow(col) {
+    if (sortCol !== col) return '';
+    return `<span class="sort-arrow">${sortDir > 0 ? '&#9650;' : '&#9660;'}</span>`;
+}
+
+function renderDayCards(topN) {
+    const grid = document.getElementById('day-grid');
+    const byDay = {};
+    allResults.forEach(r => { if(!byDay[r.day]) byDay[r.day]=[]; byDay[r.day].push(r); });
+
+    let html = '';
+    const maxDay = parseInt(document.getElementById('range-days').value)||62;
+    for (let d = 1; d <= maxDay; d++) {
+        const dayMs = allResults.find(r=>r.day===d);
+        const dayDate = dayMs ? dayMs.dayDate : null;
+        const dayItems = (byDay[d]||[]).sort((a,b) => b.rScore - a.rScore).slice(0, topN);
+        const hasStar = dayItems.some(m => m.rScore >= 80 || m.isPow2);
+
+        html += `<div class="day-card ${hasStar?'has-star':''}">
+            <div class="day-header">
+                <div class="day-label">Day ${d} ${hasStar?'&#9733;':''}</div>
+                <div class="day-date">${dayDate?dayDate.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'}):''}</div>
+            </div>`;
+
+        if (dayItems.length === 0) {
+            html += '<div style="color:var(--muted);font-size:0.78rem;padding:2px 0">No milestones</div>';
+        } else {
+            dayItems.forEach((m, i) => {
+                html += `<div class="ms-row">
+                    <div class="ms-rank rank-${i+1}">${i+1}</div>
+                    <div class="ms-val">${m.value.toLocaleString()}</div>
+                    <div class="ms-unit">${m.unit}</div>
+                    <div class="ms-type">${m.type}</div>
+                    <div class="ms-sc">${m.rScore}</div>
+                </div>`;
+            });
+        }
+        html += '</div>';
+    }
+    grid.innerHTML = html;
+}
+
+function renderByUnit() {
+    const area = document.getElementById('by-unit-area');
+    let html = '';
+
+    for (const [unitKey, cfg] of Object.entries(TIME_UNITS)) {
+        const unitMs = allResults.filter(r => r.unitKey === unitKey).sort((a,b) => b.rScore - a.rScore);
+        html += `<h3>${cfg.full} (${unitMs.length} milestones in range)</h3>`;
+        if (unitMs.length === 0) { html += '<p style="color:var(--muted);font-size:0.85rem">None</p>'; continue; }
+
+        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px;margin-bottom:16px;">';
+        unitMs.slice(0, 30).forEach(m => {
+            const bg = m.isPow2 ? 'rgba(96,165,250,0.08)' : m.isBigRound ? 'rgba(212,184,118,0.06)' : 'var(--surface)';
+            html += `<div style="background:${bg};border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:0.82rem;display:flex;justify-content:space-between;align-items:center;">
+                <div><span style="color:var(--cyan);font-weight:700;font-family:monospace">${m.value.toLocaleString()}</span>
+                ${m.isPow2?'<span style="color:var(--blue);font-size:0.72rem"> [2^'+Math.round(Math.log2(m.value))+']</span>':''}
+                <span style="color:var(--muted);font-size:0.75rem;margin-left:6px">${m.type}</span></div>
+                <div style="text-align:right"><span style="color:var(--gold);font-size:0.75rem">Day ${m.day}</span> <span style="color:var(--green);font-family:monospace;font-size:0.75rem">${m.rScore}</span></div>
+            </div>`;
+        });
+        html += '</div>';
+    }
+    area.innerHTML = html;
+}
+
+// Wrap runAnalysis with error reporting
+const _origRunAnalysis = runAnalysis;
+runAnalysis = function() {
+    try {
+        _origRunAnalysis();
+    } catch(err) {
+        console.error('runAnalysis error:', err);
+        const el = document.getElementById('stats-area');
+        if (el) el.innerHTML = '<div style="background:#2a1010;border:1px solid #f87171;border-radius:8px;padding:14px;color:#f87171;font-size:0.9rem;"><strong>Error:</strong> ' + err.message + '<br><pre style="margin-top:8px;font-size:0.78rem;color:#fb923c;white-space:pre-wrap">' + err.stack + '</pre></div>';
+    }
+};
+
+// Auto-run — safe for both pre- and post-DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runAnalysis);
+} else {
+    // DOM already ready — run immediately (setTimeout to ensure layout is settled)
+    setTimeout(runAnalysis, 0);
+}
+</script>
+</body>
+</html>

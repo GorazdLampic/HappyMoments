@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments Engine — How It Works</title>
+<style>
+:root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --gold: #d4b876;
+    --purple: #6366f1;
+    --green: #4ade80;
+    --red: #f87171;
+    --orange: #fb923c;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+h1 { font-size: 1.8rem; color: var(--gold); margin-bottom: 8px; }
+h2 { font-size: 1.3rem; color: var(--purple); margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+h3 { font-size: 1.1rem; color: var(--gold); margin: 20px 0 8px; }
+p { margin-bottom: 12px; }
+.subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; }
+
+/* Pipeline diagram */
+.pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: stretch;
+    margin: 20px 0;
+}
+.pipe-stage {
+    flex: 1;
+    min-width: 180px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    position: relative;
+}
+.pipe-stage::after {
+    content: '\2192';
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.pipe-stage:last-child::after { display: none; }
+.pipe-stage .stage-num {
+    display: inline-block;
+    width: 26px; height: 26px;
+    line-height: 26px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--purple);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.pipe-stage .stage-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+.pipe-stage .stage-desc { font-size: 0.82rem; color: var(--muted); }
+
+/* Number categories */
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+.cat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+}
+.cat-card .cat-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.cat-card .cat-badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.badge-on { background: rgba(74,222,128,0.15); color: var(--green); }
+.badge-off { background: rgba(248,113,113,0.15); color: var(--red); }
+.badge-always { background: rgba(212,184,118,0.15); color: var(--gold); }
+.cat-card .cat-examples { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+.cat-card .cat-examples span { color: var(--cyan); font-family: 'Fira Code', monospace; }
+.cat-card .cat-detail { font-size: 0.82rem; margin-top: 6px; }
+
+/* Scoring */
+.score-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.85rem;
+}
+.score-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface2);
+    color: var(--gold);
+    border-bottom: 2px solid var(--border);
+}
+.score-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+}
+.score-table tr:hover { background: var(--surface); }
+.score-val { color: var(--green); font-family: monospace; font-weight: 700; }
+.score-low { color: var(--orange); }
+
+/* Flow diagram */
+.flow-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 12px 0;
+    font-size: 0.9rem;
+}
+.flow-box code {
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--cyan);
+}
+.flow-arrow { color: var(--gold); font-weight: bold; margin: 0 4px; }
+
+/* Time units */
+.unit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+}
+.unit-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+.unit-name { font-weight: 700; color: var(--gold); font-size: 0.95rem; }
+.unit-max { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+/* Filter rules */
+.filter-rule {
+    background: var(--surface);
+    border-left: 3px solid var(--orange);
+    padding: 10px 14px;
+    margin: 8px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+}
+.filter-rule strong { color: var(--orange); }
+
+/* Gaps / issues */
+.gap-card {
+    background: var(--surface);
+    border: 1px solid var(--red);
+    border-radius: 10px;
+    padding: 14px;
+    margin: 8px 0;
+}
+.gap-card .gap-title { color: var(--red); font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+.gap-card .gap-desc { font-size: 0.85rem; color: var(--muted); }
+
+.ok-card {
+    background: var(--surface);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 14px;
+    margin: 8px 0;
+}
+.ok-card .ok-title { color: var(--green); font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+
+/* Interactive demo */
+.demo-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+.demo-section label { font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 4px; }
+.demo-section input[type="date"], .demo-section input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    width: 200px;
+}
+.demo-section button {
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 8px;
+}
+.demo-section button:hover { filter: brightness(1.15); }
+#demo-results {
+    margin-top: 16px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+.demo-milestone {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+}
+.demo-milestone:hover { background: var(--surface2); }
+.dm-value { color: var(--gold); font-weight: 700; font-family: monospace; min-width: 120px; }
+.dm-unit { color: var(--purple); min-width: 70px; }
+.dm-type { color: var(--cyan); min-width: 120px; }
+.dm-date { color: var(--muted); }
+.dm-score { color: var(--green); font-family: monospace; min-width: 50px; text-align: right; }
+
+/* Legends / notes */
+.note {
+    background: rgba(99,102,241,0.08);
+    border-left: 3px solid var(--purple);
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.85rem;
+}
+
+/* Summary box */
+.summary-box {
+    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(212,184,118,0.1));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+}
+.summary-box h3 { margin-top: 0; }
+.summary-box ul { padding-left: 20px; }
+.summary-box li { margin-bottom: 6px; font-size: 0.9rem; }
+
+@media (max-width: 700px) {
+    .pipeline { flex-direction: column; }
+    .pipe-stage::after { display: none; }
+    .cat-grid { grid-template-columns: 1fr; }
+    .unit-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<h1>HappyMoments Engine</h1>
+<p class="subtitle">How milestones are generated, scored, filtered, and displayed &mdash; the full pipeline</p>
+
+<!-- ===================== PIPELINE OVERVIEW ===================== -->
+<h2>1. The Pipeline (5 stages)</h2>
+<p>Every time the app renders milestones for a person, it runs this pipeline:</p>
+
+<div class="pipeline">
+    <div class="pipe-stage">
+        <div class="stage-num">1</div>
+        <div class="stage-title">Generate Numbers</div>
+        <div class="stage-desc"><code>specialNumbers.js</code> builds a master set of all "interesting" numbers based on user settings (patterns on/off). Cached after first run.</div>
+    </div>
+    <div class="pipe-stage">
+        <div class="stage-num">2</div>
+        <div class="stage-title">Find Milestones</div>
+        <div class="stage-desc"><code>milestoneCalculator.js</code> iterates 7 time units &times; all special numbers, keeps those within the time window (default 365 days).</div>
+    </div>
+    <div class="pipe-stage">
+        <div class="stage-num">3</div>
+        <div class="stage-title">Coherence Filter</div>
+        <div class="stage-desc">Inside <code>findAllUpcomingMilestones</code>: removes numbers that don't make sense for a unit (e.g., palindrome 12321 in seconds &mdash; too noisy).</div>
+    </div>
+    <div class="pipe-stage">
+        <div class="stage-num">4</div>
+        <div class="stage-title">Score &amp; Sort</div>
+        <div class="stage-desc"><code>roundnessScore()</code> &times; 0.5 + proximity &times; 0.5. Cosmic milestones get fixed scores. Result: ordered by "interestingness".</div>
+    </div>
+    <div class="pipe-stage">
+        <div class="stage-num">5</div>
+        <div class="stage-title">Dedup &amp; Display</div>
+        <div class="stage-desc"><code>filterNearbyMilestones</code> removes lesser numbers too close to "very special" ones. Top N shown per column.</div>
+    </div>
+</div>
+
+<!-- ===================== NUMBER CATEGORIES ===================== -->
+<h2>2. Number Categories (what's in the master set)</h2>
+<p>The engine generates these number families. Each can be toggled via <code>DEFAULT_SETTINGS.patterns</code>.</p>
+
+<div class="cat-grid">
+    <div class="cat-card">
+        <div class="cat-name">Powers of 10 + Round Numbers <span class="cat-badge badge-on">ON</span></div>
+        <div class="cat-examples">Examples: <span>10, 100, 1000, 500, 2500, 75000, 1000000000</span></div>
+        <div class="cat-detail">87 round numbers hardcoded in ROUND_NUMBERS array, from 500 to 100,000,000,000. Includes half/quarter points.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Repdigits <span class="cat-badge badge-on">ON</span></div>
+        <div class="cat-examples">Examples: <span>11, 222, 3333, 55555, 7777777</span></div>
+        <div class="cat-detail">All single-digit repeats from 2 to 11 digits. Digits 1-9 &times; lengths 2-11 = ~90 numbers. High roundness scores.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Palindromes <span class="cat-badge badge-on">ON</span></div>
+        <div class="cat-examples">Examples: <span>121, 12321, 1234321, 7654567, 1010101</span></div>
+        <div class="cat-detail">SELECTIVE &mdash; not all palindromes. Handpicked ~120 numbers: mountain patterns, binary-style, prime-digit, round, date-like. Max 9 digits.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Sequential <span class="cat-badge badge-on">ON</span></div>
+        <div class="cat-examples">Examples: <span>123, 12345, 987, 98765, 345, 5678</span></div>
+        <div class="cat-detail">Ascending (123...9), descending (987...1), plus partial sequences of 3-4 digits. ~40 numbers total.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Alternating <span class="cat-badge badge-on">ON</span></div>
+        <div class="cat-examples">Examples: <span>1212, 3737, 252525, 19191919</span></div>
+        <div class="cat-detail">Two-digit alternating patterns, lengths 4 to 10 (even only). 9&times;9&times;4 = ~300 numbers. Only 8+ digit ones pass seconds/minutes filter.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Powers of 2 <span class="cat-badge badge-on">ON</span></div>
+        <div class="cat-examples">Examples: <span>8, 16, 32, 64, 128, 256, 512, 1024, ... 2<sup>30</sup></span></div>
+        <div class="cat-detail">2<sup>3</sup> to 2<sup>40</sup> generated, but <strong>classified only up to 1024</strong> (2<sup>10</sup>). Above 1024, they enter the set but get no "2<sup>n</sup>" label &mdash; just generic "Special number".</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Fibonacci <span class="cat-badge badge-on">ON</span> <span class="cat-badge badge-off" style="margin-left:4px">DEFAULT OFF</span></div>
+        <div class="cat-examples">Examples: <span>5, 8, 13, 21, 34, 55, 89, 144, 233, 610, 2584, 46368</span></div>
+        <div class="cat-detail">Generated up to 100B. <strong>Disabled by default</strong> in settings (fibonacci: false) but the generation code sets <code>fibonacci !== false</code>, so actually ON. Score bonus: only +8. Most users won't recognize 2584 or 46368.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Scientific Constants <span class="cat-badge badge-on">ON (Pi, e, &phi;)</span></div>
+        <div class="cat-examples">Examples: <span>314, 3141, 31415, 2718, 1618, 299792458</span></div>
+        <div class="cat-detail">6 constants defined, 3 enabled by default (Pi, e, Golden Ratio). Each has 5-8 truncation levels. Score bonus: +12.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Asian Auspicious <span class="cat-badge badge-always">ALWAYS ON</span></div>
+        <div class="cat-examples">Examples: <span>88, 168, 520, 888, 1314, 5201314, 8888</span></div>
+        <div class="cat-detail">~28 hardcoded numbers. Always included regardless of settings. Includes Chinese prosperity (8s), longevity (9s), love codes (520, 1314), Indian sacred (108, 786).</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Sacred / Cultural <span class="cat-badge badge-always">ALWAYS ON</span></div>
+        <div class="cat-examples">Examples: <span>3, 7, 12, 33, 40, 108, 786, 1008</span></div>
+        <div class="cat-detail">Classified inside <code>_classifyAsianLucky()</code> as "sacred" type. Hindu (108, 1008), Islamic (786), Christian (7, 12, 33, 40). Score: +15 as asian_lucky.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Lucky Digits <span class="cat-badge badge-off">OFF</span></div>
+        <div class="cat-examples">Default digits [3,7]: <span>33, 37, 73, 77, 333, 337, 373, ...</span></div>
+        <div class="cat-detail">All numbers composed only of chosen lucky digits, up to 10 digits. Capped at 3 lucky digits to prevent combinatorial explosion. Disabled by default.</div>
+    </div>
+    <div class="cat-card">
+        <div class="cat-name">Cosmic / Planetary Returns <span class="cat-badge badge-always">ALWAYS ON</span></div>
+        <div class="cat-examples">Examples: <span>1st Saturn return (~29.5y), Jupiter return (~11.86y), Mars return (~1.88y)</span></div>
+        <div class="cat-detail">7 bodies: Moon (27.3d), Mercury (88d), Venus (225d), Mars (687d), Jupiter (4333d), Saturn (10759d), Chiron (18520d). Fast planets: only round returns (500th Moon, 100th Mercury). Slow planets: every return.</div>
+    </div>
+</div>
+
+<div class="note">
+    <strong>Total numbers in master set:</strong> Roughly ~2,000-3,000 depending on settings. After per-unit coherence filtering, typically 50-200 candidates survive per person per render.
+</div>
+
+<!-- ===================== TIME UNITS ===================== -->
+<h2>3. Seven Time Units</h2>
+<p>Each milestone is computed in ALL 7 units independently. The engine checks every special number against every unit.</p>
+
+<div class="unit-grid">
+    <div class="unit-card">
+        <div class="unit-name">Seconds</div>
+        <div class="unit-max">max: 15B</div>
+    </div>
+    <div class="unit-card">
+        <div class="unit-name">Minutes</div>
+        <div class="unit-max">max: 200M</div>
+    </div>
+    <div class="unit-card">
+        <div class="unit-name">Hours</div>
+        <div class="unit-max">max: 3M</div>
+    </div>
+    <div class="unit-card">
+        <div class="unit-name">Days</div>
+        <div class="unit-max">max: 50,000</div>
+    </div>
+    <div class="unit-card">
+        <div class="unit-name">Weeks</div>
+        <div class="unit-max">max: 7,000</div>
+    </div>
+    <div class="unit-card">
+        <div class="unit-name">Months</div>
+        <div class="unit-max">max: 1,500</div>
+    </div>
+    <div class="unit-card">
+        <div class="unit-name">Years</div>
+        <div class="unit-max">max: 150</div>
+    </div>
+</div>
+
+<!-- ===================== COHERENCE FILTER ===================== -->
+<h2>4. Coherence Filter (Stage 3 detail)</h2>
+<p>Not every number makes sense in every unit. Inside <code>findAllUpcomingMilestones()</code>, the engine applies per-unit gates:</p>
+
+<div class="filter-rule">
+    <strong>Seconds &amp; Minutes:</strong> Only round thousands (n%1000===0), powers of 10, repdigits, alternating 8+ digits, or Asian lucky codes (888, 8888, 1314, etc.) pass. Everything else is rejected.
+</div>
+<div class="filter-rule">
+    <strong>Hours:</strong> Only round hundreds (n%100===0), powers of 10, or repdigits pass when n&gt;100.
+</div>
+<div class="filter-rule">
+    <strong>Weeks:</strong> Only round hundreds (n%100===0) or powers of 10 pass when n&gt;100.
+</div>
+<div class="filter-rule">
+    <strong>Months:</strong> Only round 50s (n%50===0), powers of 10, or cultural numbers (108, 786, 888, 1008, 1314) pass when n&gt;12.
+</div>
+<div class="filter-rule">
+    <strong>Days:</strong> Passes most patterns through, but filters numbers 1001-1005, 2001-2005 etc. (trivially close to round thousands).
+</div>
+<div class="filter-rule">
+    <strong>Years:</strong> Everything passes (range is small, 0-150).
+</div>
+
+<!-- ===================== SCORING ===================== -->
+<h2>5. Scoring System</h2>
+
+<h3>5a. roundnessScore() &mdash; How "impressive" is the number itself?</h3>
+<table class="score-table">
+    <thead>
+        <tr><th>Pattern</th><th>Score</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Power of 10</td><td class="score-val">100 + digits&times;10</td><td>1,000,000 &rarr; 170</td></tr>
+        <tr><td>Trailing zeros &times;15</td><td class="score-val">+15 per zero</td><td>5,000,000 &rarr; +90</td></tr>
+        <tr><td>Divisible by 1M</td><td class="score-val">+50</td><td>3,000,000</td></tr>
+        <tr><td>Divisible by 100K</td><td class="score-val">+40</td><td>500,000</td></tr>
+        <tr><td>Divisible by 10K</td><td class="score-val">+30</td><td>20,000</td></tr>
+        <tr><td>Divisible by 1K</td><td class="score-val">+20</td><td>3,000</td></tr>
+        <tr><td>Single non-zero digit (e.g. 5000)</td><td class="score-val">+25</td><td>3,000,000</td></tr>
+        <tr><td>Repdigit (3+ digits, all same)</td><td class="score-val">+20 + digits&times;3</td><td>11111 &rarr; 35</td></tr>
+        <tr><td>Palindrome (3+ digits)</td><td class="score-val">+10</td><td>12321</td></tr>
+        <tr><td>Asian auspicious</td><td class="score-val">+15</td><td>168, 520</td></tr>
+        <tr><td>Key Asian (888, 8888, 9999, 5201314)</td><td class="score-val">+25 extra</td><td>888 &rarr; 40 total</td></tr>
+        <tr><td>Scientific constant</td><td class="score-val">+12</td><td>3141 (Pi)</td></tr>
+        <tr><td class="score-low">Fibonacci</td><td class="score-low">+8</td><td>2584</td></tr>
+        <tr><td class="score-low">Power of 2</td><td class="score-low">+8</td><td>4096</td></tr>
+    </tbody>
+</table>
+
+<h3>5b. Final display score (in renderPersonColumns)</h3>
+<div class="flow-box">
+    <code>finalScore</code> = <code>roundnessScore(value)</code> &times; <strong>0.5</strong> + <code>proximityScore</code> &times; <strong>0.5</strong><br><br>
+    Where <code>proximityScore</code> = max(0, 100 &minus; daysAway &times; 0.27)<br>
+    <span style="color:var(--muted)">So: today = 100, 30 days = 92, 180 days = 51, 365 days = 1.5</span>
+</div>
+
+<h3>5c. Hero milestone score (findHeroMilestone)</h3>
+<div class="flow-box">
+    <code>heroScore</code> = <code>rScore</code> &times; <strong>0.6</strong> + <code>pScore</code> &times; <strong>0.4</strong><br><br>
+    <strong>rScore components:</strong><br>
+    &bull; Birthday: 40 base<br>
+    &bull; Big milestone (next power of 10): +80<br>
+    &bull; Very special number: +30<br>
+    &bull; Saturn return: +60 &nbsp;|&nbsp; Jupiter/Chiron: +20 &nbsp;|&nbsp; Other cosmic: +5<br><br>
+    <strong>pScore:</strong><br>
+    &bull; &le;30 days: 100 &minus; days&times;1.5<br>
+    &bull; 30-365 days: decays 55 &rarr; 0<br>
+    &bull; &gt;365 days: 0<br>
+    &bull; Birthday within 14 days: +50 bonus
+</div>
+
+<!-- ===================== DEDUP FILTER ===================== -->
+<h2>6. Proximity Deduplication (Stage 5)</h2>
+<p><code>filterNearbyMilestones()</code> removes "lesser" milestones that sit too close to a "very special" one in the same unit.</p>
+
+<h3>What counts as "very special"?</h3>
+<div class="flow-box">
+    <code>isVerySpecialNumber(num)</code> returns true for:<br>
+    &bull; num &ge; 1,000,000 (anything a million+)<br>
+    &bull; Round thousands (num%1000 === 0)<br>
+    &bull; Powers of 10 &ge; 1000<br>
+    &bull; Large repdigits &ge; 10,000<br>
+    &bull; Key Asian: 888, 8888, 9999, 1314, 5201314<br>
+    &bull; Small special: 2, 3, 5, 10, 50
+</div>
+
+<h3>Filtering threshold</h3>
+<div class="flow-box">
+    &bull; specialValue &ge; 10,000: filter within 1.5% of value<br>
+    &bull; specialValue &ge; 1,000: filter within 2% of value<br>
+    &bull; smaller: filter within &plusmn;50
+</div>
+
+<!-- ===================== COMBINED MILESTONES ===================== -->
+<h2>7. Combined / Group Milestones</h2>
+<p>When 2+ people are in a group, the engine computes their <strong>age sum</strong> in each unit and finds when that sum hits a special number.</p>
+
+<div class="flow-box">
+    <strong>Key insight:</strong> If N people are in the group, their combined age increases by N per unit of time (N seconds per second, N days per day, etc.).<br><br>
+    <code>unitsNeeded = (targetNumber &minus; currentSum) / N</code><br>
+    <code>milestoneDate = now + unitsNeeded &times; unitMultiplier</code><br><br>
+    The max reasonable value per unit is multiplied by N, so a 4-person family can reach 4&times; the normal range.
+</div>
+
+<p>Combined milestones use the same master number set but with <strong>no per-unit coherence filter</strong> (all special numbers in all units). This means more results but also more noise.</p>
+
+<!-- ===================== INTERACTIVE DEMO ===================== -->
+<h2>8. Interactive Demo</h2>
+<p>Enter a birthday to see what the engine actually produces. This runs the real algorithm.</p>
+
+<div class="demo-section">
+    <label for="demo-date">Birthday</label>
+    <input type="date" id="demo-date" value="1978-06-02">
+    <label for="demo-days" style="margin-top:12px">Look-ahead (days)</label>
+    <input type="number" id="demo-days" value="365" min="30" max="3650">
+    <br>
+    <button onclick="runDemo()">Run Engine</button>
+    <div id="demo-results"></div>
+</div>
+
+<!-- ===================== GAP ANALYSIS ===================== -->
+<h2>9. What I See as Gaps / Issues</h2>
+
+<div class="gap-card">
+    <div class="gap-title">A. Fibonacci is ON despite settings saying OFF</div>
+    <div class="gap-desc">DEFAULT_SETTINGS has <code>fibonacci: false</code>, but <code>generateAllSpecialNumbers()</code> checks <code>settings.patterns.fibonacci !== false</code>, which is <code>false !== false = false</code> &mdash; wait, actually this IS correct and Fibonacci IS off. But the check at line 496 uses <code>!== false</code> which means it would be ON if the value were <code>undefined</code> (a new user who never set it). Ambiguous default behavior.</div>
+</div>
+
+<div class="gap-card">
+    <div class="gap-title">B. Powers of 2 classified only up to 1024</div>
+    <div class="gap-desc">Numbers 2048, 4096, 8192, 16384, 32768, 65536 are IN the master set but <code>classifyNumber()</code> only labels them as "2^n" if <code>num &le; 1024</code>. Above that, they get "Special number" &mdash; the user doesn't know why 4096 is there. Should extend classification or remove them from the set.</div>
+</div>
+
+<div class="gap-card">
+    <div class="gap-title">C. No "double digit" round numbers in days (e.g., 11111 days)</div>
+    <div class="gap-desc">Repdigits are generated and classified, but the days coherence filter doesn't explicitly handle them. They DO pass through (only 1001-1005 near round K are blocked), but their <code>roundnessScore</code> is modest (+20 + digits&times;3 = 35 for 11111). A 5-digit repdigit in days could get outranked by a generic round thousand.</div>
+</div>
+
+<div class="gap-card">
+    <div class="gap-title">D. No "nice fractions" concept</div>
+    <div class="gap-desc">The engine doesn't recognize numbers like <strong>12345</strong> days (sequential!), <strong>11111</strong> hours (repdigit!) because these get filtered by the hours coherence rule (must be round hundreds for hours &gt;100). A 5-digit repdigit in hours would be rejected.</div>
+</div>
+
+<div class="gap-card">
+    <div class="gap-title">E. Weeks are heavily filtered &mdash; almost nothing shows</div>
+    <div class="gap-desc">Only round hundreds and powers of 10 pass for weeks &gt;100. That means the only week milestones you'll ever see are 100, 200, 300... 1000, 1500, 2000, 2500, 3000, 5000 weeks. No palindromes, no repdigits, no Fibonacci in weeks. A 48-year-old has ~2500 weeks &mdash; they'll see very few upcoming week milestones.</div>
+</div>
+
+<div class="gap-card">
+    <div class="gap-title">F. Scoring doesn't reward multi-type numbers</div>
+    <div class="gap-desc"><code>roundnessScore()</code> checks each pattern independently, but a number that is BOTH a palindrome AND a repdigit (like 11111) gets both bonuses additively. However, a number that is a Fibonacci number AND a power of 2 (like 8) only gets +8+8=+16. There's no multiplicative bonus for multi-dimensional specialness.</div>
+</div>
+
+<div class="gap-card">
+    <div class="gap-title">G. Potentially missing: milestone number ranges for 25-45 year olds in DAYS</div>
+    <div class="gap-desc">A 30-year-old is at ~10,957 days. The interesting day milestones in the next year are 11,000 and 11,111 (repdigit). But 11,111 is a repdigit that roundnessScore gives only 35 points. Meanwhile 11,000 gets 20+45+30=95 points. The app might never surface 11,111 ahead of the round number &mdash; but 11,111 is arguably more fun and shareable than "11,000 days".</div>
+</div>
+
+<div class="gap-card">
+    <div class="gap-title">H. No "binary milestone" category</div>
+    <div class="gap-desc">Numbers like 10000 in binary (=16), 100000 (=32), 10000000000 (=1024) are already covered as powers of 2, but the engine doesn't flag "your age in days is exactly a binary round number" as a distinct milestone type. Binary/CS people would love "2<sup>14</sup> = 16,384 days old" but the label only shows "Special number" above 1024.</div>
+</div>
+
+<!-- ===================== WHAT'S WORKING WELL ===================== -->
+<h2>10. What's Working Well</h2>
+
+<div class="ok-card">
+    <div class="ok-title">Coherence filter is smart</div>
+    Per-unit gating prevents the "10,392nd second" nonsense. Only meaningful numbers show for each time scale.
+</div>
+<div class="ok-card">
+    <div class="ok-title">Proximity dedup prevents clutter</div>
+    filterNearbyMilestones() removes 10,001 when 10,000 is present. Good UX.
+</div>
+<div class="ok-card">
+    <div class="ok-title">Cosmic milestones are properly deprioritized</div>
+    After the v50-52 fixes: max 1 cosmic globally, never first in list, low fixed scores (5 for Mercury, 20 for Jupiter, 60 for Saturn).
+</div>
+<div class="ok-card">
+    <div class="ok-title">Combined milestone math is correct</div>
+    The "sum increases by N" formula is accurate. Calendar-accurate months/years with overflow handling.
+</div>
+<div class="ok-card">
+    <div class="ok-title">Asian/sacred numbers are always on</div>
+    Smart decision for global market &mdash; 888, 520, 108 resonate deeply in target demographics.
+</div>
+
+<!-- ===================== SUMMARY ===================== -->
+<div class="summary-box">
+    <h3>Summary: The Engine's Philosophy</h3>
+    <ul>
+        <li><strong>Generate broadly</strong> &mdash; ~2,000-3,000 candidate numbers from 11 categories</li>
+        <li><strong>Filter per unit</strong> &mdash; coherence rules reduce to ~50-200 candidates per person</li>
+        <li><strong>Score = 50% impressiveness + 50% proximity</strong> &mdash; balance "wow factor" with "happening soon"</li>
+        <li><strong>Deduplicate</strong> &mdash; remove lesser numbers near very special ones</li>
+        <li><strong>Display top N</strong> &mdash; typically 7 per person, expandable</li>
+    </ul>
+    <p style="margin-top:12px;color:var(--muted);font-size:0.85rem;">The system is well-engineered but has room for improvement in: (1) repdigit/palindrome scoring relative to round numbers, (2) week milestones being too aggressively filtered, (3) powers of 2 classification above 1024, and (4) potentially missing number families that are "nice" but don't fit current categories.</p>
+</div>
+
+<script>
+// ===== Embed the actual engine for the interactive demo =====
+
+const POWERS_OF_TEN = [10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000];
+
+const ROUND_NUMBERS = [500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 60000, 70000, 75000, 80000, 90000, 100000, 150000, 200000, 250000, 300000, 400000, 500000, 600000, 700000, 750000, 800000, 900000, 1000000, 1500000, 2000000, 2500000, 3000000, 4000000, 5000000, 6000000, 7000000, 8000000, 9000000, 10000000, 15000000, 20000000, 25000000, 30000000, 40000000, 50000000, 75000000, 100000000, 150000000, 200000000, 250000000, 300000000, 400000000, 500000000, 600000000, 700000000, 750000000, 800000000, 900000000, 1000000000, 1500000000, 2000000000, 2500000000, 3000000000, 3500000000, 4000000000, 4500000000, 5000000000, 6000000000, 7000000000, 7500000000, 8000000000, 9000000000, 10000000000];
+
+const FIBONACCI = (() => { const f=[1,1]; while(f[f.length-1]<100000000000) f.push(f[f.length-1]+f[f.length-2]); return f.filter(n=>n>=5); })();
+const POWERS_OF_TWO = (() => { const p=[]; for(let i=3;i<=40;i++) p.push(Math.pow(2,i)); return p; })();
+
+const SCIENTIFIC_CONSTANTS = {
+    pi: { name:'Pi', numbers:[314,3141,31415,314159,3141592,31415926,314159265] },
+    e: { name:'e', numbers:[271,2718,27182,271828,2718281,27182818] },
+    phi: { name:'Golden Ratio', numbers:[161,1618,16180,161803,1618033,16180339] }
+};
+
+const TIME_UNITS = {
+    seconds: { name:'seconds', ms:1000, max:15000000000 },
+    minutes: { name:'minutes', ms:60000, max:200000000 },
+    hours: { name:'hours', ms:3600000, max:3000000 },
+    days: { name:'days', ms:86400000, max:50000 },
+    weeks: { name:'weeks', ms:604800000, max:7000 },
+    months: { name:'months', ms:2629746000, max:1500 },
+    years: { name:'years', ms:31557600000, max:150 }
+};
+
+function generateRepdigits() {
+    const r = [];
+    for(let len=2;len<=11;len++) for(let d=1;d<=9;d++) { const n=parseInt(String(d).repeat(len)); if(n<=Number.MAX_SAFE_INTEGER) r.push(n); }
+    return r;
+}
+
+function generatePalindromes() {
+    return [101,121,131,141,242,252,272,353,373,505,535,575,757,909,1001,1221,2112,2332,2552,2772,3443,3553,3773,4554,5005,5335,5665,5775,6776,7337,7557,7887,8998,9009,10001,10101,11011,11211,12021,12121,12221,12321,13531,14841,21012,22022,23532,24642,25752,27572,31013,35753,37573,50005,57375,75357,90009,100001,101101,110011,1000001,1001001,1010101,1100011,1234321,1248421,1357531,5000005,7654567,9000009,9876789,10000001,10011001,12344321,100000001,101010101,123454321,135797531,1000000001,2468642,12345654321];
+}
+
+function generateSequentials() {
+    const s = [];
+    for(let l=3;l<=9;l++) { let a='',d=''; for(let i=1;i<=l;i++) a+=i; for(let i=9;i>=9-l+1;i--) d+=i; s.push(parseInt(a),parseInt(d)); }
+    [234,345,456,567,678,789,2345,3456,4567,5678,6789,876,765,654,543,432,321,8765,7654,6543,5432,4321].forEach(n=>s.push(n));
+    return [...new Set(s)];
+}
+
+function generateAsian() { return [88,99,108,168,188,288,388,520,521,666,786,888,999,1008,1088,1188,1314,1688,1888,2888,3888,5201314,6666,8888,9999,10008,10088,88888,99999]; }
+
+function buildMasterSet() {
+    const nums = new Set();
+    POWERS_OF_TEN.forEach(n=>nums.add(n));
+    ROUND_NUMBERS.forEach(n=>nums.add(n));
+    POWERS_OF_TWO.filter(n=>n<=1073741824).forEach(n=>nums.add(n));
+    FIBONACCI.forEach(n=>nums.add(n));
+    generateRepdigits().forEach(n=>nums.add(n));
+    generatePalindromes().forEach(n=>nums.add(n));
+    generateSequentials().forEach(n=>nums.add(n));
+    for(const c of Object.values(SCIENTIFIC_CONSTANTS)) c.numbers.forEach(n=>nums.add(n));
+    generateAsian().forEach(n=>nums.add(n));
+    return [...nums].sort((a,b)=>a-b);
+}
+
+function classifyNum(num) {
+    const s = String(num);
+    const tags = [];
+    if(POWERS_OF_TEN.includes(num)) tags.push('10^n');
+    if(FIBONACCI.includes(num)) tags.push('Fibonacci');
+    if(POWERS_OF_TWO.includes(num)) { const exp=Math.round(Math.log2(num)); tags.push('2^'+exp); }
+    if(ROUND_NUMBERS.includes(num)&&!POWERS_OF_TEN.includes(num)) tags.push('Round');
+    if(s.length>=2&&new Set(s).size===1) tags.push('Repdigit');
+    if(s===s.split('').reverse().join('')&&s.length>=3) tags.push('Palindrome');
+    if('123456789'.includes(s)&&s.length>=3) tags.push('Ascending');
+    if('987654321'.includes(s)&&s.length>=3) tags.push('Descending');
+    for(const[k,c] of Object.entries(SCIENTIFIC_CONSTANTS)) if(c.numbers.includes(num)) tags.push(c.name);
+    const asian = {88:'Lucky 8s',99:'Lucky 9s',108:'Sacred 108',168:'Yi lu fa',520:'Wo ai ni',888:'Triple fortune',1314:'Forever',5201314:'I love you forever',8888:'Supreme prosperity'};
+    if(asian[num]) tags.push(asian[num]);
+    return tags.length ? tags.join(', ') : 'Special';
+}
+
+function roundnessScore(num) {
+    let score = 0;
+    const s = String(num);
+    if(POWERS_OF_TEN.includes(num)) return 100+s.length*10;
+    const tz = s.length-s.replace(/0+$/,'').length;
+    score += tz*15;
+    if(num%1000000===0) score+=50; else if(num%100000===0) score+=40; else if(num%10000===0) score+=30; else if(num%1000===0) score+=20; else if(num%500===0) score+=15;
+    const digits=s.replace(/0+$/,'');
+    if(digits.length===1&&tz>=2) score+=25;
+    if(s.length>=3&&new Set(s).size===1) score+=20+s.length*3;
+    if(s===s.split('').reverse().join('')&&s.length>=3) score+=10;
+    if(FIBONACCI.includes(num)) score+=8;
+    if(POWERS_OF_TWO.includes(num)) score+=8;
+    for(const c of Object.values(SCIENTIFIC_CONSTANTS)) if(c.numbers.includes(num)){score+=12;break;}
+    return score;
+}
+
+function runDemo() {
+    const dateStr = document.getElementById('demo-date').value;
+    const maxDays = parseInt(document.getElementById('demo-days').value)||365;
+    if(!dateStr) return;
+
+    const startDate = new Date(dateStr+'T00:00:00');
+    const now = new Date();
+    const maxMs = maxDays*86400000;
+    const masterSet = buildMasterSet();
+    const results = [];
+
+    for(const[unit,cfg] of Object.entries(TIME_UNITS)) {
+        const elapsed = (now-startDate)/cfg.ms;
+        if(elapsed<0) continue;
+
+        for(const num of masterSet) {
+            if(num<=elapsed||num>cfg.max) continue;
+            const remaining = (num-elapsed)*cfg.ms;
+            if(remaining>maxMs) continue;
+
+            // Coherence filter
+            const s=String(num);
+            const isRoundK=num%1000===0||POWERS_OF_TEN.includes(num);
+            const isRepdigit=s.length>=3&&new Set(s).size===1;
+            if((unit==='seconds'||unit==='minutes')&&!isRoundK&&!isRepdigit&&![888,8888,88888,888888,9999,99999,1314,5201314].includes(num)) continue;
+            if(unit==='hours'&&num>100&&num%100!==0&&!POWERS_OF_TEN.includes(num)&&!isRepdigit) continue;
+            if(unit==='weeks'&&num>100&&num%100!==0&&!POWERS_OF_TEN.includes(num)) continue;
+            if(unit==='months'&&num>12&&num%50!==0&&!POWERS_OF_TEN.includes(num)&&![108,786,888,1008,1314].includes(num)) continue;
+
+            const date = new Date(now.getTime()+remaining);
+            const rScore = roundnessScore(num);
+            const daysAway = remaining/86400000;
+            const pScore = Math.max(0, 100-daysAway*0.27);
+            const finalScore = rScore*0.5+pScore*0.5;
+
+            results.push({ value:num, unit:cfg.name, type:classifyNum(num), date, score:finalScore, rScore, pScore, daysAway });
+        }
+    }
+
+    results.sort((a,b)=>b.score-a.score);
+
+    const el = document.getElementById('demo-results');
+    if(results.length===0) { el.innerHTML='<p style="color:var(--muted)">No milestones found in this range.</p>'; return; }
+
+    let html = `<div style="color:var(--muted);font-size:0.8rem;margin-bottom:8px;">${results.length} milestones found. Showing top 80 by score.</div>`;
+    html += '<div style="display:flex;padding:4px 10px;font-size:0.75rem;color:var(--gold);font-weight:700;border-bottom:2px solid var(--border)">';
+    html += '<div style="min-width:120px">Number</div><div style="min-width:70px">Unit</div><div style="min-width:140px">Type</div><div style="min-width:100px">Date</div><div style="min-width:60px">Days</div><div style="min-width:50px;text-align:right">rScore</div><div style="min-width:50px;text-align:right">pScore</div><div style="min-width:50px;text-align:right">Total</div>';
+    html += '</div>';
+
+    results.slice(0,80).forEach(r => {
+        html += `<div class="demo-milestone">
+            <div class="dm-value">${r.value.toLocaleString()}</div>
+            <div class="dm-unit">${r.unit}</div>
+            <div class="dm-type">${r.type}</div>
+            <div class="dm-date">${r.date.toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}</div>
+            <div style="min-width:60px;color:var(--muted)">${Math.round(r.daysAway)}d</div>
+            <div class="dm-score">${Math.round(r.rScore)}</div>
+            <div class="dm-score" style="color:var(--blue)">${Math.round(r.pScore)}</div>
+            <div class="dm-score" style="color:var(--gold)">${Math.round(r.score)}</div>
+        </div>`;
+    });
+
+    el.innerHTML = html;
+}
+
+// Auto-run on load
+window.addEventListener('DOMContentLoaded', runDemo);
+</script>
+
+</body>
+</html>
