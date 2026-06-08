@@ -2224,6 +2224,7 @@ function wizardAddPerson4() {
 // ============================================================
 
 let _wizardGroupMembers = [];
+let _wizardRevealedIds = new Set(); // Track which events had milestones revealed during onboarding
 
 // --- Screen 4→5: Discover friend, show hero + milestones on one screen ---
 function wizardDiscoverFriendV2() {
@@ -2279,6 +2280,10 @@ function wizardDiscoverFriendV2() {
         html += '</div>';
         moreEl.innerHTML = html;
     }
+
+    // Mark this person as "already revealed" so Screen 8 doesn't repeat them
+    const friendEvent = appData.events[appData.events.length - 1];
+    if (friendEvent) _wizardRevealedIds.add(friendEvent.id);
 
     window._wizardFriendName = name;
     const shareBtn = document.getElementById('wizardShareFriendBtn');
@@ -2546,10 +2551,12 @@ function wizardShowGroupReveal() {
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
 
-    // Phase 1: Individual milestones — best one per member
+    // Phase 1: Individual milestones — only for NEW members (not already revealed)
     let individualHtml = '';
+    let newMemberCount = 0;
     appData.events.forEach(e => {
         if (e.name === 'Me') return;
+        if (_wizardRevealedIds.has(e.id)) return; // Skip already-revealed members
         const d = e.date instanceof Date ? e.date : new Date(e.date);
         const ms = typeof findAllUpcomingMilestones === 'function'
             ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
@@ -2570,15 +2577,27 @@ function wizardShowGroupReveal() {
             const unit = best.unitName || best.unit || '';
             const ds = formatMilestoneDate(best.date);
             individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, ds, e.name);
+            // Educational hint for kids (born after 2010)
+            const birthYear = d.getFullYear();
+            if (birthYear >= 2010 && best.value >= 100000) {
+                individualHtml += `<p style="color:var(--text-muted);font-size:0.75rem;font-style:italic;text-align:center;margin:-4px 0 6px;">That's a big number \u2014 ask them how many zeroes it has!</p>`;
+            }
+            newMemberCount++;
         }
     });
 
+    // If no new members to show, skip Phase 1 → go straight to Phase 2
+    if (newMemberCount === 0) {
+        wizardShowTeamMilestones();
+        return;
+    }
+
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Now you know something worth telling them</h2>
-        ${individualHtml || '<p style="color:var(--text-muted);text-align:center;font-style:italic;">Add people to see their milestones</p>'}
+        ${individualHtml}
     `;
 
-    _track('onboard_group_reveal_individual', { members: appData.events.length });
+    _track('onboard_group_reveal_individual', { members: newMemberCount });
 
     // Update buttons: only show "See team milestones" in Phase 1
     const shareBtn8 = document.getElementById('wizardShareBtn8');
