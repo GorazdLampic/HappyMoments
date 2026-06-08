@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- OPTION 1: Clean round "3" face — the number IS the smile -->
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a1a3a"/>
+      <stop offset="100%" style="stop-color:#1a1a2a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg1)"/>
+
+  <!-- Face circle -->
+  <circle cx="256" cy="260" r="150" fill="#f0d060" opacity="0.95"/>
+
+  <!-- Happy eyes — curved arcs -->
+  <path d="M 195 210 Q 215 180 235 210" fill="none" stroke="#2a1a3a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 277 210 Q 297 180 317 210" fill="none" stroke="#2a1a3a" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- The "3" AS the mouth — a big grinning 3 shape -->
+  <path d="M 200 270 C 200 270, 280 260, 280 290 C 280 310, 200 310, 200 310"
+        fill="none" stroke="#2a1a3a" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 200 310 C 200 310, 290 305, 290 340 C 290 370, 200 370, 200 370"
+        fill="none" stroke="#2a1a3a" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Rosy cheeks -->
+  <circle cx="185" cy="250" r="18" fill="#e87848" opacity="0.25"/>
+  <circle cx="327" cy="250" r="18" fill="#e87848" opacity="0.25"/>
+
+  <!-- Party hat -->
+  <polygon points="256,75 218,150 294,150" fill="#e83838"/>
+  <line x1="237" y1="110" x2="230" y2="142" stroke="#f8e060" stroke-width="3" opacity="0.7"/>
+  <line x1="256" y1="95" x2="256" y2="142" stroke="#f8e060" stroke-width="3" opacity="0.6"/>
+  <line x1="275" y1="110" x2="282" y2="142" stroke="#f8e060" stroke-width="3" opacity="0.7"/>
+  <circle cx="256" cy="72" r="12" fill="#f8e060"/>
+
+  <!-- Sparkles -->
+  <g transform="translate(80,100)" opacity="0.8"><line x1="0" y1="-16" x2="0" y2="16" stroke="#f0d060" stroke-width="3.5" stroke-linecap="round"/><line x1="-16" y1="0" x2="16" y2="0" stroke="#f0d060" stroke-width="3.5" stroke-linecap="round"/></g>
+  <g transform="translate(430,130)" opacity="0.6"><line x1="0" y1="-12" x2="0" y2="12" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/><line x1="-12" y1="0" x2="12" y2="0" stroke="#d4b876" stroke-width="3" stroke-linecap="round"/></g>
+
+  <!-- Music note -->
+  <g transform="translate(430,350)" opacity="0.5">
+    <ellipse cx="0" cy="0" rx="9" ry="6" fill="#d4b876" transform="rotate(-20)"/>
+    <line x1="8" y1="-2" x2="8" y2="-32" stroke="#d4b876" stroke-width="2.5"/>
+    <path d="M 8 -32 Q 20 -36 18 -25 Q 16 -18 8 -21" fill="#d4b876"/>
+  </g>
+
+  <!-- Confetti -->
+  <circle cx="100" cy="380" r="5" fill="#5aaad0" opacity="0.6"/>
+  <circle cx="410" cy="420" r="6" fill="#e078b0" opacity="0.55"/>
+  <circle cx="75" cy="200" r="4" fill="#70b870" opacity="0.5"/>
+
+  <text x="256" y="478" font-family="Georgia,serif" font-size="38" fill="#d4b876" text-anchor="middle" opacity="0.7" font-style="italic">HappyMoments</text>
+</svg>

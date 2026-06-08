@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HappyMoments Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #1a1a1a;
+    --bg-card: #222222;
+    --bg-elevated: #2a2a2a;
+    --bg-hover: #303030;
+    --accent: #d4b876;
+    --accent-dim: rgba(212, 184, 118, 0.15);
+    --accent-mid: rgba(212, 184, 118, 0.4);
+    --text: #e0e0e0;
+    --text-secondary: #aaaaaa;
+    --text-muted: #777777;
+    --border: #333333;
+    --success: #a0b8a0;
+    --danger: #c07070;
+    --font: 'Segoe UI', -apple-system, system-ui, sans-serif;
+    --mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    --radius: 10px;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* ---- Auth overlay ---- */
+#auth-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+}
+#auth-overlay.hidden { display: none; }
+
+.auth-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    width: 360px;
+    text-align: center;
+}
+.auth-box h1 {
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 6px;
+}
+.auth-box p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+.auth-box input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.auth-box input:focus { border-color: var(--accent); }
+.auth-box button {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px;
+    background: var(--accent);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.auth-box button:hover { opacity: 0.85; }
+.auth-error {
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 10px;
+    min-height: 18px;
+}
+
+/* ---- Dashboard layout ---- */
+#dashboard { display: none; }
+#dashboard.visible { display: block; }
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    position: sticky; top: 0; z-index: 100;
+}
+.topbar h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.topbar-right button {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.topbar-right button:hover { border-color: var(--accent); color: var(--accent); }
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* ---- Tabs ---- */
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+}
+.tab {
+    padding: 10px 18px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+}
+.tab:hover { color: var(--text-secondary); }
+.tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ---- Stat cards ---- */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--accent-mid); }
+.stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+.stat-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+.stat-card.accent .stat-value { color: var(--accent); }
+
+/* ---- Funnel ---- */
+.funnel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 28px;
+}
+.funnel h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.funnel-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+.funnel-label {
+    width: 160px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-family: var(--mono);
+    text-align: right;
+    flex-shrink: 0;
+}
+.funnel-bar-wrap {
+    flex: 1;
+    height: 32px;
+    background: var(--bg);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+.funnel-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-mid));
+    border-radius: 6px;
+    transition: width 0.6s ease;
+    min-width: 2px;
+}
+.funnel-count {
+    width: 70px;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    flex-shrink: 0;
+}
+.funnel-rate {
+    width: 60px;
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    text-align: right;
+}
+
+/* ---- Tables ---- */
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+.section-header h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.filter-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+}
+.filter-select:focus { border-color: var(--accent); }
+
+.table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+thead th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+    position: sticky;
+    top: 0;
+}
+tbody td {
+    padding: 8px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+tbody tr:hover { background: var(--bg-hover); }
+tbody tr:last-child td { border-bottom: none; }
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+}
+.badge-premium { background: var(--accent-dim); color: var(--accent); }
+.badge-free { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+.badge-action {
+    background: rgba(160, 184, 160, 0.15);
+    color: var(--success);
+    font-family: var(--mono);
+    font-size: 11px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* ---- Loading ---- */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    color: var(--text-muted);
+    gap: 10px;
+}
+.spinner {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- Status dot ---- */
+.status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+}
+.status-dot.live { background: var(--success); box-shadow: 0 0 6px var(--success); }
+.status-dot.error { background: var(--danger); }
+
+/* ---- User Flow Map ---- */
+.flow-map {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    overflow-x: auto;
+}
+.flow-map h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+.flow-legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.flow-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+.flow-legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.flow-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 0;
+    position: relative;
+}
+.flow-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+.flow-branch {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.flow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    max-width: 160px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-elevated);
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    cursor: default;
+}
+.flow-node:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(212, 184, 118, 0.15);
+}
+.flow-node-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+}
+.flow-node-count {
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+}
+.flow-node-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* Node color types */
+.flow-node.type-entry { border-color: #888; }
+.flow-node.type-entry .flow-node-count { color: var(--text); }
+
+.flow-node.type-engage { border-color: #5b8fb9; }
+.flow-node.type-engage .flow-node-count { color: #7bb3d9; }
+
+.flow-node.type-growth { border-color: #6b9b6b; }
+.flow-node.type-growth .flow-node-count { color: #8bc78b; }
+
+.flow-node.type-revenue { border-color: #b89b4b; }
+.flow-node.type-revenue .flow-node-count { color: var(--accent); }
+
+.flow-node.type-loop { border-color: #9b7bb8; }
+.flow-node.type-loop .flow-node-count { color: #b89bd8; }
+
+/* Size variants based on relative volume */
+.flow-node.size-lg { min-width: 140px; padding: 14px 18px; }
+.flow-node.size-lg .flow-node-count { font-size: 24px; }
+
+.flow-node.size-sm { min-width: 90px; padding: 7px 10px; }
+.flow-node.size-sm .flow-node-count { font-size: 14px; }
+.flow-node.size-sm .flow-node-name { font-size: 11px; }
+
+/* Connector arrows */
+.flow-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0;
+    min-height: 32px;
+    position: relative;
+}
+.flow-arrow-line {
+    width: 2px;
+    flex: 1;
+    min-height: 14px;
+    background: var(--border);
+}
+.flow-arrow-head {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--border);
+}
+.flow-arrow-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    padding: 1px 6px;
+    border-radius: 8px;
+    white-space: nowrap;
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.flow-arrow.has-rate .flow-arrow-label {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* Horizontal connector */
+.flow-harrow {
+    display: flex;
+    align-items: center;
+    min-width: 30px;
+    position: relative;
+}
+.flow-harrow-line {
+    height: 2px;
+    flex: 1;
+    min-width: 14px;
+    background: var(--border);
+}
+.flow-harrow-head {
+    width: 0; height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 6px solid var(--border);
+}
+.flow-harrow-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    padding: 1px 6px;
+    border-radius: 8px;
+    white-space: nowrap;
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Branch splitter line */
+.flow-split {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    margin: 0;
+}
+.flow-split::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 2px;
+    background: var(--border);
+}
+.flow-split-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+.flow-split-branch::before {
+    content: '';
+    width: 2px;
+    height: 12px;
+    background: var(--border);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .container { padding: 16px; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-value { font-size: 24px; }
+    .funnel-label { width: 100px; font-size: 11px; }
+    .topbar { padding: 12px 16px; }
+    .topbar h1 { font-size: 15px; }
+    .tabs { overflow-x: auto; }
+    .tab { padding: 8px 12px; font-size: 12px; white-space: nowrap; }
+    .table-wrap { overflow-x: auto; }
+    table { min-width: 640px; }
+}
+@media (max-width: 480px) {
+    .stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-card { padding: 14px; }
+    .stat-value { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Auth overlay -->
+<div id="auth-overlay">
+    <div class="auth-box">
+        <h1>HappyMoments Admin</h1>
+        <p>Enter the admin password to continue</p>
+        <input type="password" id="auth-password" placeholder="Password" autocomplete="off" autofocus>
+        <button onclick="authenticate()">Sign in</button>
+        <div class="auth-error" id="auth-error"></div>
+    </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+    <div class="topbar">
+        <h1><span style="font-size: 22px;">&#9733;</span> HappyMoments Admin</h1>
+        <div class="topbar-right">
+            <span id="status-indicator"><span class="status-dot"></span> Connecting...</span>
+            <span id="last-updated">--</span>
+            <button onclick="refreshAll()">Refresh</button>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="overview">Overview</button>
+            <button class="tab" data-tab="journey">User Journey</button>
+            <button class="tab" data-tab="events">Events</button>
+            <button class="tab" data-tab="users">Users</button>
+            <button class="tab" data-tab="campaigns">Campaigns</button>
+            <button class="tab" data-tab="userflow">User Flow</button>
+        </div>
+
+        <!-- Overview tab -->
+        <div class="tab-content active" id="tab-overview">
+            <div class="stat-grid" id="stat-cards">
+                <div class="loading"><div class="spinner"></div> Loading stats...</div>
+            </div>
+        </div>
+
+        <!-- Journey tab -->
+        <div class="tab-content" id="tab-journey">
+            <div id="funnel-container">
+                <div class="loading"><div class="spinner"></div> Loading funnel...</div>
+            </div>
+        </div>
+
+        <!-- Events tab -->
+        <div class="tab-content" id="tab-events">
+            <div class="section-header">
+                <h3>Recent Analytics Events</h3>
+                <select class="filter-select" id="event-filter" onchange="loadEvents()">
+                    <option value="">All actions</option>
+                </select>
+            </div>
+            <div class="table-wrap">
+                <div id="events-table">
+                    <div class="loading"><div class="spinner"></div> Loading events...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users tab -->
+        <div class="tab-content" id="tab-users">
+            <div class="section-header">
+                <h3>Registered Users</h3>
+                <span id="user-count" style="font-size: 12px; color: var(--text-muted);"></span>
+            </div>
+            <div class="table-wrap">
+                <div id="users-table">
+                    <div class="loading"><div class="spinner"></div> Loading users...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaigns tab -->
+        <div class="tab-content" id="tab-campaigns">
+            <div class="section-header">
+                <h3>UTM Campaign Performance</h3>
+            </div>
+            <div class="table-wrap">
+                <div id="campaigns-table">
+                    <div class="loading"><div class="spinner"></div> Loading campaigns...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Flow tab -->
+        <div class="tab-content" id="tab-userflow">
+            <div id="userflow-container">
+                <div class="loading"><div class="spinner"></div> Loading user flow...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+    'use strict';
+
+    const API_BASE = '/api/admin';
+    const REFRESH_INTERVAL = 60000;
+    const PASSWORD_KEY = 'hm_admin_token';
+
+    let token = '';
+    let refreshTimer = null;
+    let cachedData = {};
+
+    // ---- Auth ----
+
+    window.authenticate = function() {
+        const input = document.getElementById('auth-password');
+        const pw = input.value.trim();
+        if (!pw) return;
+
+        token = pw;
+        // Test the token by fetching stats
+        apiGet('stats').then(data => {
+            if (data.error) {
+                document.getElementById('auth-error').textContent = 'Invalid password';
+                token = '';
+                input.value = '';
+                input.focus();
+            } else {
+                sessionStorage.setItem(PASSWORD_KEY, pw);
+                document.getElementById('auth-overlay').classList.add('hidden');
+                document.getElementById('dashboard').classList.add('visible');
+                initDashboard(data);
+            }
+        }).catch(() => {
+            document.getElementById('auth-error').textContent = 'Connection error';
+            token = '';
+        });
+    };
+
+    window.logout = function() {
+        sessionStorage.removeItem(PASSWORD_KEY);
+        token = '';
+        if (refreshTimer) clearInterval(refreshTimer);
+        document.getElementById('auth-overlay').classList.remove('hidden');
+        document.getElementById('dashboard').classList.remove('visible');
+        document.getElementById('auth-password').value = '';
+        document.getElementById('auth-error').textContent = '';
+    };
+
+    // Check for saved session
+    const saved = sessionStorage.getItem(PASSWORD_KEY);
+    if (saved) {
+        token = saved;
+        apiGet('stats').then(data => {
+            if (!data.error) {
+                document.getElementById('auth-overlay').classList.add('hidden');
+                document.getElementById('dashboard').classList.add('visible');
+                initDashboard(data);
+            } else {
+                sessionStorage.removeItem(PASSWORD_KEY);
+                token = '';
+            }
+        }).catch(() => {});
+    }
+
+    // Enter key on password input
+    document.getElementById('auth-password').addEventListener('keydown', e => {
+        if (e.key === 'Enter') authenticate();
+    });
+
+    // ---- API ----
+
+    function apiGet(action, params = {}) {
+        const url = new URL(API_BASE, window.location.origin);
+        url.searchParams.set('action', action);
+        for (const [k, v] of Object.entries(params)) {
+            if (v) url.searchParams.set(k, v);
+        }
+        return fetch(url, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        }).then(r => r.json()).catch(err => ({ error: err.message }));
+    }
+
+    // ---- Dashboard init ----
+
+    function initDashboard(statsData) {
+        renderStats(statsData);
+        setStatus(true);
+        loadJourney();
+        loadEvents();
+        loadUsers();
+        loadCampaigns();
+        loadUserFlow();
+
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = setInterval(refreshAll, REFRESH_INTERVAL);
+    }
+
+    window.refreshAll = function() {
+        apiGet('stats').then(data => {
+            if (!data.error) {
+                renderStats(data);
+                setStatus(true);
+            } else {
+                setStatus(false);
+            }
+        }).catch(() => setStatus(false));
+        loadJourney();
+        loadEvents();
+        loadUsers();
+        loadCampaigns();
+        loadUserFlow();
+    };
+
+    function setStatus(ok) {
+        const el = document.getElementById('status-indicator');
+        const dot = el.querySelector('.status-dot');
+        if (ok) {
+            dot.className = 'status-dot live';
+            el.innerHTML = '';
+            el.appendChild(dot);
+            el.append(' Connected');
+        } else {
+            dot.className = 'status-dot error';
+            el.innerHTML = '';
+            el.appendChild(dot);
+            el.append(' Error');
+        }
+        document.getElementById('last-updated').textContent =
+            'Updated ' + new Date().toLocaleTimeString();
+    }
+
+    // ---- Tabs ----
+
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        });
+    });
+
+    // ---- Render stats cards ----
+
+    function renderStats(data) {
+        cachedData.stats = data;
+        const grid = document.getElementById('stat-cards');
+        grid.innerHTML = '';
+
+        const cards = [
+            { label: 'Total Users', value: fmt(data.total_users), sub: null, accent: true },
+            { label: 'Users Today', value: fmt(data.users_today), sub: 'This week: ' + fmt(data.users_this_week) },
+            { label: 'Total Events', value: fmt(data.total_events), sub: 'Today: ' + fmt(data.events_today) },
+            { label: 'Premium Users', value: fmt(data.premium_users), sub: null },
+            { label: 'Happy Clicks', value: fmt(data.happy_clicks), sub: null, accent: true },
+        ];
+
+        cards.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'stat-card' + (c.accent ? ' accent' : '');
+            div.innerHTML =
+                '<div class="stat-label">' + esc(c.label) + '</div>' +
+                '<div class="stat-value">' + esc(c.value) + '</div>' +
+                (c.sub ? '<div class="stat-sub">' + esc(c.sub) + '</div>' : '');
+            grid.appendChild(div);
+        });
+    }
+
+    // ---- Render funnel ----
+
+    function loadJourney() {
+        apiGet('journey').then(data => {
+            if (data.error) return;
+            cachedData.journey = data;
+            renderFunnel(data.funnel);
+        });
+    }
+
+    function renderFunnel(funnel) {
+        const container = document.getElementById('funnel-container');
+        if (!funnel || funnel.length === 0) {
+            container.innerHTML = '<div class="empty-state">No journey data yet</div>';
+            return;
+        }
+
+        const maxCount = Math.max(...funnel.map(f => f.count), 1);
+
+        let html = '<div class="funnel"><h3>User Journey Funnel</h3>';
+        funnel.forEach((step, i) => {
+            const pct = ((step.count / maxCount) * 100).toFixed(1);
+            let rate = '';
+            if (i > 0 && funnel[i - 1].count > 0) {
+                rate = ((step.count / funnel[i - 1].count) * 100).toFixed(1) + '%';
+            } else if (i === 0) {
+                rate = '100%';
+            } else {
+                rate = '--';
+            }
+
+            html +=
+                '<div class="funnel-step">' +
+                    '<div class="funnel-label">' + esc(step.action) + '</div>' +
+                    '<div class="funnel-bar-wrap"><div class="funnel-bar" style="width:' + pct + '%"></div></div>' +
+                    '<div class="funnel-count">' + fmt(step.count) + '</div>' +
+                    '<div class="funnel-rate">' + esc(rate) + '</div>' +
+                '</div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    // ---- Render events ----
+
+    window.loadEvents = function() {
+        const filter = document.getElementById('event-filter').value;
+        apiGet('events', { filter: filter || '' }).then(data => {
+            if (data.error) return;
+            cachedData.events = data;
+            renderEvents(data.events);
+            updateEventFilter(data.action_types);
+        });
+    };
+
+    function updateEventFilter(types) {
+        const sel = document.getElementById('event-filter');
+        const current = sel.value;
+        // Only rebuild if options changed
+        if (sel.dataset.count === String(types.length)) return;
+        sel.dataset.count = types.length;
+        sel.innerHTML = '<option value="">All actions</option>';
+        types.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            if (t === current) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    function renderEvents(events) {
+        const wrap = document.getElementById('events-table');
+        if (!events || events.length === 0) {
+            wrap.innerHTML = '<div class="empty-state">No events recorded yet</div>';
+            return;
+        }
+        let html = '<table><thead><tr>' +
+            '<th>Time</th><th>Action</th><th>Session</th><th>User</th><th>Country</th><th>Data</th>' +
+            '</tr></thead><tbody>';
+        events.forEach(e => {
+            const ts = e.created_at > 1e12
+                ? new Date(e.created_at).toLocaleString()
+                : new Date(e.created_at * 1000).toLocaleString();
+            const dataStr = truncate(typeof e.data === 'string' ? e.data : JSON.stringify(e.data || {}), 80);
+            html += '<tr>' +
+                '<td>' + esc(ts) + '</td>' +
+                '<td><span class="badge badge-action">' + esc(e.action) + '</span></td>' +
+                '<td style="font-family:var(--mono);font-size:11px;">' + esc(e.session_id || '--') + '</td>' +
+                '<td style="font-family:var(--mono);font-size:11px;">' + esc(truncate(e.user_id || '--', 12)) + '</td>' +
+                '<td>' + esc(e.country || '--') + '</td>' +
+                '<td title="' + escAttr(dataStr) + '" style="font-size:11px;color:var(--text-muted);">' + esc(dataStr) + '</td>' +
+                '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+    }
+
+    // ---- Render users ----
+
+    function loadUsers() {
+        apiGet('users').then(data => {
+            if (data.error) return;
+            cachedData.users = data;
+            renderUsers(data.users);
+        });
+    }
+
+    function renderUsers(users) {
+        document.getElementById('user-count').textContent = users.length + ' users';
+        const wrap = document.getElementById('users-table');
+        if (!users || users.length === 0) {
+            wrap.innerHTML = '<div class="empty-state">No registered users yet</div>';
+            return;
+        }
+        const now = Math.floor(Date.now() / 1000);
+        let html = '<table><thead><tr>' +
+            '<th>UID</th><th>Email</th><th>Name</th><th>Status</th><th>UTM Source</th><th>Campaign</th><th>Registered</th>' +
+            '</tr></thead><tbody>';
+        users.forEach(u => {
+            const isPremium = u.premium_until && u.premium_until > now;
+            const created = new Date(u.created_at * 1000).toLocaleDateString();
+            html += '<tr>' +
+                '<td style="font-family:var(--mono);font-size:11px;">' + esc(truncate(u.uid, 12)) + '</td>' +
+                '<td>' + esc(u.email || '--') + '</td>' +
+                '<td>' + esc(u.display_name || '--') + '</td>' +
+                '<td><span class="badge ' + (isPremium ? 'badge-premium' : 'badge-free') + '">' +
+                    (isPremium ? 'Premium' : 'Free') + '</span></td>' +
+                '<td>' + esc(u.utm_source || '--') + '</td>' +
+                '<td>' + esc(u.utm_campaign || '--') + '</td>' +
+                '<td>' + esc(created) + '</td>' +
+                '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+    }
+
+    // ---- Render campaigns ----
+
+    function loadCampaigns() {
+        apiGet('campaigns').then(data => {
+            if (data.error) return;
+            cachedData.campaigns = data;
+            renderCampaigns(data.campaigns);
+        });
+    }
+
+    function renderCampaigns(campaigns) {
+        const wrap = document.getElementById('campaigns-table');
+        if (!campaigns || campaigns.length === 0) {
+            wrap.innerHTML = '<div class="empty-state">No UTM campaign data yet</div>';
+            return;
+        }
+        let total = campaigns.reduce((s, c) => s + c.count, 0);
+        let html = '<table><thead><tr>' +
+            '<th>Source</th><th>Medium</th><th>Campaign</th><th>Users</th><th>Share</th>' +
+            '</tr></thead><tbody>';
+        campaigns.forEach(c => {
+            const share = total > 0 ? ((c.count / total) * 100).toFixed(1) + '%' : '--';
+            html += '<tr>' +
+                '<td>' + esc(c.utm_source || '(none)') + '</td>' +
+                '<td>' + esc(c.utm_medium || '(none)') + '</td>' +
+                '<td>' + esc(c.utm_campaign || '(none)') + '</td>' +
+                '<td style="font-weight:600;">' + fmt(c.count) + '</td>' +
+                '<td style="color:var(--text-muted);">' + esc(share) + '</td>' +
+                '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+    }
+
+    // ---- User Flow Map ----
+
+    const FLOW_EVENT_MAP = {
+        page_view: 'Visit App',
+        deeplink_opened: 'Deep Link',
+        deeplink_accepted: 'Joined via Friend',
+        onboard_complete: 'Entered Birthday',
+        event_added: 'Added Person',
+        tab_switched: 'Explored',
+        auth_signed_in: 'Signed In',
+        quick_share: 'Quick Share',
+        share_whatsapp: 'WhatsApp',
+        share_viber: 'Viber',
+        share_email: 'Email',
+        challenge_share: 'Challenge',
+        group_challenge: 'Group Challenge',
+        card_downloaded: 'Downloaded Card',
+        card_shared: 'Shared Card',
+        premium_gate_hit: 'Hit Premium Gate',
+        checkout_started: 'Started Checkout',
+        payment_complete: 'Paid!',
+        happy_click: 'Made Happy',
+        notifications_enabled: 'Enabled Reminders',
+        gift_order_started: 'Started Gift Order',
+    };
+
+    function loadUserFlow() {
+        apiGet('journey').then(data => {
+            if (data.error) return;
+            renderUserFlow(data);
+        });
+    }
+
+    function flowCount(funnel, key) {
+        if (!funnel || !Array.isArray(funnel)) return 0;
+        const step = funnel.find(f => f.action === key);
+        return step ? step.count : 0;
+    }
+
+    function flowRate(from, to) {
+        if (!from || from === 0) return '';
+        const pct = ((to / from) * 100).toFixed(0);
+        return pct + '%';
+    }
+
+    function flowNodeSize(count, maxCount) {
+        if (maxCount === 0) return '';
+        const ratio = count / maxCount;
+        if (ratio > 0.5) return ' size-lg';
+        if (ratio < 0.1) return ' size-sm';
+        return '';
+    }
+
+    function flowNodeOpacity(count, maxCount) {
+        if (maxCount === 0) return 1;
+        return Math.max(0.45, count / maxCount);
+    }
+
+    function buildFlowNode(name, count, type, maxCount) {
+        const size = flowNodeSize(count, maxCount);
+        const opacity = flowNodeOpacity(count, maxCount);
+        return '<div class="flow-node type-' + type + size + '" style="opacity:' + opacity.toFixed(2) + '">' +
+            '<div class="flow-node-name">' + esc(name) + '</div>' +
+            '<div class="flow-node-count">' + fmt(count) + '</div>' +
+            '</div>';
+    }
+
+    function buildFlowArrow(label) {
+        const hasRate = label && label.includes('%');
+        return '<div class="flow-arrow' + (hasRate ? ' has-rate' : '') + '">' +
+            '<div class="flow-arrow-line"></div>' +
+            (label ? '<div class="flow-arrow-label">' + esc(label) + '</div>' : '') +
+            '<div class="flow-arrow-head"></div>' +
+            '</div>';
+    }
+
+    function renderUserFlow(data) {
+        const container = document.getElementById('userflow-container');
+        const funnel = data.funnel || [];
+
+        // Gather counts from funnel data
+        const c = {};
+        Object.keys(FLOW_EVENT_MAP).forEach(key => {
+            c[key] = flowCount(funnel, key);
+        });
+
+        // Find max for sizing
+        const allCounts = Object.values(c);
+        const maxCount = Math.max(...allCounts, 1);
+
+        // Share totals
+        const totalShares = c.quick_share + c.share_whatsapp + c.share_viber + c.share_email + c.challenge_share + c.group_challenge;
+        const cardActions = c.card_downloaded + c.card_shared;
+
+        let html = '<div class="flow-map">';
+        html += '<h3>User Flow Map</h3>';
+
+        // Legend
+        html += '<div class="flow-legend">' +
+            '<div class="flow-legend-item"><div class="flow-legend-swatch" style="background:#888;"></div> Entry</div>' +
+            '<div class="flow-legend-item"><div class="flow-legend-swatch" style="background:#5b8fb9;"></div> Engagement</div>' +
+            '<div class="flow-legend-item"><div class="flow-legend-swatch" style="background:#6b9b6b;"></div> Growth / Sharing</div>' +
+            '<div class="flow-legend-item"><div class="flow-legend-swatch" style="background:#b89b4b;"></div> Revenue</div>' +
+            '<div class="flow-legend-item"><div class="flow-legend-swatch" style="background:#9b7bb8;"></div> Viral Loop</div>' +
+            '</div>';
+
+        // ===== ROW 1: Visit App =====
+        html += '<div class="flow-column">';
+
+        html += '<div class="flow-row">';
+        html += buildFlowNode('Visit App', c.page_view, 'entry', maxCount);
+        html += '</div>';
+
+        html += buildFlowArrow('');
+
+        // ===== ROW 2: Deep Link branch =====
+        html += '<div class="flow-row">';
+        html += '<div class="flow-branch">';
+
+        // Left: No deep link path
+        html += '<div class="flow-column">';
+        html += '<div class="flow-node type-entry' + flowNodeSize(c.page_view - c.deeplink_opened, maxCount) + '" style="opacity:' + flowNodeOpacity(c.page_view - c.deeplink_opened, maxCount).toFixed(2) + '">' +
+            '<div class="flow-node-name">Direct Visit</div>' +
+            '<div class="flow-node-count">' + fmt(Math.max(0, c.page_view - c.deeplink_opened)) + '</div>' +
+            '<div class="flow-node-sub">no deep link</div>' +
+            '</div>';
+        html += buildFlowArrow(flowRate(c.page_view, c.onboard_complete));
+        html += buildFlowNode('Entered Birthday', c.onboard_complete, 'engage', maxCount);
+        html += '</div>';
+
+        // Right: Deep link path
+        html += '<div class="flow-column">';
+        html += buildFlowNode('Deep Link', c.deeplink_opened, 'loop', maxCount);
+        html += buildFlowArrow(flowRate(c.deeplink_opened, c.deeplink_accepted));
+        html += buildFlowNode('Joined via Friend', c.deeplink_accepted, 'loop', maxCount);
+        html += buildFlowArrow('');
+        html += '<div class="flow-node type-engage' + flowNodeSize(c.onboard_complete, maxCount) + '" style="opacity:0.6">' +
+            '<div class="flow-node-name">Entered Birthday</div>' +
+            '<div class="flow-node-sub">merges here</div>' +
+            '</div>';
+        html += '</div>';
+
+        html += '</div>'; // flow-branch
+        html += '</div>'; // flow-row
+
+        html += buildFlowArrow('');
+
+        // ===== ROW 3: Core engagement =====
+        html += '<div class="flow-row">';
+        html += buildFlowNode('See Milestones', c.happy_click, 'engage', maxCount);
+        html += '</div>';
+
+        html += buildFlowArrow('');
+
+        // ===== ROW 4: Three branches =====
+        html += '<div class="flow-row">';
+        html += '<div class="flow-branch">';
+
+        // Branch 1: Share
+        html += '<div class="flow-column">';
+        html += buildFlowNode('Share', totalShares, 'growth', maxCount);
+        html += buildFlowArrow('');
+
+        // Share sub-branches
+        html += '<div class="flow-branch">';
+        html += '<div class="flow-column">';
+        html += buildFlowNode('WhatsApp', c.share_whatsapp, 'growth', maxCount);
+        html += '</div>';
+        html += '<div class="flow-column">';
+        html += buildFlowNode('Viber', c.share_viber, 'growth', maxCount);
+        html += '</div>';
+        html += '<div class="flow-column">';
+        html += buildFlowNode('Email', c.share_email, 'growth', maxCount);
+        html += '</div>';
+        html += '</div>'; // share sub-branches
+
+        html += buildFlowArrow('');
+        html += buildFlowNode('Challenge', c.challenge_share + c.group_challenge, 'growth', maxCount);
+        html += buildFlowArrow('');
+
+        // Viral loop node
+        html += '<div class="flow-node type-loop size-sm" style="opacity:0.7">' +
+            '<div class="flow-node-name">Friend Clicks</div>' +
+            '<div class="flow-node-sub">New User Loop</div>' +
+            '</div>';
+        html += '</div>'; // share column
+
+        // Branch 2: Add Person / Explore
+        html += '<div class="flow-column">';
+        html += buildFlowNode('Added Person', c.event_added, 'engage', maxCount);
+        html += buildFlowArrow('');
+        html += buildFlowNode('Explored Tabs', c.tab_switched, 'engage', maxCount);
+        html += buildFlowArrow('');
+        html += buildFlowNode('Signed In', c.auth_signed_in, 'engage', maxCount);
+        html += buildFlowArrow('');
+        html += buildFlowNode('Enabled Reminders', c.notifications_enabled, 'engage', maxCount);
+        html += '</div>';
+
+        // Branch 3: Premium / Revenue
+        html += '<div class="flow-column">';
+        html += buildFlowNode('Hit Premium Gate', c.premium_gate_hit, 'revenue', maxCount);
+        html += buildFlowArrow(flowRate(c.premium_gate_hit, c.checkout_started));
+        html += buildFlowNode('Started Checkout', c.checkout_started, 'revenue', maxCount);
+        html += buildFlowArrow(flowRate(c.checkout_started, c.payment_complete));
+        html += buildFlowNode('Paid!', c.payment_complete, 'revenue', maxCount);
+        html += buildFlowArrow('');
+        html += buildFlowNode('Started Gift Order', c.gift_order_started, 'revenue', maxCount);
+        html += '</div>';
+
+        html += '</div>'; // flow-branch
+        html += '</div>'; // flow-row
+
+        // ===== ROW 5: Cards =====
+        html += buildFlowArrow('');
+        html += '<div class="flow-row">';
+        html += '<div class="flow-branch">';
+        html += buildFlowNode('Downloaded Card', c.card_downloaded, 'engage', maxCount);
+        html += '<div style="width:16px"></div>';
+        html += buildFlowNode('Shared Card', c.card_shared, 'growth', maxCount);
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>'; // flow-column (main wrapper)
+
+        // ===== Summary table =====
+        html += '<div style="margin-top:28px; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius); padding:20px;">';
+        html += '<h3 style="font-size:13px; color:var(--text-secondary); margin-bottom:14px; font-weight:500;">Conversion Summary</h3>';
+        html += '<table><thead><tr><th>Step</th><th>From</th><th>To</th><th>Rate</th></tr></thead><tbody>';
+
+        const conversions = [
+            ['Visit to Onboard', 'page_view', 'onboard_complete'],
+            ['Deep Link to Accept', 'deeplink_opened', 'deeplink_accepted'],
+            ['Premium Gate to Checkout', 'premium_gate_hit', 'checkout_started'],
+            ['Checkout to Payment', 'checkout_started', 'payment_complete'],
+            ['Visit to Share', 'page_view', null, totalShares],
+            ['Visit to Sign In', 'page_view', 'auth_signed_in'],
+        ];
+
+        conversions.forEach(row => {
+            const fromCount = c[row[1]] || 0;
+            const toCount = row[3] !== undefined ? row[3] : (c[row[2]] || 0);
+            const rate = fromCount > 0 ? ((toCount / fromCount) * 100).toFixed(1) + '%' : '--';
+            html += '<tr>' +
+                '<td>' + esc(row[0]) + '</td>' +
+                '<td style="font-weight:600;">' + fmt(fromCount) + '</td>' +
+                '<td style="font-weight:600;">' + fmt(toCount) + '</td>' +
+                '<td style="color:var(--accent); font-weight:600;">' + esc(rate) + '</td>' +
+                '</tr>';
+        });
+
+        html += '</tbody></table>';
+        html += '</div>';
+
+        html += '</div>'; // flow-map
+
+        container.innerHTML = html;
+    }
+
+    // ---- Helpers ----
+
+    function fmt(n) {
+        if (n === undefined || n === null) return '0';
+        return Number(n).toLocaleString();
+    }
+
+    function esc(s) {
+        if (s === null || s === undefined) return '';
+        const d = document.createElement('div');
+        d.textContent = String(s);
+        return d.innerHTML;
+    }
+
+    function escAttr(s) {
+        return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function truncate(s, len) {
+        if (!s) return '';
+        s = String(s);
+        return s.length > len ? s.slice(0, len) + '...' : s;
+    }
+})();
+</script>
+</body>
+</html>
