@@ -484,26 +484,23 @@
                 </div>
             </div>
 
-            <div class="card">
-                <h2 data-i18n="appearance">Appearance</h2>
-                <div class="theme-selector">
-                    <button class="theme-btn active" data-theme-val="dark" onclick="setAppTheme('dark')">
-                        <span class="theme-dot" style="background:#1a1a1a;"></span> Dark
-                    </button>
-                    <button class="theme-btn" data-theme-val="light" onclick="setAppTheme('light')">
-                        <span class="theme-dot" style="background:#f5f0e8;"></span> Light
-                    </button>
-                    <!-- Ocean, Sunset, Blossom, Forest removed — 2 themes only per UX spec -->
-                </div>
+            <!-- Settings — minimal, auto-save, no clutter -->
+            <!-- Theme toggle: just two small dots, no card wrapper -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:12px 0;">
+                <span style="color:var(--text-muted);font-size:0.8rem;">Theme:</span>
+                <button class="theme-btn active" data-theme-val="dark" onclick="setAppTheme('dark')" style="padding:4px 10px;font-size:0.8rem;">
+                    <span class="theme-dot" style="background:#1a1a1a;"></span> Dark
+                </button>
+                <button class="theme-btn" data-theme-val="light" onclick="setAppTheme('light')" style="padding:4px 10px;font-size:0.8rem;">
+                    <span class="theme-dot" style="background:#f5f0e8;"></span> Light
+                </button>
             </div>
 
-            <!-- Notifications -->
-            <div class="card">
-                <h2 data-i18n="reminders">Reminders</h2>
-                <p class="card-description" data-i18n="reminders_desc">Get notified before birthdays and special number milestones.</p>
-                <label class="toggle-option">
+            <!-- Reminders: single toggle, no card -->
+            <div style="padding:8px 16px;">
+                <label class="toggle-option" style="font-size:0.85rem;">
                     <input type="checkbox" id="notifToggle" onchange="toggleNotifications(this.checked)">
-                    <span data-i18n="enable_reminders">Enable reminders</span>
+                    <span data-i18n="enable_reminders">Notify me before milestones</span>
                 </label>
                 <div id="notifOptions" class="notif-options" style="display:none;">
                     <label class="toggle-option"><input type="checkbox" id="notifDay" checked onchange="updateNotifPrefs()"><span data-i18n="day_before">1 day before</span></label>
@@ -512,24 +509,11 @@
                 </div>
             </div>
 
-            <!-- Invite Friends -->
-            <div class="card">
-                <h2 data-i18n="invite_friends">Invite Friends</h2>
-                <p class="card-description" data-i18n="invite_desc">Know someone who'd love to discover their special numbers?</p>
-                <button class="btn-primary" onclick="shareAppLink()" style="margin-top: 8px;" data-i18n="share_app">Share HappyMoments</button>
-            </div>
-
-            <!-- Feedback -->
-            <div class="card">
-                <h2>Share Your Ideas</h2>
-                <p class="card-description">What features would you love to see? How can we make HappyMoments better for you?</p>
-                <textarea id="feedbackText" class="feedback-input" placeholder="Tell us what you think... new features, improvements, anything!" rows="3" maxlength="500"></textarea>
-                <button class="btn-primary" onclick="submitFeedback()" style="margin-top: 8px;">Send Feedback</button>
-            </div>
-
-            <div class="card">
-                <button id="saveSettingsBtn" class="btn-primary" data-i18n="save_settings">Save Settings</button>
-                <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;" data-i18n="reset_all">Reset All Data</button>
+            <!-- Hidden elements for JS compatibility — no visible UI -->
+            <div style="display:none;">
+                <button id="saveSettingsBtn"></button>
+                <button id="resetBtn"></button>
+                <textarea id="feedbackText"></textarea>
             </div>
         </section>
 
