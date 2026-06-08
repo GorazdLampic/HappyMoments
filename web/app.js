@@ -2512,20 +2512,90 @@ function wizardAddGroupMember() {
     if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-// --- Screen 8: Group combined milestone reveal ---
+// --- Screen 8: Two-phase group reveal ---
+// Phase 1: Individual milestones per member ("reach out to each person")
+// Phase 2: Combined team milestones ("celebrate together")
+
 function wizardShowGroupReveal() {
     _wizardEnsureClean();
     const el = document.getElementById('wizardGroupReveal');
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    const now = new Date();
     const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
 
-    // Use the REAL milestone algorithm for combined milestones
-    const combinedMs8 = typeof findSumMilestonesForEvents === 'function'
+    // Phase 1: Individual milestones — best one per member
+    let individualHtml = '';
+    appData.events.forEach(e => {
+        if (e.name === 'Me') return;
+        const d = e.date instanceof Date ? e.date : new Date(e.date);
+        const ms = typeof findAllUpcomingMilestones === 'function'
+            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
+        let best = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
+            .sort((a, b) => {
+                let sa = 0, sb = 0;
+                if (a.value >= 1000 && a.value % 1000 === 0) sa += 100;
+                if (b.value >= 1000 && b.value % 1000 === 0) sb += 100;
+                if (a.isBigMilestone) sa += 80;
+                if (b.isBigMilestone) sb += 80;
+                sa += Math.max(0, 50 - a.timeUntil / (24*60*60*1000) * 0.15);
+                sb += Math.max(0, 50 - b.timeUntil / (24*60*60*1000) * 0.15);
+                return sb - sa;
+            })[0];
+        if (!best && ms.length > 0) best = ms.filter(m => m.timeUntil > 0)[0];
+        if (best) {
+            const val = best.value.toLocaleString(locale);
+            const unit = best.unitName || best.unit || '';
+            const ds = formatMilestoneDate(best.date);
+            individualHtml += `<div style="padding:10px 0;border-bottom:1px solid var(--border,#333);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
+                    <span style="color:var(--text-muted);font-size:0.82rem;">${ds}</span>
+                </div>
+                <div style="font-family:var(--font-mono,monospace);color:var(--warning,#d4b876);font-size:1rem;margin-top:2px;">${val} ${unit}</div>
+            </div>`;
+        }
+    });
+
+    el.innerHTML = `
+        <h2 class="wizard-question">A reason to reach out</h2>
+        <p style="color:var(--text-muted);text-align:center;font-size:0.88rem;margin-bottom:14px;">Each person has a milestone worth sharing</p>
+        ${individualHtml || '<p style="color:var(--text-muted);text-align:center;font-style:italic;">Add people to see their milestones</p>'}
+    `;
+
+    _track('onboard_group_reveal_individual', { members: appData.events.length });
+
+    // Update buttons: show "See team milestones" instead of share
+    const shareBtn8 = document.getElementById('wizardShareBtn8');
+    if (shareBtn8) {
+        shareBtn8.textContent = 'See ' + groupName + ' team milestones \u2192';
+        shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
+    }
+
+    // Hide "Create another group" if user already has 2+ groups, show dashboard instead
+    const hasMultipleGroups = allSets.length >= 2;
+    const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
+    if (createAnotherBtn) createAnotherBtn.style.display = hasMultipleGroups ? 'none' : '';
+    const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
+    if (dashboardBtn8) dashboardBtn8.style.display = hasMultipleGroups ? '' : 'none';
+
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
+    document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
+    _lastWizardStep = 8;
+    window.scrollTo(0, 0);
+}
+
+// --- Screen 8 Phase 2: Team combined milestones ---
+function wizardShowTeamMilestones() {
+    const el = document.getElementById('wizardGroupReveal');
+    if (!el) return;
+
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
+
+    const combinedMs = typeof findSumMilestonesForEvents === 'function'
         ? findSumMilestonesForEvents(appData.events, 20, 1825, appSettings || {}) : [];
-    const goodMs8 = combinedMs8.filter(m => !m.isCosmic && m.timeUntil > 0)
+    const goodMs = combinedMs.filter(m => !m.isCosmic && m.timeUntil > 0)
         .sort((a, b) => {
             let sa = 0, sb = 0;
             const va = String(a.value), vb = String(b.value);
@@ -2540,58 +2610,41 @@ function wizardShowGroupReveal() {
             return sb - sa;
         });
 
-    const hero8 = goodMs8[0];
-    let bestTarget, bestDist, dateDisplay;
-    if (hero8) {
-        bestTarget = hero8.value;
-        bestDist = Math.ceil(hero8.timeUntil / (24*60*60*1000));
-        dateDisplay = formatMilestoneDate(hero8.date, { long: true });
-    } else {
-        bestTarget = 0; bestDist = 0; dateDisplay = '';
-    }
-
-    const heroUnit = hero8 ? (hero8.unitName || hero8.unit) : 'days';
-
-    // More combined milestones
-    let moreCombinedHtml8 = '';
-    const shown8 = new Set([hero8 ? hero8.value + '_' + hero8.unit : '']);
+    const hero = goodMs[0];
+    let combinedHtml = '';
+    const shown = new Set();
     let cnt = 0;
-    goodMs8.forEach(m => {
+    goodMs.forEach(m => {
         const key = m.value + '_' + m.unit;
-        if (cnt >= 4 || shown8.has(key)) return;
-        shown8.add(key);
+        if (cnt >= 3 || shown.has(key)) return;
+        shown.add(key);
         const dt = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
-        moreCombinedHtml8 += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
+        combinedHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
         cnt++;
     });
 
     el.innerHTML = `
-        <p style="font-size:1.1rem;color:var(--text);text-align:center;margin-bottom:4px;font-weight:600;">${escapeHtml(groupName)} <span onclick="wizardNext(7)" style="cursor:pointer;color:var(--text-muted);font-size:0.85rem;">&#9998;</span></p>
-        <div class="wizard-reveal-number-wrap">
-            <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
-        </div>
-        <div class="wizard-reveal-unit">${heroUnit} combined</div>
-        <div class="wizard-reveal-date">${dateDisplay}</div>
-        <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
-        ${moreCombinedHtml8 ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More group milestones</div><div class="wizard-milestone-list">${moreCombinedHtml8}</div></div>` : ''}
+        <h2 class="wizard-question">Celebrate together</h2>
+        <p style="color:var(--text-muted);text-align:center;font-size:0.88rem;margin-bottom:14px;">${escapeHtml(groupName)} has team milestones worth a party</p>
+        ${hero ? `
+            <div class="wizard-reveal-number-wrap">
+                <div class="wizard-reveal-number" style="font-size:2.2rem;">${hero.value.toLocaleString(locale)}</div>
+            </div>
+            <div class="wizard-reveal-unit">${hero.unitName || hero.unit} combined</div>
+            <div class="wizard-reveal-date">${formatMilestoneDate(hero.date, { long: true })}</div>
+            <div class="wizard-reveal-countdown">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} days</div>
+        ` : ''}
+        ${combinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div class="wizard-milestone-list">${combinedHtml}</div></div>` : ''}
     `;
 
-    _track('onboard_group_reveal', { members: appData.events.length });
-
-    // Update share button with group name
+    // Restore share button to continue to Screen 9
     const shareBtn8 = document.getElementById('wizardShareBtn8');
-    if (shareBtn8) shareBtn8.textContent = 'Share ' + groupName + ' milestones \u2192';
+    if (shareBtn8) {
+        shareBtn8.textContent = 'Continue \u2192';
+        shareBtn8.onclick = function() { wizardBuildShareScreen(); };
+    }
 
-    // Hide "Create another group" if user already has 2+ groups, show dashboard instead
-    const hasMultipleGroups = allSets.length >= 2;
-    const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
-    if (createAnotherBtn) createAnotherBtn.style.display = hasMultipleGroups ? 'none' : '';
-    const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
-    if (dashboardBtn8) dashboardBtn8.style.display = hasMultipleGroups ? '' : 'none';
-
-    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
-    _lastWizardStep = 8;
+    _track('onboard_group_reveal_combined', { members: appData.events.length });
     window.scrollTo(0, 0);
 }
 
@@ -6302,6 +6355,7 @@ window.editorDeleteGroup = editorDeleteGroup;
 window.wizardSelectMsRow = wizardSelectMsRow;
 window.selectMilestoneForBar = selectMilestoneForBar;
 window.toggleMoreMilestones = toggleMoreMilestones;
+window.wizardShowTeamMilestones = wizardShowTeamMilestones;
 window.deselectMilestone = deselectMilestone;
 window.shareSelectedMilestone = shareSelectedMilestone;
 // ============================================================
