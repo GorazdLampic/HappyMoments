@@ -2367,7 +2367,6 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div></div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
-            <p style="color:var(--text-muted);text-align:center;font-size:0.8rem;font-style:italic;margin-bottom:10px;">The Novak family crosses 200,000 days together next month &mdash; now they have a reason to celebrate.</p>
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
             <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
@@ -2375,6 +2374,15 @@ function wizardShowCombinedAndName() {
 
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
     if (addMoreBtn) addMoreBtn.textContent = 'Add more people to ' + suggestedName + ' \u2192';
+    // Motivational hint below the button
+    const actionsEl = document.querySelector('#wizardStep6 .wizard-actions');
+    if (actionsEl && !document.getElementById('wizardMotivHint6')) {
+        const hint = document.createElement('p');
+        hint.id = 'wizardMotivHint6';
+        hint.style.cssText = 'color:var(--text-muted,#888);font-size:0.78rem;font-style:italic;text-align:center;margin-top:8px;';
+        hint.textContent = 'More people, more reasons to celebrate together.';
+        actionsEl.appendChild(hint);
+    }
 
     _track('onboard_combined_reveal', { event_count: appData.events.length });
 
