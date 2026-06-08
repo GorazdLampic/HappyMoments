@@ -1,226 +1,113 @@
-# HappyMoments Daily Use — Screen Strategy
+# HappyMoments Daily Use Screens — v2.5.0 (versionCode 50)
 
-## Overview
+After onboarding (9 screens), the user enters daily use mode. Three bottom tabs with labels + icons + gold active indicator.
 
-After onboarding, the user enters "daily use" mode. Three tabs at the bottom:
-- **Me** — individual milestones for all people
-- **Together** — combined/group milestones
-- **Edit** — manage people, groups, settings
-
-This document describes each screen, transitions, and design decisions.
+See [navigation-architecture.html](navigation-architecture.html) for full details with mockups.
 
 ---
 
 ## Tab 1: Me (Individual Milestones)
 
-### What user sees:
-- Time-chunked milestone list: "This week", "This month", "Later this year", "Next year"
-- Each milestone shows: person name, milestone value+unit, date, Share button
-- No hero card (all milestones equal — no person emphasized over another)
-- "Together" section teaser at bottom (if 2+ people): combined group target
-- "+ Add more people" prompt at bottom
+Default landing tab. Shows all individual milestones across all people.
 
-### Person filter:
-- Row of person buttons at top — tap to filter milestones by one person
-- Tap again to show all
+### Layout:
+- **Person filter** at top: row of person buttons (All | Me | Mom | Dad | ...). Tap to filter by one person, tap again to show all.
+- **Time-chunked milestone list**: "This week" / "This month" / "Later" sections
+- Each milestone shows: person name, milestone value+unit (gold mono), date with ordinal suffixes ("Sep 7th"), year only if different from current year
 
-### Share:
-- Each milestone has a "Share" pill button
-- Tap → text copied to clipboard + bottom sheet shows the text
-- User opens WhatsApp/Viber and pastes (full control to edit before sending)
+### No hero card:
+All milestones are treated equally. No single person's milestone is emphasized over others. The time-chunked list naturally surfaces the soonest milestones at the top.
 
-### Transition to other tabs:
-- Tap "Together" tab → see combined milestones
-- Tap "Edit" tab → manage people and groups
-- Tap "Together" section teaser → switch to Together tab
+### Share flow:
+1. Tap a milestone -> gold highlight + sticky share bar appears at bottom
+2. Sticky bar shows selected milestone text
+3. Tap "Share" button -> native share picker
+4. Text also copied to clipboard automatically
+
+### Multiple selection:
+Tap additional milestones to add them to the selection. Share bar updates to reflect all selected items.
 
 ---
 
 ## Tab 2: Together (Combined/Group Milestones)
 
-### Current:
-- Group name with pencil icon (edit → goes to Edit tab)
-- Combined milestone content from renderCombinedTab()
-- Shows sum milestones, ratio milestones, time comparisons
+Shows combined milestones from the milestone engine (`renderCombinedTab`).
 
-### What SHOULD be there:
-- Group name + pencil at top
-- **Group switcher** if 2+ groups (tap to change which group you're viewing)
-- Combined milestone hero: the next nice round number (same as onboarding)
-- Below: list of combined milestones (sum, ratio, duration)
-- Each with Share button
-- At bottom: "Create another group" link
+### Layout:
+- **Group sub-tabs** at top when 2+ groups exist (e.g. "Family | Friends")
+- **Group name** with pencil icon -> tap pencil to open full-screen group editor
+- Combined milestone content: sum milestones found by `findSumMilestonesForEvents` across seconds/minutes/hours/days/weeks/months/years
+- Finds: palindromes, repdigits, Pi, Fibonacci, powers of 2, round numbers, Asian auspicious, sacred numbers
 
-### Missing functionality:
-- [ ] No group switcher — user has to go to Edit tab to switch
-- [ ] Combined milestones only show if renderCombinedTab succeeds
-- [ ] No way to see "more" combined milestones
-- [ ] Share for combined milestones
+### Share flow:
+Same as Me tab: tap combined milestone -> sticky share bar -> Share -> native picker.
 
 ---
 
 ## Tab 3: Edit (Manage People, Groups, Settings)
 
-### Current layout (top to bottom):
-1. **Dates & Events** — list of people with edit/delete
-2. **Add a Date** — name + date + type
-3. **Groups** — list of groups with active/switch/rename/delete + "Add group"
-4. **Backup** — export/import
-5. **Account** — sign in
-6. **Number Patterns** — toggles for types
-7. **Custom Numbers** — user-specific numbers
-8. **Appearance** — dark/light
-9. **Reminders** — enable notifications
-10. **Invite / Feedback / Legal**
-
-### Problems:
-- Too much on one screen — user has to scroll forever
-- Group management is buried below the person list
-- No dedicated "edit group members" screen — you add people globally, not per-group
-- No clear visual separation between "manage data" and "settings"
-
-### Proposed improvement:
-Split Edit tab into sections with clear headers, or use accordion/collapsible sections:
-- **People & Groups** (primary — top)
-- **Settings** (secondary — bottom, collapsed by default)
-
-OR: Edit tab shows ONLY current group:
-- Group name (editable) at top
-- Members of this group
-- Add member (name + date, inline)
-- "Switch group" / "New group" at bottom
-- Settings in a separate gear icon or 4th tab
+### Layout (top to bottom):
+1. **Group cards** — each card shows group name + members listed. Tappable to open group editor.
+2. **"+ New group"** button
+3. **Settings** (below group cards):
+   - Appearance (dark/light theme)
+   - Notifications
+   - Number patterns (toggles)
+   - Backup (export/import)
+   - Account
+   - Legal / Feedback
 
 ---
 
-## Design Questions for Gorazd
+## Group Editor (Full-Screen Overlay)
 
-### Q1: Settings content during onboarding — show or hide?
+Opens when tapping a group card on Edit tab, or pencil icon on Together tab.
 
-**Arguments FOR showing (current behavior on old cached version):**
-- User can explore settings if curious
-- They see what's configurable (themes, notifications)
-- Less code to manage visibility
-
-**Arguments AGAINST (recommended):**
-- Distracting — user should focus on the guided path
-- Looks broken (half onboarding, half settings)
-- Users don't need settings before they have data
-- Professional apps (Instagram, Duolingo) show NOTHING except onboarding during setup
-
-**Recommendation:** Hide during onboarding. Settings appear only after reaching dashboard. *(Already implemented in v37 but cached version still shows old.)*
-
-### Q2: Should there be a "see more combined milestones" screen?
-
-**Arguments FOR:**
-- Combined milestones are the unique value of the app
-- Showing just one combined number undersells the feature
-- Sum + ratio + duration milestones are all different and interesting
-
-**Arguments AGAINST:**
-- During onboarding, one combined number is enough to plant the idea
-- Too many screens = higher drop-off
-- The dashboard Together tab shows full combined milestones
-
-**Recommendation:** During onboarding, show ONE impressive combined number + individual member highlights. Save the full combined milestone exploration for the Together tab in daily use. This gives the user a reason to come back.
-
-### Q3: Should we show already-seen individual milestones on the group reveal?
-
-**No.** If the user already saw Nastja's milestones on Screen 5, don't repeat them on Screen 8. Only show NEW individual milestones (people added on Screen 7 that weren't seen before). The combined milestone itself IS the new content.
-
-### Q4: Group editing — separate page or inline?
-
-**Arguments for separate page:**
-- Clean, focused experience
-- User knows exactly what they're doing
-- Can show full member list + add/remove
-- "Done" button returns to dashboard
-
-**Arguments for inline (current):**
-- No extra navigation
-- Everything visible at once
-
-**Recommendation:** Separate page/modal for group editing. When user taps pencil next to group name:
-1. Full-screen overlay with group name (editable), member list, add member form
-2. "Done" button returns to previous tab
-3. Same pattern used in onboarding (Screen 7) — consistent
-
-### Q5: How should the group switcher work in daily use?
-
-Options:
-- **A. Tabs within Together tab** — one sub-tab per group (like "Family | Friends")
-- **B. Dropdown** — tap group name to see list
-- **C. Swipe** — swipe left/right between groups
-
-**Recommendation:** Option A (sub-tabs) for 2-3 groups. If 4+, use dropdown.
+### Elements:
+- **Group name**: editable text field at top
+- **Members**: inline editable name + date fields for each member
+- **Add member**: name + date input row at bottom of member list
+- **Remove member**: x button on each member row
+- **Delete group**: destructive action at bottom
+- **"Done" button**: saves all changes and returns to the previous tab
 
 ---
 
-## Proposed Daily Use Flow (v2)
+## Navigation Details
 
-### Tab 1: Me
-```
-[Person filter: All | Me | Nastja | Val]
+### 3 bottom tabs:
+| Tab | Icon | Label | Purpose |
+|-----|------|-------|---------|
+| Me | Star | Me | Individual milestones for all people, time-chunked |
+| Together | People | Together | Combined/group milestones |
+| Edit | Pencil | Edit | Manage people, groups, settings |
 
-This week
-  Val: 5,000 days              Jul 12    [Share]
-  Me: 18,000 days              Oct 5     [Share]
+### Active state:
+- Gold icon + gold label for active tab
+- Gray icon + gray label for inactive tabs
+- Tab bar fixed at bottom, never scrolls away
 
-This month
-  Nastja: 600 months           Sep 3     [Share]
-
-Later this year
-  Me: 50 years                 Jun 2028  [Share]
-  Val: 1,000,000,000 sec       Nov 2027  [Share]
-
-── Together ──
-Family: 50,000 days combined in 142 days
-
-[+ Add more people]
-```
-
-### Tab 2: Together
-```
-[Family | Friends]  ← group sub-tabs (if 2+ groups)
-
-Family
-  50,000 days combined         Oct 28    [Share]
-
-Sum milestones
-  Me + Nastja: 40,000 days     Feb 14    [Share]
-  All: 50,000 days             Oct 28    [Share]
-
-Ratios
-  Val is exactly 1/2 of Me     Jun 2030  [Share]
-
-[Create another group]
-```
-
-### Tab 3: Edit
-```
-── Family (active) ──
-  Me          Jun 2, 1978      [edit]
-  Nastja      Mar 13, 1990     [edit]
-  Val         Jul 7, 2012      [edit]
-  [+ Add person to Family]
-
-── Friends ──
-  Me          Jun 2, 1978
-  Matej       Dec 1, 1983
-  [Switch to Friends]
-
-[+ Create new group]
-
-── Settings ──  (collapsed)
-  Appearance | Notifications | Patterns | Backup
-```
+### Transitions:
+- Tab switch: instant crossfade, maintains scroll position
+- Group editor: full-screen overlay, slide up, "Done" to dismiss
+- Share: sticky bar at bottom, native share picker
 
 ---
 
-## Next Steps
+## Milestone Engine (Daily Use)
 
-1. Decide on Q1-Q5 above
-2. Fix date formatting (ordinal suffixes)
-3. Don't repeat already-seen milestones on group reveal
-4. Consider group switcher for Together tab
-5. Consider separate group editing page
+- **Powers of 2**: uncapped, up to 2^30
+- **Combined milestones**: `findSumMilestonesForEvents` across all time units
+- **Patterns found**: palindromes, repdigits, Pi, Fibonacci, powers, round numbers, Asian auspicious, sacred numbers
+- **Cosmic milestones**: max 1 globally, show description only (no redundant number)
+- **Date formatting**: ordinal suffixes ("Sep 7th"), year only if different from current year
+
+---
+
+## Design Rules
+
+- **Gold (#d4b876)** = things that matter (milestone values, active tab, section labels)
+- **Dark theme default**, light available
+- **3-level typography**: hero (mono, onboarding only), body (serif), caption
+- **No shadows, no gradients**
+- **`autocomplete="new-password"`** on all name inputs to suppress password managers

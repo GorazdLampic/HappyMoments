@@ -1,85 +1,77 @@
-# HappyMoments Onboarding Steps — Current Implementation (v23)
+# HappyMoments Onboarding Steps — v2.5.0 (versionCode 50)
 
-## Screen 1: Your Date
-- **Show:** Two inspiration examples (Luka's billion seconds, Sara & Maja's 10,000 days), "What about you?"
-- **User enters:** DD / MM / YYYY (their birthday)
-- **Primary button:** `Show me` → goes to Screen 2
-- **Secondary:** none
-
-## Screen 2: Your Hero Reveal
-- **Show:** One big milestone number (counter animation), unit, date, emotional countdown
-- **User enters:** nothing
-- **Primary button:** `See more of my milestones` → goes to Screen 3
-secondary: none
-
-## Screen 3: Your Milestones List
-- **Show:** Top 4 upcoming milestones (no cosmic), "You have X milestones coming"
-- **User enters:** nothing
-- **Primary button:** someone you care about` → goes to Screen 4
-- **Secondary:** none
-
-screen 4:
-enter his/her date
-button: show his/her milestone
-
-
-screen 5: show more of her milestones
-button 1: show combined milestones 
-button 2: share any of the milestone... 
-
-screen 6: show combined milestones only...
-finalize your first group
-
-screen 7: 
-enter two more names and dates
-
-screen 8: show their milestones
-button: show combined milestones.
-
-button 1: now either share individual milestones or team milestones
-button 2: create new group... 
-
-
-
-old content: 
-
-## Screen 3: Your Milestones List
-- **Show:** Top 4 upcoming milestones (no cosmic), "You have X milestones coming"
-- **User enters:** nothing
-- **Primary button:** `Build your first group →` → goes to Screen 4
-- **Secondary:** none
-
-## Screen 4: Build Your First Group
-- **Show:** Group name input (pre-filled "Family"), "Me" already in member list, role chips (Mom/Dad/Partner/Sister/Brother/Friend/Child/Other), date fields
-- **User enters:** Tap role chip, enter DD/MM/YYYY, tap "Add to group" — repeat for each member
-- **Primary button:** `See group milestones →` (appears after 2+ members) → goes to Screen 5
-- **Secondary:** `Skip for now` → goes to dashboard
-- **Note:** Members appear in growing list as added. Form clears after each add.
-
-## Screen 5: Group 1 Combined Reveal
-- **Show:** Group name ("Family"), big nice target number (e.g. 50,000), "days combined", date, countdown
-- **User enters:** nothing
-- **Primary button:** `Create another group` → goes to Screen 6
-- **Secondary:** `Explore all milestones →` → goes to dashboard
-
-## Screen 6: Create Second Group (optional)
-- **Show:** Same as Screen 4 but group name pre-filled "Friends", "Me" pre-filled as first member
-- **User enters:** Same as Screen 4 — role chips + dates
-- **Primary button:** `See group milestones →` (after 2+ members) → goes to Screen 7
-- **Secondary:** `Skip for now` → goes to dashboard
-
-## Screen 7: Group 2 Combined Reveal
-- **Show:** Group name ("Friends"), big nice target number, "days combined", date, countdown
-- **User enters:** nothing
-- **Primary button:** `Explore all milestones →` → goes to dashboard
-- **Secondary:** none
+9-screen progressive reveal. See [onboarding-flow.html](onboarding-flow.html) for full details with mockups.
 
 ---
 
-## Issues / Questions for Review
+## Screen 1: Your Date
+- **Show:** Inspiration examples + "What about you?" + DD/MM/YYYY input
+- **User enters:** Birthday (DD/MM/YYYY). Auto-advance triggers when day>=4 and month>=2.
+- **Primary button:** `Show me` (or auto-advance)
+- **Transition:** Counter animation starts -> Screen 2
 
-1. Screen 4 jumps straight to group building — should there be an individual person reveal first?
-2. Group naming happens upfront — should it happen after adding people?
-3. No share prompts during onboarding — should sharing be offered after reveals?
-4. No individual person reveals for group members — is the group reveal enough?
-5. The flow feels "businesslike" (name your group) vs organic (add people, group emerges)
+## Screen 2: Your Hero Reveal
+- **Show:** Counter animation rolling up to big gold number + unit + date + emotional countdown
+- **User enters:** Nothing
+- **Rules:** No cosmic milestones in hero reveal
+- **Primary button:** `See more of my milestones` -> Screen 3
+
+## Screen 3: Your Milestones List
+- **Show:** 8 milestones within 730-day window, all tappable to share
+- **User enters:** Nothing
+- **Share:** Tap any milestone -> gold highlight + floating "Share ->" bubble -> native share picker
+- **Primary button:** `Now someone you care about ->` -> Screen 4
+- **Back button:** Yes (returns to Screen 2)
+
+## Screen 4: Add ONE Person
+- **Show:** "Now someone you care about" + name text input + role hint chips (Partner/Mom/Dad/Sister/Brother) + DD/MM/YYYY input
+- **User enters:** Name (or tap role chip to pre-fill) + their birthday
+- **Input:** `autocomplete="new-password"` on name field to suppress password managers
+- **Primary button:** `Show their milestone` -> Screen 5
+- **Back button:** Yes
+
+## Screen 5: Their Hero Reveal + Milestones (merged)
+- **Show:** Counter animation for their hero, then milestone list appears AFTER animation finishes. All tappable to share.
+- **User enters:** Nothing
+- **Share:** Tap any milestone -> gold highlight + floating "Share ->" bubble
+- **Primary button:** `See what's special together ->` -> Screen 6
+- **Back button:** Yes
+
+## Screen 6: Combined Milestones + Group Name
+- **Show:** 6 combined milestones from FULL engine (palindromes, repdigits, Pi, powers of 2) across all time units (seconds/minutes/hours/days/weeks/months/years). Group name input (auto-suggested, e.g. "Family").
+- **User enters:** Group name (optional, auto-suggested)
+- **Share:** Tap any combined milestone -> gold highlight + floating "Share ->" bubble
+- **Primary button:** `Add more people to this group ->` -> Screen 7
+- **Back button:** Yes
+
+## Screen 7: Group Builder
+- **Show:** Name + date input on one row. Growing member list below (You + person from Screen 4 already listed). "See milestones" button appears after 2+ new members added.
+- **User enters:** Additional names + birthdays. Each added person appears in list immediately.
+- **Input:** `autocomplete="new-password"` on name fields
+- **Primary button:** `See milestones ->` (appears at 2+ members) -> Screen 8
+- **Back button:** Yes
+
+## Screen 8: Group Reveal
+- **Show:** Group combined milestones + individual milestones for NEW members only (people added in Screen 7, not re-showing Screen 5 milestones). Pencil icon to edit group. All milestones tappable.
+- **User enters:** Nothing
+- **Share:** Tap any milestone -> gold highlight + floating "Share ->" bubble
+- **Edit:** Pencil icon opens group editor
+- **Primary button:** `Continue ->` -> Screen 9
+- **Back button:** Yes
+
+## Screen 9: Share Screen
+- **Show:** Each person's milestone with share preview text. Ready-to-send messages.
+- **User enters:** Nothing (optionally taps to share)
+- **Primary button:** `Go to my dashboard ->` -> Me tab (daily use)
+- **Back button:** Yes
+
+---
+
+## Global Rules
+
+- **Back buttons:** Present on all screens 3-9
+- **Resume banner:** If onboarding is interrupted (app closed), resume banner appears on next open
+- **Share everywhere:** Tap any milestone on screens 3, 5, 6, 8 -> gold highlight + floating "Share ->" bubble -> native share picker
+- **No cosmic milestones** in hero reveal (Screen 2). Max 1 cosmic milestone globally, description only.
+- **Date formatting:** Ordinal suffixes ("Sep 7th"), year only if different from current year
+- **On completion:** User lands on Me tab with 3 bottom tabs (Me | Together | Edit)

@@ -316,9 +316,9 @@ hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
 <body>
 
 <h1>HappyMoments Onboarding Flow</h1>
-<p class="meta">Version 1.5 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
-Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (visual specs), <a href="user-psychology.html">user-psychology.html</a> (why each decision)<br>
-Supersedes: v1.4 (individual person-adding), archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md</p>
+<p class="meta">Version 2.0 &middot; v2.5.0 (versionCode 50) &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
+Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (visual specs), <a href="user-psychology.html">user-psychology.html</a> (why each decision), <a href="onboarding-steps.md">onboarding-steps.md</a> (step-by-step summary)<br>
+Supersedes: v1.5 (group-based), v1.4 (individual person-adding), archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md</p>
 
 <!-- ═════════════════════════════════════════════ -->
 <h2>Design Principles</h2>
@@ -335,28 +335,23 @@ Supersedes: v1.4 (individual person-adding), archive/onboarding-v3-strategy.md, 
 <h2>The Journey: Group-Based Onboarding</h2>
 
 <div class="rule">
-<strong>v1.5 &mdash; group-based onboarding. Users build named groups (Family, Friends) instead of adding people one by one:</strong><br><br>
-1. Inspiration + MY date<br>
-2. MY hero milestone &rarr; see more / <strong>build your first group</strong><br>
-3. (optional) More of MY milestones &rarr; build your first group<br>
-4. <strong>Build your first group</strong> &mdash; name it (default "Family"), "Me" pre-filled, add 2-3 members on ONE screen (role chips + date, growing member list). "See group milestones" appears after 2+ members.<br>
-5. GROUP 1 combined milestone reveal (nice target number + individual highlights) &rarr; <strong>Create another group</strong> / Explore all<br>
-6. <strong>Create another group</strong> (optional) &mdash; name it (default "Friends"), "Me" pre-filled in new set, add members same way<br>
-7. GROUP 2 combined milestone reveal &rarr; Explore all milestones &rarr; Dashboard<br><br>
-
-<strong>Why groups instead of individual adding:</strong><br>
-&bull; Users immediately understand the "group" concept &mdash; Family vs Friends vs Work<br>
-&bull; Adding 3+ people on one screen is faster than one-per-screen with reveals<br>
-&bull; The group milestone reveal is the payoff &mdash; "Your Family has 50,000 days combined!"<br>
-&bull; Creating a 2nd group shows the power of separate milestone views<br>
-&bull; Maps directly to the data model (sets) so the dashboard is pre-organized<br><br>
+<strong>v2.0 &mdash; 9-screen progressive reveal. User discovers their milestones first, then adds ONE person, then builds a group:</strong><br><br>
+1. <strong>Your date</strong> &mdash; DD/MM/YYYY, auto-advance on day&ge;4 and month&ge;2<br>
+2. <strong>Your hero reveal</strong> &mdash; counter animation, no cosmic milestones<br>
+3. <strong>Your milestones list</strong> &mdash; 8 milestones, 730-day window, all tappable to share<br>
+4. <strong>Add ONE person</strong> &mdash; name text input + role hint chips (Partner/Mom/Dad/Sister/Brother)<br>
+5. <strong>Their hero reveal + milestones</strong> &mdash; merged on one screen, list hidden until animation finishes, all tappable<br>
+6. <strong>Combined milestones + group name</strong> &mdash; full engine across all time units (palindromes, repdigits, Pi, powers of 2), shows 6 combined, group name auto-suggested<br>
+7. <strong>Group builder</strong> &mdash; name+date on one row, growing member list, "See milestones" at 2+ members<br>
+8. <strong>Group reveal</strong> &mdash; group combined + individual milestones for NEW members only, pencil to edit, all tappable<br>
+9. <strong>Share screen</strong> &mdash; each person's milestone with preview, then "Go to my dashboard"<br><br>
 
 <strong>Key rules:</strong><br>
-&bull; Cosmic milestones NEVER appear in onboarding lists or highlights.<br>
-&bull; "Me" is always pre-filled as first member in every group.<br>
-&bull; Skip available at group-building steps but de-emphasized.<br>
-&bull; No Remind me / Appearance in onboarding &mdash; those belong in Settings.<br>
-&bull; On finish, switch to first group (primary) for dashboard landing.
+&bull; Back buttons on all screens (3-9). Resume banner if onboarding interrupted early.<br>
+&bull; Share flow on milestone screens: tap &rarr; gold highlight + floating "Share &rarr;" bubble &rarr; native share picker.<br>
+&bull; <code>autocomplete="new-password"</code> on all name inputs to suppress password managers.<br>
+&bull; Cosmic milestones: max 1 globally, description only (no redundant number).<br>
+&bull; On finish, user lands on Me tab with 3 bottom tabs (Me | Together | Edit).
 </div>
 
 <!-- ── Screen 1 ── -->
@@ -372,11 +367,11 @@ Supersedes: v1.4 (individual person-adding), archive/onboarding-v3-strategy.md, 
     <div class="btn-gold">Show me</div>
 </div>
 
-<p><strong>Elements:</strong> 4 (two inspirational examples, question, date input + button)</p>
-<p><strong>User action:</strong> Read the examples (2 seconds), then type 8 digits</p>
+<p><strong>Elements:</strong> Inspirational examples + "What about you?" + DD/MM/YYYY input</p>
+<p><strong>User action:</strong> Read the examples (2 seconds), then type birthday. Auto-advance triggers when day&ge;4 and month&ge;2.</p>
 <p><strong>Reward:</strong> Curiosity &mdash; "what's MY number?"</p>
-<p><strong>Psychology:</strong> The examples show OTHER people's milestones first. This creates social proof + curiosity ("she has a billionth-second birthday &mdash; what about me?"). The examples demonstrate the range: big cosmic numbers AND small personal ones. Value before identity (Duolingo principle).</p>
-<p><strong>Transition:</strong> Counter animation starts &rarr; slide to Screen 2</p>
+<p><strong>Psychology:</strong> The examples show OTHER people's milestones first. This creates social proof + curiosity ("she has a billionth-second birthday &mdash; what about me?"). Value before identity (Duolingo principle).</p>
+<p><strong>Transition:</strong> Auto-advance or "Show me" button &rarr; counter animation starts &rarr; Screen 2</p>
 
 <div class="rule">
 <strong>Why examples first:</strong> Without examples, "billionth-second birthday" is abstract. With examples, the user immediately sees: (1) these are real milestones people have, (2) they're sharable moments ("she just turned..."), (3) they cover different scales (billions of seconds, thousands of days). The examples ARE the elevator pitch.
@@ -398,15 +393,15 @@ Supersedes: v1.4 (individual person-adding), archive/onboarding-v3-strategy.md, 
     <div class="btn-gold" style="background:#333;color:#aaa;margin-top:8px;">Now check someone you know &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> 4 (number, unit, date, emotional countdown) + 2 buttons</p>
-<p><strong>User action:</strong> Watch counter animation, absorb the result</p>
+<p><strong>Elements:</strong> Counter animation &rarr; big gold number + unit + date + emotional countdown</p>
+<p><strong>User action:</strong> Watch counter animation, absorb the result. No cosmic milestones shown.</p>
 <p><strong>Reward:</strong> Personal discovery &mdash; "I didn't know that about myself"</p>
 <p><strong>Psychology:</strong> Peak moment (Kahneman Peak-End Rule). The counter rolling up IS the product experience.</p>
-<p><strong>Transition:</strong> Two options: "See more of my milestones" (expand to see 3-4 more) OR "Now check someone you know &rarr;" (empathy pivot). User controls the depth.</p>
+<p><strong>Transition:</strong> "See more of my milestones" &rarr; Screen 3</p>
 
 <div class="rule">
-<strong>v1.1 Update &mdash; gradual reveal, one hero at a time:</strong><br>
-The onboarding journey should build gradually: (1) YOUR one best milestone &rarr; (2) optionally see more of yours &rarr; (3) add another person &rarr; (4) THEIR one best milestone &rarr; (5) optionally see more of theirs &rarr; (6) one combined milestone &rarr; (7) dashboard. At every step, the user can choose to go deeper or move forward. The key: each screen has a SHARE option alongside the CONTINUE option &mdash; the user is never forced to share but always invited.
+<strong>v2.0 flow &mdash; gradual reveal, always forward:</strong><br>
+The journey builds: (1) YOUR hero &rarr; (2) YOUR milestone list &rarr; (3) add ONE person &rarr; (4) THEIR hero + milestones &rarr; (5) combined milestones &rarr; (6) group builder &rarr; (7) group reveal &rarr; (8) share screen &rarr; dashboard. Share available at every milestone screen (tap to highlight + floating "Share &rarr;" bubble). Back buttons on screens 3-9.
 </div>
 
 <p><strong>The number:</strong> Counter rolls from 0 to target (1.5&ndash;2s, ease-out-cubic). Gold glow on completion. Sparkle particles.</p>
@@ -444,7 +439,40 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 </div>
 
 <!-- ── Screen 3 ── -->
-<h3>Screen 3: Someone You Know</h3>
+<h3>Screen 3: Your Milestones List</h3>
+
+<div class="mockup">
+    <div class="back-arrow">&larr;</div>
+    <div style="font-size:0.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 8px;font-weight:600;">Your milestones</div>
+    <div class="milestone-row">
+        <span class="ms-value">&#9733; 1,000,000,000 seconds</span>
+        <span class="ms-date">Mar 23</span>
+    </div>
+    <div class="milestone-row">
+        <span class="ms-value">18,000 days</span>
+        <span class="ms-date">Oct 5th</span>
+    </div>
+    <div class="milestone-row">
+        <span class="ms-value">600 months</span>
+        <span class="ms-date">Sep 3rd</span>
+    </div>
+    <div class="milestone-row">
+        <span class="ms-value">12,321 days</span>
+        <span class="ms-date">Jun 22nd</span>
+    </div>
+    <div style="text-align:center;color:#666;font-size:0.85rem;margin-top:12px;">+ 4 more milestones</div>
+    <div class="btn-gold" style="margin-top:16px;">Now someone you care about &rarr;</div>
+</div>
+
+<p><strong>Elements:</strong> 8 milestones within 730-day window, all tappable to share</p>
+<p><strong>User action:</strong> Browse milestones, optionally tap to share. Then continue to add someone.</p>
+<p><strong>Reward:</strong> Depth &mdash; "I have THIS MANY special numbers coming!"</p>
+<p><strong>Psychology:</strong> The list proves the product has substance. 8 milestones shows variety (days, months, seconds).</p>
+<p><strong>Share:</strong> Tap any milestone &rarr; gold highlight + floating "Share &rarr;" bubble &rarr; native share picker.</p>
+<p><strong>Transition:</strong> "Now someone you care about &rarr;" button &rarr; Screen 4</p>
+
+<!-- ── Screen 4 ── -->
+<h3>Screen 4: Add ONE Person</h3>
 
 <div class="mockup">
     <div class="back-arrow">&larr;</div>
@@ -452,178 +480,199 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
         Now someone<br>
         you care about
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-        <div style="flex:1;display:flex;flex-wrap:wrap;gap:6px;">
-            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Mom</span>
-            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Partner</span>
-            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Sister</span>
-            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Friend</span>
-            <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Child</span>
-            <span style="background:#2a2a2a;border:1px solid #d4b876;border-radius:16px;padding:8px 14px;color:#d4b876;font-size:0.9rem;cursor:pointer;">Other...</span>
-        </div>
+    <div class="input-field">Their name</div>
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+        <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Partner</span>
+        <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Mom</span>
+        <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Dad</span>
+        <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Sister</span>
+        <span style="background:#2a2a2a;border:1px solid #444;border-radius:16px;padding:8px 14px;color:#ccc;font-size:0.9rem;cursor:pointer;">Brother</span>
     </div>
     <div class="input-field">DD / MM / YYYY</div>
     <div class="btn-gold">Show their milestone</div>
-    <div class="btn-skip">Skip for now</div>
 </div>
 
-<p><strong>Elements:</strong> 4 (question, name input, date input, hint) + 2 actions</p>
-<p><strong>User action:</strong> Enter a name and birthday for someone they care about</p>
+<p><strong>Elements:</strong> Name text input + role hint chips (Partner/Mom/Dad/Sister/Brother) + date input</p>
+<p><strong>User action:</strong> Type a name (or tap a role chip to pre-fill), enter their birthday</p>
 <p><strong>Reward:</strong> Transition from "my app" to "our app" &mdash; emotional investment</p>
 <p><strong>Psychology:</strong> Investment (Nir Eyal Hook Model). They now have data worth keeping.</p>
-<p><strong>Transition:</strong> Counter animation for the other person &rarr; Screen 4</p>
-
-<p><strong>Skip path:</strong> "Skip for now" (small, muted text) &rarr; jump to Screen 5 (dashboard). De-emphasized but always available.</p>
+<p><strong>Transition:</strong> Counter animation for the other person &rarr; Screen 5</p>
 
 <div class="rule">
-<strong>No name input &mdash; tap a role instead (Matej Guid insight):</strong> "Input should be minimal; show, don't ask." The user doesn't type a name &mdash; they tap a pre-set role chip: Mom, Partner, Sister, Friend, Child, or "Other..." (which opens a text field). This is faster (one tap vs typing), less intimidating, and immediately communicates what the app is for. The role label ("Mom") works as the name in the share message until the user renames it later. Names can be added anytime from the People tab &mdash; they are NOT needed for the reveal to work.
+<strong>Name input + role hint chips (v2.0):</strong> The user types a name in a text field. Below the field, role hint chips (Partner, Mom, Dad, Sister, Brother) pre-fill the name field when tapped. The <code>autocomplete="new-password"</code> attribute suppresses password managers from interfering with the name input. Role chips are HINTS, not the only option &mdash; user can type any name.
 </div>
 
-<!-- ── Screen 4 ── -->
-<h3>Screen 4: Their Hero Reveal</h3>
+<!-- ── Screen 5 ── -->
+<h3>Screen 5: Their Hero Reveal + Milestones (merged)</h3>
 
 <div class="mockup">
+    <div class="back-arrow">&larr;</div>
     <div class="hero-name">Mom turns</div>
     <div class="hero-num">20,000</div>
     <div class="hero-unit">days</div>
-    <div class="hero-date">Thursday, June 18, 2026</div>
+    <div class="hero-date">Thursday, Jun 18th</div>
     <div class="hero-countdown">That's in 12 days!</div>
-    <div class="btn-gold">See more of Mom's milestones</div>
-    <div class="btn-gold" style="background:#333;color:#aaa;margin-top:8px;">Continue &rarr;</div>
-</div>
-
-<p><strong>Elements:</strong> 4 (name, number+unit, date, countdown) + 2 buttons</p>
-<p><strong>User action:</strong> Watch counter animation for their person</p>
-<p><strong>Reward:</strong> Discovery about someone they care about &mdash; "I should tell them!"</p>
-<p><strong>Transition:</strong> "See more" expands to Screen 5 (their milestones). "Continue" skips to Screen 6 (combined).</p>
-
-<!-- ── Screen 5 ── -->
-<h3>Screen 5: Mom's Milestones (only theirs)</h3>
-
-<div class="mockup">
-    <div style="font-size:0.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 8px;font-weight:600;">Mom's milestones</div>
-    <div class="milestone-row">
-        <span class="ms-value">&#9733; 20,000 days</span>
-        <span class="ms-date">Jun 18</span>
-    </div>
+    <div style="font-size:0.85rem;color:#555;text-align:center;font-style:italic;margin:12px 0 4px;">Milestone list appears after animation finishes</div>
     <div class="milestone-row">
         <span class="ms-value">100,000,000 seconds</span>
-        <span class="ms-date">Nov 23</span>
+        <span class="ms-date">Nov 23rd</span>
     </div>
     <div class="milestone-row">
-        <span class="ms-value">888 days</span>
-        <span class="ms-date">Sep 5</span>
+        <span class="ms-value">888 months</span>
+        <span class="ms-date">Sep 5th</span>
     </div>
-    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
-        <div class="btn-gold" style="text-align:center;padding:12px;border-radius:8px;">Share</div>
-        <div class="btn-gold" style="text-align:center;padding:12px;border-radius:8px;background:#333;color:#aaa;">Remind me</div>
-        <div class="btn-gold" style="text-align:center;padding:12px;border-radius:8px;background:transparent;color:#888;border:1px solid #444;">Continue &rarr;</div>
-    </div>
+    <div class="btn-gold" style="margin-top:16px;">See what's special together &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> 3-4 milestones for THIS person only + 3 action buttons</p>
-<p><strong>User action:</strong> Tap a milestone to share, or tap Remind me, or Continue</p>
-<p><strong>Reward:</strong> Seeing several milestones for one person &mdash; depth without overwhelm</p>
-<p><strong>Psychology:</strong> Only ONE person's milestones. Not mixed with yours. Clear, focused.</p>
-<p><strong>Three options:</strong> Share (native share sheet) / Remind me (set notification) / Continue (to Screen 6)</p>
+<p><strong>Elements:</strong> Hero counter animation + milestone list (hidden until animation finishes). All tappable to share.</p>
+<p><strong>User action:</strong> Watch counter animation, then browse their milestones. Tap any to share.</p>
+<p><strong>Reward:</strong> Discovery about someone they care about &mdash; "I should tell them!"</p>
+<p><strong>Psychology:</strong> Merged hero+list on one screen avoids an extra tap. List hidden until animation finishes preserves the "wow" moment.</p>
+<p><strong>Share:</strong> Tap any milestone &rarr; gold highlight + floating "Share &rarr;" bubble.</p>
+<p><strong>Transition:</strong> "See what's special together &rarr;" &rarr; Screen 6 (combined milestones)</p>
 
 <!-- ── Screen 6 ── -->
-<h3>Screen 6: Combined Milestone (together teaser)</h3>
+<h3>Screen 6: Combined Milestones + Group Name</h3>
 
 <div class="mockup">
+    <div class="back-arrow">&larr;</div>
     <div style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:8px;font-style:italic;">You and Mom together</div>
-    <div class="hero-num" style="font-size:1.8rem;">38,547</div>
-    <div class="hero-unit">days combined</div>
-    <div style="color:var(--gold);font-size:0.95rem;text-align:center;margin-top:8px;font-style:italic;">40,000 together in 1,453 days</div>
-    <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;">
-        <div class="btn-gold" style="text-align:center;padding:12px;border-radius:8px;">Share</div>
-        <div class="btn-gold" style="text-align:center;padding:12px;border-radius:8px;background:#333;color:#aaa;">Continue &rarr;</div>
+    <div class="milestone-row">
+        <span class="ms-value">40,000 days combined</span>
+        <span class="ms-date">Nov 2027</span>
     </div>
+    <div class="milestone-row">
+        <span class="ms-value">111,111 hours combined</span>
+        <span class="ms-date">Aug 2026</span>
+    </div>
+    <div class="milestone-row">
+        <span class="ms-value">3,141,592 minutes</span>
+        <span class="ms-date">Oct 2026</span>
+    </div>
+    <div style="text-align:center;color:#666;font-size:0.85rem;margin-top:8px;">+ 3 more combined milestones</div>
+    <div style="margin-top:16px;">
+        <div style="font-size:0.85rem;color:var(--muted);margin-bottom:4px;">Group name</div>
+        <div class="input-field">Family</div>
+    </div>
+    <div class="btn-gold" style="margin-top:12px;">Add more people to this group &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> 1 combined milestone + next round target + 2 buttons</p>
-<p><strong>Reward:</strong> Surprise &mdash; "I never thought about OUR combined age!"</p>
-<p><strong>Psychology:</strong> This plants the seed for the &#128101; group view in daily use. Shows the concept without explaining it.</p>
+<p><strong>Elements:</strong> 6 combined milestones (from FULL engine across all time units: palindromes, repdigits, Pi, powers of 2) + group name input (auto-suggested)</p>
+<p><strong>Reward:</strong> Surprise &mdash; "I never thought about OUR combined numbers!" Multiple combined milestones show the engine's depth.</p>
+<p><strong>Psychology:</strong> Plants the seed for the Together tab in daily use. The group name makes it feel like a named entity ("Family").</p>
+<p><strong>Share:</strong> Tap any combined milestone &rarr; gold highlight + floating "Share &rarr;" bubble.</p>
+<p><strong>Transition:</strong> "Add more people to this group &rarr;" &rarr; Screen 7 (group builder)</p>
 
 <!-- ── Screen 7 ── -->
-<h3>Screen 7: Dashboard Landing</h3>
+<h3>Screen 7: Group Builder</h3>
 
-<div class="mockup dashboard">
-    <div class="dash-header">
-        <span class="app-name">HappyMoments</span>
-        <div class="avatar">&#128100;</div>
+<div class="mockup">
+    <div class="back-arrow">&larr;</div>
+    <div style="font-size:1rem;color:var(--text);margin-bottom:12px;">Add to <span style="color:var(--gold);">Family</span></div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <div class="input-field" style="flex:1;margin-bottom:0;">Name</div>
+        <div class="input-field" style="flex:1;margin-bottom:0;">DD/MM/YYYY</div>
     </div>
-
-    <div class="hero-card">
-        <div><span class="star">&#9733;</span> <span class="hero-card-title">Mom turns 20,000 days</span></div>
-        <div class="hero-card-sub">June 18 &mdash; in 12 days!</div>
-        <div class="btn-row">
-            <div class="btn-small gold">Share</div>
-            <div class="btn-small gray">Remind me</div>
-        </div>
-    </div>
-
-    <div class="section-label">This week</div>
-    <div class="milestone-row">
-        <span class="ms-label">You</span>
-        <span class="ms-value">500 months</span>
-        <span class="ms-date">Thu</span>
-    </div>
-
-    <div class="section-label">This month</div>
-    <div class="milestone-row">
-        <span class="ms-label">Mom</span>
-        <span class="ms-value">12,321 days</span>
-        <span class="ms-date">Jun 22</span>
-    </div>
-
-    <div class="add-person-btn">+ Add a friend or create a group</div>
-
-    <div class="tab-bar">
-        <div class="tab active">&#127968;</div>
-        <div class="tab">&#128101;</div>
-    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">Members:</div>
+    <div class="milestone-row"><span class="ms-label">You</span><span class="ms-date">Jun 2, 1978</span></div>
+    <div class="milestone-row"><span class="ms-label">Mom</span><span class="ms-date">Mar 13, 1960</span></div>
+    <div class="milestone-row"><span class="ms-label" style="color:var(--gold);">Dad</span><span class="ms-date" style="color:var(--gold);">Sep 1, 1955</span></div>
+    <div class="btn-gold" style="margin-top:16px;">See milestones &rarr;</div>
+    <div style="font-size:0.78rem;color:#555;text-align:center;margin-top:6px;">"See milestones" appears after 2+ members added</div>
 </div>
 
-<p><strong>What happens:</strong> The hero card shows the most exciting upcoming milestone. The time-chunked list shows a few milestones. The bottom tabs (icons only: &#127968; Home, &#128101; People) are now visible.</p>
+<p><strong>Elements:</strong> Name+date input on one row, growing member list below. "See milestones" button appears after 2+ members.</p>
+<p><strong>User action:</strong> Add 1-3 more people by name + birthday. Each added person appears in the list immediately.</p>
+<p><strong>Reward:</strong> The growing list creates momentum &mdash; "my group is taking shape."</p>
+<p><strong>Transition:</strong> "See milestones &rarr;" &rarr; Screen 8 (group reveal)</p>
 
-<p><strong>"Add a friend or create a group"</strong> &mdash; this is the door to team milestones. Tapping opens the People tab where they can add more people and create groups (family, friends). Group milestones then appear in the &#128101; sub-toggle on Home.</p>
+<!-- ── Screen 8 ── -->
+<h3>Screen 8: Group Reveal</h3>
+
+<div class="mockup">
+    <div class="back-arrow">&larr;</div>
+    <div style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:8px;">Family milestones</div>
+    <div style="font-size:0.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 8px;font-weight:600;">Combined</div>
+    <div class="milestone-row">
+        <span class="ms-value">200,000 days combined</span>
+        <span class="ms-date">Feb 2027</span>
+    </div>
+    <div style="font-size:0.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;padding:8px 0 4px;font-weight:600;">Dad (new)</div>
+    <div class="milestone-row">
+        <span class="ms-value">25,000 days</span>
+        <span class="ms-date">Jul 8th</span>
+    </div>
+    <div class="milestone-row">
+        <span class="ms-value">888 months</span>
+        <span class="ms-date">Nov 1st</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+        <span style="color:var(--muted);font-size:0.85rem;">&#9998; Edit group</span>
+    </div>
+    <div class="btn-gold" style="margin-top:12px;">Continue &rarr;</div>
+</div>
+
+<p><strong>Elements:</strong> Group combined milestones + individual milestones for NEW members only (people added in Screen 7 that weren't seen before). Pencil to edit group. All milestones tappable.</p>
+<p><strong>User action:</strong> Browse group milestones, optionally share, optionally edit.</p>
+<p><strong>Reward:</strong> Seeing the group's milestones is the payoff for adding more people.</p>
+<p><strong>Share:</strong> Tap any milestone &rarr; gold highlight + floating "Share &rarr;" bubble.</p>
+<p><strong>Transition:</strong> "Continue &rarr;" &rarr; Screen 9 (share screen)</p>
+
+<!-- ── Screen 9 ── -->
+<h3>Screen 9: Share Screen</h3>
+
+<div class="mockup">
+    <div class="back-arrow">&larr;</div>
+    <div style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:16px;">Share a milestone</div>
+    <div style="border-left:3px solid var(--gold);padding:8px 12px;margin-bottom:12px;background:rgba(212,184,118,0.05);border-radius:0 8px 8px 0;">
+        <div style="font-size:0.9rem;color:var(--muted);margin-bottom:4px;">Mom</div>
+        <div style="font-size:0.95rem;color:var(--text);font-style:italic;">"Hey, did you know you turn exactly 20,000 days old on Jun 18th?"</div>
+    </div>
+    <div style="border-left:3px solid var(--gold);padding:8px 12px;margin-bottom:12px;background:rgba(212,184,118,0.05);border-radius:0 8px 8px 0;">
+        <div style="font-size:0.9rem;color:var(--muted);margin-bottom:4px;">Dad</div>
+        <div style="font-size:0.95rem;color:var(--text);font-style:italic;">"Dad, you turn 25,000 days old on Jul 8th!"</div>
+    </div>
+    <div class="btn-gold" style="margin-top:16px;">Go to my dashboard &rarr;</div>
+</div>
+
+<p><strong>Elements:</strong> Each person's milestone with share preview text. "Go to my dashboard" button.</p>
+<p><strong>User action:</strong> Review share previews, optionally tap to share individual milestones, then proceed to dashboard.</p>
+<p><strong>Reward:</strong> Ready-to-send messages create immediate sharing opportunity.</p>
+<p><strong>Transition:</strong> "Go to my dashboard &rarr;" deposits user into the Me tab with 3 bottom tabs (Me | Together | Edit).</p>
 
 <div class="rule">
-<strong>This screen IS the daily app.</strong> Onboarding deposits the user into exactly the state they'll see every day. No disorientation. The hero card, time-chunked list, and tabs are the daily experience from now on.
+<strong>The dashboard IS the daily app.</strong> Onboarding deposits the user into exactly the state they'll see every day. No disorientation. The time-chunked milestone list, person filter, and 3 bottom tabs are the daily experience from now on. No hero card in daily use &mdash; all milestones are equal.
 </div>
 
 <!-- ═════════════════════════════════════════════ -->
 <h2>Skip Paths</h2>
 
-<table>
-<tr><th>From</th><th>Skip action</th><th>Goes to</th></tr>
-<tr><td>Screen 3</td><td>"Skip for now"</td><td>Screen 7 (dashboard)</td></tr>
-<tr><td>Screen 4</td><td>"Continue"</td><td>Screen 6 (combined) or Screen 7 if skipped Screen 3</td></tr>
-<tr><td>Screen 5</td><td>"Continue"</td><td>Screen 6 (combined)</td></tr>
-<tr><td>Screen 6</td><td>"Continue"</td><td>Screen 7 (dashboard)</td></tr>
-</table>
+<p>Back buttons are available on screens 3-9, allowing the user to go back to any previous screen. If onboarding is interrupted (app closed), a resume banner appears on next open to continue where they left off.</p>
 
-<p>No other skips. Screen 1 and 2 are mandatory (you can't skip entering YOUR birthday &mdash; that IS the product).</p>
+<p>Screens 1 and 2 are mandatory (you can't skip entering YOUR birthday &mdash; that IS the product). The flow is linear: each screen leads to the next.</p>
 
 <!-- ═════════════════════════════════════════════ -->
 <h2>Metrics</h2>
 
 <table>
 <tr><th>Screen</th><th>Success metric</th><th>Target</th></tr>
-<tr><td>1. Question + Date</td><td>Date entered</td><td>&gt;70% of page views</td></tr>
-<tr><td>2. Your Reveal</td><td>Tap "Now someone I love"</td><td>&gt;60% of reveals</td></tr>
-<tr><td>3. Add Someone</td><td>Name+date entered (not skipped)</td><td>&gt;50% of viewers</td></tr>
-<tr><td>4. Their Reveal + Share</td><td>Share initiated</td><td>&gt;20% of viewers</td></tr>
-<tr><td>5. Dashboard</td><td>Reminders enabled</td><td>&gt;30%</td></tr>
+<tr><td>1. Your Date</td><td>Date entered</td><td>&gt;70% of page views</td></tr>
+<tr><td>2. Your Hero Reveal</td><td>Continue to milestones list</td><td>&gt;80% of reveals</td></tr>
+<tr><td>3. Your Milestones</td><td>Continue to add person</td><td>&gt;70% of viewers</td></tr>
+<tr><td>4. Add ONE Person</td><td>Name+date entered</td><td>&gt;50% of viewers</td></tr>
+<tr><td>5. Their Reveal + Milestones</td><td>Continue to combined</td><td>&gt;60% of viewers</td></tr>
+<tr><td>6. Combined Milestones</td><td>Continue to group builder</td><td>&gt;50% of viewers</td></tr>
+<tr><td>7. Group Builder</td><td>2+ members added</td><td>&gt;40% of viewers</td></tr>
+<tr><td>8. Group Reveal</td><td>Continue to share screen</td><td>&gt;60% of viewers</td></tr>
+<tr><td>9. Share Screen</td><td>Share initiated OR dashboard reached</td><td>&gt;30% share, &gt;80% dashboard</td></tr>
 </table>
 
 <p><strong>Overall funnel:</strong></p>
 <ul>
 <li>Page view &rarr; date entered: &gt;70%</li>
 <li>Date entered &rarr; 2nd person added: &gt;50%</li>
-<li>Date entered &rarr; share initiated: &gt;15%</li>
-<li>Date entered &rarr; reminders enabled: &gt;25%</li>
+<li>Date entered &rarr; share initiated (any screen): &gt;15%</li>
+<li>Date entered &rarr; onboarding complete: &gt;40%</li>
 </ul>
 
 <!-- ═════════════════════════════════════════════ -->
@@ -631,10 +680,10 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 
 <table>
 <tr><th>Day</th><th>What happens</th><th>Goal</th></tr>
-<tr><td><strong>Day 1</strong></td><td>Onboarding &rarr; hero reveal &rarr; add person &rarr; share</td><td>First share (activation)</td></tr>
+<tr><td><strong>Day 1</strong></td><td>Onboarding (9 screens) &rarr; add person &rarr; group &rarr; share</td><td>First share (activation)</td></tr>
 <tr><td><strong>Day 2</strong></td><td>Push notification: "Mom's 20,000 days is in 11 days"</td><td>Return visit</td></tr>
-<tr><td><strong>Day 3</strong></td><td>Open app &rarr; hero card updated &rarr; time-chunked list</td><td>Explore depth</td></tr>
-<tr><td><strong>Day 4&ndash;5</strong></td><td>If 2+ people: "Together" section with teaser</td><td>Discover combined milestones</td></tr>
+<tr><td><strong>Day 3</strong></td><td>Open app &rarr; Me tab with updated countdowns &rarr; explore milestones</td><td>Explore depth</td></tr>
+<tr><td><strong>Day 4&ndash;5</strong></td><td>Together tab: combined group milestones, multiple groups</td><td>Discover combined milestones</td></tr>
 <tr><td><strong>Day 7</strong></td><td>"You have 24 milestones coming this year"</td><td>Long-term retention</td></tr>
 </table>
 
@@ -660,30 +709,40 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 
 <h3>State management</h3>
 <ul>
-<li>Screen 1: saves date to localStorage on "Show me" tap</li>
-<li>Screen 3: saves second person to appData on "Find their milestones" tap</li>
-<li>Screen 5: sets <code>hm_onboarded = 1</code> &rarr; next app open goes straight to dashboard</li>
+<li>Screen 1: saves date to localStorage on auto-advance or "Show me" tap</li>
+<li>Screen 4: saves second person to appData on submission</li>
+<li>Screen 6: saves combined milestone data + group name</li>
+<li>Screen 7: saves additional group members</li>
+<li>Screen 9: sets <code>hm_onboarded = 1</code> &rarr; next app open goes straight to Me tab</li>
+<li>Interruption: resume state saved at each screen transition. Resume banner on next open.</li>
 </ul>
 
 <h3>Analytics events</h3>
 <ul>
 <li><code>onboard_date_entered</code> (Screen 1 &rarr; 2)</li>
 <li><code>onboard_reveal_seen</code> (Screen 2 viewed)</li>
-<li><code>onboard_empathy_tapped</code> (Screen 2 &rarr; 3, "Now someone I love")</li>
-<li><code>onboard_add_person</code> (Screen 3 submitted)</li>
-<li><code>onboard_skip_person</code> (Screen 3 skipped)</li>
-<li><code>onboard_share_initiated</code> (Screen 4 share tapped)</li>
-<li><code>onboard_share_skipped</code> (Screen 4 "maybe later")</li>
-<li><code>onboard_reminders_enabled</code> (Screen 5)</li>
-<li><code>onboard_complete</code> (Screen 5 &rarr; daily use)</li>
+<li><code>onboard_milestones_browsed</code> (Screen 3 viewed)</li>
+<li><code>onboard_add_person</code> (Screen 4 submitted)</li>
+<li><code>onboard_their_reveal</code> (Screen 5 viewed)</li>
+<li><code>onboard_combined_seen</code> (Screen 6 viewed)</li>
+<li><code>onboard_group_built</code> (Screen 7 &rarr; 8)</li>
+<li><code>onboard_share_initiated</code> (any screen, milestone tapped to share)</li>
+<li><code>onboard_complete</code> (Screen 9 &rarr; dashboard)</li>
 </ul>
 
 <h3>Hidden elements during onboarding</h3>
 <ul>
 <li>Main app header (shown after onboarding)</li>
 <li>Language picker (shown after onboarding, auto-detected from browser)</li>
-<li>Tab navigation (shown on Screen 5)</li>
+<li>Tab navigation (shown after Screen 9, Me tab is default)</li>
 <li>Consent banner (auto-accepted on first tap)</li>
+</ul>
+
+<h3>Input behavior</h3>
+<ul>
+<li><code>autocomplete="new-password"</code> on all name inputs to suppress password managers</li>
+<li>Date input: DD/MM/YYYY format, auto-advance when day&ge;4 and month&ge;2</li>
+<li>Role hint chips on Screen 4: Partner/Mom/Dad/Sister/Brother (tap to pre-fill name)</li>
 </ul>
 
 <p class="meta" style="margin-top:48px">End of document. Open in browser for rendered screen mockups.</p>

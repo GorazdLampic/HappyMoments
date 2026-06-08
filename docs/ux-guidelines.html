@@ -41,9 +41,9 @@ ul { margin: 6px 0 14px 22px; }
 <body>
 
 <h1>HappyMoments UX Guidelines</h1>
-<p class="meta">Version 1.4 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
+<p class="meta">Version 2.0 &middot; v2.5.0 (versionCode 50) &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
 Cross-references: <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="navigation-architecture.html">navigation-architecture.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
-Supersedes: archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html</p>
+Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html</p>
 
 <!-- ═════════════════════════════════════════════ -->
 <h2>1. Design Philosophy</h2>
@@ -121,8 +121,8 @@ Supersedes: archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html<
 <!-- ═════════════════════════════════════════════ -->
 <h2>5. Component Catalog</h2>
 
-<h3>5.1 Hero Card</h3>
-<p>The weather-app glanceable element. One per screen. Dominates the top of Home.</p>
+<h3>5.1 Hero Card (Onboarding Only)</h3>
+<p>The counter-animation reveal element. Used in onboarding (Screens 2 and 5) for the "wow" moment. NOT used in daily use &mdash; the Me tab shows all milestones equally in a time-chunked list.</p>
 
 <div class="demo-area">
 <div class="hero-num">20,000</div>
@@ -138,7 +138,7 @@ Supersedes: archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html<
 <p>Rules: hero number in monospace gold (2.5rem), unit in body serif italic, date in body gray, countdown in body gold italic bold. Two buttons: Share (gold) + Remind me (gray).</p>
 
 <h3>5.2 Milestone Cell</h3>
-<p>Two lines. Value + unit on line 1. Date + countdown on line 2. Tap to select for sharing.</p>
+<p>Two lines. Value + unit on line 1. Date (ordinal suffixes, "Sep 7th") + countdown on line 2. Tap to select &rarr; gold highlight + sticky share bar (daily use) or floating "Share &rarr;" bubble (onboarding).</p>
 
 <div class="demo-area">
 <div class="section-label">This week</div>
@@ -166,7 +166,7 @@ Supersedes: archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html<
 <p>Rules: value in monospace gold (1.1rem, bold for starred), date in caption muted. Star (&#9733;) for very special numbers. Time-chunked: "This week" / "This month" / "Later". Max 5-7 per chunk.</p>
 
 <h3>5.3 Share Flow</h3>
-<p>Bottom sheet modal. Two elements: pre-written message + Share button. Native OS share sheet.</p>
+<p>Two contexts: (1) Onboarding: tap milestone &rarr; gold highlight + floating "Share &rarr;" bubble &rarr; native share picker. (2) Daily use: tap milestone &rarr; sticky bar shows selection &rarr; Share button &rarr; native share picker. Text also copied to clipboard.</p>
 
 <div class="demo-area" style="max-width:380px;margin:16px auto;">
 <p style="font-style:italic;color:#aaa;border-left:3px solid #d4b876;padding:10px 14px;margin:0 0 16px;font-size:1rem;line-height:1.5">&ldquo;Hey, did you know you turn exactly 20,000 days old on June 18th? That&rsquo;s worth celebrating!&rdquo;</p>
@@ -204,10 +204,10 @@ Supersedes: archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html<
 <table>
 <tr><th>What</th><th>Animation</th><th>Duration</th></tr>
 <tr><td><strong>Counter reveal</strong></td><td>Numbers roll up from 0 to target with ease-out-cubic. Gold glow pulse on completion. Sparkle particles float up.</td><td>1.5&ndash;2s (longer for bigger numbers)</td></tr>
-<tr><td><strong>Tab switch</strong></td><td>Instant crossfade. Maintain scroll position.</td><td>0ms (no animation)</td></tr>
-<tr><td><strong>Drill-down</strong> (milestone detail, person view)</td><td>Slide from right. Back arrow (&larr;) top-left.</td><td>300ms</td></tr>
-<tr><td><strong>Bottom sheet</strong> (share, add person)</td><td>Slide up from bottom. Drag-to-dismiss.</td><td>300ms</td></tr>
-<tr><td><strong>Full-screen modal</strong> (onboarding, settings page)</td><td>Slide up. Close (&times;) top-left.</td><td>300ms</td></tr>
+<tr><td><strong>Tab switch</strong> (Me/Together/Edit)</td><td>Instant crossfade. Maintain scroll position.</td><td>0ms (no animation)</td></tr>
+<tr><td><strong>Sticky share bar</strong> (tap milestone)</td><td>Gold highlight on milestone + sticky bar slides up at bottom.</td><td>200ms</td></tr>
+<tr><td><strong>Full-screen overlay</strong> (group editor)</td><td>Slide up. "Done" button to dismiss.</td><td>300ms</td></tr>
+<tr><td><strong>Onboarding screens</strong></td><td>Full-screen modal, back buttons on screens 3-9.</td><td>300ms</td></tr>
 <tr><td><strong>Stagger fade-in</strong> (reveal supporting elements)</td><td>Name &rarr; unit &rarr; date &rarr; countdown appear sequentially after counter finishes.</td><td>0.3s delay between each, 0.5s each</td></tr>
 </table>
 
@@ -233,14 +233,16 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 <p>These elements are sacred. They define the app. Do not remove or significantly alter them without explicit founder approval:</p>
 
 <ul>
-<li>The billion-second hook (first onboarding screen)</li>
-<li>Counter animation on milestone reveal</li>
+<li>The billion-second hook (onboarding Screen 1 inspiration)</li>
+<li>Counter animation on milestone reveal (onboarding Screens 2, 5)</li>
 <li>Pre-written share messages (1000+ templates, 6 languages)</li>
-<li>Column layout for per-person milestones (returning users)</li>
+<li>3-tab navigation (Me | Together | Edit) with labels + icons</li>
+<li>Time-chunked milestone list (no hero card in daily use)</li>
 <li>PWA capability (works offline, installable)</li>
-<li>21-language support with auto-detection</li>
+<li>20-language support with auto-detection</li>
 <li>Local-first data (no account required)</li>
 <li>Gold + gray color system</li>
+<li>Full milestone engine: palindromes, repdigits, Pi, Fibonacci, powers of 2 (to 2<sup>30</sup>), Asian auspicious, sacred numbers</li>
 </ul>
 
 <!-- ═════════════════════════════════════════════ -->
@@ -262,9 +264,11 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 
 <h3>Default-off patterns</h3>
 <div class="rule">
-<strong>v1.2 Update:</strong><br>
-<strong>Fibonacci:</strong> OFF by default. Numbers like 17,711 or 46,368 are not recognizable &mdash; they look random. Available as opt-in in Profile &rarr; Advanced.<br><br>
-<strong>Powers of 2:</strong> Show up to 2<sup>10</sup> = 1,024 only. Everyone knows 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024. These should be displayed with their power notation: "128 days (2<sup>7</sup>)" or "512 hours (2<sup>9</sup>)". Beyond 1,024 (2,048, 4,096, 8,192...) &mdash; OFF by default, available in Advanced.
+<strong>v2.0 Update:</strong><br>
+<strong>Fibonacci:</strong> Included in the milestone engine. Available across all time units.<br><br>
+<strong>Powers of 2:</strong> Uncapped, up to 2<sup>30</sup> = 1,073,741,824. All powers of 2 are now included in the milestone engine.<br><br>
+<strong>Combined milestones:</strong> Use <code>findSumMilestonesForEvents</code> across seconds/minutes/hours/days/weeks/months/years. Finds palindromes, repdigits, Pi, Fibonacci, powers, round numbers, Asian auspicious, sacred numbers.<br><br>
+<strong>Cosmic milestones:</strong> Max 1 globally, show description only (no redundant number).
 </div>
 
 <h3>Coherence filter reminder</h3>
