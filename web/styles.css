@@ -2735,10 +2735,15 @@ body {
     font-size: 1.15rem;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.2s, border-left 0.2s;
+    border-left: 3px solid transparent;
 }
 .wizard-milestone-row:active {
     background: rgba(212, 184, 118, 0.1);
+}
+.wizard-milestone-row.ms-selected {
+    background: rgba(212, 184, 118, 0.1);
+    border-left: 3px solid var(--warning);
 }
 
 .wizard-milestone-star {

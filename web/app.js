@@ -1419,15 +1419,53 @@ function validateDateFields(dateStr) {
 }
 
 // ============================================================
-// Helper: render a tappable milestone row that shares on click
+// Helper: render a tappable milestone row — click selects it for sharing
+let _wizardSelectedRow = null;
+let _wizardSelectedMsg = '';
+
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
     const shareText = (personName ? personName + ': ' : '') + displayText + ' on ' + dateStr + ' \u2014 happymoments.app';
     const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    return `<div class="wizard-milestone-row ${extraClass || ''}" onclick="showSharePreview('${safeMsg}')" style="cursor:pointer;" title="Tap to share">
+    const rowId = 'wmsRow' + (Math.random() * 99999 | 0);
+    return `<div class="wizard-milestone-row ${extraClass || ''}" id="${rowId}" onclick="wizardSelectMsRow('${rowId}','${safeMsg}')" style="cursor:pointer;">
         <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
         <span class="wizard-milestone-date">${dateStr}</span>
     </div>`;
 }
+
+function wizardSelectMsRow(rowId, msg) {
+    // Deselect previous
+    if (_wizardSelectedRow) {
+        const prev = document.getElementById(_wizardSelectedRow);
+        if (prev) prev.classList.remove('ms-selected');
+    }
+    // Select new
+    _wizardSelectedRow = rowId;
+    _wizardSelectedMsg = msg;
+    const row = document.getElementById(rowId);
+    if (row) row.classList.add('ms-selected');
+
+    // Show floating share bubble
+    showWizardShareBubble(msg);
+}
+
+function showWizardShareBubble(msg) {
+    let bubble = document.getElementById('wizardShareBubble');
+    if (!bubble) {
+        bubble = document.createElement('div');
+        bubble.id = 'wizardShareBubble';
+        bubble.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--warning,#d4b876);color:#1a1a1a;padding:12px 20px;border-radius:24px;font-weight:600;font-size:0.9rem;box-shadow:0 4px 16px rgba(0,0,0,0.3);cursor:pointer;white-space:nowrap;transition:opacity 0.3s;';
+        document.body.appendChild(bubble);
+    }
+    bubble.textContent = 'Share \u2192';
+    bubble.onclick = function() {
+        showSharePreview(msg);
+        bubble.style.opacity = '0';
+        setTimeout(() => { if (bubble.parentNode) bubble.remove(); _wizardSelectedRow = null; }, 300);
+    };
+    bubble.style.opacity = '1';
+}
+
 
 // Helper: ensure clean wizard state (hide all non-wizard content)
 function _wizardEnsureClean() {
@@ -6133,6 +6171,7 @@ window.editorUpdateMember = editorUpdateMember;
 window.editorUpdateMemberDate = editorUpdateMemberDate;
 window.editorRemoveMember = editorRemoveMember;
 window.editorDeleteGroup = editorDeleteGroup;
+window.wizardSelectMsRow = wizardSelectMsRow;
 window.selectMilestoneForBar = selectMilestoneForBar;
 window.deselectMilestone = deselectMilestone;
 window.shareSelectedMilestone = shareSelectedMilestone;
