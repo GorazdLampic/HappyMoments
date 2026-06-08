@@ -1053,7 +1053,7 @@ function openGroupEditor(setId) {
     let html = `
         <div style="margin-bottom:16px;">
             <label style="font-size:0.8rem;color:var(--text-muted);display:block;margin-bottom:4px;">Group name</label>
-            <input type="text" id="editorGroupName" value="${escapeHtml(currentSet.name)}" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:1.1rem;font-weight:600;text-align:center;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
+            <input type="text" id="editorGroupName" value="${escapeHtml(currentSet.name)}" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:1.1rem;font-weight:600;text-align:center;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
         <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Members — edit name or date directly</div>
     `;
@@ -1065,7 +1065,7 @@ function openGroupEditor(setId) {
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const yyyy = d.getFullYear();
         html += `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
+            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;" autocomplete="off" data-lpignore="true" data-1p-ignore>
             <input type="text" inputmode="numeric" value="${dd}" onchange="editorUpdateMemberDate('${e.id}','d',this.value)" maxlength="2" style="width:2em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
             <input type="text" inputmode="numeric" value="${mm}" onchange="editorUpdateMemberDate('${e.id}','m',this.value)" maxlength="2" style="width:2em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
@@ -1079,7 +1079,7 @@ function openGroupEditor(setId) {
     html += `
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#333);">
             <div style="display:flex;gap:8px;align-items:center;">
-                <input type="text" id="editorPersonName" placeholder="Name" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
+                <input type="text" id="editorPersonName" placeholder="Name" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" autocomplete="off" data-lpignore="true" data-1p-ignore>
                 <div style="display:flex;gap:4px;align-items:center;">
                     <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorMonth',2)">
                     <span style="color:var(--text-muted);">/</span>
@@ -2364,7 +2364,7 @@ function wizardShowCombinedAndName() {
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div></div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
-            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
+            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
@@ -2565,11 +2565,12 @@ function wizardShowGroupReveal() {
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) shareBtn8.textContent = 'Share ' + groupName + ' milestones \u2192';
 
-    // Hide "Create another group" if user already has 2+ groups
+    // Hide "Create another group" if user already has 2+ groups, show dashboard instead
+    const hasMultipleGroups = allSets.length >= 2;
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
-    if (createAnotherBtn) {
-        createAnotherBtn.style.display = allSets.length >= 2 ? 'none' : '';
-    }
+    if (createAnotherBtn) createAnotherBtn.style.display = hasMultipleGroups ? 'none' : '';
+    const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
+    if (dashboardBtn8) dashboardBtn8.style.display = hasMultipleGroups ? '' : 'none';
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
@@ -2661,7 +2662,7 @@ function wizardCreateAnotherGroup() {
         <p style="color:var(--text-muted);text-align:center;font-size:0.9rem;margin-bottom:16px;">A group for friends, colleagues, or another circle</p>
         <div style="margin-top:12px;">
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your new group</p>
-            <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
+            <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
