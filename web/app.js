@@ -970,30 +970,185 @@ function switchHomeView(view) {
         if (groupView) groupView.style.display = '';
         if (toggleMe) toggleMe.classList.remove('active');
         if (toggleGroup) toggleGroup.classList.add('active');
-        // Show group name with edit pencil
+
+        // Render group sub-tabs if 2+ groups
+        renderGroupSubTabs();
+
+        // Render content for current group
         const content = document.getElementById('groupMilestonesContent');
         const currentSet = allSets.find(s => s.id === currentSetId);
         const gName = currentSet ? currentSet.name : 'My Group';
         if (content) {
-            // Render group header + combined milestones
             let headerHtml = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;">
                 <span style="font-size:1.1rem;font-weight:600;color:var(--text);">${escapeHtml(gName)}</span>
-                <button onclick="switchTab('manage')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;" title="Edit group">&#9998;</button>
+                <button onclick="openGroupEditor('${currentSetId}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;" title="Edit group">&#9998;</button>
             </div>`;
             if (typeof renderCombinedTab === 'function') {
                 renderCombinedTab();
                 const combinedContent = document.getElementById('combinedMilestonesContent');
-                if (combinedContent) {
+                if (combinedContent && combinedContent.innerHTML.trim()) {
                     headerHtml += combinedContent.innerHTML;
+                } else {
+                    headerHtml += '<p style="text-align:center;padding:24px;color:var(--text-muted);font-style:italic;">Add 2 or more people to discover combined milestones.</p>';
                 }
             }
             content.innerHTML = headerHtml;
         }
-        if (content && content.innerHTML.trim() === '') {
-            content.innerHTML = '<p style="text-align:center;padding:32px;color:var(--text-muted);font-style:italic;">Add 2 or more people to discover combined milestones.</p>';
-        }
     }
     _track('home_view_switched', { view });
+}
+
+// ============================================================
+// GROUP SUB-TABS (Together tab) + GROUP EDITOR
+// ============================================================
+
+function renderGroupSubTabs() {
+    const container = document.getElementById('groupSubTabs');
+    if (!container) return;
+    if (allSets.length < 2) { container.style.display = 'none'; return; }
+    container.style.display = 'flex';
+    container.innerHTML = allSets.map(set => {
+        const isActive = set.id === currentSetId;
+        return `<button onclick="switchToGroupTab('${set.id}')" style="flex:1;padding:8px 12px;border:none;cursor:pointer;font-size:0.85rem;font-weight:${isActive ? '700' : '400'};color:${isActive ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};background:${isActive ? 'rgba(212,184,118,0.12)' : 'transparent'};transition:all 0.2s;">${escapeHtml(set.name)}</button>`;
+    }).join('');
+}
+
+function switchToGroupTab(setId) {
+    if (setId === currentSetId) return;
+    saveData();
+    currentSetId = setId;
+    loadCurrentSet();
+    selectedPersonIds = appData.events.map(e => e.id);
+    switchHomeView('group');
+}
+
+function openGroupEditor(setId) {
+    const overlay = document.getElementById('groupEditorOverlay');
+    if (!overlay) return;
+
+    // If a specific set is requested, switch to it first
+    if (setId && setId !== currentSetId) {
+        saveData();
+        currentSetId = setId;
+        loadCurrentSet();
+    }
+
+    const currentSet = allSets.find(s => s.id === currentSetId);
+    if (!currentSet) return;
+
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+
+    let html = `
+        <div style="margin-bottom:16px;">
+            <label style="font-size:0.8rem;color:var(--text-muted);display:block;margin-bottom:4px;">Group name</label>
+            <input type="text" id="editorGroupName" value="${escapeHtml(currentSet.name)}" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:1.1rem;font-weight:600;text-align:center;" autocomplete="off">
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Members</div>
+    `;
+
+    // Member list
+    appData.events.forEach(e => {
+        const d = e.date instanceof Date ? e.date : new Date(e.date);
+        const dateStr = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
+        html += `<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
+            <span style="flex:1;color:var(--text);">${escapeHtml(e.name)}</span>
+            <span style="color:var(--text-muted);font-size:0.8rem;">${dateStr}</span>
+            ${e.name !== 'Me' ? `<button onclick="editorRemoveMember('${e.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;" title="Remove">&times;</button>` : ''}
+        </div>`;
+    });
+
+    // Add member form
+    html += `
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#333);">
+            <div style="display:flex;gap:8px;align-items:center;">
+                <input type="text" id="editorPersonName" placeholder="Name" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" autocomplete="off">
+                <div style="display:flex;gap:4px;align-items:center;">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorMonth',2)">
+                    <span style="color:var(--text-muted);">/</span>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorMonth" placeholder="MM" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorYear',2)">
+                    <span style="color:var(--text-muted);">/</span>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorYear" placeholder="YYYY" maxlength="4" style="width:3.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);">
+                </div>
+            </div>
+            <button onclick="editorAddMember()" style="width:100%;margin-top:8px;padding:10px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;">+ Add to ${escapeHtml(currentSet.name)}</button>
+        </div>
+    `;
+
+    // Delete group (if more than 1)
+    if (allSets.length > 1) {
+        html += `<button onclick="editorDeleteGroup()" style="display:block;margin:24px auto 0;padding:10px 20px;border-radius:8px;background:none;border:1px solid #c66;color:#c66;cursor:pointer;font-size:0.85rem;">Delete this group</button>`;
+    }
+
+    document.getElementById('groupEditorContent').innerHTML = html;
+    overlay.classList.remove('hidden');
+}
+
+function closeGroupEditor() {
+    // Save any name change
+    const nameInput = document.getElementById('editorGroupName');
+    if (nameInput) {
+        const newName = nameInput.value.trim();
+        const currentSet = allSets.find(s => s.id === currentSetId);
+        if (currentSet && newName && newName !== currentSet.name) {
+            currentSet.name = newName;
+            saveData();
+        }
+    }
+    document.getElementById('groupEditorOverlay')?.classList.add('hidden');
+    // Refresh whatever tab we're on
+    selectedPersonIds = appData.events.map(e => e.id);
+    renderPersonFilter();
+    renderMilestonesTab();
+    renderEventSetsList();
+    renderPeopleTabGroups();
+    updateSetSwitcher();
+}
+
+function editorAddMember() {
+    const name = document.getElementById('editorPersonName')?.value?.trim();
+    const dateStr = buildDateFromFields('editor');
+    if (!name) { showToast('Enter a name', 'error'); return; }
+    if (!dateStr) { showToast('Enter a date', 'error'); return; }
+    if (!validateDateFields(dateStr)) return;
+    const date = parseLocalDate(dateStr);
+
+    if (!appData.events.some(e => e.name === name && e.date.getTime() === date.getTime())) {
+        const newEvent = {
+            id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            name: name, type: 'birthday', date: date
+        };
+        appData.events.push(newEvent);
+        appData.events.forEach(e => {
+            if (e.id !== newEvent.id) {
+                const key = typeof getConnectionKey === 'function' ? getConnectionKey(e.id, newEvent.id) : '';
+                if (key) appData.connections[key] = true;
+            }
+        });
+        saveData();
+    }
+    showToast(name + ' added!', 'success');
+    openGroupEditor(); // Re-render
+}
+
+function editorRemoveMember(eventId) {
+    appData.events = appData.events.filter(e => e.id !== eventId);
+    // Clean up connections
+    Object.keys(appData.connections).forEach(key => {
+        if (key.includes(eventId)) delete appData.connections[key];
+    });
+    saveData();
+    openGroupEditor(); // Re-render
+}
+
+function editorDeleteGroup() {
+    if (allSets.length <= 1) { showToast('Cannot delete the last group', 'error'); return; }
+    const currentSet = allSets.find(s => s.id === currentSetId);
+    if (!confirm('Delete "' + (currentSet ? currentSet.name : '') + '" and all its members?')) return;
+    allSets = allSets.filter(s => s.id !== currentSetId);
+    currentSetId = allSets[0].id;
+    loadCurrentSet();
+    saveData();
+    closeGroupEditor();
 }
 
 // ============================================================
@@ -5852,6 +6007,12 @@ window.deleteSet = deleteSet;
 window.renameSet = renameSet;
 window.togglePerson = togglePerson;
 window.selectMostSpecial = selectMostSpecial;
+window.switchToGroupTab = switchToGroupTab;
+window.openGroupEditor = openGroupEditor;
+window.closeGroupEditor = closeGroupEditor;
+window.editorAddMember = editorAddMember;
+window.editorRemoveMember = editorRemoveMember;
+window.editorDeleteGroup = editorDeleteGroup;
 
 // ============================================================
 // AUTHENTICATION UI

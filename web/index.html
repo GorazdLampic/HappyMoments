@@ -291,10 +291,13 @@
 
             <!-- Group view (combined milestones) -->
             <div id="homeViewGroup" style="display:none;">
+                <div id="groupSubTabs" style="display:flex;justify-content:center;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:20px;overflow:hidden;">
+                    <!-- Populated by renderGroupSubTabs() -->
+                </div>
                 <div id="groupMilestonesContent">
                     <!-- Populated by switchHomeView('group') — reuses renderCombinedTab -->
                 </div>
-                <div class="home-add-person" onclick="switchTab('events');">
+                <div class="home-add-person" onclick="openGroupEditor()">
                     <strong>+ Create a group</strong><br>
                     <span style="font-size:0.9rem;color:var(--text-muted);">Family, friends, colleagues &mdash; see combined milestones</span>
                 </div>
@@ -550,6 +553,17 @@
                 <button id="resetBtn" class="btn-secondary" style="margin-top: 10px;" data-i18n="reset_all">Reset All Data</button>
             </div>
         </section>
+
+        <!-- Group Editor Overlay (full-screen) -->
+        <div id="groupEditorOverlay" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:var(--bg-page,#1a1a1a);overflow-y:auto;padding:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <button onclick="closeGroupEditor()" style="background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;padding:8px;">&larr; Back</button>
+                <button onclick="closeGroupEditor()" style="background:var(--warning,#d4b876);color:#1a1a1a;border:none;padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;">Done</button>
+            </div>
+            <div id="groupEditorContent">
+                <!-- Populated by openGroupEditor() -->
+            </div>
+        </div>
 
         <!-- Profile Panel (slide-in from right) -->
         <div class="profile-panel hidden" id="profilePanel">
