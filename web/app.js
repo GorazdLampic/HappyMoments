@@ -1485,6 +1485,8 @@ function _wizardEnsureClean() {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
     const profilePanel = document.getElementById('profilePanel');
     if (profilePanel) profilePanel.classList.add('hidden');
+    const footer = document.querySelector('.app-footer');
+    if (footer) footer.style.display = 'none';
     onboardingSection.classList.remove('hidden');
     tabNav.classList.add('hidden');
 }
@@ -2631,12 +2633,21 @@ function wizardShowTeamMilestones() {
         .sort((a, b) => {
             let sa = 0, sb = 0;
             const va = String(a.value), vb = String(b.value);
-            if (a.value >= 1000 && a.value % 1000 === 0) sa += 50;
-            if (b.value >= 1000 && b.value % 1000 === 0) sb += 50;
-            if (new Set(va).size === 1) sa += 40;
-            if (new Set(vb).size === 1) sb += 40;
-            if (va === va.split('').reverse().join('')) sa += 30;
-            if (vb === vb.split('').reverse().join('')) sb += 30;
+            // Repdigits (e.g. 888888) — highest aesthetic value
+            if (new Set(va).size === 1) sa += 80;
+            if (new Set(vb).size === 1) sb += 80;
+            // Palindromes (e.g. 12321)
+            if (va === va.split('').reverse().join('') && new Set(va).size > 1) sa += 60;
+            if (vb === vb.split('').reverse().join('') && new Set(vb).size > 1) sb += 60;
+            // Round thousands — only reward if compact (<=6 digits)
+            if (a.value >= 1000 && a.value % 1000 === 0 && va.length <= 6) sa += 40;
+            if (b.value >= 1000 && b.value % 1000 === 0 && vb.length <= 6) sb += 40;
+            // Aesthetic penalty: numbers with >50% zero digits look ugly (e.g. 3190000000)
+            const zerosA = (va.match(/0/g) || []).length;
+            const zerosB = (vb.match(/0/g) || []).length;
+            if (va.length > 6 && zerosA / va.length > 0.5) sa -= 40;
+            if (vb.length > 6 && zerosB / vb.length > 0.5) sb -= 40;
+            // Proximity bonus (within 60 days)
             sa += Math.max(0, 60 - a.timeUntil / (24*60*60*1000) * 0.03);
             sb += Math.max(0, 60 - b.timeUntil / (24*60*60*1000) * 0.03);
             return sb - sa;
@@ -2679,16 +2690,16 @@ function wizardShowTeamMilestones() {
     // Restore buttons for Phase 2
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
-        shareBtn8.textContent = 'Continue \u2192';
+        shareBtn8.textContent = 'Share with your group \u2192';
         shareBtn8.onclick = function() { wizardBuildShareScreen(); };
     }
 
-    // Show context-appropriate buttons
-    const hasMultipleGroups = allSets.length >= 2;
+    // Always show "create another group" — this drives retention
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
-    if (createAnotherBtn) createAnotherBtn.style.display = hasMultipleGroups ? 'none' : '';
+    if (createAnotherBtn) createAnotherBtn.style.display = '';
+    // Dashboard link always available but demoted
     const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
-    if (dashboardBtn8) dashboardBtn8.style.display = hasMultipleGroups ? '' : 'none';
+    if (dashboardBtn8) dashboardBtn8.style.display = '';
 
     _track('onboard_group_reveal_combined', { members: appData.events.length });
     window.scrollTo(0, 0);
@@ -2849,6 +2860,8 @@ function wizardFinish() {
     tabNav.classList.remove('hidden');
     const header = document.getElementById('appHeader');
     if (header) header.style.display = '';
+    const footer = document.querySelector('.app-footer');
+    if (footer) footer.style.display = '';
 
     // Switch to first set (primary group) for dashboard landing
     if (allSets.length > 1 && currentSetId !== allSets[0].id) {

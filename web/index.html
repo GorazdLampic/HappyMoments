@@ -237,9 +237,9 @@
                     <!-- Populated by wizardShowGroupReveal() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardBuildShareScreen()" id="wizardShareBtn8">Share milestones &rarr;</button>
-                    <button class="wizard-btn" onclick="wizardCreateAnotherGroup()" id="wizardCreateAnotherBtn8">Create another group</button>
-                    <button class="wizard-btn-secondary" onclick="wizardFinish()" id="wizardDashboardBtn8" style="display:none;margin-top:4px;">Go to my dashboard &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardBuildShareScreen()" id="wizardShareBtn8">Share with your group &rarr;</button>
+                    <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardCreateAnotherBtn8" style="margin-top:4px;">Add another circle of people &rarr;</button>
+                    <a href="#" onclick="wizardFinish(); return false;" id="wizardDashboardBtn8" style="display:block;text-align:center;margin-top:12px;color:var(--text-muted,#888);font-size:0.82rem;text-decoration:none;">Go to my dashboard</a>
                 </div>
             </div>
 
@@ -510,6 +510,11 @@
                 </div>
             </div>
 
+            <!-- Terms & Privacy link -->
+            <div style="text-align:center;padding:16px 0 8px;">
+                <a href="legal.html" target="_blank" data-i18n="terms_privacy" style="color:var(--text-muted,#888);font-size:0.8rem;text-decoration:none;">Terms &amp; Privacy</a>
+            </div>
+
             <!-- Hidden elements for JS compatibility — no visible UI -->
             <div style="display:none;">
                 <button id="saveSettingsBtn"></button>
@@ -543,9 +548,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <a href="legal.html" target="_blank" data-i18n="terms_privacy">Terms &amp; Privacy</a>
-            <span class="footer-sep">&middot;</span>
-            <span class="footer-copy">HappyMoments &copy; 2026 Quantum Wave Ltd</span>
+            <span class="footer-copy">HappyMoments &copy; 2026</span>
             <div class="app-version" id="appVersion"></div>
         </footer>
 

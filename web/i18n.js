@@ -111,7 +111,7 @@ const I18N = (() => {
             turns: 'Turns',
             terms_privacy: 'Terms & Privacy',
             // Footer
-            copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            copyright: 'HappyMoments © 2026',
             // Consent
             consent_text: 'HappyMoments stores your dates and preferences locally on your device. No data is sent to any server.',
             consent_ok: 'OK, got it',
@@ -229,7 +229,7 @@ const I18N = (() => {
             unit_sec: 'seg', unit_min: 'min', unit_hrs: 'hrs', unit_d: 'd', unit_w: 'sem', unit_mo: 'mes', unit_y: 'año',
             edit_event: 'Editar Evento', save: 'Guardar', delete: 'Eliminar',
             name: 'Nombre', type: 'Tipo', date: 'Fecha', notes: 'Notas', turns: 'Cumple',
-            terms_privacy: 'Términos y Privacidad', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Términos y Privacidad', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments almacena tus datos localmente en tu dispositivo. No se envían datos a ningún servidor.',
             consent_ok: 'Entendido', consent_read: 'Leer política completa',
             // Milestone descriptions
@@ -284,7 +284,7 @@ const I18N = (() => {
             unit_sec: 'Sek', unit_min: 'Min', unit_hrs: 'Std', unit_d: 'T', unit_w: 'W', unit_mo: 'Mo', unit_y: 'J',
             edit_event: 'Ereignis bearbeiten', save: 'Speichern', delete: 'Löschen',
             name: 'Name', type: 'Typ', date: 'Datum', notes: 'Notizen', turns: 'Wird',
-            terms_privacy: 'AGB & Datenschutz', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'AGB & Datenschutz', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments speichert deine Daten lokal auf deinem Gerät. Es werden keine Daten an Server gesendet.',
             consent_ok: 'Verstanden', consent_read: 'Vollständige Richtlinie lesen',
             // Milestone descriptions
@@ -397,7 +397,7 @@ const I18N = (() => {
             unit_sec: 'seg', unit_min: 'min', unit_hrs: 'hrs', unit_d: 'd', unit_w: 'sem', unit_mo: 'mês', unit_y: 'ano',
             edit_event: 'Editar Evento', save: 'Guardar', delete: 'Eliminar',
             name: 'Nome', type: 'Tipo', date: 'Data', notes: 'Notas', turns: 'Faz',
-            terms_privacy: 'Termos e Privacidade', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Termos e Privacidade', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments armazena os seus dados localmente. Nenhum dado é enviado para servidores.',
             consent_ok: 'Entendido', consent_read: 'Ler política completa',
             // Milestone descriptions
@@ -451,7 +451,7 @@ const I18N = (() => {
             unit_sec: 'seg', unit_min: 'min', unit_hrs: 'hrs', unit_d: 'd', unit_w: 'sem', unit_mo: 'mês', unit_y: 'ano',
             edit_event: 'Editar Evento', save: 'Salvar', delete: 'Excluir',
             name: 'Nome', type: 'Tipo', date: 'Data', notes: 'Notas', turns: 'Faz',
-            terms_privacy: 'Termos e Privacidade', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Termos e Privacidade', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments armazena seus dados localmente no seu dispositivo. Nenhum dado é enviado para servidores.',
             consent_ok: 'Entendi', consent_read: 'Ler política completa',
             // Milestone descriptions
@@ -505,7 +505,7 @@ const I18N = (() => {
             unit_sec: 'sec', unit_min: 'min', unit_hrs: 'ore', unit_d: 'g', unit_w: 'sett', unit_mo: 'me', unit_y: 'an',
             edit_event: 'Modifica Evento', save: 'Salva', delete: 'Elimina',
             name: 'Nome', type: 'Tipo', date: 'Data', notes: 'Note', turns: 'Compie',
-            terms_privacy: 'Termini e Privacy', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Termini e Privacy', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments salva i tuoi dati localmente sul dispositivo. Nessun dato viene inviato a un server.',
             consent_ok: 'Ho capito', consent_read: 'Leggi informativa completa',
             // Milestone descriptions
@@ -559,7 +559,7 @@ const I18N = (() => {
             unit_sec: 'sec', unit_min: 'min', unit_hrs: 'h', unit_d: 'j', unit_w: 'sem', unit_mo: 'mois', unit_y: 'an',
             edit_event: 'Modifier l\'événement', save: 'Enregistrer', delete: 'Supprimer',
             name: 'Nom', type: 'Type', date: 'Date', notes: 'Notes', turns: 'Aura',
-            terms_privacy: 'Conditions et confidentialité', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Conditions et confidentialité', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments stocke vos données localement sur votre appareil. Aucune donnée n\'est envoyée.',
             consent_ok: 'Compris', consent_read: 'Lire la politique complète',
             // Milestone descriptions
@@ -672,7 +672,7 @@ const I18N = (() => {
             unit_sec: 'sek', unit_min: 'min', unit_hrs: 'sati', unit_d: 'd', unit_w: 'tj', unit_mo: 'mj', unit_y: 'god',
             edit_event: 'Uredi događaj', save: 'Spremi', delete: 'Obriši',
             name: 'Ime', type: 'Vrsta', date: 'Datum', notes: 'Bilješke', turns: 'Puni',
-            terms_privacy: 'Uvjeti i Privatnost', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Uvjeti i Privatnost', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments sprema vaše podatke lokalno na uređaju. Nikakvi podaci se ne šalju na poslužitelj.',
             consent_ok: 'U redu', consent_read: 'Pročitaj cijelu politiku',
             // Milestone descriptions
@@ -726,7 +726,7 @@ const I18N = (() => {
             unit_sec: 'sek', unit_min: 'min', unit_hrs: 'ur', unit_d: 'd', unit_w: 'ted', unit_mo: 'mes', unit_y: 'let',
             edit_event: 'Uredi dogodek', save: 'Shrani', delete: 'Izbriši',
             name: 'Ime', type: 'Vrsta', date: 'Datum', notes: 'Opombe', turns: 'Dopolni',
-            terms_privacy: 'Pogoji in zasebnost', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Pogoji in zasebnost', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments shranjuje tvoje podatke lokalno na napravi. Noben podatek se ne pošlje na strežnik.',
             consent_ok: 'V redu', consent_read: 'Preberi celotna pravila',
             // Milestone descriptions
@@ -839,7 +839,7 @@ const I18N = (() => {
             unit_sec: 'sec', unit_min: 'min', unit_hrs: 'uur', unit_d: 'd', unit_w: 'w', unit_mo: 'mnd', unit_y: 'jr',
             edit_event: 'Bewerken', save: 'Opslaan', delete: 'Verwijderen',
             name: 'Naam', type: 'Type', date: 'Datum', notes: 'Notities', turns: 'Wordt',
-            terms_privacy: 'Voorwaarden & Privacy', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Voorwaarden & Privacy', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments slaat je gegevens lokaal op je apparaat op. Er worden geen gegevens naar servers verstuurd.',
             consent_ok: 'Begrepen', consent_read: 'Lees volledig beleid',
             // Milestone descriptions
@@ -893,7 +893,7 @@ const I18N = (() => {
             unit_sec: 'sek', unit_min: 'min', unit_hrs: 'godz', unit_d: 'dn', unit_w: 'tyg', unit_mo: 'mies', unit_y: 'lat',
             edit_event: 'Edytuj Wydarzenie', save: 'Zapisz', delete: 'Usuń',
             name: 'Imię', type: 'Typ', date: 'Data', notes: 'Notatki', turns: 'Skończy',
-            terms_privacy: 'Regulamin i Prywatność', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Regulamin i Prywatność', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments przechowuje dane lokalnie na Twoim urządzeniu. Żadne dane nie są wysyłane na serwery.',
             consent_ok: 'Rozumiem', consent_read: 'Przeczytaj pełną politykę',
             // Milestone descriptions
@@ -948,7 +948,7 @@ const I18N = (() => {
             unit_sec: 'сек', unit_min: 'мин', unit_hrs: 'час', unit_d: 'дн', unit_w: 'нед', unit_mo: 'мес', unit_y: 'г',
             edit_event: 'Редактировать', save: 'Сохранить', delete: 'Удалить',
             name: 'Имя', type: 'Тип', date: 'Дата', notes: 'Заметки', turns: 'Исполнится',
-            terms_privacy: 'Условия и конфиденциальность', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Условия и конфиденциальность', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments хранит ваши данные локально на устройстве. Никакие данные не отправляются на серверы.',
             consent_ok: 'Понятно', consent_read: 'Читать полную политику',
             turns_age: '{name} исполняется {value}!',
@@ -1000,7 +1000,7 @@ const I18N = (() => {
             unit_sec: '秒', unit_min: '分', unit_hrs: '时', unit_d: '天', unit_w: '周', unit_mo: '月', unit_y: '年',
             edit_event: '编辑事件', save: '保存', delete: '删除',
             name: '名称', type: '类型', date: '日期', notes: '备注', turns: '将满',
-            terms_privacy: '条款与隐私', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: '条款与隐私', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments 将你的数据存储在本地设备上。不会向任何服务器发送数据。',
             consent_ok: '知道了', consent_read: '阅读完整政策',
             // Milestone descriptions
@@ -1054,7 +1054,7 @@ const I18N = (() => {
             unit_sec: 'सेकंड', unit_min: 'मिनट', unit_hrs: 'घंटे', unit_d: 'दिन', unit_w: 'सप्ताह', unit_mo: 'महीने', unit_y: 'साल',
             edit_event: 'घटना संपादित करें', save: 'सेव', delete: 'हटाएं',
             name: 'नाम', type: 'प्रकार', date: 'तारीख', notes: 'नोट्स', turns: 'होंगे',
-            terms_privacy: 'शर्तें और गोपनीयता', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'शर्तें और गोपनीयता', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments आपके डेटा को आपके डिवाइस पर स्थानीय रूप से संग्रहीत करता है। कोई डेटा सर्वर को नहीं भेजा जाता।',
             consent_ok: 'समझ गया', consent_read: 'पूरी नीति पढ़ें',
             // Milestone descriptions
@@ -1108,7 +1108,7 @@ const I18N = (() => {
             unit_sec: 'ثانية', unit_min: 'دقيقة', unit_hrs: 'ساعة', unit_d: 'يوم', unit_w: 'أسبوع', unit_mo: 'شهر', unit_y: 'سنة',
             edit_event: 'تعديل الحدث', save: 'حفظ', delete: 'حذف',
             name: 'الاسم', type: 'النوع', date: 'التاريخ', notes: 'ملاحظات', turns: 'سيبلغ',
-            terms_privacy: 'الشروط والخصوصية', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'الشروط والخصوصية', copyright: 'HappyMoments © 2026',
             consent_text: 'يخزن HappyMoments بياناتك محلياً على جهازك. لا يتم إرسال أي بيانات إلى أي خادم.',
             consent_ok: 'فهمت', consent_read: 'اقرأ السياسة الكاملة',
             // Milestone descriptions
@@ -1162,7 +1162,7 @@ const I18N = (() => {
             unit_sec: 'সেকেন্ড', unit_min: 'মিনিট', unit_hrs: 'ঘণ্টা', unit_d: 'দিন', unit_w: 'সপ্তাহ', unit_mo: 'মাস', unit_y: 'বছর',
             edit_event: 'ইভেন্ট সম্পাদনা', save: 'সেভ', delete: 'মুছুন',
             name: 'নাম', type: 'ধরন', date: 'তারিখ', notes: 'নোট', turns: 'হবে',
-            terms_privacy: 'শর্তাবলী ও গোপনীয়তা', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'শর্তাবলী ও গোপনীয়তা', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments আপনার ডেটা আপনার ডিভাইসে স্থানীয়ভাবে সংরক্ষণ করে। কোনো ডেটা সার্ভারে পাঠানো হয় না।',
             consent_ok: 'বুঝেছি', consent_read: 'সম্পূর্ণ নীতি পড়ুন',
             // Milestone descriptions
@@ -1216,7 +1216,7 @@ const I18N = (() => {
             unit_sec: '秒', unit_min: '分', unit_hrs: '時間', unit_d: '日', unit_w: '週', unit_mo: '月', unit_y: '年',
             edit_event: 'イベント編集', save: '保存', delete: '削除',
             name: '名前', type: 'タイプ', date: '日付', notes: 'メモ', turns: '歳になる',
-            terms_privacy: '利用規約とプライバシー', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: '利用規約とプライバシー', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMomentsはデータをお使いのデバイスにローカル保存します。サーバーへのデータ送信はありません。',
             consent_ok: '了解', consent_read: 'ポリシー全文を読む',
             // Milestone descriptions
@@ -1270,7 +1270,7 @@ const I18N = (() => {
             unit_sec: 'giây', unit_min: 'phút', unit_hrs: 'giờ', unit_d: 'ngày', unit_w: 'tuần', unit_mo: 'tháng', unit_y: 'năm',
             edit_event: 'Sửa sự kiện', save: 'Lưu', delete: 'Xóa',
             name: 'Tên', type: 'Loại', date: 'Ngày', notes: 'Ghi chú', turns: 'Sẽ tròn',
-            terms_privacy: 'Điều khoản & Quyền riêng tư', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Điều khoản & Quyền riêng tư', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments lưu dữ liệu cục bộ trên thiết bị. Không gửi dữ liệu đến máy chủ nào.',
             consent_ok: 'Đã hiểu', consent_read: 'Đọc chính sách đầy đủ',
             // Milestone descriptions
@@ -1324,7 +1324,7 @@ const I18N = (() => {
             unit_sec: 'dtk', unit_min: 'mnt', unit_hrs: 'jam', unit_d: 'hari', unit_w: 'mgg', unit_mo: 'bln', unit_y: 'thn',
             edit_event: 'Edit Acara', save: 'Simpan', delete: 'Hapus',
             name: 'Nama', type: 'Tipe', date: 'Tanggal', notes: 'Catatan', turns: 'Akan genap',
-            terms_privacy: 'Ketentuan & Privasi', copyright: 'HappyMoments © 2026 Quantum Wave Ltd',
+            terms_privacy: 'Ketentuan & Privasi', copyright: 'HappyMoments © 2026',
             consent_text: 'HappyMoments menyimpan data Anda secara lokal di perangkat. Tidak ada data yang dikirim ke server.',
             consent_ok: 'Mengerti', consent_read: 'Baca kebijakan lengkap',
             // Milestone descriptions
