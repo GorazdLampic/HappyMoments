@@ -2282,7 +2282,6 @@ function wizardDiscoverFriendV2() {
     }
 
     // Mark this person as "already revealed" so Screen 8 doesn't repeat them
-    const friendEvent = appData.events[appData.events.length - 1];
     if (friendEvent) _wizardRevealedIds.add(friendEvent.id);
 
     window._wizardFriendName = name;

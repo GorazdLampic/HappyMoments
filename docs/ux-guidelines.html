@@ -41,7 +41,7 @@ ul { margin: 6px 0 14px 22px; }
 <body>
 
 <h1>HappyMoments UX Guidelines</h1>
-<p class="meta">Version 2.2 &middot; v55 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
+<p class="meta">Version 2.3 &middot; v68 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
 Cross-references: <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="navigation-architecture.html">navigation-architecture.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html</p>
 
@@ -138,7 +138,7 @@ Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review
 <p>Rules: hero number in monospace gold (2.5rem), unit in body serif italic, date in body gray, countdown in body gold italic bold. Two buttons: Share (gold) + Remind me (gray).</p>
 
 <h3>5.2 Milestone Cell</h3>
-<p>Two lines. Value + unit on line 1. Date (ordinal suffixes, "Sep 7th") + countdown on line 2. Tap to select &rarr; gold highlight (<code>ms-selected</code> class in onboarding, <code>tc-selected</code> in daily use) + floating "Share &rarr;" bubble at bottom center (onboarding) or sticky share bar above tabs (daily use Me/Together tabs).</p>
+<p>Two lines. Value + unit on line 1. Date (ordinal suffixes, "Sep 7th") + countdown on line 2. 3 milestones shown by default with an expand/collapse toggle to reveal more. Tap to select &rarr; gold highlight (<code>ms-selected</code> class in onboarding, <code>tc-selected</code> in daily use) + floating "Share &rarr;" bubble at bottom center (onboarding) or sticky share bar above tabs (daily use Me/Together tabs).</p>
 
 <div class="demo-area">
 <div class="section-label">This week</div>
@@ -163,7 +163,7 @@ Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review
 </div>
 </div>
 
-<p>Rules: value in monospace gold (1.1rem, bold for starred), date in caption muted. Star (&#9733;) for very special numbers. Time-chunked: "This week" / "This month" / "Later". Max 5-7 per chunk.</p>
+<p>Rules: value in monospace gold (1.1rem, bold for starred), date in caption muted. Star (&#9733;) for very special numbers. Time-chunked: "This week" / "This month" / "Later". 3 milestones shown by default per section, expand/collapse toggle for more.</p>
 
 <h3>5.3 Share Flow</h3>
 <p>Two contexts: (1) Onboarding: tap milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center &rarr; native share picker. (2) Daily use (Me/Together tabs): tap milestone &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs &rarr; Share button &rarr; native share picker. Text also copied to clipboard.</p>
@@ -264,13 +264,14 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 
 <h3>Default-off patterns</h3>
 <div class="rule">
-<strong>v2.2 Update (v55):</strong><br>
+<strong>v2.3 Update (v68):</strong><br>
 <strong>Round numbers:</strong> Always included as a density floor regardless of the "Powers of 10" toggle in Advanced settings. Without them, pattern milestones (palindromes, alternating) have multi-year gaps at adult ages. The toggle only controls whether powers of 10 are explicitly labeled as special.<br><br>
 <strong>Fibonacci:</strong> Included in the milestone engine. Available across all time units.<br><br>
 <strong>Powers of 2:</strong> Uncapped, up to 2<sup>30</sup> = 1,073,741,824. All powers of 2 are now included in the milestone engine.<br><br>
 <strong>Combined milestones:</strong> Use <code>findSumMilestonesForEvents</code> across seconds/minutes/hours/days/weeks/months/years. Finds palindromes, repdigits, Pi, Fibonacci, powers, round numbers, Asian auspicious, sacred numbers.<br><br>
 <strong>Cosmic milestones:</strong> Max 1 globally, show description only (no redundant number). If the hero reveal shows a cosmic milestone, it also appears in the milestone list below for consistency.<br><br>
-<strong>Density guarantee:</strong> Round number step sizes scaled per magnitude — no time unit has gaps exceeding ~350 days for adults aged 25&ndash;75. Seconds: 2.5M step (~29d), minutes: 100K step (~69d), hours: 5&ndash;10K step (~208&ndash;417d), days: 250 step, weeks: 50 step (~350d).
+<strong>Adaptive filter:</strong> Generic palindromes (Tier 4) are filtered from seconds/minutes/hours for ages 40+ when value exceeds 50 (was 30 in v55). This prevents noise while keeping interesting palindromes visible for younger users.<br><br>
+<strong>Density guarantee:</strong> Round number step sizes scaled per magnitude — no time unit has gaps exceeding ~350 days for adults aged 25&ndash;75. Seconds: 2.5M step (~29d), minutes: 100K step (~69d), hours: 5&ndash;10K step (~208&ndash;417d), days: 250 step, weeks: 50 step (~350d). Round numbers step sizes further tightened in v68: minutes 10M&ndash;100M every 500K, hours 200K&ndash;1M every 10K.
 </div>
 
 <h3>Coherence filter reminder</h3>
@@ -295,7 +296,7 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 
 <p>Full research archive: <code>docs/archive/ux-research-strategic.md</code> (25 principles, 12 anti-patterns, 10 expert profiles with sources).</p>
 
-<p class="meta" style="margin-top:48px">End of document. v55. Open in browser for rendered component examples.</p>
+<p class="meta" style="margin-top:48px">End of document. v68. Open in browser for rendered component examples.</p>
 
 </body>
 </html>

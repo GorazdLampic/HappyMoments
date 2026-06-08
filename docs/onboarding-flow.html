@@ -316,7 +316,7 @@ hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
 <body>
 
 <h1>HappyMoments Onboarding Flow</h1>
-<p class="meta">Version 2.2 &middot; v55 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
+<p class="meta">Version 2.3 &middot; v68 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for the onboarding journey<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (visual specs), <a href="user-psychology.html">user-psychology.html</a> (why each decision), <a href="onboarding-steps.md">onboarding-steps.md</a> (step-by-step summary)<br>
 Supersedes: v1.5 (group-based), v1.4 (individual person-adding), archive/onboarding-v3-strategy.md, archive/onboarding-v4-strategy.md</p>
 
@@ -338,13 +338,13 @@ Supersedes: v1.5 (group-based), v1.4 (individual person-adding), archive/onboard
 <strong>v2.0 &mdash; 9-screen progressive reveal. User discovers their milestones first, then adds ONE person, then builds a group:</strong><br><br>
 1. <strong>Your date</strong> &mdash; DD/MM/YYYY, auto-advance on day&ge;4 and month&ge;2<br>
 2. <strong>Your hero reveal</strong> &mdash; counter animation, no cosmic milestones<br>
-3. <strong>Your milestones list</strong> &mdash; 8 milestones, 730-day window, all tappable to share<br>
-4. <strong>Add ONE person</strong> &mdash; name text input + role hint chips (Partner/Mom/Dad/Sister/Brother)<br>
-5. <strong>Their hero reveal + milestones</strong> &mdash; merged on one screen, list hidden until animation finishes, all tappable<br>
-6. <strong>Combined milestones + group name</strong> &mdash; full engine across all time units (palindromes, repdigits, Pi, powers of 2), shows 6 combined, group name auto-suggested<br>
-7. <strong>Group builder</strong> &mdash; name+date on one row, growing member list, "See milestones" at 2+ members<br>
-8. <strong>Group reveal</strong> &mdash; group combined + individual milestones for NEW members only, pencil to edit, all tappable<br>
-9. <strong>Share screen</strong> &mdash; each person's milestone with preview, then "Go to my dashboard"<br><br>
+3. <strong>Your milestones list</strong> &mdash; 3 milestones + expand toggle, 730-day window, all tappable to share<br>
+4. <strong>Add ONE person</strong> &mdash; name text input + "or choose:" label above role hint chips (Partner/Mom/Dad/Sister/Brother). No "Skip for now" button.<br>
+5. <strong>Their hero reveal + milestones</strong> &mdash; merged on one screen, 3 milestones + expand toggle, list hidden until animation finishes, all tappable<br>
+6. <strong>Combined milestones + group name</strong> &mdash; full engine across all time units (palindromes, repdigits, Pi, powers of 2), shows 3 combined + expand toggle, group name auto-suggested<br>
+7. <strong>Group builder</strong> &mdash; name+date on one row, growing member list, "See milestones" at 2+ members. No "Skip for now" button.<br>
+8. <strong>Group reveal (two-phase)</strong> &mdash; Phase 1: individual milestones for NEW members only ("Now you know something worth telling them"). Phase 2: combined team milestones ("Some milestones belong to all of you"), 3 shown + expand toggle. All tappable.<br>
+9. <strong>Share screen</strong> &mdash; "Another circle of people?" button + tab guide text (Me/Together/Edit descriptions), then "Go to my dashboard"<br><br>
 
 <strong>Key rules:</strong><br>
 &bull; Back buttons on all screens (3-9). Resume banner if onboarding interrupted early.<br>
@@ -464,10 +464,10 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div class="btn-gold" style="margin-top:16px;">Now someone you care about &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> 8 milestones within 730-day window, all tappable to share</p>
-<p><strong>User action:</strong> Browse milestones, optionally tap to share. Then continue to add someone.</p>
+<p><strong>Elements:</strong> 3 milestones shown by default + expand toggle within 730-day window, all tappable to share</p>
+<p><strong>User action:</strong> Browse milestones (expand to see more), optionally tap to share. Then continue to add someone.</p>
 <p><strong>Reward:</strong> Depth &mdash; "I have THIS MANY special numbers coming!"</p>
-<p><strong>Psychology:</strong> The list proves the product has substance. 8 milestones shows variety (days, months, seconds).</p>
+<p><strong>Psychology:</strong> 3 milestones shown by default avoids overwhelm. The expand toggle lets curious users dig deeper, proving the product has substance across days, months, seconds.</p>
 <p><strong>Share:</strong> Tap any milestone row &rarr; gold highlight (<code>ms-selected</code> class) + floating "Share &rarr;" bubble at bottom center &rarr; native share picker.</p>
 <p><strong>Transition:</strong> "Now someone you care about &rarr;" button &rarr; Screen 4</p>
 
@@ -492,14 +492,14 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div class="btn-gold">Show their milestone</div>
 </div>
 
-<p><strong>Elements:</strong> Name text input + role hint chips (Partner/Mom/Dad/Sister/Brother) + date input</p>
+<p><strong>Elements:</strong> Name text input + "or choose:" label above role hint chips (Partner/Mom/Dad/Sister/Brother) + date input. No "Skip for now" button &mdash; the user is guided to add someone.</p>
 <p><strong>User action:</strong> Type a name (or tap a role chip to pre-fill), enter their birthday</p>
 <p><strong>Reward:</strong> Transition from "my app" to "our app" &mdash; emotional investment</p>
 <p><strong>Psychology:</strong> Investment (Nir Eyal Hook Model). They now have data worth keeping.</p>
 <p><strong>Transition:</strong> Counter animation for the other person &rarr; Screen 5</p>
 
 <div class="rule">
-<strong>Name input + role hint chips (v2.0):</strong> The user types a name in a text field. Below the field, role hint chips (Partner, Mom, Dad, Sister, Brother) pre-fill the name field when tapped. The <code>autocomplete="off"</code> attribute suppresses password managers from interfering with the name input. Role chips are HINTS, not the only option &mdash; user can type any name.
+<strong>Name input + role hint chips (v2.0):</strong> The user types a name in a text field. Below the field, an "or choose:" label introduces role hint chips (Partner, Mom, Dad, Sister, Brother) that pre-fill the name field when tapped. The <code>autocomplete="off"</code> attribute suppresses password managers from interfering with the name input. Role chips are HINTS, not the only option &mdash; user can type any name. No "Skip for now" button &mdash; the flow guides the user to add at least one person.
 </div>
 
 <!-- ── Screen 5 ── -->
@@ -524,10 +524,10 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div class="btn-gold" style="margin-top:16px;">See what's special together &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> Hero counter animation + milestone list (hidden until animation finishes). All tappable to share.</p>
-<p><strong>User action:</strong> Watch counter animation, then browse their milestones. Tap any to share.</p>
+<p><strong>Elements:</strong> Hero counter animation + 3 milestones + expand toggle (hidden until animation finishes). All tappable to share.</p>
+<p><strong>User action:</strong> Watch counter animation, then browse their milestones (expand to see more). Tap any to share.</p>
 <p><strong>Reward:</strong> Discovery about someone they care about &mdash; "I should tell them!"</p>
-<p><strong>Psychology:</strong> Merged hero+list on one screen avoids an extra tap. List hidden until animation finishes preserves the "wow" moment.</p>
+<p><strong>Psychology:</strong> Merged hero+list on one screen avoids an extra tap. 3 milestones shown by default + expand toggle. List hidden until animation finishes preserves the "wow" moment.</p>
 <p><strong>Share:</strong> Tap any milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.</p>
 <p><strong>Transition:</strong> "See what's special together &rarr;" &rarr; Screen 6 (combined milestones)</p>
 
@@ -557,7 +557,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div class="btn-gold" style="margin-top:12px;">Add more people to this group &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> 6 combined milestones (from FULL engine across all time units: palindromes, repdigits, Pi, powers of 2) + group name input (auto-suggested)</p>
+<p><strong>Elements:</strong> 3 combined milestones + expand toggle (from FULL engine across all time units: palindromes, repdigits, Pi, powers of 2) + group name input (auto-suggested)</p>
 <p><strong>Reward:</strong> Surprise &mdash; "I never thought about OUR combined numbers!" Multiple combined milestones show the engine's depth.</p>
 <p><strong>Psychology:</strong> Plants the seed for the Together tab in daily use. The group name makes it feel like a named entity ("Family").</p>
 <p><strong>Share:</strong> Tap any combined milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.</p>
@@ -581,7 +581,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div style="font-size:0.78rem;color:#555;text-align:center;margin-top:6px;">"See milestones" appears after 2+ members added</div>
 </div>
 
-<p><strong>Elements:</strong> Name+date input on one row, growing member list below. "See milestones" button appears after 2+ members.</p>
+<p><strong>Elements:</strong> Name+date input on one row, growing member list below. "See milestones" button appears after 2+ members. No "Skip for now" button &mdash; the user is guided to build the group.</p>
 <p><strong>User action:</strong> Add 1-3 more people by name + birthday. Each added person appears in the list immediately.</p>
 <p><strong>Reward:</strong> The growing list creates momentum &mdash; "my group is taking shape."</p>
 <p><strong>Transition:</strong> "See milestones &rarr;" &rarr; Screen 8 (group reveal)</p>
@@ -612,16 +612,29 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div class="btn-gold" style="margin-top:12px;">Continue &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> Group combined milestones + individual milestones for NEW members only (people added in Screen 7 that weren't seen before). Pencil to edit group. All milestones tappable.</p>
-<p><strong>User action:</strong> Browse group milestones, optionally share, optionally edit.</p>
-<p><strong>Reward:</strong> Seeing the group's milestones is the payoff for adding more people.</p>
-<p><strong>Share:</strong> Tap any milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.</p>
-<p><strong>Buttons (context-sensitive):</strong></p>
+<p><strong>TWO-PHASE flow (v68):</strong></p>
+
+<p><strong>Phase 1 &mdash; "Now you know something worth telling them"</strong></p>
 <ul>
-<li><strong>First group:</strong> "Share milestones &rarr;" + "Create another group" (encourages second group)</li>
-<li><strong>Second+ group:</strong> "Share milestones &rarr;" + "Go to my dashboard &rarr;" (clear exit path, no more group prompts)</li>
+<li>Shows individual milestones for NEW members only (people added in Screen 7 that weren't already revealed on Screen 5).</li>
+<li>If no new members exist (user skipped adding in Screen 7), Phase 1 is skipped and the user goes directly to Phase 2.</li>
+<li>Educational hint for kids born after 2010: the app hints at learning about large numbers as a fun angle for young members.</li>
+<li>Milestones are tappable to share (gold highlight <code>ms-selected</code> + floating "Share &rarr;" bubble).</li>
+<li><strong>Button:</strong> "See team milestones &rarr;" (single button, advances to Phase 2).</li>
 </ul>
-<p><strong>Transition:</strong> "Share milestones &rarr;" &rarr; Screen 9. "Go to my dashboard &rarr;" &rarr; Me tab directly.</p>
+
+<p><strong>Phase 2 &mdash; "Some milestones belong to all of you &mdash; [random subtitle]"</strong></p>
+<ul>
+<li>Shows 3 combined team milestones + expand toggle.</li>
+<li>Single sentence heading, randomly picked from 4 subtitle options.</li>
+<li>All milestones tappable to share.</li>
+<li><strong>Buttons:</strong> "Continue &rarr;" (primary gold) + context-sensitive buttons (e.g., "Create another group" for first group, "Go to my dashboard &rarr;" for second+ group).</li>
+</ul>
+
+<p><strong>User action:</strong> Phase 1: browse individual milestones for new members, optionally share, then advance. Phase 2: browse combined milestones, optionally share, then continue.</p>
+<p><strong>Reward:</strong> Phase 1 creates reach-out motivation ("I should tell Dad about this!"). Phase 2 creates group celebration motivation ("our family has milestones together!").</p>
+<p><strong>Share:</strong> Tap any milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.</p>
+<p><strong>Transition:</strong> "Continue &rarr;" &rarr; Screen 9. "Go to my dashboard &rarr;" &rarr; Me tab directly.</p>
 
 <!-- ── Screen 9 ── -->
 <h3>Screen 9: Share Screen</h3>
@@ -640,9 +653,9 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
     <div class="btn-gold" style="margin-top:16px;">Go to my dashboard &rarr;</div>
 </div>
 
-<p><strong>Elements:</strong> Each person's milestone with share preview text. "Go to my dashboard" button. If only 1 group exists, "Add another group" secondary button. Tab guide text below: <strong>Me</strong> &mdash; personal milestones &middot; <strong>Together</strong> &mdash; group milestones &middot; <strong>Edit</strong> &mdash; manage groups &amp; people.</p>
-<p><strong>User action:</strong> Review share previews, optionally tap to share individual milestones, then proceed to dashboard.</p>
-<p><strong>Reward:</strong> Ready-to-send messages create immediate sharing opportunity. The tab guide text prepares the user for what they'll find on each tab.</p>
+<p><strong>Elements:</strong> "Another circle of people?" button with hint text: "Friends, colleagues, old classmates &mdash; each group has milestones only they share." Tab guide text: <strong>Me</strong> &mdash; personal milestones &middot; <strong>Together</strong> &mdash; group milestones &middot; <strong>Edit</strong> &mdash; manage groups &amp; people. "Go to my dashboard" button.</p>
+<p><strong>User action:</strong> Optionally create another group, review the tab guide, then proceed to dashboard.</p>
+<p><strong>Reward:</strong> The "Another circle?" prompt encourages second group creation. The tab guide text prepares the user for what they'll find on each tab.</p>
 <p><strong>Transition:</strong> "Go to my dashboard &rarr;" deposits user into the Me tab with 3 bottom tabs (Me | Together | Edit).</p>
 
 <div class="rule">
@@ -750,7 +763,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <li>Role hint chips on Screen 4: Partner/Mom/Dad/Sister/Brother (tap to pre-fill name)</li>
 </ul>
 
-<p class="meta" style="margin-top:48px">End of document. v55. Open in browser for rendered screen mockups.</p>
+<p class="meta" style="margin-top:48px">End of document. v68. Open in browser for rendered screen mockups.</p>
 
 </body>
 </html>
