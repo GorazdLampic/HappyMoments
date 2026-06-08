@@ -24,6 +24,22 @@ function parseLocalDate(dateStr) {
 }
 
 // Auto-advance: when user types enough digits, move to next field
+// Ordinal date formatting: "Sep 7th" or "Sep 7th, 2027" if different year
+function formatMilestoneDate(date, options) {
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const day = date.getDate();
+    const suffix = (day >= 11 && day <= 13) ? 'th' : ['th','st','nd','rd','th','th','th','th','th','th'][day % 10];
+    const month = date.toLocaleDateString(locale, { month: 'short' });
+    const thisYear = new Date().getFullYear();
+    const year = date.getFullYear();
+    if (options && options.long) {
+        const weekday = date.toLocaleDateString(locale, { weekday: 'long' });
+        const monthLong = date.toLocaleDateString(locale, { month: 'long' });
+        return year !== thisYear ? `${weekday}, ${monthLong} ${day}${suffix}, ${year}` : `${weekday}, ${monthLong} ${day}${suffix}`;
+    }
+    return year !== thisYear ? `${month} ${day}${suffix}, ${year}` : `${month} ${day}${suffix}`;
+}
+
 function autoAdvance(field, nextFieldId, maxLen) {
     // Strip non-digits
     field.value = field.value.replace(/[^0-9]/g, '');
@@ -1428,9 +1444,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         });
         const m = best;
 
-        const dateDisplay = m.date.toLocaleDateString(getAppLocale(), {
-            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-        });
+        const dateDisplay = formatMilestoneDate(m.date, { long: true });
         const countdown = typeof formatTimeDistance === 'function' ? formatTimeDistance(m.timeUntil) : '';
 
         // Emotional framing for countdown (Spotify Wrapped style)
@@ -1565,7 +1579,7 @@ function wizardShowMyMore() {
 
     let listHtml = '';
     upcoming.forEach(m => {
-        const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
+        const dateStr = formatMilestoneDate(m.date);
         const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         listHtml += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
@@ -1617,7 +1631,7 @@ function wizardShowTheirMore() {
     html += '<div class="wizard-milestone-list">';
     upcoming.forEach(m => {
         const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
-        const dateStr = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+        const dateStr = formatMilestoneDate(m.date);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         html += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
             <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${displayText}</span>
@@ -1998,7 +2012,7 @@ function wizardDiscoverFriendV2() {
         html += '<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More milestones</div>';
         upcoming.forEach(m => {
             const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
-            const ds = m.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            const ds = formatMilestoneDate(m.date);
             html += `<div class="wizard-milestone-row">
                 <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
                 <span class="wizard-milestone-date">${ds}</span>
@@ -2047,9 +2061,7 @@ function wizardShowCombinedAndName() {
     });
 
     const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
-    const dateDisplay = targetDate.toLocaleDateString(locale, {
-        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-    });
+    const dateDisplay = formatMilestoneDate(targetDate, { long: true });
     const namesStr = names.join(' and ');
 
     // Auto-suggest group name based on role
@@ -2069,7 +2081,7 @@ function wizardShowCombinedAndName() {
         if (best2) {
             const val2 = best2.value.toLocaleString(locale);
             const unit2 = best2.unitName || '';
-            const ds2 = best2.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            const ds2 = formatMilestoneDate(best2.date);
             memberMsHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${escapeHtml(e.name)}: ${val2} ${unit2}</span><span class="wizard-milestone-date">${ds2}</span></div>`;
         }
     });
@@ -2240,14 +2252,13 @@ function wizardShowGroupReveal() {
     });
 
     const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
-    const dateDisplay = targetDate.toLocaleDateString(locale, {
-        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-    });
+    const dateDisplay = formatMilestoneDate(targetDate, { long: true });
 
-    // Build individual member milestones for "more"
+    // Show milestones only for NEW members (added on Screen 7, not seen before)
+    // First 2 events are Me + the person from Screen 4 — already seen
+    const newMembers = appData.events.slice(2);
     let moreMsHtml = '';
-    appData.events.forEach(e => {
-        if (e.name === 'Me') return;
+    newMembers.forEach(e => {
         const d = e.date instanceof Date ? e.date : new Date(e.date);
         const ms2 = typeof findAllUpcomingMilestones === 'function'
             ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
@@ -2256,7 +2267,7 @@ function wizardShowGroupReveal() {
         if (best2) {
             const val2 = best2.value.toLocaleString(locale);
             const unit2 = best2.unitName || '';
-            const ds2 = best2.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            const ds2 = formatMilestoneDate(best2.date);
             moreMsHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${escapeHtml(e.name)}: ${val2} ${unit2}</span><span class="wizard-milestone-date">${ds2}</span></div>`;
         }
     });
@@ -2315,7 +2326,7 @@ function wizardBuildShareScreen() {
         if (best) {
             const val = best.value.toLocaleString(locale);
             const unit = best.unitName || best.unit || '';
-            const ds = best.date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+            const ds = formatMilestoneDate(best.date);
             const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
             html += `<div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:10px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
