@@ -157,7 +157,7 @@
                 <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
-                    <input type="text" id="friendName" class="wizard-input" placeholder="Name or role (e.g. Mom, Ana, Partner)" autocomplete="off" style="margin-bottom:8px;">
+                    <input type="text" id="friendName" class="wizard-input" placeholder="Name or role (e.g. Mom, Ana, Partner)" autocomplete="new-password" data-lpignore="true" data-1p-ignore style="margin-bottom:8px;">
                     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
                         <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Partner';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Partner</button>
                         <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Mom';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Mom</button>
@@ -215,7 +215,7 @@
                     </div>
                     <div id="groupAddForm">
                         <div style="display:flex;gap:8px;align-items:center;">
-                            <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="off" style="flex:1;">
+                            <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="new-password" data-lpignore="true" data-1p-ignore style="flex:1;">
                             <div class="wizard-date-fields" style="flex:1.2;margin:0;">
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.2em;">
                                 <span class="wizard-date-sep">/</span>
@@ -362,7 +362,7 @@
                 <p class="card-description">Tap a group to edit — rename, add or remove members.</p>
                 <div id="eventSetsList2" class="event-sets-list"></div>
                 <div style="margin-top:16px;display:flex;gap:8px;align-items:center;">
-                    <input type="text" id="newSetName2" placeholder="New group name" autocomplete="off" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
+                    <input type="text" id="newSetName2" placeholder="New group name" autocomplete="new-password" data-lpignore="true" data-1p-ignore style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
                     <button onclick="handleAddSetFromPeopleTab()" style="padding:10px 14px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;white-space:nowrap;font-size:0.85rem;">+ New group</button>
                 </div>
             </div>

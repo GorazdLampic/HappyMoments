@@ -1042,19 +1042,25 @@ function openGroupEditor(setId) {
     let html = `
         <div style="margin-bottom:16px;">
             <label style="font-size:0.8rem;color:var(--text-muted);display:block;margin-bottom:4px;">Group name</label>
-            <input type="text" id="editorGroupName" value="${escapeHtml(currentSet.name)}" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:1.1rem;font-weight:600;text-align:center;" autocomplete="off">
+            <input type="text" id="editorGroupName" value="${escapeHtml(currentSet.name)}" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:1.1rem;font-weight:600;text-align:center;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
         </div>
-        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Members</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Members — edit name or date directly</div>
     `;
 
-    // Member list
-    appData.events.forEach(e => {
+    // Editable member list
+    appData.events.forEach((e, i) => {
         const d = e.date instanceof Date ? e.date : new Date(e.date);
-        const dateStr = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
-        html += `<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <span style="flex:1;color:var(--text);">${escapeHtml(e.name)}</span>
-            <span style="color:var(--text-muted);font-size:0.8rem;">${dateStr}</span>
-            ${e.name !== 'Me' ? `<button onclick="editorRemoveMember('${e.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;" title="Remove">&times;</button>` : ''}
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        html += `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
+            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
+            <input type="text" inputmode="numeric" value="${dd}" onchange="editorUpdateMemberDate('${e.id}','d',this.value)" maxlength="2" style="width:2em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
+            <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
+            <input type="text" inputmode="numeric" value="${mm}" onchange="editorUpdateMemberDate('${e.id}','m',this.value)" maxlength="2" style="width:2em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
+            <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
+            <input type="text" inputmode="numeric" value="${yyyy}" onchange="editorUpdateMemberDate('${e.id}','y',this.value)" maxlength="4" style="width:3em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
+            <button onclick="editorRemoveMember('${e.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;" title="Remove">&times;</button>
         </div>`;
     });
 
@@ -1062,7 +1068,7 @@ function openGroupEditor(setId) {
     html += `
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#333);">
             <div style="display:flex;gap:8px;align-items:center;">
-                <input type="text" id="editorPersonName" placeholder="Name" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" autocomplete="off">
+                <input type="text" id="editorPersonName" placeholder="Name" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
                 <div style="display:flex;gap:4px;align-items:center;">
                     <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorMonth',2)">
                     <span style="color:var(--text-muted);">/</span>
@@ -1129,6 +1135,28 @@ function editorAddMember() {
     }
     showToast(name + ' added!', 'success');
     openGroupEditor(); // Re-render
+}
+
+function editorUpdateMember(eventId, field, value) {
+    const ev = appData.events.find(e => e.id === eventId);
+    if (!ev) return;
+    if (field === 'name' && value.trim()) {
+        ev.name = value.trim();
+        saveData();
+    }
+}
+
+function editorUpdateMemberDate(eventId, part, value) {
+    const ev = appData.events.find(e => e.id === eventId);
+    if (!ev) return;
+    const d = ev.date instanceof Date ? ev.date : new Date(ev.date);
+    const v = parseInt(value, 10);
+    if (isNaN(v)) return;
+    if (part === 'd' && v >= 1 && v <= 31) d.setDate(v);
+    else if (part === 'm' && v >= 1 && v <= 12) d.setMonth(v - 1);
+    else if (part === 'y' && v >= 1900 && v <= 2100) d.setFullYear(v);
+    ev.date = d;
+    saveData();
 }
 
 function editorRemoveMember(eventId) {
@@ -5985,9 +6013,9 @@ function handleAddSetFromPeopleTab() {
     saveData();
     renderEventSetsList();
     renderPeopleTabGroups();
-    renderEventsTab();
     updateSetSwitcher();
-    showToast(`Group "${name}" created with you in it`, 'success');
+    // Immediately open editor for the new group
+    openGroupEditor(newSet.id);
 }
 
 function renderPeopleTabGroups() {
@@ -6044,8 +6072,13 @@ window.switchToGroupTab = switchToGroupTab;
 window.openGroupEditor = openGroupEditor;
 window.closeGroupEditor = closeGroupEditor;
 window.editorAddMember = editorAddMember;
+window.editorUpdateMember = editorUpdateMember;
+window.editorUpdateMemberDate = editorUpdateMemberDate;
 window.editorRemoveMember = editorRemoveMember;
 window.editorDeleteGroup = editorDeleteGroup;
+window.selectMilestoneForBar = selectMilestoneForBar;
+window.deselectMilestone = deselectMilestone;
+window.shareSelectedMilestone = shareSelectedMilestone;
 
 // ============================================================
 // AUTHENTICATION UI
