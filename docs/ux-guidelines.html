@@ -41,7 +41,7 @@ ul { margin: 6px 0 14px 22px; }
 <body>
 
 <h1>HappyMoments UX Guidelines</h1>
-<p class="meta">Version 2.0 &middot; v2.5.0 (versionCode 50) &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
+<p class="meta">Version 2.1 &middot; v52 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong><br>
 Cross-references: <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="navigation-architecture.html">navigation-architecture.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review.html</p>
 
@@ -138,7 +138,7 @@ Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review
 <p>Rules: hero number in monospace gold (2.5rem), unit in body serif italic, date in body gray, countdown in body gold italic bold. Two buttons: Share (gold) + Remind me (gray).</p>
 
 <h3>5.2 Milestone Cell</h3>
-<p>Two lines. Value + unit on line 1. Date (ordinal suffixes, "Sep 7th") + countdown on line 2. Tap to select &rarr; gold highlight + sticky share bar (daily use) or floating "Share &rarr;" bubble (onboarding).</p>
+<p>Two lines. Value + unit on line 1. Date (ordinal suffixes, "Sep 7th") + countdown on line 2. Tap to select &rarr; gold highlight (<code>ms-selected</code> class in onboarding, <code>tc-selected</code> in daily use) + floating "Share &rarr;" bubble at bottom center (onboarding) or sticky share bar above tabs (daily use Me/Together tabs).</p>
 
 <div class="demo-area">
 <div class="section-label">This week</div>
@@ -166,7 +166,7 @@ Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review
 <p>Rules: value in monospace gold (1.1rem, bold for starred), date in caption muted. Star (&#9733;) for very special numbers. Time-chunked: "This week" / "This month" / "Later". Max 5-7 per chunk.</p>
 
 <h3>5.3 Share Flow</h3>
-<p>Two contexts: (1) Onboarding: tap milestone &rarr; gold highlight + floating "Share &rarr;" bubble &rarr; native share picker. (2) Daily use: tap milestone &rarr; sticky bar shows selection &rarr; Share button &rarr; native share picker. Text also copied to clipboard.</p>
+<p>Two contexts: (1) Onboarding: tap milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center &rarr; native share picker. (2) Daily use (Me/Together tabs): tap milestone &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs &rarr; Share button &rarr; native share picker. Text also copied to clipboard.</p>
 
 <div class="demo-area" style="max-width:380px;margin:16px auto;">
 <p style="font-style:italic;color:#aaa;border-left:3px solid #d4b876;padding:10px 14px;margin:0 0 16px;font-size:1rem;line-height:1.5">&ldquo;Hey, did you know you turn exactly 20,000 days old on June 18th? That&rsquo;s worth celebrating!&rdquo;</p>
@@ -205,7 +205,7 @@ Supersedes: v1.4, archive/ux-redesign-minimalist.md, archive/ux-strategic-review
 <tr><th>What</th><th>Animation</th><th>Duration</th></tr>
 <tr><td><strong>Counter reveal</strong></td><td>Numbers roll up from 0 to target with ease-out-cubic. Gold glow pulse on completion. Sparkle particles float up.</td><td>1.5&ndash;2s (longer for bigger numbers)</td></tr>
 <tr><td><strong>Tab switch</strong> (Me/Together/Edit)</td><td>Instant crossfade. Maintain scroll position.</td><td>0ms (no animation)</td></tr>
-<tr><td><strong>Sticky share bar</strong> (tap milestone)</td><td>Gold highlight on milestone + sticky bar slides up at bottom.</td><td>200ms</td></tr>
+<tr><td><strong>Share selection</strong> (tap milestone)</td><td>Onboarding: gold highlight + floating "Share &rarr;" bubble at bottom center. Daily use: gold highlight + sticky share bar slides up above tabs.</td><td>200ms</td></tr>
 <tr><td><strong>Full-screen overlay</strong> (group editor)</td><td>Slide up. "Done" button to dismiss.</td><td>300ms</td></tr>
 <tr><td><strong>Onboarding screens</strong></td><td>Full-screen modal, back buttons on screens 3-9.</td><td>300ms</td></tr>
 <tr><td><strong>Stagger fade-in</strong> (reveal supporting elements)</td><td>Name &rarr; unit &rarr; date &rarr; countdown appear sequentially after counter finishes.</td><td>0.3s delay between each, 0.5s each</td></tr>
@@ -268,7 +268,7 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 <strong>Fibonacci:</strong> Included in the milestone engine. Available across all time units.<br><br>
 <strong>Powers of 2:</strong> Uncapped, up to 2<sup>30</sup> = 1,073,741,824. All powers of 2 are now included in the milestone engine.<br><br>
 <strong>Combined milestones:</strong> Use <code>findSumMilestonesForEvents</code> across seconds/minutes/hours/days/weeks/months/years. Finds palindromes, repdigits, Pi, Fibonacci, powers, round numbers, Asian auspicious, sacred numbers.<br><br>
-<strong>Cosmic milestones:</strong> Max 1 globally, show description only (no redundant number).
+<strong>Cosmic milestones:</strong> Max 1 globally, show description only (no redundant number). If the hero reveal shows a cosmic milestone, it also appears in the milestone list below for consistency.
 </div>
 
 <h3>Coherence filter reminder</h3>
@@ -293,7 +293,7 @@ All transitions 300ms, 60fps. The counter reveal is the only "long" animation &m
 
 <p>Full research archive: <code>docs/archive/ux-research-strategic.md</code> (25 principles, 12 anti-patterns, 10 expert profiles with sources).</p>
 
-<p class="meta" style="margin-top:48px">End of document. Open in browser for rendered component examples.</p>
+<p class="meta" style="margin-top:48px">End of document. v52. Open in browser for rendered component examples.</p>
 
 </body>
 </html>

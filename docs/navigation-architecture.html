@@ -63,7 +63,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em;
 <body>
 
 <h1>HappyMoments Navigation Architecture</h1>
-<p class="meta">Version 2.0 &middot; v2.5.0 (versionCode 50) &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
+<p class="meta">Version 2.1 &middot; v52 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture-research.md, v1.4 (2-tab model)</p>
 
@@ -90,7 +90,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <tr><th>Tab</th><th>What's in it</th><th>Usage</th></tr>
 <tr><td><strong>Me</strong> (default)</td><td>Time-chunked milestone list (This week / This month / Later). No hero card &mdash; all milestones equal. Person filter at top. Tap to select &rarr; sticky share bar + Share button.</td><td>60%</td></tr>
 <tr><td><strong>Together</strong></td><td>Combined/group milestones from <code>renderCombinedTab</code>. Group sub-tabs when 2+ groups. Group name with pencil &rarr; full-screen group editor.</td><td>25%</td></tr>
-<tr><td><strong>Edit</strong></td><td>Group cards with members listed, tappable to open group editor. "+ New group" button. Settings below (appearance, notifications, patterns, backup, legal).</td><td>15%</td></tr>
+<tr><td><strong>Edit</strong></td><td>Group cards with members listed, tappable to open group editor. "+ New group" button. Settings below: theme (tiny inline dark/light toggle), reminders (single checkbox), then collapsible "Advanced settings &#9660;" (hidden by default) containing Number Patterns + Custom Numbers. Removed per Matej Guid's UX review: Invite Friends, Send Feedback, Save Settings, Reset All Data.</td><td>15%</td></tr>
 </table>
 
 <h3>v2.0 Update: 3 tabs instead of 2 + sub-toggle</h3>
@@ -213,7 +213,13 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <h3>Edit Tab</h3>
 
-<p>Group cards with members listed. Each card tappable to open the group editor (full-screen overlay). "+ New group" button. Settings (appearance, notifications, patterns, backup, legal) below the group cards.</p>
+<p>Group cards with members listed. Each card tappable to open the group editor (full-screen overlay). "+ New group" button. Settings below the group cards, organized as:</p>
+<ol>
+<li><strong>Theme:</strong> tiny inline dark/light toggle (no separate section)</li>
+<li><strong>Reminders:</strong> single checkbox</li>
+<li><strong>"Advanced settings &#9660;"</strong> (collapsed by default): Number Patterns + Custom Numbers</li>
+</ol>
+<p>Removed (v52, per Matej Guid's UX review): Invite Friends, Send Feedback, Save Settings button, Reset All Data. These added visual weight without clear user benefit at this stage.</p>
 
 <h3>Group Editor (Full-Screen Overlay)</h3>
 
@@ -261,8 +267,9 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <tr><td>Edit a group</td><td>Edit tab &rarr; tap group card (or pencil on Together tab)</td><td><strong>2</strong></td></tr>
 <tr><td>Add a person to group</td><td>Edit tab &rarr; tap group &rarr; add member in group editor</td><td><strong>3</strong></td></tr>
 <tr><td>Create a new group</td><td>Edit tab &rarr; "+ New group"</td><td><strong>2</strong></td></tr>
-<tr><td>Change language/theme</td><td>Edit tab &rarr; scroll to settings</td><td><strong>2</strong></td></tr>
-<tr><td>Enable notifications</td><td>Edit tab &rarr; Notifications toggle</td><td><strong>2</strong></td></tr>
+<tr><td>Change theme</td><td>Edit tab &rarr; tiny inline dark/light toggle</td><td><strong>2</strong></td></tr>
+<tr><td>Enable reminders</td><td>Edit tab &rarr; single checkbox</td><td><strong>2</strong></td></tr>
+<tr><td>Change number patterns</td><td>Edit tab &rarr; "Advanced settings &#9660;" &rarr; toggle</td><td><strong>3</strong></td></tr>
 </table>
 
 <!-- ═════════════════════════════════════════════ -->
@@ -271,7 +278,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <table>
 <tr><th>Type</th><th>When</th><th>Animation</th></tr>
 <tr><td><strong>Tab switch</strong></td><td>Me &harr; Together &harr; Edit</td><td>Instant crossfade. Maintain scroll position.</td></tr>
-<tr><td><strong>Sticky share bar</strong></td><td>Tap milestone on Me tab</td><td>Gold highlight on milestone + sticky bar slides up at bottom.</td></tr>
+<tr><td><strong>Share selection</strong></td><td>Tap milestone on Me/Together tab</td><td>Gold highlight (<code>tc-selected</code>) + sticky share bar slides up above tabs.</td></tr>
 <tr><td><strong>Full-screen overlay</strong></td><td>Group editor (from pencil icon or Edit tab tap)</td><td>Slide up. "Done" button to dismiss.</td></tr>
 <tr><td><strong>Native share picker</strong></td><td>Share button tapped</td><td>OS native share sheet. Text also copied to clipboard.</td></tr>
 <tr><td><strong>Onboarding</strong></td><td>First launch or <code>?reset</code></td><td>Full-screen modal, back buttons on screens 3-9.</td></tr>
@@ -294,8 +301,9 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <tr><td>Group sub-tabs</td><td>2+ groups created</td><td>Top of Together tab</td></tr>
 <tr><td>Share flow</td><td>User taps a milestone</td><td>Gold highlight + sticky share bar + native picker</td></tr>
 <tr><td>Group editor</td><td>Pencil icon or Edit tab card tap</td><td>Full-screen overlay</td></tr>
-<tr><td>Notifications</td><td>Edit tab settings section</td><td>Toggle in settings area</td></tr>
-<tr><td>Number preferences</td><td>Edit tab &rarr; Advanced</td><td>Expander in settings, hidden by default</td></tr>
+<tr><td>Theme (dark/light)</td><td>Edit tab settings section</td><td>Tiny inline toggle, always visible</td></tr>
+<tr><td>Reminders</td><td>Edit tab settings section</td><td>Single checkbox, always visible</td></tr>
+<tr><td>Number preferences</td><td>Edit tab &rarr; "Advanced settings &#9660;"</td><td>Collapsible section, hidden by default. Contains Number Patterns + Custom Numbers.</td></tr>
 <tr><td>Export/Import</td><td>Edit tab settings section</td><td>Always available, never promoted</td></tr>
 </table>
 
@@ -327,6 +335,10 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <tr><td><strong>6 themes</strong></td><td>2 themes: Dark and Light.</td></tr>
 <tr><td><strong>Consent banner</strong></td><td>Auto-accepted on first wizard tap. Legal link in Edit tab.</td></tr>
 <tr><td><strong>Column layout</strong></td><td>Time-chunked list across all people is cleaner than per-person columns.</td></tr>
+<tr><td><strong>Invite Friends button</strong></td><td>Removed in v52 (Matej Guid UX review). Settings area was too heavy.</td></tr>
+<tr><td><strong>Send Feedback button</strong></td><td>Removed in v52. Not needed at this stage; adds visual clutter.</td></tr>
+<tr><td><strong>Save Settings button</strong></td><td>Removed in v52. Settings save automatically; explicit button was confusing.</td></tr>
+<tr><td><strong>Reset All Data button</strong></td><td>Removed in v52. Dangerous action that shouldn't be casually discoverable.</td></tr>
 </table>
 
 <!-- ═════════════════════════════════════════════ -->
@@ -343,8 +355,8 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <h3>Daily use share</h3>
 <ul>
-<li>Me tab: tap milestone &rarr; sticky bar shows selection &rarr; Share button &rarr; native share picker</li>
-<li>Together tab: tap combined milestone &rarr; same flow</li>
+<li>Me tab: tap milestone &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs &rarr; Share button &rarr; native share picker</li>
+<li>Together tab: tap combined milestone &rarr; same flow (gold highlight + sticky share bar above tabs)</li>
 <li>All shared text also copied to clipboard automatically</li>
 </ul>
 
@@ -354,11 +366,11 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <li><strong>Powers of 2:</strong> Uncapped (up to 2<sup>30</sup>)</li>
 <li><strong>Combined milestones:</strong> <code>findSumMilestonesForEvents</code> across seconds/minutes/hours/days/weeks/months/years</li>
 <li><strong>Patterns found:</strong> palindromes, repdigits, Pi, Fibonacci, powers, round numbers, Asian auspicious, sacred numbers</li>
-<li><strong>Cosmic milestones:</strong> max 1 globally, show description only (no redundant number)</li>
+<li><strong>Cosmic milestones:</strong> max 1 globally, show description only (no redundant number). If the hero reveal shows a cosmic milestone, it also appears in the milestone list below for consistency.</li>
 <li><strong>Date formatting:</strong> ordinal suffixes ("Sep 7th"), year only if different from current year</li>
 </ul>
 
-<p class="meta" style="margin-top:48px">End of document. v2.5.0 (versionCode 50). Open in browser for rendered mockups.</p>
+<p class="meta" style="margin-top:48px">End of document. v52. Open in browser for rendered mockups.</p>
 
 </body>
 </html>
