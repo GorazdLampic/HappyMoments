@@ -2565,19 +2565,18 @@ function wizardShowGroupReveal() {
 
     _track('onboard_group_reveal_individual', { members: appData.events.length });
 
-    // Update buttons: show "See team milestones" instead of share
+    // Update buttons: only show "See team milestones" in Phase 1
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
         shareBtn8.textContent = 'See ' + groupName + ' team milestones \u2192';
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
-    // Hide "Create another group" if user already has 2+ groups, show dashboard instead
-    const hasMultipleGroups = allSets.length >= 2;
+    // Hide other buttons during Phase 1 — they appear in Phase 2
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
-    if (createAnotherBtn) createAnotherBtn.style.display = hasMultipleGroups ? 'none' : '';
+    if (createAnotherBtn) createAnotherBtn.style.display = 'none';
     const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
-    if (dashboardBtn8) dashboardBtn8.style.display = hasMultipleGroups ? '' : 'none';
+    if (dashboardBtn8) dashboardBtn8.style.display = 'none';
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
@@ -2637,12 +2636,19 @@ function wizardShowTeamMilestones() {
         ${combinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div class="wizard-milestone-list">${combinedHtml}</div></div>` : ''}
     `;
 
-    // Restore share button to continue to Screen 9
+    // Restore buttons for Phase 2
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
         shareBtn8.textContent = 'Continue \u2192';
         shareBtn8.onclick = function() { wizardBuildShareScreen(); };
     }
+
+    // Show context-appropriate buttons
+    const hasMultipleGroups = allSets.length >= 2;
+    const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
+    if (createAnotherBtn) createAnotherBtn.style.display = hasMultipleGroups ? 'none' : '';
+    const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
+    if (dashboardBtn8) dashboardBtn8.style.display = hasMultipleGroups ? '' : 'none';
 
     _track('onboard_group_reveal_combined', { members: appData.events.length });
     window.scrollTo(0, 0);
