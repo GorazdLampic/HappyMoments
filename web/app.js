@@ -995,6 +995,15 @@ function switchHomeView(view) {
                     headerHtml += '<p style="text-align:center;padding:24px;color:var(--text-muted);font-style:italic;">Add 2 or more people to discover combined milestones.</p>';
                 }
             }
+            // Nudge to create a second group if only 1 exists
+            if (allSets.length === 1) {
+                headerHtml += `<div id="secondGroupNudge" style="margin-top:24px;padding:16px;border-radius:10px;background:rgba(212,184,118,0.06);border:1px dashed rgba(212,184,118,0.3);text-align:center;">
+                    <p style="color:var(--text);font-size:0.95rem;margin-bottom:4px;">Got another circle?</p>
+                    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:12px;">Add a group for Friends, Colleagues, or another part of your life</p>
+                    <button onclick="promptNewGroupFromTogether()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">+ New group</button>
+                </div>`;
+            }
+
             content.innerHTML = headerHtml;
         }
     }
@@ -2611,6 +2620,12 @@ function wizardBuildShareScreen() {
     }
 
     el.innerHTML = html;
+
+    // Hide "Add another group" button if user already created one during onboarding
+    const addGroupBtn9 = document.getElementById('wizardAddGroupBtn9');
+    if (addGroupBtn9) {
+        addGroupBtn9.style.display = allSets.length >= 2 ? 'none' : '';
+    }
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep9')?.classList.add('wizard-step-active');
@@ -6090,6 +6105,30 @@ function handleAddSet() {
     updateSetSwitcher();
 }
 
+function promptNewGroupFromTogether() {
+    const name = prompt('Name for the new group:');
+    if (!name || !name.trim()) return;
+
+    // Auto-add "Me" from first set
+    const firstSet = allSets[0];
+    const meEvent = firstSet ? firstSet.events.find(e => e.name === 'Me') || firstSet.events[0] : null;
+    const meClone = meEvent ? {
+        id: 'event_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        name: meEvent.name, type: meEvent.type, date: new Date(meEvent.date)
+    } : null;
+
+    const newSet = { id: 'set_' + Date.now(), name: name.trim(), events: meClone ? [meClone] : [], connections: {}, comboTypes: { sum: true, ratio: true, duration: true } };
+    allSets.push(newSet);
+    currentSetId = newSet.id;
+    loadCurrentSet();
+    saveData();
+    renderEventSetsList();
+    renderPeopleTabGroups();
+    updateSetSwitcher();
+    _track('new_group_from_together');
+    openGroupEditor(newSet.id);
+}
+
 function handleAddSetFromPeopleTab() {
     const input = document.getElementById('newSetName2');
     const name = input ? input.value.trim() : '';
@@ -6167,6 +6206,7 @@ window.renameSet = renameSet;
 window.togglePerson = togglePerson;
 window.selectMostSpecial = selectMostSpecial;
 window.switchToGroupTab = switchToGroupTab;
+window.promptNewGroupFromTogether = promptNewGroupFromTogether;
 window.openGroupEditor = openGroupEditor;
 window.closeGroupEditor = closeGroupEditor;
 window.editorAddMember = editorAddMember;
