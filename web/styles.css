@@ -2734,6 +2734,11 @@ body {
     font-family: var(--font-serif);
     font-size: 1.15rem;
     color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.wizard-milestone-row:active {
+    background: rgba(212, 184, 118, 0.1);
 }
 
 .wizard-milestone-star {

@@ -1419,6 +1419,16 @@ function validateDateFields(dateStr) {
 }
 
 // ============================================================
+// Helper: render a tappable milestone row that shares on click
+function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
+    const shareText = (personName ? personName + ': ' : '') + displayText + ' on ' + dateStr + ' \u2014 happymoments.app';
+    const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return `<div class="wizard-milestone-row ${extraClass || ''}" onclick="showSharePreview('${safeMsg}')" style="cursor:pointer;" title="Tap to share">
+        <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
+        <span class="wizard-milestone-date">${dateStr}</span>
+    </div>`;
+}
+
 // Helper: ensure clean wizard state (hide all non-wizard content)
 function _wizardEnsureClean() {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
@@ -1768,10 +1778,7 @@ function wizardShowMyMore() {
         const dateStr = formatMilestoneDate(m.date);
         const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
-        listHtml += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
-            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${displayText}</span>
-            <span class="wizard-milestone-date">${dateStr}</span>
-        </div>`;
+        listHtml += wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, 'Me', isBig ? 'wizard-milestone-star' : '');
     });
 
     const moreCount = Math.max(0, count - 4);
@@ -1819,10 +1826,7 @@ function wizardShowTheirMore() {
         const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
         const dateStr = formatMilestoneDate(m.date);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
-        html += `<div class="wizard-milestone-row ${isBig ? 'wizard-milestone-star' : ''}">
-            <span class="wizard-milestone-value" style="white-space:nowrap;">${isBig ? '\u2605 ' : ''}${displayText}</span>
-            <span class="wizard-milestone-date">${dateStr}</span>
-        </div>`;
+        html += wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, friendEvent.name, isBig ? 'wizard-milestone-star' : '');
     });
     html += '</div>';
     el.innerHTML = html;
@@ -2201,10 +2205,7 @@ function wizardDiscoverFriendV2() {
         upcoming.forEach(m => {
             const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
             const ds = formatMilestoneDate(m.date);
-            html += `<div class="wizard-milestone-row">
-                <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
-                <span class="wizard-milestone-date">${ds}</span>
-            </div>`;
+            html += wizardMilestoneRow(displayText, ds, name);
         });
         html += '</div>';
         moreEl.innerHTML = html;
@@ -2298,7 +2299,7 @@ function wizardShowCombinedAndName() {
         shown.add(key);
         const displayText = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
         const ds = formatMilestoneDate(m.date);
-        moreCombinedHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span><span class="wizard-milestone-date">${ds}</span></div>`;
+        moreCombinedHtml += wizardMilestoneRow(displayText, ds, namesStr);
         count++;
     });
 
@@ -2493,7 +2494,7 @@ function wizardShowGroupReveal() {
         if (cnt >= 4 || shown8.has(key)) return;
         shown8.add(key);
         const dt = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
-        moreCombinedHtml8 += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${dt}</span><span class="wizard-milestone-date">${formatMilestoneDate(m.date)}</span></div>`;
+        moreCombinedHtml8 += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
         cnt++;
     });
 
