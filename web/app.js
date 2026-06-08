@@ -940,6 +940,7 @@ function switchTab(tabName) {
         renderEventsTab();
         renderPeopleTabGroups();
         if (typeof loadSettingsUI === 'function') loadSettingsUI();
+        window.scrollTo(0, 0);
     }
     // Legacy: settings-only
     else if (tabName === 'settings') {
@@ -4039,25 +4040,32 @@ function homeShareMilestone(idx) {
 }
 
 function showSharePreview(message, recipientName) {
-    // Copy to clipboard and show the text in a dismissible bottom sheet
-    navigator.clipboard.writeText(message).catch(() => {});
-
     const existing = document.getElementById('sharePreviewModal');
     if (existing) existing.remove();
 
     const modal = document.createElement('div');
     modal.id = 'sharePreviewModal';
     modal.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--card-bg,#222);border-top:2px solid var(--warning,#d4b876);padding:16px 20px;box-shadow:0 -4px 20px rgba(0,0,0,0.4);border-radius:16px 16px 0 0;';
+    const safeMsg = message.replace(/'/g, "\\'");
     modal.innerHTML = `
-        <p style="font-size:0.8rem;color:var(--warning,#d4b876);margin-bottom:6px;font-weight:600;">Copied to clipboard!</p>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;">This will be shared:</p>
         <p style="font-size:0.9rem;color:var(--text);margin-bottom:12px;line-height:1.5;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--warning,#d4b876);">${escapeHtml(message)}</p>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px;">Open WhatsApp, Viber, or any app and paste. You can edit the text before sending.</p>
-        <button onclick="document.getElementById('sharePreviewModal').remove();" style="width:100%;padding:12px;border-radius:8px;background:var(--border,#333);color:var(--text);border:none;cursor:pointer;font-size:0.9rem;">Got it</button>
+        <div style="display:flex;gap:8px;">
+            <button onclick="doNativeShare('${safeMsg}');document.getElementById('sharePreviewModal').remove();" style="flex:2;padding:12px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;font-size:0.9rem;">Send via app</button>
+            <button onclick="document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:12px;border-radius:8px;background:var(--border,#333);color:var(--text);border:none;cursor:pointer;font-size:0.85rem;">Cancel</button>
+        </div>
     `;
     document.body.appendChild(modal);
+}
 
-    // Auto-dismiss after 8 seconds
-    setTimeout(() => { const m = document.getElementById('sharePreviewModal'); if (m) m.remove(); }, 8000);
+function doNativeShare(message) {
+    if (navigator.share) {
+        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Copied to clipboard!', 'success');
+        }).catch(() => {});
+    }
 }
 
 function renderMilestonesTab() {
@@ -5745,22 +5753,29 @@ function updateSetSwitcher() {
 
 function renderEventSetsHTML() {
     if (allSets.length === 0) return '<p class="empty-text small">No groups yet.</p>';
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     return allSets.map(set => {
         const isCurrent = set.id === currentSetId;
-        const eventCount = set.events.length;
-        const memberNames = set.events.slice(0, 4).map(e => e.name).join(', ');
-        const moreCount = set.events.length > 4 ? ` +${set.events.length - 4}` : '';
+
+        // Member list
+        let membersHtml = '';
+        set.events.forEach(e => {
+            const d = typeof e.date === 'string' ? new Date(e.date) : e.date;
+            const ds = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
+            membersHtml += `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:0.82rem;">
+                <span style="color:var(--text);flex:1;">${escapeHtml(e.name)}</span>
+                <span style="color:var(--text-muted);">${ds}</span>
+            </div>`;
+        });
+
         return `
-            <div class="event-set-item ${isCurrent ? 'current' : ''}" onclick="${!isCurrent ? `switchToSet('${set.id}')` : ''}" style="cursor:pointer;">
-                <div class="event-set-info">
-                    <strong>${escapeHtml(set.name)}</strong>
-                    ${isCurrent ? '<span style="color:var(--warning);font-size:0.7rem;font-weight:600;margin-left:6px;">ACTIVE</span>' : ''}
-                    <div style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">${escapeHtml(memberNames)}${moreCount}</div>
+            <div class="event-set-item ${isCurrent ? 'current' : ''}" style="padding:12px;margin-bottom:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid ${isCurrent ? 'var(--warning,#d4b876)' : 'var(--border,#333)'};">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <strong style="flex:1;font-size:1rem;color:var(--text);">${escapeHtml(set.name)}</strong>
+                    ${isCurrent ? '<span style="color:var(--warning);font-size:0.65rem;font-weight:700;padding:2px 8px;border:1px solid var(--warning);border-radius:10px;">ACTIVE</span>' : `<button class="btn-small" onclick="event.stopPropagation();switchToSet('${set.id}')" style="font-size:0.75rem;padding:3px 10px;">Switch</button>`}
+                    <button onclick="event.stopPropagation();openGroupEditor('${set.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;" title="Edit group">&#9998;</button>
                 </div>
-                <div class="event-set-actions">
-                    <button class="btn-small btn-edit" onclick="event.stopPropagation();renameSet('${set.id}')" title="Rename">&#9998;</button>
-                    ${allSets.length > 1 ? `<button class="btn-danger-small" onclick="event.stopPropagation();deleteSet('${set.id}')" title="Delete">&times;</button>` : ''}
-                </div>
+                <div style="padding-left:4px;">${membersHtml}</div>
             </div>
         `;
     }).join('');
