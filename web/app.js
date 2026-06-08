@@ -1824,23 +1824,27 @@ function wizardShowMyMore() {
     // Fallback: if nothing, include all upcoming
     if (upcoming.length === 0) upcoming = milestones.filter(m => m.timeUntil > 0);
     const count = upcoming.length;
-    upcoming = upcoming.slice(0, 8);
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
 
-    let listHtml = '';
-    upcoming.forEach(m => {
+    function renderMsRow(m) {
         const dateStr = formatMilestoneDate(m.date);
         const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
-        listHtml += wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, 'Me', isBig ? 'wizard-milestone-star' : '');
-    });
+        return wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, 'Me', isBig ? 'wizard-milestone-star' : '');
+    }
 
-    const moreCount = Math.max(0, count - 4);
-    const heading = count > 0 ? `You have ${count} milestones coming` : 'Your milestones are being calculated';
+    const TOP = 3;
+    let topHtml = '';
+    upcoming.slice(0, TOP).forEach(m => { topHtml += renderMsRow(m); });
+    let moreHtml = '';
+    upcoming.slice(TOP).forEach(m => { moreHtml += renderMsRow(m); });
+
+    const heading = count > 0 ? `Your upcoming milestones` : 'Your milestones are being calculated';
     el.innerHTML = `
         <h2 class="wizard-question">${heading}</h2>
-        <div class="wizard-milestone-list">${listHtml}</div>
-        ${moreCount > 0 ? `<p class="wizard-more-hint">...and ${moreCount} more</p>` : ''}
+        <div class="wizard-milestone-list">${topHtml}</div>
+        ${moreHtml ? `<div id="wizMoreMs3" style="display:none;" class="wizard-milestone-list">${moreHtml}</div>
+        <div id="wizMoreToggle3" style="cursor:pointer;color:var(--warning,#d4b876);padding:10px;text-align:center;font-size:0.85rem;" onclick="var m=document.getElementById('wizMoreMs3'),b=document.getElementById('wizMoreToggle3');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${count - TOP} more milestones \\u25BC';}">Show ${count - TOP} more milestones \u25BC</div>` : ''}
     `;
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
@@ -2248,19 +2252,30 @@ function wizardDiscoverFriendV2() {
         });
     }
     let upcoming = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
-        .sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 6);
-    if (upcoming.length === 0) upcoming = ms.filter(m => m.timeUntil > 0).slice(0, 6);
+        .sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 8);
+    if (upcoming.length === 0) upcoming = ms.filter(m => m.timeUntil > 0).slice(0, 8);
 
     const moreEl = document.getElementById('wizardFriendMore');
     if (moreEl && upcoming.length > 0) {
+        const TOP5 = 3;
         // Hidden initially — revealed after counter animation finishes
         let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
         html += '<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More milestones</div>';
-        upcoming.forEach(m => {
+        upcoming.slice(0, TOP5).forEach(m => {
             const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
             const ds = formatMilestoneDate(m.date);
             html += wizardMilestoneRow(displayText, ds, name);
         });
+        if (upcoming.length > TOP5) {
+            html += `<div id="friendMoreExtra" style="display:none;">`;
+            upcoming.slice(TOP5).forEach(m => {
+                const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
+                const ds = formatMilestoneDate(m.date);
+                html += wizardMilestoneRow(displayText, ds, name);
+            });
+            html += `</div>`;
+            html += `<div id="friendMoreToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('friendMoreExtra'),b=document.getElementById('friendMoreToggle');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${upcoming.length - TOP5} more \\u25BC';}">Show ${upcoming.length - TOP5} more \u25BC</div>`;
+        }
         html += '</div>';
         moreEl.innerHTML = html;
     }

@@ -1,23 +1,23 @@
-// HappyMoments Service Worker — vmq5rl9d6
-const CACHE_NAME = 'happymoments-vmq5rl9d6';
+// HappyMoments Service Worker — vmq5rn3gc
+const CACHE_NAME = 'happymoments-vmq5rn3gc';
 const ASSETS = [
     './',
     './index.html',
-    './styles.css?v=mq5rl9d6',
-    './notifications.js?v=mq5rl9d6',
-    './i18n.js?v=mq5rl9d6',
-    './historyFacts.js?v=mq5rl9d6',
-    './specialNumbers.js?v=mq5rl9d6',
-    './milestoneCalculator.js?v=mq5rl9d6',
-    './combinations.js?v=mq5rl9d6',
-    './shareMessages.js?v=mq5rl9d6',
-    './giftStore.js?v=mq5rl9d6',
-    './dataProtection.js?v=mq5rl9d6',
-    './imageCard.js?v=mq5rl9d6',
-    './checkout.js?v=mq5rl9d6',
-    './analytics.js?v=mq5rl9d6',
-    './auth.js?v=mq5rl9d6',
-    './app.js?v=mq5rl9d6',
+    './styles.css?v=mq5rn3gc',
+    './notifications.js?v=mq5rn3gc',
+    './i18n.js?v=mq5rn3gc',
+    './historyFacts.js?v=mq5rn3gc',
+    './specialNumbers.js?v=mq5rn3gc',
+    './milestoneCalculator.js?v=mq5rn3gc',
+    './combinations.js?v=mq5rn3gc',
+    './shareMessages.js?v=mq5rn3gc',
+    './giftStore.js?v=mq5rn3gc',
+    './dataProtection.js?v=mq5rn3gc',
+    './imageCard.js?v=mq5rn3gc',
+    './checkout.js?v=mq5rn3gc',
+    './analytics.js?v=mq5rn3gc',
+    './auth.js?v=mq5rn3gc',
+    './app.js?v=mq5rn3gc',
     './manifest.json',
     './legal.html'
 ];
