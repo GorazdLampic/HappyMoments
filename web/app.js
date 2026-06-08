@@ -2254,19 +2254,17 @@ function wizardShowCombinedAndName() {
     const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? 'Family'
         : (lastPerson && lastPerson.name === 'Friend' ? 'Friends' : 'My Group');
 
-    // Build individual milestones for each person
-    let memberMsHtml = '';
-    appData.events.forEach(e => {
-        const d = e.date instanceof Date ? e.date : new Date(e.date);
-        const ms2 = typeof findAllUpcomingMilestones === 'function'
-            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
-        const best2 = ms2.filter(x => x.timeUntil > 0 && !x.isCosmic)
-            .sort((a, b) => a.timeUntil - b.timeUntil)[0];
-        if (best2) {
-            const val2 = best2.value.toLocaleString(locale);
-            const unit2 = best2.unitName || '';
-            const ds2 = formatMilestoneDate(best2.date);
-            memberMsHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${escapeHtml(e.name)}: ${val2} ${unit2}</span><span class="wizard-milestone-date">${ds2}</span></div>`;
+    // Build more combined milestones (next 2-3 round targets after the first)
+    let moreCombinedHtml = '';
+    let count = 0;
+    candidates.forEach(step => {
+        if (count >= 3) return;
+        const target = Math.ceil(totalDays / step) * step;
+        const dist = target - totalDays;
+        if (dist > 0 && target !== bestTarget) {
+            const td = new Date(now.getTime() + dist * 24 * 60 * 60 * 1000);
+            moreCombinedHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${target.toLocaleString(locale)} days</span><span class="wizard-milestone-date">${formatMilestoneDate(td)}</span></div>`;
+            count++;
         }
     });
 
@@ -2278,10 +2276,10 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-unit">days combined</div>
         <div class="wizard-reveal-date">${dateDisplay}</div>
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
-        ${memberMsHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">Individual milestones</div><div class="wizard-milestone-list">${memberMsHtml}</div></div>` : ''}
+        ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div></div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
-            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off">
+            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
@@ -2557,7 +2555,7 @@ function wizardCreateAnotherGroup() {
         <p style="color:var(--text-muted);text-align:center;font-size:0.9rem;margin-bottom:16px;">A group for friends, colleagues, or another circle</p>
         <div style="margin-top:12px;">
             <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your new group</p>
-            <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off">
+            <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="new-password" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
@@ -4067,23 +4065,27 @@ function selectMilestoneForBar(idx) {
     const row = document.getElementById('tcItem' + idx);
     if (row) row.classList.add('tc-selected');
 
-    // Update share bar
-    const bar = document.getElementById('stickyShareBar');
+    // Show active state in share bar
+    const barEmpty = document.getElementById('shareBarEmpty');
+    const barActive = document.getElementById('shareBarActive');
     const barText = document.getElementById('shareBarText');
     const barPerson = document.getElementById('shareBarPerson');
-    if (bar && barText && barPerson) {
+    if (barEmpty) barEmpty.style.display = 'none';
+    if (barActive) barActive.style.display = '';
+    if (barText && barPerson) {
         const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + m.unitName);
         barText.textContent = displayText;
         barPerson.textContent = m.eventName + ' \u2014 ' + formatMilestoneDate(m.date);
-        bar.style.display = '';
     }
 }
 
 function deselectMilestone() {
     _selectedMilestoneIdx = -1;
     document.querySelectorAll('.time-chunk-item').forEach(el => el.classList.remove('tc-selected'));
-    const bar = document.getElementById('stickyShareBar');
-    if (bar) bar.style.display = 'none';
+    const barEmpty = document.getElementById('shareBarEmpty');
+    const barActive = document.getElementById('shareBarActive');
+    if (barEmpty) barEmpty.style.display = '';
+    if (barActive) barActive.style.display = 'none';
 }
 
 function shareSelectedMilestone() {

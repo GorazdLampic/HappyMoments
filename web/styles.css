@@ -857,9 +857,9 @@ body {
     stroke: var(--warning);
 }
 
-/* Body padding for bottom tab bar */
+/* Body padding for bottom tab bar + share bar */
 #app {
-    padding-bottom: 76px;
+    padding-bottom: 110px;
 }
 
 /* ============================================================
