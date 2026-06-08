@@ -4146,20 +4146,58 @@ function renderHomeScreen() {
     const laterThisYear = later.filter(m => m.date.getFullYear() === thisYear);
     const nextYear = later.filter(m => m.date.getFullYear() > thisYear);
 
-    let html = '';
-    // Recently passed milestones (you just missed these!)
-    if (recentlyPassed.length > 0) {
-        html += renderChunk('Just passed', recentlyPassed, 2);
-    }
-    html += renderChunk('This week', week, 2);
-    html += renderChunk('This month', month, 2);
-    html += renderChunk(laterThisYear.length > 0 ? 'Later this year' : 'Coming up', laterThisYear, 2);
-    if (nextYear.length > 0) {
-        html += renderChunk('Next year', nextYear, 2);
-    }
+    // Show top 3 milestones, then expandable rest
+    // Merge all into one sorted list (recently passed first, then by proximity)
+    const merged = [...recentlyPassed, ...future].filter(m => {
+        if (m.isCosmic) { _globalCosmicShown++; return _globalCosmicShown <= 1; }
+        return true;
+    });
 
-    if (html === '') {
+    let html = '';
+    if (merged.length === 0) {
         html = '<p class="empty-text" style="padding:24px;text-align:center;font-style:italic;color:var(--text-muted);">Add more people &mdash; each birthday unlocks new milestones here.</p>';
+    } else {
+        // Render individual milestone item
+        function renderItem(m, idx) {
+            let displayText;
+            if (m.isCosmic) {
+                displayText = m.description || m.unitName;
+            } else {
+                displayText = m.value.toLocaleString(locale) + ' ' + m.unitName;
+            }
+            const mYear = m.date.getFullYear();
+            const showYear = mYear !== thisYear;
+            const dateOpts = showYear
+                ? { month: 'short', day: 'numeric', year: 'numeric' }
+                : { weekday: 'short', month: 'short', day: 'numeric' };
+            let dateStr;
+            if (m.recentlyPassed) {
+                const daysAgo = Math.round(Math.abs(m.timeUntil) / (24*60*60*1000));
+                dateStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo}d ago`;
+            } else {
+                dateStr = m.date.toLocaleDateString(locale, dateOpts);
+            }
+            const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
+            const mIdx = all.indexOf(m);
+            return `<div class="time-chunk-item" onclick="selectMilestoneForBar(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
+                <div class="tc-left">
+                    <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
+                    <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                </div>
+                <span class="tc-date">${dateStr}</span>
+            </div>`;
+        }
+
+        const TOP_COUNT = 3;
+        html += '<div class="time-chunk-label">Upcoming</div>';
+        merged.slice(0, TOP_COUNT).forEach((m, i) => { html += renderItem(m, i); });
+
+        if (merged.length > TOP_COUNT) {
+            html += `<div id="moreMs" style="display:none;">`;
+            merged.slice(TOP_COUNT).forEach((m, i) => { html += renderItem(m, TOP_COUNT + i); });
+            html += `</div>`;
+            html += `<div class="time-chunk-more" style="cursor:pointer;color:var(--warning,#d4b876);padding:12px;text-align:center;font-size:0.85rem;" onclick="document.getElementById('moreMs').style.display='';this.style.display='none';">Show ${merged.length - TOP_COUNT} more milestones</div>`;
+        }
     }
     listEl.innerHTML = html;
 
