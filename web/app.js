@@ -4196,7 +4196,7 @@ function renderHomeScreen() {
             html += `<div id="moreMs" style="display:none;">`;
             merged.slice(TOP_COUNT).forEach((m, i) => { html += renderItem(m, TOP_COUNT + i); });
             html += `</div>`;
-            html += `<div class="time-chunk-more" style="cursor:pointer;color:var(--warning,#d4b876);padding:12px;text-align:center;font-size:0.85rem;" onclick="document.getElementById('moreMs').style.display='';this.style.display='none';">Show ${merged.length - TOP_COUNT} more milestones</div>`;
+            html += `<div id="moreMsToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:12px;text-align:center;font-size:0.85rem;" onclick="toggleMoreMilestones()">Show ${merged.length - TOP_COUNT} more milestones \u25BC</div>`;
         }
     }
     listEl.innerHTML = html;
@@ -4220,6 +4220,20 @@ function renderHomeScreen() {
         }
     } else if (togetherEl) {
         togetherEl.style.display = 'none';
+    }
+}
+
+function toggleMoreMilestones() {
+    const more = document.getElementById('moreMs');
+    const btn = document.getElementById('moreMsToggle');
+    if (!more || !btn) return;
+    const isHidden = more.style.display === 'none';
+    more.style.display = isHidden ? '' : 'none';
+    btn.textContent = isHidden ? 'Show less \u25B2' : btn.textContent.replace('Show less \u25B2', '');
+    if (!isHidden) {
+        // Restore "Show X more" text
+        const count = more.querySelectorAll('.time-chunk-item').length;
+        btn.textContent = 'Show ' + count + ' more milestones \u25BC';
     }
 }
 
@@ -6287,6 +6301,7 @@ window.editorRemoveMember = editorRemoveMember;
 window.editorDeleteGroup = editorDeleteGroup;
 window.wizardSelectMsRow = wizardSelectMsRow;
 window.selectMilestoneForBar = selectMilestoneForBar;
+window.toggleMoreMilestones = toggleMoreMilestones;
 window.deselectMilestone = deselectMilestone;
 window.shareSelectedMilestone = shareSelectedMilestone;
 // ============================================================
