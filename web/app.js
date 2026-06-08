@@ -3968,13 +3968,13 @@ function renderHomeScreen() {
                 dateStr = m.date.toLocaleDateString(locale, dateOpts);
             }
             const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
-            html += `<div class="time-chunk-item">
+            const mIdx = all.indexOf(m);
+            html += `<div class="time-chunk-item" onclick="selectMilestoneForBar(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
                 <div class="tc-left">
                     <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>
-                <button class="tc-share-btn" onclick="event.stopPropagation();homeShareMilestone(${all.indexOf(m)})">Share</button>
             </div>`;
         });
         if (items.length > maxShow) {
@@ -4026,6 +4026,43 @@ function renderHomeScreen() {
     }
 }
 
+// Sticky share bar — select milestone, show at bottom, share on tap
+let _selectedMilestoneIdx = -1;
+
+function selectMilestoneForBar(idx) {
+    const m = allMilestonesFlat[idx];
+    if (!m) return;
+    _selectedMilestoneIdx = idx;
+
+    // Highlight the selected row
+    document.querySelectorAll('.time-chunk-item').forEach(el => el.classList.remove('tc-selected'));
+    const row = document.getElementById('tcItem' + idx);
+    if (row) row.classList.add('tc-selected');
+
+    // Update share bar
+    const bar = document.getElementById('stickyShareBar');
+    const barText = document.getElementById('shareBarText');
+    const barPerson = document.getElementById('shareBarPerson');
+    if (bar && barText && barPerson) {
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + m.unitName);
+        barText.textContent = displayText;
+        barPerson.textContent = m.eventName + ' \u2014 ' + formatMilestoneDate(m.date);
+        bar.style.display = '';
+    }
+}
+
+function deselectMilestone() {
+    _selectedMilestoneIdx = -1;
+    document.querySelectorAll('.time-chunk-item').forEach(el => el.classList.remove('tc-selected'));
+    const bar = document.getElementById('stickyShareBar');
+    if (bar) bar.style.display = 'none';
+}
+
+function shareSelectedMilestone() {
+    if (_selectedMilestoneIdx < 0) return;
+    homeShareMilestone(_selectedMilestoneIdx);
+}
+
 // Share from time-chunked list
 function homeShareMilestone(idx) {
     const m = allMilestonesFlat[idx];
@@ -4040,31 +4077,12 @@ function homeShareMilestone(idx) {
 }
 
 function showSharePreview(message, recipientName) {
-    const existing = document.getElementById('sharePreviewModal');
-    if (existing) existing.remove();
-
-    const modal = document.createElement('div');
-    modal.id = 'sharePreviewModal';
-    modal.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--card-bg,#222);border-top:2px solid var(--warning,#d4b876);padding:16px 20px;box-shadow:0 -4px 20px rgba(0,0,0,0.4);border-radius:16px 16px 0 0;';
-    const safeMsg = message.replace(/'/g, "\\'");
-    modal.innerHTML = `
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;">This will be shared:</p>
-        <p style="font-size:0.9rem;color:var(--text);margin-bottom:12px;line-height:1.5;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid var(--warning,#d4b876);">${escapeHtml(message)}</p>
-        <div style="display:flex;gap:8px;">
-            <button onclick="doNativeShare('${safeMsg}');document.getElementById('sharePreviewModal').remove();" style="flex:2;padding:12px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;font-size:0.9rem;">Send via app</button>
-            <button onclick="document.getElementById('sharePreviewModal').remove();" style="flex:1;padding:12px;border-radius:8px;background:var(--border,#333);color:var(--text);border:none;cursor:pointer;font-size:0.85rem;">Cancel</button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-}
-
-function doNativeShare(message) {
+    // Direct native share — show app picker immediately
+    navigator.clipboard.writeText(message).catch(() => {});
     if (navigator.share) {
         navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
     } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied to clipboard!', 'success');
-        }).catch(() => {});
+        showToast('Copied to clipboard!', 'success');
     }
 }
 
@@ -5769,11 +5787,11 @@ function renderEventSetsHTML() {
         });
 
         return `
-            <div class="event-set-item ${isCurrent ? 'current' : ''}" style="padding:12px;margin-bottom:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid ${isCurrent ? 'var(--warning,#d4b876)' : 'var(--border,#333)'};">
+            <div class="event-set-item ${isCurrent ? 'current' : ''}" onclick="openGroupEditor('${set.id}')" style="padding:12px;margin-bottom:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid ${isCurrent ? 'var(--warning,#d4b876)' : 'var(--border,#333)'};cursor:pointer;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
                     <strong style="flex:1;font-size:1rem;color:var(--text);">${escapeHtml(set.name)}</strong>
-                    ${isCurrent ? '<span style="color:var(--warning);font-size:0.65rem;font-weight:700;padding:2px 8px;border:1px solid var(--warning);border-radius:10px;">ACTIVE</span>' : `<button class="btn-small" onclick="event.stopPropagation();switchToSet('${set.id}')" style="font-size:0.75rem;padding:3px 10px;">Switch</button>`}
-                    <button onclick="event.stopPropagation();openGroupEditor('${set.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;" title="Edit group">&#9998;</button>
+                    ${isCurrent ? '<span style="color:var(--warning);font-size:0.65rem;font-weight:700;padding:2px 8px;border:1px solid var(--warning);border-radius:10px;">ACTIVE</span>' : '<span style="color:var(--text-muted);font-size:0.7rem;">tap to edit</span>'}
+                    <span style="color:var(--text-muted);font-size:1rem;">&#9998;</span>
                 </div>
                 <div style="padding-left:4px;">${membersHtml}</div>
             </div>
