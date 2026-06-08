@@ -1585,7 +1585,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
     selectedPersonIds = appData.events.map(e => e.id);
     allMilestonesFlat = [];
     const milestones = typeof findAllUpcomingMilestones === 'function'
-        ? findAllUpcomingMilestones(date, 20, 365, appSettings || {}) : [];
+        ? findAllUpcomingMilestones(date, 30, 730, appSettings || {}) : [];
     if (typeof findBigMilestones === 'function') {
         const big = findBigMilestones(date, appSettings || {});
         big.forEach(b => { if (!milestones.some(m => m.value === b.value && m.unit === b.unit)) milestones.push(b); });
@@ -1760,7 +1760,7 @@ function wizardShowMyMore() {
     // Fallback: if no non-cosmic milestones, include all upcoming
     if (upcoming.length === 0) upcoming = milestones.filter(m => m.timeUntil > 0);
     const count = upcoming.length;
-    upcoming = upcoming.slice(0, 6);
+    upcoming = upcoming.slice(0, 8);
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
 
     let listHtml = '';
@@ -4171,6 +4171,12 @@ function renderMilestonesTab() {
     const shareBar = document.getElementById('stickyShareBar');
     if (shareBar) shareBar.style.display = '';
     deselectMilestone(); // Reset selection
+    // Fade out the hint after 10 seconds
+    const shareHint = document.getElementById('shareBarEmpty');
+    if (shareHint) {
+        shareHint.style.opacity = '1';
+        setTimeout(() => { if (shareHint && _selectedMilestoneIdx < 0) shareHint.style.opacity = '0'; }, 10000);
+    }
 
     // Legacy: keep old columns for compatibility but don't show
     if (appData.events.length === 0) {
