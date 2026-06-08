@@ -937,6 +937,8 @@ function switchTab(tabName) {
         combinedTab.classList.add('hidden');
         eventsTab.classList.remove('hidden');
         if (settingsTab) settingsTab.classList.remove('hidden');
+        const shareBar = document.getElementById('stickyShareBar');
+        if (shareBar) shareBar.style.display = 'none';
         renderEventsTab();
         renderPeopleTabGroups();
         if (typeof loadSettingsUI === 'function') loadSettingsUI();
@@ -2241,23 +2243,24 @@ function wizardShowCombinedAndName() {
     const combinedMs = typeof findSumMilestonesForEvents === 'function'
         ? findSumMilestonesForEvents(appData.events, 20, 1825, appSettings || {}) : [];
     // Filter to non-cosmic, sort by proximity, pick best
+    // Sort by date (nearest first) — show what's coming soon across all units
     const goodMs = combinedMs.filter(m => !m.isCosmic && m.timeUntil > 0)
-        .sort((a, b) => {
-            // Score: impressiveness × proximity
-            let sa = 0, sb = 0;
-            const va = String(a.value), vb = String(b.value);
-            if (a.value >= 1000 && a.value % 1000 === 0) sa += 50;
-            if (b.value >= 1000 && b.value % 1000 === 0) sb += 50;
-            if (new Set(va).size === 1) sa += 40; // repdigit
-            if (new Set(vb).size === 1) sb += 40;
-            if (va === va.split('').reverse().join('')) sa += 30; // palindrome
-            if (vb === vb.split('').reverse().join('')) sb += 30;
-            sa += Math.max(0, 60 - a.timeUntil / (24*60*60*1000) * 0.03);
-            sb += Math.max(0, 60 - b.timeUntil / (24*60*60*1000) * 0.03);
-            return sb - sa;
-        });
+        .sort((a, b) => a.timeUntil - b.timeUntil);
 
-    const hero = goodMs[0];
+    // Pick the most impressive milestone within 6 months as hero
+    const heroPool = goodMs.filter(m => m.timeUntil < 180 * 24*60*60*1000);
+    let hero = heroPool[0]; // default: nearest
+    heroPool.forEach(m => {
+        const v = String(m.value);
+        let score = 0;
+        if (new Set(v).size === 1 && v.length >= 4) score += 80; // repdigit 4+ digits
+        if (v === v.split('').reverse().join('') && v.length >= 5) score += 50; // long palindrome
+        if (m.value >= 1000000 && m.value % 1000000 === 0) score += 60; // round million
+        if (m.value >= 10000 && m.value % 10000 === 0) score += 40; // round 10k
+        if (!hero || score > (hero._hscore || 0)) { m._hscore = score; hero = m; }
+    });
+    if (!hero && goodMs.length > 0) hero = goodMs[0];
+
     let bestTarget, bestDist, targetDate, dateDisplay;
     if (hero) {
         bestTarget = hero.value;
@@ -2283,13 +2286,13 @@ function wizardShowCombinedAndName() {
     const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? 'Family'
         : (lastPerson && lastPerson.name === 'Friend' ? 'Friends' : 'My Group');
 
-    // Build more combined milestones (next 4 interesting ones)
+    // Build more combined milestones — nearest 6 across all units
     let moreCombinedHtml = '';
     const shown = new Set([hero ? hero.value + '_' + hero.unit : '']);
     let count = 0;
     goodMs.forEach(m => {
         const key = m.value + '_' + m.unit;
-        if (count >= 4 || shown.has(key)) return;
+        if (count >= 6 || shown.has(key)) return;
         shown.add(key);
         const displayText = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
         const ds = formatMilestoneDate(m.date);
@@ -2302,7 +2305,7 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-number-wrap">
             <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
         </div>
-        <div class="wizard-reveal-unit">days combined</div>
+        <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
         <div class="wizard-reveal-date">${dateDisplay}</div>
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div></div>` : ''}
@@ -4161,6 +4164,11 @@ function renderMilestonesTab() {
     // Hero card hidden — milestones from all people shown equally in the list
     const heroEl = document.getElementById('heroMilestone');
     if (heroEl) heroEl.style.display = 'none';
+
+    // Show sticky share bar on milestone screens
+    const shareBar = document.getElementById('stickyShareBar');
+    if (shareBar) shareBar.style.display = '';
+    deselectMilestone(); // Reset selection
 
     // Legacy: keep old columns for compatibility but don't show
     if (appData.events.length === 0) {
