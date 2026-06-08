@@ -6178,7 +6178,6 @@ window.wizardSelectMsRow = wizardSelectMsRow;
 window.selectMilestoneForBar = selectMilestoneForBar;
 window.deselectMilestone = deselectMilestone;
 window.shareSelectedMilestone = shareSelectedMilestone;
-
 // ============================================================
 // AUTHENTICATION UI
 // ============================================================
@@ -6478,6 +6477,22 @@ function updateAccountUI(user) {
         }
     }
 }
+
+// Auth UI — must be on window for onclick handlers in HTML
+window.openAuthModal = openAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.showAuthView = showAuthView;
+window.handleGoogleSignIn = handleGoogleSignIn;
+window.handleAppleSignIn = handleAppleSignIn;
+window.handleFacebookSignIn = handleFacebookSignIn;
+window.handlePhoneSend = handlePhoneSend;
+window.handlePhoneVerify = handlePhoneVerify;
+window.handleEmailSignIn = handleEmailSignIn;
+window.handleEmailSignUp = handleEmailSignUp;
+window.handlePasswordReset = handlePasswordReset;
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.resendVerification = resendVerification;
+window.toggleProfilePanel = toggleProfilePanel;
 
 // ============================================================
 // PREMIUM GATE

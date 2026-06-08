@@ -104,6 +104,17 @@ Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 <p class="implication"><strong>"When the next improved version is ready and verified good, have Claude find popular mobile apps with a similar user experience. Then copy, following the principle: Users prefer your app to work like the apps they already know."</strong></p>
 </div>
 
+<div class="quote">
+<p class="en">Matej Guid &mdash; Settings cleanup (applied in v52):</p>
+<ul style="margin:12px 0 0 20px;">
+<li><strong>Remove everything that isn't essential.</strong> Invite Friends, Send Feedback, Save Settings, and Reset All Data were removed from the Edit tab. They added visual weight without clear user benefit at this stage.</li>
+<li><strong>Number Patterns and Custom Numbers moved under a collapsible "Advanced settings &#9660;"</strong> (hidden by default). Most users never need these &mdash; showing them upfront violates Hick's Law.</li>
+<li><strong>Theme: tiny inline dark/light toggle.</strong> No separate section needed for a binary choice.</li>
+<li><strong>Reminders: single checkbox.</strong> One control, not a settings sub-page.</li>
+</ul>
+<p class="implication"><strong>Implication:</strong> The Edit tab now has a clean hierarchy: group management at top, then theme + reminders as lightweight controls, then advanced settings collapsed away. This directly applies Matej's "Simplicity = removing what isn't essential" principle.</p>
+</div>
+
 <h3>Luka Renko &mdash; User Journey Psychology</h3>
 
 <div class="quote">
@@ -139,7 +150,7 @@ Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 <tr><th>Action</th><th>Reward</th><th>Emotional feel</th></tr>
 <tr><td>Enter MY birthday</td><td>Counter animation &rarr; my milestone revealed</td><td>"I didn't know that about myself!"</td></tr>
 <tr><td>Enter THEIR birthday</td><td>Counter animation &rarr; their milestone revealed</td><td>"I should tell them!"</td></tr>
-<tr><td>Tap milestone</td><td>Gold highlight + sticky share bar (daily) or floating "Share &rarr;" bubble (onboarding)</td><td>"That was easy"</td></tr>
+<tr><td>Tap milestone</td><td>Onboarding: gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center. Daily use: gold highlight (<code>tc-selected</code>) + sticky share bar above tabs.</td><td>"That was easy"</td></tr>
 <tr><td>Share sent</td><td>Native share picker, text also copied to clipboard</td><td>Social validation anticipation</td></tr>
 <tr><td>Return next day</td><td>Me tab shows updated time-chunked list, countdowns change</td><td>"Time is moving, this matters"</td></tr>
 <tr><td>Add 2nd person</td><td>Together tab shows combined milestones</td><td>"Wait, there's MORE?"</td></tr>
@@ -202,7 +213,7 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 <li><strong>Share screen</strong> &mdash; ready-to-send previews, then dashboard (Screen 9)</li>
 </ol>
 <br>
-<strong>Why:</strong> Showing 20 milestones at once is overwhelming (Miller's Law). The 9-screen flow creates anticipation at every step (Spotify Wrapped model). Share is available at every milestone screen via tap &rarr; gold highlight + floating "Share &rarr;" bubble.
+<strong>Why:</strong> Showing 20 milestones at once is overwhelming (Miller's Law). The 9-screen flow creates anticipation at every step (Spotify Wrapped model). Share is available at every milestone screen via tap &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.
 <br><br>
 <strong>In daily use:</strong> The Me tab shows a flat time-chunked list with all people's milestones. No hero card &mdash; all milestones equal. Person filter at top lets users focus on one person if desired.
 </div>
@@ -238,7 +249,7 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 <tr><td>Show features the user hasn't earned</td><td>Confusing, empty tabs</td><td>Progressive: Together tab content appears only when 2+ people in a group. Group sub-tabs appear only when 2+ groups.</td></tr>
 <tr><td>Use tiny text for "important" info</td><td>Date and countdown ARE the actionable info</td><td>Body size (1.1rem) minimum for dates. Gold for countdowns.</td></tr>
 <tr><td>End session on a blank screen</td><td>No reason to return</td><td>Always show the next milestone with countdown</td></tr>
-<tr><td>Show all settings upfront</td><td>Overwhelming for new users</td><td>Settings on Edit tab, below group management. Number preferences behind "Advanced" expander.</td></tr>
+<tr><td>Show all settings upfront</td><td>Overwhelming for new users</td><td>Settings on Edit tab, below group management. Theme = tiny toggle, reminders = single checkbox, number preferences behind collapsible "Advanced settings &#9660;" (hidden by default). Removed: Invite Friends, Send Feedback, Save Settings, Reset All Data (v52).</td></tr>
 <tr><td>Use "Data" as a tab label</td><td>Technical, not user-benefiting</td><td>"Edit" &mdash; describes what you DO in the tab.</td></tr>
 <tr><td>Show ugly numbers (25252525 min)</td><td>Breaks the magic &mdash; user thinks "why should I care?"</td><td>Coherence filter: only show numbers that make sense for each time unit</td></tr>
 </table>
@@ -290,7 +301,7 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 <strong>The fundamental retention insight:</strong> Unlike social media (which needs new content), HappyMoments generates fresh content AUTOMATICALLY from the passage of time. Every day, the countdown changes. Every week, a new milestone becomes the closest one. The user doesn't need to "do" anything &mdash; time creates value.
 </div>
 
-<p class="meta" style="margin-top:48px">End of document.</p>
+<p class="meta" style="margin-top:48px">End of document. v52.</p>
 
 </body>
 </html>

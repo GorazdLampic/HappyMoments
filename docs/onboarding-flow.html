@@ -348,9 +348,9 @@ Supersedes: v1.5 (group-based), v1.4 (individual person-adding), archive/onboard
 
 <strong>Key rules:</strong><br>
 &bull; Back buttons on all screens (3-9). Resume banner if onboarding interrupted early.<br>
-&bull; Share flow on milestone screens: tap &rarr; gold highlight + floating "Share &rarr;" bubble &rarr; native share picker.<br>
+&bull; Share flow on milestone screens: tap milestone row &rarr; gold highlight (<code>ms-selected</code> class) + floating "Share &rarr;" bubble at bottom center &rarr; native share picker.<br>
 &bull; <code>autocomplete="new-password"</code> on all name inputs to suppress password managers.<br>
-&bull; Cosmic milestones: max 1 globally, description only (no redundant number).<br>
+&bull; Cosmic milestones: max 1 globally, description only (no redundant number). If the hero reveal shows a cosmic milestone, it also appears in the milestone list below for consistency.<br>
 &bull; On finish, user lands on Me tab with 3 bottom tabs (Me | Together | Edit).
 </div>
 
@@ -401,7 +401,7 @@ Supersedes: v1.5 (group-based), v1.4 (individual person-adding), archive/onboard
 
 <div class="rule">
 <strong>v2.0 flow &mdash; gradual reveal, always forward:</strong><br>
-The journey builds: (1) YOUR hero &rarr; (2) YOUR milestone list &rarr; (3) add ONE person &rarr; (4) THEIR hero + milestones &rarr; (5) combined milestones &rarr; (6) group builder &rarr; (7) group reveal &rarr; (8) share screen &rarr; dashboard. Share available at every milestone screen (tap to highlight + floating "Share &rarr;" bubble). Back buttons on screens 3-9.
+The journey builds: (1) YOUR hero &rarr; (2) YOUR milestone list &rarr; (3) add ONE person &rarr; (4) THEIR hero + milestones &rarr; (5) combined milestones &rarr; (6) group builder &rarr; (7) group reveal &rarr; (8) share screen &rarr; dashboard. Share available at every milestone screen (tap row &rarr; gold highlight <code>ms-selected</code> + floating "Share &rarr;" bubble at bottom center). Back buttons on screens 3-9.
 </div>
 
 <p><strong>The number:</strong> Counter rolls from 0 to target (1.5&ndash;2s, ease-out-cubic). Gold glow on completion. Sparkle particles.</p>
@@ -468,7 +468,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <p><strong>User action:</strong> Browse milestones, optionally tap to share. Then continue to add someone.</p>
 <p><strong>Reward:</strong> Depth &mdash; "I have THIS MANY special numbers coming!"</p>
 <p><strong>Psychology:</strong> The list proves the product has substance. 8 milestones shows variety (days, months, seconds).</p>
-<p><strong>Share:</strong> Tap any milestone &rarr; gold highlight + floating "Share &rarr;" bubble &rarr; native share picker.</p>
+<p><strong>Share:</strong> Tap any milestone row &rarr; gold highlight (<code>ms-selected</code> class) + floating "Share &rarr;" bubble at bottom center &rarr; native share picker.</p>
 <p><strong>Transition:</strong> "Now someone you care about &rarr;" button &rarr; Screen 4</p>
 
 <!-- ── Screen 4 ── -->
@@ -528,7 +528,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <p><strong>User action:</strong> Watch counter animation, then browse their milestones. Tap any to share.</p>
 <p><strong>Reward:</strong> Discovery about someone they care about &mdash; "I should tell them!"</p>
 <p><strong>Psychology:</strong> Merged hero+list on one screen avoids an extra tap. List hidden until animation finishes preserves the "wow" moment.</p>
-<p><strong>Share:</strong> Tap any milestone &rarr; gold highlight + floating "Share &rarr;" bubble.</p>
+<p><strong>Share:</strong> Tap any milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.</p>
 <p><strong>Transition:</strong> "See what's special together &rarr;" &rarr; Screen 6 (combined milestones)</p>
 
 <!-- ── Screen 6 ── -->
@@ -560,7 +560,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <p><strong>Elements:</strong> 6 combined milestones (from FULL engine across all time units: palindromes, repdigits, Pi, powers of 2) + group name input (auto-suggested)</p>
 <p><strong>Reward:</strong> Surprise &mdash; "I never thought about OUR combined numbers!" Multiple combined milestones show the engine's depth.</p>
 <p><strong>Psychology:</strong> Plants the seed for the Together tab in daily use. The group name makes it feel like a named entity ("Family").</p>
-<p><strong>Share:</strong> Tap any combined milestone &rarr; gold highlight + floating "Share &rarr;" bubble.</p>
+<p><strong>Share:</strong> Tap any combined milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.</p>
 <p><strong>Transition:</strong> "Add more people to this group &rarr;" &rarr; Screen 7 (group builder)</p>
 
 <!-- ── Screen 7 ── -->
@@ -615,7 +615,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <p><strong>Elements:</strong> Group combined milestones + individual milestones for NEW members only (people added in Screen 7 that weren't seen before). Pencil to edit group. All milestones tappable.</p>
 <p><strong>User action:</strong> Browse group milestones, optionally share, optionally edit.</p>
 <p><strong>Reward:</strong> Seeing the group's milestones is the payoff for adding more people.</p>
-<p><strong>Share:</strong> Tap any milestone &rarr; gold highlight + floating "Share &rarr;" bubble.</p>
+<p><strong>Share:</strong> Tap any milestone row &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.</p>
 <p><strong>Transition:</strong> "Continue &rarr;" &rarr; Screen 9 (share screen)</p>
 
 <!-- ── Screen 9 ── -->
@@ -745,7 +745,7 @@ The reveal must feel exciting regardless of WHEN the milestone falls. Three scen
 <li>Role hint chips on Screen 4: Partner/Mom/Dad/Sister/Brother (tap to pre-fill name)</li>
 </ul>
 
-<p class="meta" style="margin-top:48px">End of document. Open in browser for rendered screen mockups.</p>
+<p class="meta" style="margin-top:48px">End of document. v52. Open in browser for rendered screen mockups.</p>
 
 </body>
 </html>

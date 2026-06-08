@@ -57,35 +57,43 @@ const POWERS_OF_TEN = [
     1000000000, 10000000000
 ];
 
-// Nice round numbers (multiples of 500, 1000, etc.)
-const ROUND_NUMBERS = [
-    // Hundreds
-    500,
-    // Thousands
-    1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000,
-    5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500,
-    // Ten thousands
-    10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000,
-    60000, 70000, 75000, 80000, 90000,
-    // Hundred thousands
-    100000, 150000, 200000, 250000, 300000, 400000, 500000,
-    600000, 700000, 750000, 800000, 900000,
-    // Millions
-    1000000, 1500000, 2000000, 2500000, 3000000, 4000000, 5000000,
-    6000000, 7000000, 8000000, 9000000, 10000000,
-    15000000, 20000000, 25000000, 30000000, 40000000, 50000000,
-    75000000,
-    // Hundred millions
-    100000000, 150000000, 200000000, 250000000, 300000000, 400000000, 500000000,
-    600000000, 700000000, 750000000, 800000000, 900000000,
-    // Billions (for combined seconds milestones!)
-    1000000000, 1500000000, 2000000000, 2500000000, 3000000000,
-    3500000000, 4000000000, 4500000000, 5000000000,
-    6000000000, 7000000000, 7500000000, 8000000000, 9000000000, 10000000000,
-    // Even larger for big combined milestones
-    11000000000, 12000000000, 12500000000, 13000000000, 14000000000, 15000000000,
-    20000000000, 25000000000, 30000000000, 50000000000, 100000000000
-];
+// Dense round numbers — ensures no time unit goes >~90 days without a milestone
+// Density scaled per magnitude: smaller numbers need tighter steps for months/weeks,
+// larger numbers need tighter steps for seconds/minutes at older ages.
+const ROUND_NUMBERS = (() => {
+    const nums = new Set();
+    // 10-100: every 10 (for months, years)
+    for (let n = 10; n <= 100; n += 10) nums.add(n);
+    [25, 50, 75].forEach(n => nums.add(n));
+    // 100-500: every 10 (months coverage)
+    for (let n = 100; n <= 500; n += 10) nums.add(n);
+    for (let n = 100; n <= 500; n += 25) nums.add(n);
+    // 500-1000: every 10 (months at ages 40-83)
+    for (let n = 500; n <= 1000; n += 10) nums.add(n);
+    // 500-2000: every 50 (weeks)
+    for (let n = 500; n <= 2000; n += 50) nums.add(n);
+    // 2000-10000: every 100 (weeks/days)
+    for (let n = 2000; n <= 10000; n += 100) nums.add(n);
+    // 10000-50000: every 500 (days — max gap ~500d ≈ 1.4y)
+    for (let n = 10000; n <= 50000; n += 500) nums.add(n);
+    // 50000-200000: every 1000 (hours)
+    for (let n = 50000; n <= 200000; n += 1000) nums.add(n);
+    // 200000-1M: every 5000 (hours — 5Kh ≈ 208d gap)
+    for (let n = 200000; n <= 1000000; n += 5000) nums.add(n);
+    // 1M-10M: every 50K (minutes — 50K min ≈ 35d gap)
+    for (let n = 1000000; n <= 10000000; n += 50000) nums.add(n);
+    // 10M-100M: every 100K (minutes at 20-60y — 100K min ≈ 69d gap)
+    for (let n = 10000000; n <= 100000000; n += 100000) nums.add(n);
+    // 100M-1B: every 1M (seconds — 1M sec ≈ 11.6d gap)
+    for (let n = 100000000; n <= 1000000000; n += 1000000) nums.add(n);
+    // 1B-5B: every 2.5M (seconds at 30-160y — 2.5M sec ≈ 29d gap)
+    for (let n = 1000000000; n <= 5000000000; n += 2500000) nums.add(n);
+    // 5B-15B: every 100M (combined milestones)
+    for (let n = 5000000000; n <= 15000000000; n += 100000000) nums.add(n);
+    // Very large for big combined milestones
+    for (let n = 15000000000; n <= 100000000000; n += 5000000000) nums.add(n);
+    return [...nums].sort((a, b) => a - b);
+})();
 
 // Fibonacci numbers
 const FIBONACCI = (() => {
@@ -146,12 +154,12 @@ function generateAlternating(maxDigits = 10) {
     return [...new Set(alternating)].sort((a, b) => a - b);
 }
 
-// Generate palindrome numbers - SELECTIVE VERSION
-// Only includes interesting palindromes to avoid too frequent milestones
+// Generate palindrome numbers - STRUCTURED VERSION
+// Only palindromes with internal order (mountain patterns, round, binary-style)
+// Rationale: 12321 is interesting because digits ascend then descend.
+// Random palindromes like 2332 or 5775 are not recognizable to most people.
 function generatePalindromes(maxDigits = 10) {
     const palindromes = new Set();
-
-    // === SPECIAL MATHEMATICAL PALINDROMES ===
 
     // Mountain palindromes: ascending then descending (1234321, 123454321)
     palindromes.add(121);
@@ -160,31 +168,18 @@ function generatePalindromes(maxDigits = 10) {
     palindromes.add(123454321);
     palindromes.add(12345654321);
 
-    // Odd digits mountain: 1357531, 13579531
+    // Odd-digit mountains: 1-3-5-7-5-3-1
     palindromes.add(131);
     palindromes.add(13531);
     palindromes.add(1357531);
     palindromes.add(135797531);
 
-    // Even digits mountain: 24642, 2468642
+    // Even-digit mountains: 2-4-6-4-2
     palindromes.add(242);
     palindromes.add(24642);
     palindromes.add(2468642);
 
-    // Powers of 2 style: 1248421, 12481
-    palindromes.add(121);
-    palindromes.add(1248421);
-    palindromes.add(14841);
-
-    // Fibonacci-style: 11235...
-    palindromes.add(11211);
-
-    // === REPDIGIT PALINDROMES (special subset) ===
-    // These are inherently palindromes but we include some special ones
-    [111, 1111, 11111, 111111, 1111111].forEach(n => palindromes.add(n));
-    [777, 7777, 77777, 777777, 7777777].forEach(n => palindromes.add(n));
-
-    // === ROUND PALINDROMES (with zeros) ===
+    // Round palindromes (digit-zeros-digit): structurally clean
     palindromes.add(101);
     palindromes.add(1001);
     palindromes.add(10001);
@@ -192,91 +187,17 @@ function generatePalindromes(maxDigits = 10) {
     palindromes.add(1000001);
     palindromes.add(10000001);
     palindromes.add(100000001);
+    palindromes.add(1000000001);
 
-    palindromes.add(10101);
-    palindromes.add(101101);
-    palindromes.add(1001001);
-    palindromes.add(10011001);
-
-    // === BINARY-STYLE PALINDROMES ===
+    // Binary-style structured palindromes (1-0-1-0-1)
     palindromes.add(10101);
     palindromes.add(1010101);
     palindromes.add(101010101);
-    palindromes.add(11011);
-    palindromes.add(110011);
-    palindromes.add(1100011);
 
-    // === PRIME-LIKE PALINDROMES (using prime digits 2,3,5,7) ===
-    palindromes.add(232);
-    palindromes.add(252);
-    palindromes.add(272);
-    palindromes.add(353);
-    palindromes.add(373);
-    palindromes.add(535);
-    palindromes.add(575);
-    palindromes.add(757);
-    palindromes.add(2332);
-    palindromes.add(2552);
-    palindromes.add(2772);
-    palindromes.add(3553);
-    palindromes.add(3773);
-    palindromes.add(5335);
-    palindromes.add(5775);
-    palindromes.add(7337);
-    palindromes.add(7557);
-    palindromes.add(23532);
-    palindromes.add(25752);
-    palindromes.add(27572);
-    palindromes.add(35753);
-    palindromes.add(37573);
-    palindromes.add(57375);
-    palindromes.add(75357);
-
-    // === DOUBLE-DIGIT CORE PALINDROMES ===
-    // Format: ABBA, ABCBA with nice patterns
-    palindromes.add(1221);
-    palindromes.add(2112);
-    palindromes.add(3443);
-    palindromes.add(4554);
-    palindromes.add(5665);
-    palindromes.add(6776);
-    palindromes.add(7887);
-    palindromes.add(8998);
-
-    // === MILESTONE PALINDROMES (round-ish) ===
-    palindromes.add(505);
-    palindromes.add(5005);
-    palindromes.add(50005);
-    palindromes.add(500005);
-    palindromes.add(5000005);
-
-    palindromes.add(909);
-    palindromes.add(9009);
-    palindromes.add(90009);
-    palindromes.add(900009);
-    palindromes.add(9000009);
-
-    // === DATE-LIKE PALINDROMES ===
-    palindromes.add(12021); // Like 1-20-21
-    palindromes.add(12121);
-    palindromes.add(12221);
-    palindromes.add(12321);
-    palindromes.add(21012);
-    palindromes.add(22022);
-    palindromes.add(31013);
-
-    // === LARGE SPECIAL PALINDROMES ===
-    palindromes.add(1000001);
-    palindromes.add(1234321);
-    palindromes.add(1357531);
+    // Descending mountain palindromes
     palindromes.add(7654567);
     palindromes.add(9876789);
-    palindromes.add(10000001);
     palindromes.add(12344321);
-    palindromes.add(12345654321);
-    palindromes.add(100000001);
-    palindromes.add(123454321);
-    palindromes.add(1000000001);
 
     // Filter by max digits
     return [...palindromes]
@@ -318,29 +239,28 @@ function isPalindromeInteresting(num) {
     return false;
 }
 
-// Generate sequential numbers (123, 1234, 4321, etc.)
+// Generate sequential numbers (12345, 98765, etc.)
+// Minimum 5 digits — shorter sequences (123, 987) are too common to be special
 function generateSequentials() {
     const sequentials = [];
 
-    // Ascending: 123, 1234, 12345...
-    for (let length = 3; length <= 9; length++) {
+    // Ascending: 12345, 123456, 1234567...
+    for (let length = 5; length <= 9; length++) {
         let num = '';
         for (let i = 1; i <= length; i++) num += i;
         sequentials.push(parseInt(num, 10));
     }
 
-    // Descending: 987, 9876, 98765...
-    for (let length = 3; length <= 9; length++) {
+    // Descending: 98765, 987654, 9876543...
+    for (let length = 5; length <= 9; length++) {
         let num = '';
         for (let i = 9; i >= 9 - length + 1; i--) num += i;
         sequentials.push(parseInt(num, 10));
     }
 
-    // Partial sequences
-    sequentials.push(234, 345, 456, 567, 678, 789);
-    sequentials.push(2345, 3456, 4567, 5678, 6789);
-    sequentials.push(876, 765, 654, 543, 432, 321);
-    sequentials.push(8765, 7654, 6543, 5432, 4321);
+    // Partial 5+ digit sequences
+    sequentials.push(23456, 34567, 45678, 56789);
+    sequentials.push(98765, 87654, 76543, 65432, 54321);
 
     return [...new Set(sequentials)].sort((a, b) => a - b);
 }
@@ -563,8 +483,8 @@ function classifyNumber(num, settings) {
         types.push({ type: 'fibonacci', description: _t('fibonacci_number') || 'Fibonacci number' });
     }
 
-    // Power of 2
-    if (POWERS_OF_TWO.includes(num) && num <= 1024) {
+    // Power of 2 — now classified for all powers, not just ≤1024
+    if (POWERS_OF_TWO.includes(num)) {
         const exp = Math.round(Math.log2(num));
         const superscripts = '\u2070\u00B9\u00B2\u00B3\u2074\u2075\u2076\u2077\u2078\u2079';
         const supStr = String(exp).split('').map(d => superscripts[parseInt(d)]).join('');
@@ -768,44 +688,140 @@ function roundnessScore(num) {
     const trailingZeros = s.length - s.replace(/0+$/, '').length;
     score += trailingZeros * 15;
 
-    // Divisibility by large round factors
-    if (num % 1000000 === 0) score += 50;
-    else if (num % 100000 === 0) score += 40;
-    else if (num % 10000 === 0) score += 30;
-    else if (num % 1000 === 0) score += 20;
-    else if (num % 500 === 0) score += 15;
-    else if (num % 100 === 0) score += 10;
+    // Divisibility hierarchy — finer granularity
+    if      (num % 1000000 === 0) score += 70;
+    else if (num % 500000 === 0)  score += 55;
+    else if (num % 100000 === 0)  score += 45;
+    else if (num % 50000 === 0)   score += 38;
+    else if (num % 25000 === 0)   score += 32;
+    else if (num % 10000 === 0)   score += 28;
+    else if (num % 5000 === 0)    score += 22;
+    else if (num % 2500 === 0)    score += 18;
+    else if (num % 1000 === 0)    score += 15;
+    else if (num % 500 === 0)     score += 10;
+    else if (num % 250 === 0)     score += 6;
+    else if (num % 100 === 0)     score += 3;
+    else if (num % 50 === 0)      score += 2;
+    else if (num % 10 === 0)      score += 1;
 
     // Simple multiplier of a power of 10 (e.g., 2000000 = 2 * 10^6)
     const digits = s.replace(/0+$/, '');
     if (digits.length === 1 && trailingZeros >= 2) {
         score += 25; // single non-zero digit like 5000, 3000000
-    } else if (digits.length === 2 && digits[1] === '5' && trailingZeros >= 2) {
-        score += 15; // like 1500, 2500000
+    } else if (digits.length === 2 && trailingZeros >= 3) {
+        score += 15; // like 12000, 25000
     }
 
     // Repdigit bonus
     if (s.length >= 3 && new Set(s).size === 1) score += 20 + s.length * 3;
 
-    // Palindrome bonus (modest)
-    if (s === s.split('').reverse().join('') && s.length >= 3) score += 10;
+    // Palindrome bonus — extra for mountain patterns (12321)
+    if (s === s.split('').reverse().join('') && s.length >= 3) {
+        score += 10;
+        const half = s.slice(0, Math.ceil(s.length / 2));
+        let isMountain = true;
+        for (let i = 1; i < half.length; i++) {
+            if (parseInt(half[i]) <= parseInt(half[i - 1])) { isMountain = false; break; }
+        }
+        if (isMountain && s.length >= 5) score += 25;
+    }
 
     // Fibonacci bonus
     if (FIBONACCI.includes(num)) score += 8;
 
-    // Power of 2 bonus
-    if (POWERS_OF_TWO.includes(num)) score += 8;
+    // Power of 2 — bigger bonus for large powers (2^20+ is "a binary million")
+    if (POWERS_OF_TWO.includes(num)) {
+        const exp = Math.round(Math.log2(num));
+        score += exp >= 20 ? 50 : (exp >= 10 ? 25 : 12);
+    }
 
     // Scientific constant — interesting but less "round"
     for (const constant of Object.values(SCIENTIFIC_CONSTANTS)) {
         if (constant.numbers.includes(num)) { score += 12; break; }
     }
 
-    // Alternating patterns are less "round" — no bonus
+    // Alternating pattern bonus (1212, 252525, 1515151515)
+    if (s.length >= 4) {
+        let alt = true;
+        const d1 = s[0], d2 = s[1];
+        if (d1 !== d2) {
+            for (let i = 0; i < s.length; i++) {
+                if (s[i] !== (i % 2 === 0 ? d1 : d2)) { alt = false; break; }
+            }
+        } else {
+            alt = false;
+        }
+        if (alt) score += 5 + s.length * 3;
+    }
 
     // Asian auspicious numbers bonus
     if (_classifyAsianLucky(num, s)) score += 15;
     if ([888, 8888, 9999, 5201314].includes(num)) score += 25;
 
     return score;
+}
+
+// ============================================================
+// ADAPTIVE COHERENCE FILTER
+// ============================================================
+// Assigns a "niceness grade" (0-100) independent of roundnessScore.
+// Used by the adaptive filter to decide what passes at each age.
+// Young ages: only the nicest. Older ages: accept everything.
+
+function nicenessGrade(num) {
+    const s = String(num);
+
+    // Tier 1 (90-100): universally impressive
+    if (POWERS_OF_TEN.includes(num)) return 100;
+    if (num >= 1000000 && num % 1000000 === 0) return 95;
+    if (s.length >= 4 && new Set(s).size === 1) return 92; // 1111, 22222
+    if (num >= 1000000000 && num % 100000000 === 0) return 90;
+
+    // Tier 2 (70-89): most people would appreciate
+    if (num >= 100000 && num % 100000 === 0) return 85;
+    if (POWERS_OF_TWO.includes(num) && Math.log2(num) >= 20) return 82;
+    if (s.length >= 3 && new Set(s).size === 1) return 80; // 111, 222
+    if (num >= 10000 && num % 10000 === 0) return 78;
+    if (s.length >= 5 && s === s.split('').reverse().join('')) {
+        const half = s.slice(0, Math.ceil(s.length / 2));
+        let mtn = true;
+        for (let i = 1; i < half.length; i++) if (parseInt(half[i]) <= parseInt(half[i - 1])) { mtn = false; break; }
+        if (mtn) return 78; // mountain palindromes
+        return 72;
+    }
+    if (num >= 1000 && num % 1000 === 0) return 72;
+    if (s.length >= 5 && ('123456789'.includes(s) || '987654321'.includes(s))) return 72;
+
+    // Tier 3 (50-69): interesting to curious people
+    if (num >= 1000 && num % 500 === 0) return 65;
+    if (POWERS_OF_TWO.includes(num)) return 62;
+    if (FIBONACCI.includes(num) && num >= 1000) return 60;
+    for (const constant of Object.values(SCIENTIFIC_CONSTANTS)) {
+        if (constant.numbers.includes(num) && s.length >= 4) return 58;
+    }
+    if ([888, 8888, 9999, 5201314, 1314, 520, 168, 786, 108].includes(num)) return 55;
+    if (s.length >= 4 && s === s.split('').reverse().join('')) return 52;
+    if (s.length >= 6 && new Set(s).size === 2) return 50; // alternating 6+ digits
+
+    // Tier 4 (30-49): filler — something to show
+    if (num % 250 === 0) return 42;
+    if (num % 100 === 0) return 35;
+    if (num % 50 === 0) return 32;
+    if (FIBONACCI.includes(num)) return 30;
+
+    // Tier 5 (10-29): scraping the barrel
+    if (num % 10 === 0) return 20;
+    if (s.length >= 4 && new Set(s).size === 2) return 15;
+    if (s === s.split('').reverse().join('') && s.length >= 3) return 12;
+
+    return 5;
+}
+
+// Adaptive filter: strict for young ages (many candidates), loose for older ages (few candidates).
+// ageMonths: age of the person in months (used to set the threshold).
+// Returns true if the number is "nice enough" to show at this age.
+function passesAdaptiveFilter(num, ageMonths) {
+    // Smooth linear decay: 80 at birth → 5 at age 40 (month 480), clamp at 5 after
+    const threshold = ageMonths >= 480 ? 5 : Math.round(80 - (75 * ageMonths / 480));
+    return nicenessGrade(num) >= threshold;
 }

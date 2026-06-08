@@ -88,7 +88,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <table>
 <tr><th>Tab</th><th>What's in it</th><th>Usage</th></tr>
-<tr><td><strong>Me</strong> (default)</td><td>Time-chunked milestone list (This week / This month / Later). No hero card &mdash; all milestones equal. Person filter at top. Tap to select &rarr; sticky share bar + Share button.</td><td>60%</td></tr>
+<tr><td><strong>Me</strong> (default)</td><td>Time-chunked milestone list (This week / This month / Later). No hero card &mdash; all milestones equal. Person filter at top. Tap to select &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs.</td><td>60%</td></tr>
 <tr><td><strong>Together</strong></td><td>Combined/group milestones from <code>renderCombinedTab</code>. Group sub-tabs when 2+ groups. Group name with pencil &rarr; full-screen group editor.</td><td>25%</td></tr>
 <tr><td><strong>Edit</strong></td><td>Group cards with members listed, tappable to open group editor. "+ New group" button. Settings below: theme (tiny inline dark/light toggle), reminders (single checkbox), then collapsible "Advanced settings &#9660;" (hidden by default) containing Number Patterns + Custom Numbers. Removed per Matej Guid's UX review: Invite Friends, Send Feedback, Save Settings, Reset All Data.</td><td>15%</td></tr>
 </table>
@@ -180,7 +180,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 </div>
 
 <!-- Sticky share bar appears on tap -->
-<div class="annotation" style="margin-top:16px;">&#8592; Tap milestone &rarr; gold highlight + sticky share bar</div>
+<div class="annotation" style="margin-top:16px;">&#8592; Tap milestone &rarr; gold highlight (tc-selected) + sticky share bar above tabs</div>
 
 </div>
 <div class="bottom-tabs">
@@ -201,7 +201,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <p>Milestones grouped by: <strong>This week</strong> / <strong>This month</strong> / <strong>Later</strong></p>
 
-<p>Each cell: person name + milestone value (gold mono) + date with ordinal suffixes ("Sep 7th"). Year shown only if different from current year. Tap milestone &rarr; gold highlight + sticky share bar at bottom &rarr; Share button &rarr; native share picker. Text also copied to clipboard.</p>
+<p>Each cell: person name + milestone value (gold mono) + date with ordinal suffixes ("Sep 7th"). Year shown only if different from current year. Tap milestone &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs &rarr; Share button &rarr; native share picker. Text also copied to clipboard.</p>
 
 <h3>Person Filter</h3>
 
@@ -220,6 +220,8 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <li><strong>"Advanced settings &#9660;"</strong> (collapsed by default): Number Patterns + Custom Numbers</li>
 </ol>
 <p>Removed (v52, per Matej Guid's UX review): Invite Friends, Send Feedback, Save Settings button, Reset All Data. These added visual weight without clear user benefit at this stage.</p>
+
+<p>Version number (e.g., "v51") is displayed in the app footer at the bottom of the Edit tab.</p>
 
 <h3>Group Editor (Full-Screen Overlay)</h3>
 
@@ -299,7 +301,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <tr><td>Person filter</td><td>Always (1+ person)</td><td>Top of Me tab</td></tr>
 <tr><td>Together tab content</td><td>2+ people in a group</td><td>Together tab, combined milestones from engine</td></tr>
 <tr><td>Group sub-tabs</td><td>2+ groups created</td><td>Top of Together tab</td></tr>
-<tr><td>Share flow</td><td>User taps a milestone</td><td>Gold highlight + sticky share bar + native picker</td></tr>
+<tr><td>Share flow</td><td>User taps a milestone</td><td>Onboarding: gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble. Daily use: gold highlight (<code>tc-selected</code>) + sticky share bar above tabs.</td></tr>
 <tr><td>Group editor</td><td>Pencil icon or Edit tab card tap</td><td>Full-screen overlay</td></tr>
 <tr><td>Theme (dark/light)</td><td>Edit tab settings section</td><td>Tiny inline toggle, always visible</td></tr>
 <tr><td>Reminders</td><td>Edit tab settings section</td><td>Single checkbox, always visible</td></tr>
@@ -348,7 +350,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <h3>Onboarding share</h3>
 <ul>
-<li>Tap any milestone &rarr; gold highlight + floating "Share &rarr;" bubble</li>
+<li>Tap any milestone row &rarr; gold highlight (<code>ms-selected</code> class) + floating "Share &rarr;" bubble at bottom center</li>
 <li>Tap bubble &rarr; native share picker</li>
 <li>Available on all milestone screens (3, 5, 6, 8)</li>
 </ul>
