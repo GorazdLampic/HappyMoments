@@ -343,63 +343,29 @@
             </div>
         </section>
 
-        <!-- Data Tab -->
+        <!-- Data Tab — unified group-first view -->
         <section id="eventsTab" class="tab-content hidden">
             <div class="card">
-                <h2 data-i18n="dates_events">Dates &amp; Events</h2>
-                <p class="card-description" data-i18n="data_desc">Add birthdays, anniversaries, and any meaningful date to track.</p>
-                <div id="eventsList" class="events-list"></div>
-                <div class="add-event-form">
-                    <h3 data-i18n="add_date">Add a Date</h3>
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 2;">
-                            <input type="text" id="newEventName" placeholder="e.g. Anna, Our Wedding, First Day at Work" autocomplete="off">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <div class="date-fields">
-                                <input type="number" id="newEventDay" placeholder="DD" min="1" max="31" class="date-field date-dd" oninput="autoAdvance(this, 'newEventMonth', 2)">
-                                <span class="date-sep">/</span>
-                                <input type="number" id="newEventMonth" placeholder="MM" min="1" max="12" class="date-field date-mm" oninput="autoAdvance(this, 'newEventYear', 2)">
-                                <span class="date-sep">/</span>
-                                <input type="number" id="newEventYear" placeholder="YYYY" min="1900" max="2099" class="date-field date-yyyy" oninput="syncDateFields(this)">
-                            </div>
-                            <input type="hidden" id="newEventDate">
-                        </div>
-                        <button id="addEventBtn" class="btn-add">+</button>
-                    </div>
-                    <div class="event-type-row">
-                        <span class="event-type-label" data-i18n="type">Type:</span>
-                        <select id="newEventType" class="event-type-select">
-                            <option value="birthday" data-i18n="type_birthday">Birthday</option>
-                            <option value="beginning" data-i18n="type_event">Date / Event</option>
-                            <option value="milestone" data-i18n="type_milestone">Milestone</option>
-                        </select>
-                    </div>
-                    <div class="time-toggle-row">
-                        <a href="#" class="time-toggle-link" onclick="document.getElementById('timeFields').classList.toggle('hidden'); return false;">+ Add exact time (optional)</a>
-                        <div id="timeFields" class="hidden time-fields">
-                            <input type="number" id="newEventHour" placeholder="HH" min="0" max="23" class="date-field date-dd">
-                            <span class="date-sep">:</span>
-                            <input type="number" id="newEventMinute" placeholder="MM" min="0" max="59" class="date-field date-dd">
-                        </div>
+                <h2>Your Groups</h2>
+                <p class="card-description">Tap &#9998; to edit a group — rename, add or remove members.</p>
+                <div id="eventSetsList2" class="event-sets-list"></div>
+                <div style="margin-top:12px;">
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input type="text" id="newSetName2" placeholder="New group name" autocomplete="off" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);">
+                        <button class="btn-add" onclick="handleAddSetFromPeopleTab()" style="white-space:nowrap;">+ Add group</button>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h3 data-i18n="groups">Groups</h3>
-                <p class="card-description" data-i18n="groups_desc">Organize dates into separate groups. Each group has its own milestones.</p>
-                <p class="group-hint" id="groupHint">People added above will be added to the active group.</p>
-                <div id="eventSetsList2" class="event-sets-list"></div>
-                <div class="add-set-form">
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 2;">
-                            <input type="text" id="newSetName2" placeholder="e.g. Friends, Colleagues" autocomplete="off">
-                        </div>
-                        <button class="btn-add" onclick="handleAddSetFromPeopleTab()">+ Add group</button>
-                    </div>
-                </div>
-            </div>
+            <!-- Hidden elements kept for JS compatibility -->
+            <div id="eventsList" class="events-list" style="display:none;"></div>
+            <input type="hidden" id="newEventName">
+            <input type="hidden" id="newEventDay">
+            <input type="hidden" id="newEventMonth">
+            <input type="hidden" id="newEventYear">
+            <input type="hidden" id="newEventDate">
+            <input type="hidden" id="newEventType">
+            <button id="addEventBtn" style="display:none;"></button>
 
             <div class="card">
                 <h3 data-i18n="backup">Backup</h3>
