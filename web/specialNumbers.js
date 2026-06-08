@@ -72,10 +72,10 @@ const ROUND_NUMBERS = (() => {
     for (let n = 500; n <= 1000; n += 10) nums.add(n);
     // 500-2000: every 50 (weeks)
     for (let n = 500; n <= 2000; n += 50) nums.add(n);
-    // 2000-10000: every 100 (weeks/days)
-    for (let n = 2000; n <= 10000; n += 100) nums.add(n);
-    // 10000-50000: every 500 (days — max gap ~500d ≈ 1.4y)
-    for (let n = 10000; n <= 50000; n += 500) nums.add(n);
+    // 2000-10000: every 50 (weeks — 50 weeks ≈ 350d max gap)
+    for (let n = 2000; n <= 10000; n += 50) nums.add(n);
+    // 10000-50000: every 250 (days — 250d ≈ 8mo max gap)
+    for (let n = 10000; n <= 50000; n += 250) nums.add(n);
     // 50000-200000: every 1000 (hours)
     for (let n = 50000; n <= 200000; n += 1000) nums.add(n);
     // 200000-1M: every 5000 (hours — 5Kh ≈ 208d gap)
@@ -399,10 +399,13 @@ function generateAllSpecialNumbers(settings) {
 
     const numbers = new Set();
 
-    // Powers of 10 & round numbers
+    // Round numbers always included — they are the density floor
+    // Without them, pattern milestones (palindromes, alternating) are too sparse at large magnitudes
+    ROUND_NUMBERS.forEach(n => numbers.add(n));
+
+    // Powers of 10 — gated by toggle (these are the "impressive" round numbers)
     if (settings.patterns.powers) {
         POWERS_OF_TEN.forEach(n => numbers.add(n));
-        ROUND_NUMBERS.forEach(n => numbers.add(n));
     }
 
     // Powers of 2 — include all reasonable powers (up to 2^30 ~ 1 billion)

@@ -2565,6 +2565,12 @@ function wizardShowGroupReveal() {
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) shareBtn8.textContent = 'Share ' + groupName + ' milestones \u2192';
 
+    // Hide "Create another group" if user already has 2+ groups
+    const createAnotherBtn = document.querySelector('#wizardStep8 .wizard-actions .wizard-btn:last-child');
+    if (createAnotherBtn && createAnotherBtn.textContent.includes('another group')) {
+        createAnotherBtn.style.display = allSets.length >= 2 ? 'none' : '';
+    }
+
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
     _lastWizardStep = 8;
@@ -6223,6 +6229,8 @@ window.shareSelectedMilestone = shareSelectedMilestone;
 // ============================================================
 
 function openAuthModal() {
+    // Ensure Firebase is initialized (safety net — CDN scripts may load late)
+    if (typeof HM_AUTH !== 'undefined') HM_AUTH.init();
     const modal = document.getElementById('authModal');
     if (modal) {
         modal.classList.remove('hidden');
@@ -6233,6 +6241,11 @@ function openAuthModal() {
 function closeAuthModal() {
     const modal = document.getElementById('authModal');
     if (modal) modal.classList.add('hidden');
+    // Also close the profile panel behind it
+    const panel = document.getElementById('profilePanel');
+    const overlay = document.getElementById('profileOverlay');
+    if (panel) panel.classList.remove('visible');
+    if (overlay) overlay.classList.add('hidden');
     // Clear form fields
     ['authEmail', 'authPassword', 'signupName', 'signupEmail', 'signupPassword', 'resetEmail'].forEach(id => {
         const el = document.getElementById(id);
