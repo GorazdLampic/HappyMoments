@@ -2235,18 +2235,47 @@ function wizardShowCombinedAndName() {
         totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
         names.push(e.name);
     });
-
-    const candidates = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
-    let bestTarget = 0, bestDist = Infinity;
-    candidates.forEach(step => {
-        const target = Math.ceil(totalDays / step) * step;
-        const dist = target - totalDays;
-        if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
-    });
-
-    const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
-    const dateDisplay = formatMilestoneDate(targetDate, { long: true });
     const namesStr = names.join(' and ');
+
+    // Use the REAL milestone algorithm for combined milestones
+    const combinedMs = typeof findSumMilestonesForEvents === 'function'
+        ? findSumMilestonesForEvents(appData.events, 20, 1825, appSettings || {}) : [];
+    // Filter to non-cosmic, sort by proximity, pick best
+    const goodMs = combinedMs.filter(m => !m.isCosmic && m.timeUntil > 0)
+        .sort((a, b) => {
+            // Score: impressiveness × proximity
+            let sa = 0, sb = 0;
+            const va = String(a.value), vb = String(b.value);
+            if (a.value >= 1000 && a.value % 1000 === 0) sa += 50;
+            if (b.value >= 1000 && b.value % 1000 === 0) sb += 50;
+            if (new Set(va).size === 1) sa += 40; // repdigit
+            if (new Set(vb).size === 1) sb += 40;
+            if (va === va.split('').reverse().join('')) sa += 30; // palindrome
+            if (vb === vb.split('').reverse().join('')) sb += 30;
+            sa += Math.max(0, 60 - a.timeUntil / (24*60*60*1000) * 0.03);
+            sb += Math.max(0, 60 - b.timeUntil / (24*60*60*1000) * 0.03);
+            return sb - sa;
+        });
+
+    const hero = goodMs[0];
+    let bestTarget, bestDist, targetDate, dateDisplay;
+    if (hero) {
+        bestTarget = hero.value;
+        bestDist = Math.ceil(hero.timeUntil / (24*60*60*1000));
+        targetDate = hero.date;
+        dateDisplay = formatMilestoneDate(hero.date, { long: true });
+    } else {
+        // Fallback to simple round number
+        const candidates = [1000, 5000, 10000, 25000, 50000, 100000];
+        bestTarget = 0; bestDist = Infinity;
+        candidates.forEach(step => {
+            const target = Math.ceil(totalDays / step) * step;
+            const dist = target - totalDays;
+            if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
+        });
+        targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
+        dateDisplay = formatMilestoneDate(targetDate, { long: true });
+    }
 
     // Auto-suggest group name based on role
     const FAMILY_ROLES = ['Mom', 'Dad', 'Partner', 'Sister', 'Brother', 'Child'];
@@ -2254,18 +2283,18 @@ function wizardShowCombinedAndName() {
     const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? 'Family'
         : (lastPerson && lastPerson.name === 'Friend' ? 'Friends' : 'My Group');
 
-    // Build more combined milestones (next 2-3 round targets after the first)
+    // Build more combined milestones (next 4 interesting ones)
     let moreCombinedHtml = '';
+    const shown = new Set([hero ? hero.value + '_' + hero.unit : '']);
     let count = 0;
-    candidates.forEach(step => {
-        if (count >= 3) return;
-        const target = Math.ceil(totalDays / step) * step;
-        const dist = target - totalDays;
-        if (dist > 0 && target !== bestTarget) {
-            const td = new Date(now.getTime() + dist * 24 * 60 * 60 * 1000);
-            moreCombinedHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${target.toLocaleString(locale)} days</span><span class="wizard-milestone-date">${formatMilestoneDate(td)}</span></div>`;
-            count++;
-        }
+    goodMs.forEach(m => {
+        const key = m.value + '_' + m.unit;
+        if (count >= 4 || shown.has(key)) return;
+        shown.add(key);
+        const displayText = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        const ds = formatMilestoneDate(m.date);
+        moreCombinedHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span><span class="wizard-milestone-date">${ds}</span></div>`;
+        count++;
     });
 
     el.innerHTML = `
@@ -2420,38 +2449,47 @@ function wizardShowGroupReveal() {
     const now = new Date();
     const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
 
-    let totalDays = 0;
-    appData.events.forEach(e => {
-        totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
-    });
+    // Use the REAL milestone algorithm for combined milestones
+    const combinedMs8 = typeof findSumMilestonesForEvents === 'function'
+        ? findSumMilestonesForEvents(appData.events, 20, 1825, appSettings || {}) : [];
+    const goodMs8 = combinedMs8.filter(m => !m.isCosmic && m.timeUntil > 0)
+        .sort((a, b) => {
+            let sa = 0, sb = 0;
+            const va = String(a.value), vb = String(b.value);
+            if (a.value >= 1000 && a.value % 1000 === 0) sa += 50;
+            if (b.value >= 1000 && b.value % 1000 === 0) sb += 50;
+            if (new Set(va).size === 1) sa += 40;
+            if (new Set(vb).size === 1) sb += 40;
+            if (va === va.split('').reverse().join('')) sa += 30;
+            if (vb === vb.split('').reverse().join('')) sb += 30;
+            sa += Math.max(0, 60 - a.timeUntil / (24*60*60*1000) * 0.03);
+            sb += Math.max(0, 60 - b.timeUntil / (24*60*60*1000) * 0.03);
+            return sb - sa;
+        });
 
-    const candidates = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
-    let bestTarget = 0, bestDist = Infinity;
-    candidates.forEach(step => {
-        const target = Math.ceil(totalDays / step) * step;
-        const dist = target - totalDays;
-        if (dist > 0 && dist < bestDist) { bestDist = dist; bestTarget = target; }
-    });
+    const hero8 = goodMs8[0];
+    let bestTarget, bestDist, dateDisplay;
+    if (hero8) {
+        bestTarget = hero8.value;
+        bestDist = Math.ceil(hero8.timeUntil / (24*60*60*1000));
+        dateDisplay = formatMilestoneDate(hero8.date, { long: true });
+    } else {
+        bestTarget = 0; bestDist = 0; dateDisplay = '';
+    }
 
-    const targetDate = new Date(now.getTime() + bestDist * 24 * 60 * 60 * 1000);
-    const dateDisplay = formatMilestoneDate(targetDate, { long: true });
+    const heroUnit = hero8 ? (hero8.unitName || hero8.unit) : 'days';
 
-    // Show milestones only for NEW members (added on Screen 7, not seen before)
-    // First 2 events are Me + the person from Screen 4 — already seen
-    const newMembers = appData.events.slice(2);
-    let moreMsHtml = '';
-    newMembers.forEach(e => {
-        const d = e.date instanceof Date ? e.date : new Date(e.date);
-        const ms2 = typeof findAllUpcomingMilestones === 'function'
-            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
-        const best2 = ms2.filter(x => x.timeUntil > 0 && !x.isCosmic)
-            .sort((a, b) => a.timeUntil - b.timeUntil)[0];
-        if (best2) {
-            const val2 = best2.value.toLocaleString(locale);
-            const unit2 = best2.unitName || '';
-            const ds2 = formatMilestoneDate(best2.date);
-            moreMsHtml += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${escapeHtml(e.name)}: ${val2} ${unit2}</span><span class="wizard-milestone-date">${ds2}</span></div>`;
-        }
+    // More combined milestones
+    let moreCombinedHtml8 = '';
+    const shown8 = new Set([hero8 ? hero8.value + '_' + hero8.unit : '']);
+    let cnt = 0;
+    goodMs8.forEach(m => {
+        const key = m.value + '_' + m.unit;
+        if (cnt >= 4 || shown8.has(key)) return;
+        shown8.add(key);
+        const dt = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        moreCombinedHtml8 += `<div class="wizard-milestone-row"><span class="wizard-milestone-value" style="white-space:nowrap;">${dt}</span><span class="wizard-milestone-date">${formatMilestoneDate(m.date)}</span></div>`;
+        cnt++;
     });
 
     el.innerHTML = `
@@ -2459,10 +2497,10 @@ function wizardShowGroupReveal() {
         <div class="wizard-reveal-number-wrap">
             <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
         </div>
-        <div class="wizard-reveal-unit">days combined</div>
+        <div class="wizard-reveal-unit">${heroUnit} combined</div>
         <div class="wizard-reveal-date">${dateDisplay}</div>
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
-        ${moreMsHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">Individual milestones</div><div class="wizard-milestone-list">${moreMsHtml}</div></div>` : ''}
+        ${moreCombinedHtml8 ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More group milestones</div><div class="wizard-milestone-list">${moreCombinedHtml8}</div></div>` : ''}
     `;
 
     _track('onboard_group_reveal', { members: appData.events.length });
