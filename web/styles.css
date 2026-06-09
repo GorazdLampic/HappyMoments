@@ -3126,15 +3126,15 @@ body {
 /* wizard-header removed — was showing "HappyMoments" twice */
 
 .wizard-back {
-    position: relative;
-    display: block;
+    position: absolute;
+    top: 12px;
+    left: 12px;
     background: none;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 4px 0 8px;
-    margin-bottom: 8px;
-    z-index: 2;
+    padding: 8px;
+    z-index: 10;
 }
 .wizard-back:hover { color: var(--text-primary); }
 
