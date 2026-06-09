@@ -34,11 +34,11 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq6eh15f"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq6eh15f"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq6f71aa"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq6f71aa"></script>
 
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
-    <link rel="stylesheet" href="styles.css?v=mq6eh15f">
+    <link rel="stylesheet" href="styles.css?v=mq6f71aa">
 </head>
 <body>
     <div id="app">
@@ -143,7 +143,7 @@
 
             <!-- Screen 3: More of YOUR milestones -->
             <div class="wizard-step" id="wizardStep3">
-                <button class="wizard-back" onclick="wizardNext(2)">&larr;</button>
+                <button class="wizard-back" onclick="wizardNext(2)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                 <div class="wizard-content" id="wizardMyMore">
                     <!-- Populated by wizardShowMyMore() -->
                 </div>
@@ -154,7 +154,7 @@
 
             <!-- Screen 4: Add ONE person — name input on top, role hints below -->
             <div class="wizard-step" id="wizardStep4">
-                <button class="wizard-back" onclick="wizardNext(3)">&larr;</button>
+                <button class="wizard-back" onclick="wizardNext(3)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
                     <input type="text" id="friendName" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:8px;">
@@ -180,7 +180,7 @@
 
             <!-- Screen 5: Their reveal + milestones (merged) -->
             <div class="wizard-step" id="wizardStep5">
-                <button class="wizard-back" onclick="wizardNext(4)">&larr;</button>
+                <button class="wizard-back" onclick="wizardNext(4)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                 <div class="wizard-content" id="wizardFriendHero">
                     <!-- Hero reveal populated by wizardDiscoverFriendV2() -->
                 </div>
@@ -195,7 +195,7 @@
 
             <!-- Screen 6: Combined milestone + name your group -->
             <div class="wizard-step" id="wizardStep6">
-                <button class="wizard-back" onclick="wizardNext(5)">&larr;</button>
+                <button class="wizard-back" onclick="wizardNext(5)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                 <div class="wizard-content" id="wizardCombinedAndName">
                     <!-- Populated by wizardShowCombinedAndName() -->
                 </div>
@@ -206,7 +206,7 @@
 
             <!-- Screen 7: Add more people to group -->
             <div class="wizard-step" id="wizardStep7">
-                <button class="wizard-back" onclick="wizardNext(6)">&larr;</button>
+                <button class="wizard-back" onclick="wizardNext(6)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                 <div class="wizard-content">
                     <h2 class="wizard-question" id="groupBuilderTitle">Family</h2>
                     <div id="groupMembers" style="margin-bottom:12px;">
@@ -231,20 +231,20 @@
 
             <!-- Screen 8: Group milestones + new group option -->
             <div class="wizard-step" id="wizardStep8">
-                <button class="wizard-back" onclick="wizardNext(7)">&larr;</button>
+                <button class="wizard-back" onclick="wizardNext(7)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                 <div class="wizard-content" id="wizardGroupReveal">
                     <!-- Populated by wizardShowGroupReveal() -->
                 </div>
                 <div class="wizard-actions">
                     <button class="wizard-btn" onclick="wizardBuildShareScreen()" id="wizardShareBtn8">Share with your group &rarr;</button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardCreateAnotherBtn8" style="margin-top:4px;">Who else? Add another group</button>
-                    <a href="#" onclick="wizardFinish(); return false;" id="wizardDashboardBtn8" style="display:block;text-align:center;margin-top:12px;color:var(--text-muted,#888);font-size:0.82rem;text-decoration:none;">Go to my dashboard</a>
+                    <button class="wizard-btn-secondary" onclick="wizardFinish()" id="wizardDashboardBtn8" style="display:none;margin-top:4px;">Go to my dashboard</button>
                 </div>
             </div>
 
             <!-- Screen 9: Share — the last step before daily use -->
             <div class="wizard-step" id="wizardStep9">
-                <button class="wizard-back" onclick="wizardNext(8)">&larr;</button>
+                <button class="wizard-back" onclick="wizardNext(8)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
                 <div class="wizard-content" id="wizardShareScreen">
                     <!-- Populated by wizardBuildShareScreen() -->
                 </div>
@@ -551,7 +551,7 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">HappyMoments &copy; 2026</span>
-            <div class="app-version" id="appVersion">Build: v74 &middot; 2026-06-09 08:51 UTC</div>
+            <div class="app-version" id="appVersion">Build: v75 &middot; 2026-06-09 09:11 UTC</div>
         </footer>
 
         <!-- Auth Modal -->
@@ -661,20 +661,20 @@
         </div>
     </div>
 
-    <script defer src="notifications.js?v=mq6eh15f"></script>
-    <script defer src="historyFacts.js?v=mq6eh15f"></script>
-    <script defer src="i18n.js?v=mq6eh15f"></script>
-    <script defer src="specialNumbers.js?v=mq6eh15f"></script>
-    <script defer src="milestoneCalculator.js?v=mq6eh15f"></script>
-    <script defer src="combinations.js?v=mq6eh15f"></script>
-    <script defer src="shareMessages.js?v=mq6eh15f"></script>
-    <script defer src="giftStore.js?v=mq6eh15f"></script>
-    <script defer src="dataProtection.js?v=mq6eh15f"></script>
-    <script defer src="imageCard.js?v=mq6eh15f"></script>
-    <script defer src="checkout.js?v=mq6eh15f"></script>
-    <script defer src="analytics.js?v=mq6eh15f"></script>
-    <script defer src="auth.js?v=mq6eh15f"></script>
-    <script defer src="app.js?v=mq6eh15f"></script>
+    <script defer src="notifications.js?v=mq6f71aa"></script>
+    <script defer src="historyFacts.js?v=mq6f71aa"></script>
+    <script defer src="i18n.js?v=mq6f71aa"></script>
+    <script defer src="specialNumbers.js?v=mq6f71aa"></script>
+    <script defer src="milestoneCalculator.js?v=mq6f71aa"></script>
+    <script defer src="combinations.js?v=mq6f71aa"></script>
+    <script defer src="shareMessages.js?v=mq6f71aa"></script>
+    <script defer src="giftStore.js?v=mq6f71aa"></script>
+    <script defer src="dataProtection.js?v=mq6f71aa"></script>
+    <script defer src="imageCard.js?v=mq6f71aa"></script>
+    <script defer src="checkout.js?v=mq6f71aa"></script>
+    <script defer src="analytics.js?v=mq6f71aa"></script>
+    <script defer src="auth.js?v=mq6f71aa"></script>
+    <script defer src="app.js?v=mq6f71aa"></script>
 
     <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
     <script>

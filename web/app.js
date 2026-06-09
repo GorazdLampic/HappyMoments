@@ -2674,8 +2674,9 @@ function wizardShowTeamMilestones() {
         });
 
     const hero = goodMs[0];
+    // Skip hero from the list (it's shown as the big number above)
     let combinedHtml = '';
-    const shown = new Set();
+    const shown = new Set([hero ? hero.value + '_' + hero.unit : '']);
     let cnt = 0;
     goodMs.forEach(m => {
         const key = m.value + '_' + m.unit;
@@ -2697,12 +2698,14 @@ function wizardShowTeamMilestones() {
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.15rem;line-height:1.4;">These milestones belong to all of you. ${teamCont}</h2>
         ${hero ? `
+            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + (hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number" style="font-size:2.2rem;">${hero.value.toLocaleString(locale)}</div>
             </div>
             <div class="wizard-reveal-unit">${hero.unitName || hero.unit} combined</div>
             <div class="wizard-reveal-date">${formatMilestoneDate(hero.date, { long: true })}</div>
             <div class="wizard-reveal-countdown">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} days</div>
+            </div>
         ` : ''}
         ${combinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div class="wizard-milestone-list">${combinedHtml}</div></div>` : ''}
     `;
@@ -2711,13 +2714,25 @@ function wizardShowTeamMilestones() {
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
         shareBtn8.textContent = 'Share with your group \u2192';
-        shareBtn8.onclick = function() { wizardBuildShareScreen(); };
+        shareBtn8.onclick = function() {
+            // After sharing, highlight "Who else?" and show dashboard
+            const whoElse = document.getElementById('wizardCreateAnotherBtn8');
+            if (whoElse) {
+                whoElse.style.border = '2px solid var(--warning,#d4b876)';
+                whoElse.style.background = 'rgba(212,184,118,0.12)';
+            }
+            const dashBtn = document.getElementById('wizardDashboardBtn8');
+            if (dashBtn) dashBtn.style.display = '';
+            wizardBuildShareScreen();
+        };
     }
 
-    // Always show "create another group" — this drives retention
     // Show "Who else?" button in Phase 2
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
     if (createAnotherBtn) createAnotherBtn.style.display = '';
+    // Dashboard hidden until user shares
+    const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
+    if (dashboardBtn8) dashboardBtn8.style.display = 'none';
 
     _track('onboard_group_reveal_combined', { members: appData.events.length });
     window.scrollTo(0, 0);
@@ -2806,7 +2821,7 @@ function wizardCreateAnotherGroup() {
         'Your university class is 100,000 hours since graduation \u2014 time for a reunion?',
         'Your office team crosses 50,000 combined days next month \u2014 reason for cake.',
         'Your childhood friends hit 10,000 days of friendship \u2014 did anyone notice?',
-        'Your siblings are 50,000 days apart \u2014 only this app would know that.'
+        'Your college crew is 100,000 hours old \u2014 only this app would know that.'
     ];
     const groupExample = groupExamples[Math.floor(Math.random() * groupExamples.length)];
 
