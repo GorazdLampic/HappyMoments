@@ -2715,14 +2715,20 @@ function wizardShowTeamMilestones() {
     if (shareBtn8) {
         shareBtn8.textContent = 'Share with your group \u2192';
         shareBtn8.onclick = function() {
-            // After sharing, highlight "Who else?" and show dashboard
+            // After sharing: demote Share, promote Who else + Dashboard
+            shareBtn8.classList.remove('wizard-btn');
+            shareBtn8.classList.add('wizard-btn-secondary');
             const whoElse = document.getElementById('wizardCreateAnotherBtn8');
             if (whoElse) {
-                whoElse.style.border = '2px solid var(--warning,#d4b876)';
-                whoElse.style.background = 'rgba(212,184,118,0.12)';
+                whoElse.classList.remove('wizard-btn-secondary');
+                whoElse.classList.add('wizard-btn');
             }
             const dashBtn = document.getElementById('wizardDashboardBtn8');
-            if (dashBtn) dashBtn.style.display = '';
+            if (dashBtn) {
+                dashBtn.style.display = '';
+                dashBtn.classList.remove('wizard-btn-secondary');
+                dashBtn.classList.add('wizard-btn');
+            }
             wizardBuildShareScreen();
         };
     }
