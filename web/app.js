@@ -2778,7 +2778,7 @@ function wizardCreateAnotherGroup() {
         'Your university class is 100,000 hours since graduation \u2014 time for a reunion?',
         'Your office team crosses 50,000 combined days next month \u2014 reason for cake.',
         'Your childhood friends hit 10,000 days of friendship \u2014 did anyone notice?',
-        'Your neighbours\u2019 kids turn 5,000 days this summer \u2014 block party material.'
+        'Your neighbors\u2019 kids turn 5,000 days this summer \u2014 block party material.'
     ];
     const groupExample = groupExamples[Math.floor(Math.random() * groupExamples.length)];
 
@@ -2810,6 +2810,7 @@ function wizardCreateAnotherGroup() {
 
 function wizardCreateGroupAndBuild() {
     const groupName = document.getElementById('groupName')?.value?.trim() || 'Friends';
+    _wizardRevealedIds = new Set(); // Reset for new group context
     saveData();
 
     // Get "Me" from the first set (consistent with other paths)
