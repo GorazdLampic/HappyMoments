@@ -2395,8 +2395,7 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
-            <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;margin-bottom:8px;">Name your first group</p>
-            <input type="text" id="groupName" class="wizard-input" value="${escapeHtml(suggestedName)}" placeholder="e.g. Family, Friends, Team" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+            <input type="text" id="groupName" class="wizard-input" value="" placeholder="Name your first group" onfocus="if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
@@ -2544,33 +2543,70 @@ function wizardShowGroupReveal() {
     const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
 
     // Phase 1: Individual milestones — only for NEW members (not already revealed)
+    // 1 member: show 3 milestones + expand. 2+ members: show 1 each + expand per person.
     let individualHtml = '';
     let newMemberCount = 0;
-    appData.events.forEach(e => {
-        if (e.name === 'Me') return;
-        if (_wizardRevealedIds.has(e.id)) return; // Skip already-revealed members
+    const newMembers = appData.events.filter(e => e.name !== 'Me' && !_wizardRevealedIds.has(e.id));
+
+    function _sortMs(ms) {
+        return ms.filter(m => m.timeUntil > 0 && !m.isCosmic).sort((a, b) => {
+            let sa = 0, sb = 0;
+            if (a.value >= 1000 && a.value % 1000 === 0) sa += 100;
+            if (b.value >= 1000 && b.value % 1000 === 0) sb += 100;
+            if (a.isBigMilestone) sa += 80;
+            if (b.isBigMilestone) sb += 80;
+            sa += Math.max(0, 50 - a.timeUntil / (24*60*60*1000) * 0.15);
+            sb += Math.max(0, 50 - b.timeUntil / (24*60*60*1000) * 0.15);
+            return sb - sa;
+        });
+    }
+
+    newMembers.forEach(e => {
         const d = e.date instanceof Date ? e.date : new Date(e.date);
         const ms = typeof findAllUpcomingMilestones === 'function'
-            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
-        let best = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
-            .sort((a, b) => {
-                let sa = 0, sb = 0;
-                if (a.value >= 1000 && a.value % 1000 === 0) sa += 100;
-                if (b.value >= 1000 && b.value % 1000 === 0) sb += 100;
-                if (a.isBigMilestone) sa += 80;
-                if (b.isBigMilestone) sb += 80;
-                sa += Math.max(0, 50 - a.timeUntil / (24*60*60*1000) * 0.15);
-                sb += Math.max(0, 50 - b.timeUntil / (24*60*60*1000) * 0.15);
-                return sb - sa;
-            })[0];
-        if (!best && ms.length > 0) best = ms.filter(m => m.timeUntil > 0)[0];
-        if (best) {
+            ? findAllUpcomingMilestones(d, 8, 365, appSettings || {}) : [];
+        const sorted = _sortMs(ms);
+        if (sorted.length === 0) return;
+
+        if (newMembers.length === 1) {
+            // Single new member: show 3 milestones + expand
+            const top = sorted.slice(0, 3);
+            const rest = sorted.slice(3);
+            top.forEach(m => {
+                const val = m.value.toLocaleString(locale);
+                const unit = m.unitName || m.unit || '';
+                individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
+            });
+            if (rest.length > 0) {
+                const uid = 'phase1more_' + e.id.replace(/[^a-z0-9]/gi, '');
+                individualHtml += `<div id="${uid}" style="display:none;">`;
+                rest.forEach(m => {
+                    const val = m.value.toLocaleString(locale);
+                    const unit = m.unitName || m.unit || '';
+                    individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
+                });
+                individualHtml += `</div>`;
+                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rest.length} more \\u25BC';}">Show ${rest.length} more \u25BC</div>`;
+            }
+        } else {
+            // Multiple new members: show 1 best each + expand per person
+            const best = sorted[0];
             const val = best.value.toLocaleString(locale);
             const unit = best.unitName || best.unit || '';
-            const ds = formatMilestoneDate(best.date);
-            individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, ds, e.name);
-            newMemberCount++;
+            individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(best.date), e.name);
+            if (sorted.length > 1) {
+                const uid = 'phase1more_' + e.id.replace(/[^a-z0-9]/gi, '');
+                individualHtml += `<div id="${uid}" style="display:none;">`;
+                sorted.slice(1, 4).forEach(m => {
+                    const val2 = m.value.toLocaleString(locale);
+                    const unit2 = m.unitName || m.unit || '';
+                    individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val2 + ' ' + unit2, formatMilestoneDate(m.date), e.name);
+                });
+                individualHtml += `</div>`;
+                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.78rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More \\u25BC';}">More \u25BC</div>`;
+            }
         }
+        newMemberCount++;
     });
 
     // If no new members to show, skip Phase 1 → go straight to Phase 2
@@ -2579,17 +2615,9 @@ function wizardShowGroupReveal() {
         return;
     }
 
-    const reachOutHints = [
-        'A perfect excuse to send a message today.',
-        'They have no idea this number is coming.',
-        'Imagine their face when you tell them.'
-    ];
-    const reachOutHint = reachOutHints[Math.floor(Math.random() * reachOutHints.length)];
-
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Something worth sharing with each of them</h2>
+        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Imagine their face when you tell them</h2>
         ${individualHtml}
-        <p style="color:var(--text-muted);font-size:0.82rem;font-style:italic;text-align:center;margin-top:12px;">${reachOutHint}</p>
     `;
 
     _track('onboard_group_reveal_individual', { members: newMemberCount });
@@ -2597,7 +2625,7 @@ function wizardShowGroupReveal() {
     // Update buttons: only show "See team milestones" in Phase 1
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
-        shareBtn8.textContent = 'See ' + groupName + ' team milestones \u2014 more members, more magic';
+        shareBtn8.textContent = 'See ' + groupName + ' milestones \u2014 more members, more magic';
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
@@ -2778,14 +2806,13 @@ function wizardCreateAnotherGroup() {
         'Your university class is 100,000 hours since graduation \u2014 time for a reunion?',
         'Your office team crosses 50,000 combined days next month \u2014 reason for cake.',
         'Your childhood friends hit 10,000 days of friendship \u2014 did anyone notice?',
-        'Your neighbors\u2019 kids turn 5,000 days this summer \u2014 block party material.'
+        'Your siblings are 50,000 days apart \u2014 only this app would know that.'
     ];
     const groupExample = groupExamples[Math.floor(Math.random() * groupExamples.length)];
 
     el.innerHTML = `
         <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;font-style:italic;margin-bottom:20px;line-height:1.5;">${groupExample}</p>
-        <p style="color:var(--text);text-align:center;font-size:1rem;margin-bottom:8px;">Name your new team</p>
-        <input type="text" id="groupName" class="wizard-input" value="Friends" placeholder="e.g. Friends, Work, Neighbours" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+        <input type="text" id="groupName" class="wizard-input" value="" placeholder="Name your new team" onfocus="if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
     `;
 
     // Update buttons for "create another group" context
