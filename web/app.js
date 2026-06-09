@@ -2817,16 +2817,37 @@ function wizardCreateAnotherGroup() {
     const el = document.getElementById('wizardCombinedAndName');
     if (!el) return;
 
-    const groupExamples = [
-        'Your university class is 100,000 hours since graduation \u2014 time for a reunion?',
-        'Your office team crosses 50,000 combined days next month \u2014 reason for cake.',
-        'Your childhood friends hit 10,000 days of friendship \u2014 did anyone notice?',
-        'Your college crew is 100,000 hours old \u2014 only this app would know that.'
-    ];
+    // Age-appropriate examples for creating a second group
+    const meEvent = allSets[0] ? (allSets[0].events.find(e => e.name === 'Me') || allSets[0].events[0]) : null;
+    const userAge = meEvent ? Math.floor((Date.now() - new Date(meEvent.date).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 30;
+
+    let groupExamples;
+    if (userAge <= 20) {
+        // School / class context
+        groupExamples = [
+            'Your class has been together for 10,000 days \u2014 did anyone notice?',
+            'Your best friends hit 5,000 days of friendship \u2014 worth a party?',
+            'Your teammates crossed 50,000 combined days \u2014 that\u2019s a milestone.'
+        ];
+    } else if (userAge <= 25) {
+        // University / early career
+        groupExamples = [
+            'Your university crew is 100,000 hours old \u2014 only this app would know that.',
+            'Your flatmates crossed 30,000 combined days \u2014 time for a dinner?',
+            'Your study group hit 10,000 days since you met \u2014 worth celebrating.'
+        ];
+    } else {
+        // Office / adult life
+        groupExamples = [
+            'Your office team crosses 50,000 combined days next month \u2014 reason for cake.',
+            'Your college friends are 100,000 hours since graduation \u2014 time for a reunion?',
+            'Your childhood friends hit 10,000 days of friendship \u2014 did anyone notice?'
+        ];
+    }
     const groupExample = groupExamples[Math.floor(Math.random() * groupExamples.length)];
 
     el.innerHTML = `
-        <p style="color:var(--text-muted);text-align:center;font-size:0.85rem;font-style:italic;margin-bottom:20px;line-height:1.5;">${groupExample}</p>
+        <p style="color:var(--text);text-align:center;font-size:1rem;font-style:italic;margin-bottom:20px;line-height:1.5;">${groupExample}</p>
         <input type="text" id="groupName" class="wizard-input" value="" placeholder="Name your new team" onfocus="if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
     `;
 
