@@ -34,11 +34,11 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq5u5ac9"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq5u5ac9"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq6d1blw"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq6d1blw"></script>
 
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
-    <link rel="stylesheet" href="styles.css?v=mq5u5ac9">
+    <link rel="stylesheet" href="styles.css?v=mq6d1blw">
 </head>
 <body>
     <div id="app">
@@ -93,7 +93,7 @@
         <nav id="tabNav" class="tab-nav-bottom hidden">
             <button class="tab-btn-bottom active" data-tab="me" onclick="switchTab('me')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span class="tab-label">Me</span>
+                <span class="tab-label">Solo</span>
             </button>
             <button class="tab-btn-bottom" data-tab="together" onclick="switchTab('together')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="7" r="3"/><circle cx="12" cy="7" r="3"/><circle cx="18.5" cy="7" r="3"/><path d="M2 21v-1.5a3.5 3.5 0 0 1 7 0V21"/><path d="M8.5 21v-1.5a3.5 3.5 0 0 1 7 0V21"/><path d="M15 21v-1.5a3.5 3.5 0 0 1 7 0V21"/></svg>
@@ -137,7 +137,7 @@
                     <!-- Populated by wizardDiscoverV5() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShowMyMore()">See more of my milestones</button>
+                    <button class="wizard-btn" onclick="wizardShowMyMore()">Show me more milestones</button>
                 </div>
             </div>
 
@@ -238,8 +238,7 @@
                 </div>
                 <div class="wizard-actions">
                     <button class="wizard-btn" onclick="wizardBuildShareScreen()" id="wizardShareBtn8">Share with your group &rarr;</button>
-                    <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardCreateAnotherBtn8" style="margin-top:4px;">Add another circle of people &rarr;</button>
-                    <a href="#" onclick="wizardFinish(); return false;" id="wizardDashboardBtn8" style="display:block;text-align:center;margin-top:12px;color:var(--text-muted,#888);font-size:0.82rem;text-decoration:none;">Go to my dashboard</a>
+                    <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardCreateAnotherBtn8" style="margin-top:4px;">Who else? Add another group</button>
                 </div>
             </div>
 
@@ -257,7 +256,7 @@
                     (function(){var h=['Colleagues, classmates, your gym buddies \u2014 everyone has milestones.','Every circle of people has numbers only they share.','Friends, neighbours, old classmates \u2014 each group unlocks new discoveries.'];document.getElementById('wizardCircleHint9').textContent=h[Math.floor(Math.random()*h.length)];})();
                     </script>
                     <p id="wizardTabGuide" style="margin-top:16px;color:var(--text-muted);font-size:0.78rem;text-align:center;line-height:1.5;">
-                        <strong style="color:var(--text);">Me</strong> &mdash; personal milestones &nbsp;&middot;&nbsp;
+                        <strong style="color:var(--text);">Solo</strong> &mdash; individual milestones &nbsp;&middot;&nbsp;
                         <strong style="color:var(--text);">Together</strong> &mdash; group milestones &nbsp;&middot;&nbsp;
                         <strong style="color:var(--text);">Edit</strong> &mdash; manage groups &amp; people
                     </p>
@@ -552,7 +551,7 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">HappyMoments &copy; 2026</span>
-            <div class="app-version" id="appVersion">Build: v71 &middot; 2026-06-08 23:22 UTC</div>
+            <div class="app-version" id="appVersion">Build: v72 &middot; 2026-06-09 08:10 UTC</div>
         </footer>
 
         <!-- Auth Modal -->
@@ -662,20 +661,20 @@
         </div>
     </div>
 
-    <script defer src="notifications.js?v=mq5u5ac9"></script>
-    <script defer src="historyFacts.js?v=mq5u5ac9"></script>
-    <script defer src="i18n.js?v=mq5u5ac9"></script>
-    <script defer src="specialNumbers.js?v=mq5u5ac9"></script>
-    <script defer src="milestoneCalculator.js?v=mq5u5ac9"></script>
-    <script defer src="combinations.js?v=mq5u5ac9"></script>
-    <script defer src="shareMessages.js?v=mq5u5ac9"></script>
-    <script defer src="giftStore.js?v=mq5u5ac9"></script>
-    <script defer src="dataProtection.js?v=mq5u5ac9"></script>
-    <script defer src="imageCard.js?v=mq5u5ac9"></script>
-    <script defer src="checkout.js?v=mq5u5ac9"></script>
-    <script defer src="analytics.js?v=mq5u5ac9"></script>
-    <script defer src="auth.js?v=mq5u5ac9"></script>
-    <script defer src="app.js?v=mq5u5ac9"></script>
+    <script defer src="notifications.js?v=mq6d1blw"></script>
+    <script defer src="historyFacts.js?v=mq6d1blw"></script>
+    <script defer src="i18n.js?v=mq6d1blw"></script>
+    <script defer src="specialNumbers.js?v=mq6d1blw"></script>
+    <script defer src="milestoneCalculator.js?v=mq6d1blw"></script>
+    <script defer src="combinations.js?v=mq6d1blw"></script>
+    <script defer src="shareMessages.js?v=mq6d1blw"></script>
+    <script defer src="giftStore.js?v=mq6d1blw"></script>
+    <script defer src="dataProtection.js?v=mq6d1blw"></script>
+    <script defer src="imageCard.js?v=mq6d1blw"></script>
+    <script defer src="checkout.js?v=mq6d1blw"></script>
+    <script defer src="analytics.js?v=mq6d1blw"></script>
+    <script defer src="auth.js?v=mq6d1blw"></script>
+    <script defer src="app.js?v=mq6d1blw"></script>
 
     <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
     <script>

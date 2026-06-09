@@ -2386,7 +2386,7 @@ function wizardShowCombinedAndName() {
     });
 
     el.innerHTML = `
-        <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${escapeHtml(namesStr)} together</p>
+        <p style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:8px;">Dates only you and ${escapeHtml(namesStr.replace(/^Me and |^You and /i, ''))} share</p>
         <div class="wizard-reveal-number-wrap">
             <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
         </div>
@@ -2401,16 +2401,7 @@ function wizardShowCombinedAndName() {
     `;
 
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
-    if (addMoreBtn) addMoreBtn.textContent = 'Add more people to ' + suggestedName + ' \u2192';
-    // Motivational hint below the button
-    const actionsEl = document.querySelector('#wizardStep6 .wizard-actions');
-    if (actionsEl && !document.getElementById('wizardMotivHint6')) {
-        const hint = document.createElement('p');
-        hint.id = 'wizardMotivHint6';
-        hint.style.cssText = 'color:var(--text-muted,#888);font-size:0.78rem;font-style:italic;text-align:center;margin-top:8px;';
-        hint.textContent = 'More people, more reasons to celebrate together.';
-        actionsEl.appendChild(hint);
-    }
+    if (addMoreBtn) addMoreBtn.textContent = 'More people, more milestones \u2014 add to ' + suggestedName;
 
     _track('onboard_combined_reveal', { event_count: appData.events.length });
 
@@ -2578,11 +2569,6 @@ function wizardShowGroupReveal() {
             const unit = best.unitName || best.unit || '';
             const ds = formatMilestoneDate(best.date);
             individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, ds, e.name);
-            // Educational hint for kids (born after 2010)
-            const birthYear = d.getFullYear();
-            if (birthYear >= 2010 && best.value >= 100000) {
-                individualHtml += `<p style="color:var(--text-muted);font-size:0.75rem;font-style:italic;text-align:center;margin:-4px 0 6px;">That's a big number \u2014 ask them how many zeroes it has!</p>`;
-            }
             newMemberCount++;
         }
     });
@@ -2601,7 +2587,7 @@ function wizardShowGroupReveal() {
     const reachOutHint = reachOutHints[Math.floor(Math.random() * reachOutHints.length)];
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Now you know something worth telling them</h2>
+        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Something worth sharing with each of them</h2>
         ${individualHtml}
         <p style="color:var(--text-muted);font-size:0.82rem;font-style:italic;text-align:center;margin-top:12px;">${reachOutHint}</p>
     `;
@@ -2611,15 +2597,13 @@ function wizardShowGroupReveal() {
     // Update buttons: only show "See team milestones" in Phase 1
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
-        shareBtn8.textContent = 'See ' + groupName + ' team milestones \u2192';
+        shareBtn8.textContent = 'See ' + groupName + ' team milestones \u2014 more members, more magic';
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
-    // Hide other buttons during Phase 1 — they appear in Phase 2
+    // Hide "Who else?" button during Phase 1 — it appears in Phase 2
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
     if (createAnotherBtn) createAnotherBtn.style.display = 'none';
-    const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
-    if (dashboardBtn8) dashboardBtn8.style.display = 'none';
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
@@ -2674,16 +2658,16 @@ function wizardShowTeamMilestones() {
         cnt++;
     });
 
-    const teamHeadings = [
-        'Some milestones belong to all of you \u2014 a reason to gather and celebrate.',
-        'Some milestones belong to all of you \u2014 the perfect excuse for a reunion.',
-        'Some milestones belong to all of you \u2014 when this number arrives, get everyone together.',
-        'Some milestones belong to all of you \u2014 a milestone only your group can claim.'
+    const teamContinuations = [
+        'A reason to gather and celebrate.',
+        'The perfect excuse for a reunion.',
+        'When this number arrives, get everyone together.',
+        'A milestone only your group can claim.'
     ];
-    const teamHeading = teamHeadings[Math.floor(Math.random() * teamHeadings.length)];
+    const teamCont = teamContinuations[Math.floor(Math.random() * teamContinuations.length)];
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.15rem;line-height:1.4;">${teamHeading}</h2>
+        <h2 class="wizard-question" style="font-size:1.15rem;line-height:1.4;">These milestones belong to all of you. ${teamCont}</h2>
         ${hero ? `
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number" style="font-size:2.2rem;">${hero.value.toLocaleString(locale)}</div>
@@ -2703,11 +2687,9 @@ function wizardShowTeamMilestones() {
     }
 
     // Always show "create another group" — this drives retention
+    // Show "Who else?" button in Phase 2
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
     if (createAnotherBtn) createAnotherBtn.style.display = '';
-    // Dashboard link always available but demoted
-    const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
-    if (dashboardBtn8) dashboardBtn8.style.display = '';
 
     _track('onboard_group_reveal_combined', { members: appData.events.length });
     window.scrollTo(0, 0);
@@ -2809,7 +2791,7 @@ function wizardCreateAnotherGroup() {
     // Update buttons for "create another group" context
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
     if (addMoreBtn) {
-        addMoreBtn.textContent = 'Add people \u2192';
+        addMoreBtn.textContent = 'Add people and see your combined milestones \u2192';
         addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
     }
     // Hide "Explore milestones now" — it's a leak in this context
