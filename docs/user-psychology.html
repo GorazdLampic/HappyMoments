@@ -40,7 +40,7 @@ strong { font-weight: 600; }
 <body>
 
 <h1>HappyMoments User Psychology</h1>
-<p class="meta">Version 2.3 &middot; v68 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the "why" behind every UX decision<br>
+<p class="meta">Version 2.4 &middot; v78 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the "why" behind every UX decision<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> (how it looks) &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> (the journey) &middot; <a href="navigation-architecture.html">navigation-architecture.html</a> (the structure)<br>
 Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 
@@ -152,10 +152,10 @@ Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 <tr><td>Enter THEIR birthday</td><td>Counter animation &rarr; their milestone revealed</td><td>"I should tell them!"</td></tr>
 <tr><td>Tap milestone</td><td>Onboarding: gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center. Daily use: gold highlight (<code>tc-selected</code>) + sticky share bar above tabs. Expand/collapse toggle reveals more milestones (3 shown by default).</td><td>"That was easy"</td></tr>
 <tr><td>Share sent</td><td>Native share picker, text also copied to clipboard</td><td>Social validation anticipation</td></tr>
-<tr><td>Return next day</td><td>Me tab shows updated time-chunked list, countdowns change</td><td>"Time is moving, this matters"</td></tr>
+<tr><td>Return next day</td><td>Solo tab shows updated time-chunked list, countdowns change</td><td>"Time is moving, this matters"</td></tr>
 <tr><td>Add 2nd person</td><td>Together tab shows combined milestones</td><td>"Wait, there's MORE?"</td></tr>
 <tr><td>Enable reminders</td><td>"Reminder set for [date]" confirmation</td><td>Peace of mind</td></tr>
-<tr><td>Milestone day arrives</td><td>Push notification + milestone highlighted on Me tab</td><td>"I remembered! I'm a good friend"</td></tr>
+<tr><td>Milestone day arrives</td><td>Push notification + milestone highlighted on Solo tab</td><td>"I remembered! I'm a good friend"</td></tr>
 </table>
 
 <div class="rule">
@@ -180,7 +180,7 @@ Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 <table>
 <tr><th>Component</th><th>Implementation</th></tr>
 <tr><td><strong>Trigger</strong></td><td>Push notification: "Mom turns 20,000 days tomorrow!" (external). Opening app out of curiosity (internal).</td></tr>
-<tr><td><strong>Action</strong></td><td>Open app &rarr; see Me tab with time-chunked milestones (5-second glance).</td></tr>
+<tr><td><strong>Action</strong></td><td>Open app &rarr; see Solo tab with time-chunked milestones (5-second glance).</td></tr>
 <tr><td><strong>Variable Reward</strong></td><td>Different milestone each time. Sometimes it's your number, sometimes someone else's. Sometimes a cosmic event. The VARIETY keeps it interesting.</td></tr>
 <tr><td><strong>Investment</strong></td><td>Share a milestone. Add another person. Enable reminders. Each investment increases value of the next trigger.</td></tr>
 </table>
@@ -193,7 +193,7 @@ Supersedes: archive/ux-research-strategic.md (distilled, not duplicated)</p>
 <table>
 <tr><th>Moment</th><th>HappyMoments implementation</th></tr>
 <tr><td><strong>Peak</strong></td><td>The counter animation rolling up to the big number. Gold glow. Sparkle particles. This is the moment that defines the product in the user's memory.</td></tr>
-<tr><td><strong>End</strong></td><td>Every session ends with anticipation, not a dead screen. The Me tab always shows upcoming milestones with countdowns &mdash; forward-looking positive emotion. Never end on: empty state, error, "no milestones today" with nothing else.</td></tr>
+<tr><td><strong>End</strong></td><td>Every session ends with anticipation, not a dead screen. The Solo tab always shows upcoming milestones with countdowns &mdash; forward-looking positive emotion. Never end on: empty state, error, "no milestones today" with nothing else.</td></tr>
 </table>
 
 <!-- ═════════════════════════════════════════════ -->
@@ -215,7 +215,7 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 <br>
 <strong>Why:</strong> Showing 20 milestones at once is overwhelming (Miller's Law). The 9-screen flow creates anticipation at every step (Spotify Wrapped model). Share is available at every milestone screen via tap &rarr; gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble at bottom center.
 <br><br>
-<strong>In daily use:</strong> The Me tab shows a flat time-chunked list with all people's milestones. No hero card &mdash; all milestones equal. Person filter at top lets users focus on one person if desired.
+<strong>In daily use:</strong> The Solo tab shows a flat time-chunked list with all people's milestones. No hero card &mdash; all milestones equal. Person filter at top lets users focus on one person if desired.
 </div>
 
 <!-- ═════════════════════════════════════════════ -->
@@ -227,10 +227,10 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 <p>Deliver the product's value before asking for ANY user data. We don't ask for name, email, sign-in, or preferences before showing the first milestone. The ONLY input is birthday &mdash; and that IS the product.</p>
 
 <h3>2. One Thing Per Screen (from Apple HIG, Luke Wroblewski)</h3>
-<p>Each screen has ONE primary action. In onboarding, the reveal IS the screen. In daily use, the Me tab's time-chunked list IS the screen. Don't add navigation, options, or secondary features that compete with the primary element.</p>
+<p>Each screen has ONE primary action. In onboarding, the reveal IS the screen. In daily use, the Solo tab's time-chunked list IS the screen. Don't add navigation, options, or secondary features that compete with the primary element.</p>
 
 <h3>3. Hick's Law (from Jon Yablonski)</h3>
-<p>More choices = more time = more drop-off. This is why we have 3 tabs (Me/Together/Edit), not 4+. Why the Me tab shows a simple time-chunked list with no hero card competing for attention. Why settings are on the Edit tab, not displayed as toggles on the main screen.</p>
+<p>More choices = more time = more drop-off. This is why we have 3 tabs (Solo/Together/Edit), not 4+. Why the Solo tab shows a simple time-chunked list with no hero card competing for attention. Why settings are on the Edit tab, not displayed as toggles on the main screen.</p>
 
 <h3>4. Emotional Framing (from Spotify Wrapped)</h3>
 <p>"788 hours finding yourself" beats "47,283 minutes listened." Numbers must tell a story. "20,000 days alive" should feel like an achievement, not a statistic. The countdown text uses emotional language: "That's this week!" not "7 days from now."</p>
@@ -262,7 +262,7 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 <h3>1. The Parent (age 30-50)</h3>
 <p><strong>Goal:</strong> Track children's milestones. Share with family.<br>
 <strong>Emotional driver:</strong> Parental pride, marking time passing, creating memories.<br>
-<strong>Key feature:</strong> Me tab showing their child's next milestone at top of list. "Your daughter turns 5,000 days old on..." &rarr; tap to share to family WhatsApp group.<br>
+<strong>Key feature:</strong> Solo tab showing their child's next milestone at top of list. "Your daughter turns 5,000 days old on..." &rarr; tap to share to family WhatsApp group.<br>
 <strong>Retention:</strong> Milestone notifications for their children.</p>
 
 <h3>2. The Reconnector (age 25-45)</h3>
@@ -290,7 +290,7 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 
 <table>
 <tr><th>Frequency</th><th>What's new</th><th>Source</th></tr>
-<tr><td>Every day</td><td>Me tab countdowns change. "12 days" &rarr; "11 days" &rarr; "10 days"</td><td>Automatic (time passes)</td></tr>
+<tr><td>Every day</td><td>Solo tab countdowns change. "12 days" &rarr; "11 days" &rarr; "10 days"</td><td>Automatic (time passes)</td></tr>
 <tr><td>Every week</td><td>Different milestone becomes the hero (closest one rotates)</td><td>Automatic (milestone dates approach)</td></tr>
 <tr><td>Every month</td><td>New milestones enter the "Coming up" view</td><td>Automatic (year-long horizon)</td></tr>
 <tr><td>Each person added</td><td>~20 new milestones appear in the timeline</td><td>User-driven</td></tr>
@@ -302,23 +302,24 @@ The onboarding never dumps all milestones at once. Instead, it layers discovery:
 </div>
 
 <div class="rule">
-<strong>The engagement depth insight (v55):</strong> Your own milestones are interesting once. Other people's milestones drive daily use &mdash; because they create a reason to reach out, share, and reconnect. The app's value is in the ACTION (sending a message to Mom, celebrating with Partner) not the INFORMATION (knowing your own number). This is why the second-group engagement flow matters: users with 2+ groups have 3&times; more reasons to return.
+<strong>The engagement depth insight (v78):</strong> Your own milestones are interesting once. Other people's milestones drive daily use &mdash; because they create a reason to reach out, share, and reconnect. The app's value is in the ACTION (sending a message to Mom, celebrating with Partner) not the INFORMATION (knowing your own number). This is why the second-group engagement flow matters: users with 2+ groups have 3&times; more reasons to return.
 <br><br>
-<strong>Second-group nudge:</strong> Together tab shows "Got another circle?" when only 1 group exists. Screen 8 offers "Create another group" after the first group reveal. Screen 9 shows "Another circle of people?" alongside "Go to dashboard." Once the user has 2+ groups, the prompts disappear and the tab guide text (Me / Together / Edit descriptions) appears instead.
+<strong>Second-group nudge:</strong> Together tab shows "Got another circle?" when only 1 group exists. Screen 8 offers "Create another group" after the first group reveal. Screen 9 shows "Another circle of people?" alongside "Go to dashboard." Once the user has 2+ groups, the prompts disappear and the tab guide text (Solo / Together / Edit descriptions) appears instead.
 </div>
 
 <div class="rule">
-<strong>Screen 8 two-phase psychology (v68):</strong> The group reveal is split into two phases to teach the user both core use cases during onboarding:<br><br>
-<strong>Phase 1 &mdash; Individual reach-out motivation:</strong> "Now you know something worth telling them." Shows individual milestones for new members only. The emotional driver is personal connection &mdash; the user sees a specific milestone for a specific person and feels the impulse to reach out. This trains the "reconnection" use case.<br><br>
-<strong>Phase 2 &mdash; Group celebration motivation:</strong> "Some milestones belong to all of you." Shows combined team milestones. The emotional driver is collective identity &mdash; the group has milestones together that no individual has alone. This trains the "celebrate together" use case.<br><br>
+<strong>Screen 8 two-phase psychology (v78):</strong> The group reveal is split into two phases to teach the user both core use cases during onboarding:<br><br>
+<strong>Phase 1 &mdash; Individual reach-out motivation:</strong> "Imagine their face when you tell them." Shows individual milestones for new members only. Smart display: 1 member = 3 milestones + expand, 2+ members = 1 each + expand per person. The emotional driver is personal connection &mdash; the user sees a specific milestone for a specific person and feels the impulse to reach out. This trains the "reconnection" use case.<br><br>
+<strong>Phase 2 &mdash; Group celebration motivation:</strong> "These milestones belong to all of you. [random continuation]" (same font, one sentence). Hero milestone is tappable to share and not duplicated in the list below. Shows combined team milestones. The emotional driver is collective identity &mdash; the group has milestones together that no individual has alone. This trains the "celebrate together" use case.<br><br>
+<strong>Post-share button promotion:</strong> After the user shares, the "Share with your group" button is demoted to secondary, while "Who else? Add another group" and "Go to my dashboard" are promoted to primary. This guides users toward creating more groups after their first share, increasing engagement depth.<br><br>
 This separation ensures the user experiences both emotional triggers (individual reach-out AND group celebration) before leaving onboarding.
 </div>
 
 <div class="rule">
-<strong>Kids educational angle (v68):</strong> For young members (born after 2010), the app hints at learning about large numbers. When a child's milestones are shown on Screen 8 Phase 1, the app includes an educational hint suggesting that discovering big numbers (thousands, millions, billions) can be a fun learning experience for kids. This subtly positions the app as beneficial for children while being genuinely useful &mdash; parents can use milestones to teach number sense in an engaging, personal context.
+<strong>Age-appropriate group examples (v78):</strong> When creating a second group (Screen 6 repurposed), the app shows age-appropriate rotating examples to suggest contextual use cases: &le;20 years old sees school examples, 21-25 sees university examples, 26+ sees office/workplace examples. This makes the "create another group" prompt feel relevant and personal rather than abstract.
 </div>
 
-<p class="meta" style="margin-top:48px">End of document. v68.</p>
+<p class="meta" style="margin-top:48px">End of document. v78.</p>
 
 </body>
 </html>

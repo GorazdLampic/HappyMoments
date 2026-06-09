@@ -63,7 +63,7 @@ code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 0.9em;
 <body>
 
 <h1>HappyMoments Navigation Architecture</h1>
-<p class="meta">Version 2.3 &middot; v68 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
+<p class="meta">Version 2.4 &middot; v78 &middot; June 2026 &middot; Status: <strong>CANONICAL</strong> &mdash; this is the source of truth for app structure and navigation<br>
 Cross-references: <a href="ux-guidelines.html">ux-guidelines.html</a> &middot; <a href="onboarding-flow.html">onboarding-flow.html</a> &middot; <a href="user-psychology.html">user-psychology.html</a><br>
 Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture-research.md, v1.4 (2-tab model)</p>
 
@@ -78,17 +78,17 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 </div>
 <div class="screen-placeholder">[ screen content ]</div>
 <div class="bottom-tabs">
-<div class="tab active"><span class="tab-icon">&#11088;</span><br>Me</div>
+<div class="tab active"><span class="tab-icon">&#11088;</span><br>Solo</div>
 <div class="tab"><span class="tab-icon">&#128101;</span><br>Together</div>
 <div class="tab"><span class="tab-icon">&#9998;</span><br>Edit</div>
 </div>
 </div>
-<p style="text-align:center;color:var(--muted);font-size:0.82rem;margin-top:12px;font-style:italic;">3 bottom tabs: Me | Together | Edit &mdash; labels + icons + gold active indicator</p>
+<p style="text-align:center;color:var(--muted);font-size:0.82rem;margin-top:12px;font-style:italic;">3 bottom tabs: Solo | Together | Edit &mdash; labels + icons + gold active indicator</p>
 </div>
 
 <table>
 <tr><th>Tab</th><th>What's in it</th><th>Usage</th></tr>
-<tr><td><strong>Me</strong> (default)</td><td>3 milestones shown under "Upcoming", expand toggle for more. No time chunks. No hero card &mdash; all milestones equal. Person filter at top. Tap to select &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs.</td><td>60%</td></tr>
+<tr><td><strong>Solo</strong> (default)</td><td>3 milestones shown under "Upcoming", expand toggle for more. No time chunks. No hero card &mdash; all milestones equal. Person filter at top. Tap to select &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs.</td><td>60%</td></tr>
 <tr><td><strong>Together</strong></td><td>Combined/group milestones from <code>renderCombinedTab</code>. Group sub-tabs when 2+ groups. Group name with pencil &rarr; full-screen group editor. Icon: 3-person SVG icon.</td><td>25%</td></tr>
 <tr><td><strong>Edit</strong></td><td>Group cards with members listed, tappable to open group editor. "+ New group" button. Settings below: theme (tiny inline dark/light toggle), reminders (single checkbox), then collapsible "Advanced settings &#9660;" (hidden by default) containing Number Patterns + Custom Numbers. Removed per Matej Guid's UX review: Invite Friends, Send Feedback, Save Settings, Reset All Data.</td><td>15%</td></tr>
 </table>
@@ -97,14 +97,14 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <div class="rule">
 <strong>Lesson learned (v1.4 &rarr; v2.0):</strong> The 2-tab model with a sub-toggle on Home (Me / Group) was confusing &mdash; users didn't discover the sub-toggle, and mixing personal and combined milestones on one tab still felt crowded. The fix: give each concern its own tab.<br><br>
-<strong>Me</strong> = all individual milestones for all people, sorted by time proximity. No hero card &mdash; avoiding the problem of one person always being "featured" over others.<br>
+<strong>Solo</strong> = all individual milestones for all people, sorted by time proximity. No hero card &mdash; avoiding the problem of one person always being "featured" over others.<br>
 <strong>Together</strong> = combined/group milestones (when ages add up to special numbers). Group sub-tabs when 2+ groups exist.<br>
 <strong>Edit</strong> = manage people, groups, and settings. Group editor is a full-screen overlay.
 </div>
 
 <h3>Why this structure</h3>
 <ul>
-<li><strong>3 tabs, each with one clear purpose:</strong> Me = see milestones. Together = see combined milestones. Edit = manage data. No sub-toggles or hidden modes.</li>
+<li><strong>3 tabs, each with one clear purpose:</strong> Solo = see milestones. Together = see combined milestones. Edit = manage data. No sub-toggles or hidden modes.</li>
 <li><strong>Labels + icons:</strong> Each tab has both an icon and a text label. This is more discoverable than icon-only (Instagram/WhatsApp use labels too).</li>
 <li><strong>Gold active indicator:</strong> Active tab has gold icon + label. Inactive tabs are gray. Consistent with the gold = "things that matter" design rule.</li>
 <li><strong>No profile icon:</strong> Settings live on the Edit tab. No separate profile concept needed &mdash; the app is local-first with no accounts.</li>
@@ -113,14 +113,14 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <div class="rule">
 <strong>Tab visual design:</strong><br>
 &bull; A thin top border separating the tab bar from content (1px, <code>var(--border)</code>)<br>
-&bull; Icons + text labels: Me (&#11088;), Together (&#128101;), Edit (&#9998;)<br>
+&bull; Icons + text labels: Solo (&#11088;), Together (&#128101;), Edit (&#9998;)<br>
 &bull; Active tab: gold icon + gold label. Inactive: gray icon + gray label.<br>
 &bull; Fixed at bottom of viewport (sticky), never scrolls away.<br>
 &bull; Tab bar height: 56px (Apple HIG minimum 49pt, Material Design 80dp &mdash; 56px is a good compromise).
 </div>
 
 <!-- ═════════════════════════════════════════════ -->
-<h2>Me Tab (Daily Landing Screen)</h2>
+<h2>Solo Tab (Daily Landing Screen)</h2>
 
 <p>The daily landing screen. All milestones equal &mdash; no hero card. Time-chunked list with person filter at top.</p>
 
@@ -184,7 +184,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 </div>
 <div class="bottom-tabs">
-<div class="tab active"><span class="tab-icon">&#11088;</span><br><span style="font-size:0.7rem">Me</span></div>
+<div class="tab active"><span class="tab-icon">&#11088;</span><br><span style="font-size:0.7rem">Solo</span></div>
 <div class="tab"><span class="tab-icon">&#128101;</span><br><span style="font-size:0.7rem">Together</span></div>
 <div class="tab"><span class="tab-icon">&#9998;</span><br><span style="font-size:0.7rem">Edit</span></div>
 </div>
@@ -205,11 +205,11 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <h3>Person Filter</h3>
 
-<p>Row of person buttons at top of Me tab. "All" selected by default. Tap a person to filter milestones to just that person. Tap again to show all. The milestone list updates immediately to show only the selected person's milestones (v55 fix: filter is now applied to the actual milestone rendering, not just the UI buttons).</p>
+<p>Row of person buttons at top of Solo tab. "All" selected by default. Tap a person to filter milestones to just that person. Tap again to show all. The milestone list updates immediately to show only the selected person's milestones (v55 fix: filter is now applied to the actual milestone rendering, not just the UI buttons).</p>
 
 <h3>Together Tab</h3>
 
-<p>Combined/group milestones live on their own tab (not a section on Me tab). When 2+ groups exist, group sub-tabs appear at the top of the Together tab. Group name has pencil icon &rarr; tapping opens the full-screen group editor.</p>
+<p>Combined/group milestones live on their own tab (not a section on Solo tab). When 2+ groups exist, group sub-tabs appear at the top of the Together tab. Group name has pencil icon &rarr; tapping opens the full-screen group editor.</p>
 
 <p><strong>Second-group nudge (v55):</strong> When only 1 group exists, the Together tab shows a "Got another circle?" card with a "+ New group" button. This encourages users to create a second group (Friends, Colleagues, etc.) for richer combined milestones. The nudge disappears automatically once 2+ groups exist.</p>
 
@@ -263,9 +263,9 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <table>
 <tr><th>User wants to...</th><th>Path</th><th>Taps</th></tr>
-<tr><td>See what's coming up</td><td>Open app &rarr; Me tab (time-chunked list visible)</td><td><strong>0</strong></td></tr>
+<tr><td>See what's coming up</td><td>Open app &rarr; Solo tab (time-chunked list visible)</td><td><strong>0</strong></td></tr>
 <tr><td>Share a milestone</td><td>Tap milestone &rarr; sticky share bar &rarr; Share button</td><td><strong>2</strong></td></tr>
-<tr><td>Filter by person</td><td>Tap person button at top of Me tab</td><td><strong>1</strong></td></tr>
+<tr><td>Filter by person</td><td>Tap person button at top of Solo tab</td><td><strong>1</strong></td></tr>
 <tr><td>See combined milestones</td><td>Tap Together tab</td><td><strong>1</strong></td></tr>
 <tr><td>Switch group (Together tab)</td><td>Tap group sub-tab</td><td><strong>2</strong></td></tr>
 <tr><td>Edit a group</td><td>Edit tab &rarr; tap group card (or pencil on Together tab)</td><td><strong>2</strong></td></tr>
@@ -281,11 +281,11 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <table>
 <tr><th>Type</th><th>When</th><th>Animation</th></tr>
-<tr><td><strong>Tab switch</strong></td><td>Me &harr; Together &harr; Edit</td><td>Instant crossfade. Maintain scroll position.</td></tr>
-<tr><td><strong>Share selection</strong></td><td>Tap milestone on Me/Together tab</td><td>Gold highlight (<code>tc-selected</code>) + sticky share bar slides up above tabs.</td></tr>
+<tr><td><strong>Tab switch</strong></td><td>Solo &harr; Together &harr; Edit</td><td>Instant crossfade. Maintain scroll position.</td></tr>
+<tr><td><strong>Share selection</strong></td><td>Tap milestone on Solo/Together tab</td><td>Gold highlight (<code>tc-selected</code>) + sticky share bar slides up above tabs.</td></tr>
 <tr><td><strong>Full-screen overlay</strong></td><td>Group editor (from pencil icon or Edit tab tap)</td><td>Slide up. "Done" button to dismiss.</td></tr>
 <tr><td><strong>Native share picker</strong></td><td>Share button tapped</td><td>OS native share sheet. Text also copied to clipboard.</td></tr>
-<tr><td><strong>Onboarding</strong></td><td>First launch or <code>?reset</code></td><td>Full-screen modal, back buttons on screens 3-9. "Skip for now" buttons removed from Screens 4 and 7 (v68).</td></tr>
+<tr><td><strong>Onboarding</strong></td><td>First launch or <code>?reset</code></td><td>Full-screen modal, SVG back arrow (line + chevron, absolute top-left) on screens 3-9. No "Skip for now" buttons anywhere. "Explore milestones now" button removed from Screen 6 (v78). Footer hidden during onboarding, simplified to "HappyMoments &copy; 2026".</td></tr>
 </table>
 
 <div class="rule">
@@ -299,8 +299,8 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <table>
 <tr><th>Feature</th><th>Appears when...</th><th>How</th></tr>
-<tr><td>Time-chunked milestone list</td><td>Always (1+ person)</td><td>Me tab (default landing)</td></tr>
-<tr><td>Person filter</td><td>Always (1+ person)</td><td>Top of Me tab</td></tr>
+<tr><td>Time-chunked milestone list</td><td>Always (1+ person)</td><td>Solo tab (default landing)</td></tr>
+<tr><td>Person filter</td><td>Always (1+ person)</td><td>Top of Solo tab</td></tr>
 <tr><td>Together tab content</td><td>2+ people in a group</td><td>Together tab, combined milestones from engine</td></tr>
 <tr><td>Group sub-tabs</td><td>2+ groups created</td><td>Top of Together tab</td></tr>
 <tr><td>Share flow</td><td>User taps a milestone</td><td>Onboarding: gold highlight (<code>ms-selected</code>) + floating "Share &rarr;" bubble. Daily use: gold highlight (<code>tc-selected</code>) + sticky share bar above tabs.</td></tr>
@@ -318,8 +318,8 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <table>
 <tr><th>Section</th><th>Empty state copy</th></tr>
-<tr><td>Me tab (no people)</td><td>Onboarding wizard (see <a href="onboarding-flow.html">onboarding-flow.html</a>)</td></tr>
-<tr><td>Me tab (no milestones this week)</td><td>"Your next milestone is in X days. Add more people to find milestones sooner!"</td></tr>
+<tr><td>Solo tab (no people)</td><td>Onboarding wizard (see <a href="onboarding-flow.html">onboarding-flow.html</a>)</td></tr>
+<tr><td>Solo tab (no milestones this week)</td><td>"Your next milestone is in X days. Add more people to find milestones sooner!"</td></tr>
 <tr><td>Together tab (1 person only)</td><td>"Add a second person to discover combined milestones &mdash; like when your ages add up to 50,000 days."</td></tr>
 <tr><td>Edit tab (1 group)</td><td>"Create another group to see different milestone combinations."</td></tr>
 <tr><td>Notifications off</td><td>"Never miss a milestone. We'll remind you the day before."</td></tr>
@@ -359,7 +359,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 
 <h3>Daily use share</h3>
 <ul>
-<li>Me tab: tap milestone &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs &rarr; Share button &rarr; native share picker</li>
+<li>Solo tab: tap milestone &rarr; gold highlight (<code>tc-selected</code>) + sticky share bar above tabs &rarr; Share button &rarr; native share picker</li>
 <li>Together tab: tap combined milestone &rarr; same flow (gold highlight + sticky share bar above tabs)</li>
 <li>All shared text also copied to clipboard automatically</li>
 </ul>
@@ -374,7 +374,7 @@ Supersedes: archive/ux-strategic-review-v2.html, archive/navigation-architecture
 <li><strong>Date formatting:</strong> ordinal suffixes ("Sep 7th"), year only if different from current year</li>
 </ul>
 
-<p class="meta" style="margin-top:48px">End of document. v68. Open in browser for rendered mockups.</p>
+<p class="meta" style="margin-top:48px">End of document. v78. Open in browser for rendered mockups.</p>
 
 </body>
 </html>
