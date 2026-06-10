@@ -3135,6 +3135,23 @@ body {
 
 /* wizard-header removed — was showing "HappyMoments" twice */
 
+/* Top-aligned wizard steps — for short-content screens where vertical
+   centering left a large empty gap above the content */
+.wizard-step.wizard-step-top {
+    justify-content: flex-start;
+    padding-top: var(--space-xl);
+}
+
+/* Short screens: tighter wizard layout so the action buttons stay visible */
+@media (max-height: 760px) {
+    .wizard-step { padding-top: var(--space-lg); min-height: auto; }
+    .wizard-reveal-number { font-size: 2.4rem; margin: 8px 0 2px; }
+    .wizard-reveal-unit { font-size: 1.3rem; margin-bottom: 8px; }
+    .wizard-reveal-date, .wizard-reveal-countdown { font-size: 1.05rem; }
+    .wizard-question { margin-bottom: var(--space-md); }
+    .wizard-btn { padding: 14px 24px; font-size: 1.15rem; margin-top: var(--space-md); }
+}
+
 .wizard-back {
     /* Top-left of the screen, mirroring the profile icon top-right —
        header-row height, does not consume vertical space */

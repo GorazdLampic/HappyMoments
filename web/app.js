@@ -1844,6 +1844,8 @@ function wizardShowMyMore() {
     const heroMs = window._wizardMilestone;
     const heroCosmic = heroMs && heroMs.isCosmic;
     let upcoming = milestones.filter(m => m.timeUntil > 0 && (!m.isCosmic || (heroCosmic && m.value === heroMs.value && m.unit === heroMs.unit)));
+    // Don't repeat the non-cosmic hero (already shown as the big number on Screen 2)
+    if (heroMs && !heroCosmic) upcoming = upcoming.filter(m => !(m.value === heroMs.value && m.unit === heroMs.unit));
     // Fallback: if nothing, include all upcoming
     if (upcoming.length === 0) upcoming = milestones.filter(m => m.timeUntil > 0);
     const count = upcoming.length;
@@ -2278,6 +2280,10 @@ function wizardDiscoverFriendV2() {
         .sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 8);
     if (upcoming.length === 0) upcoming = ms.filter(m => m.timeUntil > 0).slice(0, 8);
 
+    // Don't repeat the hero (already shown as the big number above)
+    const fHero = window._wizardFriendMilestone;
+    if (fHero) upcoming = upcoming.filter(m => !(m.value === fHero.value && m.unit === fHero.unit));
+
     const moreEl = document.getElementById('wizardFriendMore');
     if (moreEl && upcoming.length > 0) {
         const TOP5 = 3;
@@ -2414,17 +2420,23 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</span></div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
-            <input type="text" id="groupName" class="wizard-input" value="" placeholder="Name your first group" onfocus="if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+            <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your first group</div>
+            <input type="text" id="groupTitleInput" class="wizard-input" value="" placeholder="${escapeHtml(suggestedName)}" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
-    if (addMoreBtn) addMoreBtn.textContent = 'More people, more milestones \u2014 add to ' + suggestedName;
+    if (addMoreBtn) {
+        addMoreBtn.textContent = 'Add more people to ' + suggestedName;
+        addMoreBtn.style.fontSize = '1.05rem';
+    }
 
     _track('onboard_combined_reveal', { event_count: appData.events.length });
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    const step6El = document.getElementById('wizardStep6');
+    step6El?.classList.add('wizard-step-active');
+    step6El?.classList.remove('wizard-step-top'); // tall content — keep centered layout
     _lastWizardStep = 6;
     window.scrollTo(0, 0);
 }
@@ -2432,7 +2444,7 @@ function wizardShowCombinedAndName() {
 // --- Screen 7: Group builder (Me + Person 2 pre-filled) ---
 function wizardGoToGroupBuilder() {
     _wizardEnsureClean();
-    const groupName = document.getElementById('groupName')?.value?.trim() || 'Family';
+    const groupName = document.getElementById('groupTitleInput')?.value?.trim() || 'Family';
 
     // Rename the current set
     const currentSet = allSets.find(s => s.id === currentSetId);
@@ -2440,7 +2452,7 @@ function wizardGoToGroupBuilder() {
     saveData();
 
     const title = document.getElementById('groupBuilderTitle');
-    if (title) title.textContent = groupName;
+    if (title) title.value = groupName;
 
     // Pre-fill member list with existing events
     _wizardGroupMembers = [...appData.events];
@@ -2455,15 +2467,21 @@ function wizardGoToGroupBuilder() {
 function wizardRenderGroupMembers() {
     const el = document.getElementById('groupMembers');
     if (!el) return;
-    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     let html = '';
     _wizardGroupMembers.forEach(m => {
         const d = m.date instanceof Date ? m.date : new Date(m.date);
-        const dateStr = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
-        html += `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <span style="color:var(--warning,#d4b876);">\u2713</span>
-            <span style="flex:1;color:var(--text);">${escapeHtml(m.name)}</span>
-            <span style="color:var(--text-muted);font-size:0.85rem;">${dateStr}</span>
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        // Editable rows \u2014 name and date can be corrected in place
+        html += `<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
+            <input type="text" value="${escapeHtml(m.name)}" onchange="wizardEditMember('${m.id}','name',this.value)" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;min-width:0;padding:5px 8px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text);font-size:0.95rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <input type="text" inputmode="numeric" value="${dd}" onchange="wizardEditMemberDate('${m.id}','d',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.82rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
+            <input type="text" inputmode="numeric" value="${mm}" onchange="wizardEditMemberDate('${m.id}','m',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.82rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
+            <input type="text" inputmode="numeric" value="${yyyy}" onchange="wizardEditMemberDate('${m.id}','y',this.value)" maxlength="4" style="width:3em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.82rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            ${m.name !== 'Me' ? `<button onclick="wizardRemoveMember('${m.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.05rem;padding:2px 5px;" title="Remove">&times;</button>` : '<span style="width:22px;"></span>'}
         </div>`;
     });
     el.innerHTML = html;
@@ -2472,6 +2490,30 @@ function wizardRenderGroupMembers() {
     const btn = document.getElementById('groupContinueBtn');
     // Show continue once there are 2+ members (Me + at least 1 other)
     if (btn) btn.style.display = _wizardGroupMembers.length >= 2 ? '' : 'none';
+}
+
+// Group title edited in place \u2014 rename the current set
+function wizardGroupTitleChanged(value) {
+    const name = (value || '').trim();
+    if (!name) return;
+    const currentSet = allSets.find(s => s.id === currentSetId);
+    if (currentSet) { currentSet.name = name; saveData(); }
+}
+
+// Inline edits in the group builder reuse the group-editor update logic
+function wizardEditMember(eventId, field, value) {
+    editorUpdateMember(eventId, field, value);
+}
+
+function wizardEditMemberDate(eventId, part, value) {
+    editorUpdateMemberDate(eventId, part, value);
+}
+
+function wizardRemoveMember(eventId) {
+    _wizardGroupMembers = _wizardGroupMembers.filter(m => m.id !== eventId);
+    const idx = appData.events.findIndex(e => e.id === eventId);
+    if (idx >= 0) { appData.events.splice(idx, 1); saveData(); }
+    wizardRenderGroupMembers();
 }
 
 function wizardSelectRoleGroup(btn, role) {
@@ -2559,7 +2601,7 @@ function wizardShowGroupReveal() {
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
+    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || 'Family';
 
     // Phase 1: Individual milestones — only for NEW members (not already revealed)
     // 1 member: show 3 milestones + expand. 2+ members: show 1 each + expand per person.
@@ -2635,7 +2677,7 @@ function wizardShowGroupReveal() {
     }
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;">Imagine their face when you tell them</h2>
+        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;margin-top:0;margin-bottom:var(--space-md);">Imagine their face when you tell them</h2>
         ${individualHtml}
     `;
 
@@ -2644,7 +2686,7 @@ function wizardShowGroupReveal() {
     // Update buttons: only show "See team milestones" in Phase 1
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
-        shareBtn8.textContent = 'See the combined milestones';
+        shareBtn8.textContent = 'Your combined milestones →';
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
@@ -2653,7 +2695,9 @@ function wizardShowGroupReveal() {
     if (createAnotherBtn) createAnotherBtn.style.display = 'none';
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep8')?.classList.add('wizard-step-active');
+    const step8El = document.getElementById('wizardStep8');
+    step8El?.classList.add('wizard-step-active');
+    step8El?.classList.add('wizard-step-top'); // top-align: short content, avoid big gap above
     _lastWizardStep = 8;
     window.scrollTo(0, 0);
 }
@@ -2664,7 +2708,7 @@ function wizardShowTeamMilestones() {
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
+    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || 'Family';
 
     const combinedMs = typeof findSumMilestonesForEvents === 'function'
         ? findSumMilestonesForEvents(appData.events, 20, 1825, appSettings || {}) : [];
@@ -2693,39 +2737,38 @@ function wizardShowTeamMilestones() {
         });
 
     const hero = goodMs[0];
-    // Skip hero from the list (it's shown as the big number above)
-    let combinedHtml = '';
+    // Skip hero from the list (it's shown as the big number above); dedupe; 3 visible + expandable rest
+    const rows = [];
     const shown = new Set([hero ? hero.value + '_' + hero.unit : '']);
-    let cnt = 0;
     goodMs.forEach(m => {
         const key = m.value + '_' + m.unit;
-        if (cnt >= 3 || shown.has(key)) return;
+        if (rows.length >= 8 || shown.has(key)) return;
         shown.add(key);
+        rows.push(m);
+    });
+    let combinedHtml = '';
+    rows.slice(0, 3).forEach(m => {
         const dt = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
         combinedHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
-        cnt++;
+    });
+    let combinedExtraHtml = '';
+    rows.slice(3).forEach(m => {
+        const dt = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        combinedExtraHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
     });
 
-    const teamContinuations = [
-        'A reason to gather and celebrate.',
-        'The perfect excuse for a reunion.',
-        'When this number arrives, get everyone together.',
-        'A milestone only your group can claim.'
-    ];
-    const teamCont = teamContinuations[Math.floor(Math.random() * teamContinuations.length)];
-
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.15rem;line-height:1.4;">These milestones belong to all of you. ${teamCont}</h2>
+        <h2 class="wizard-question" style="font-size:1.1rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">These milestones belong to all of you — get everyone together.</h2>
         ${hero ? `
             <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + (hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
             <div class="wizard-reveal-number-wrap">
-                <div class="wizard-reveal-number" style="font-size:2.2rem;">${hero.value.toLocaleString(locale)}</div>
+                <div class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</div>
             </div>
-            <div class="wizard-reveal-unit">${hero.unitName || hero.unit} combined</div>
-            <div class="wizard-reveal-date">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} days</span></div>
+            <div class="wizard-reveal-unit" style="font-size:1.3rem;margin-bottom:8px;">${hero.unitName || hero.unit} combined</div>
+            <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:4px;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} days</span></div>
             </div>
         ` : ''}
-        ${combinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div class="wizard-milestone-list">${combinedHtml}</div></div>` : ''}
+        ${combinedHtml ? `<div style="margin-top:10px;border-top:1px solid var(--border,#333);padding-top:8px;"><div class="wizard-milestone-list">${combinedHtml}</div>${combinedExtraHtml ? `<div id="wizTeamExtra8" style="display:none;" class="wizard-milestone-list">${combinedExtraHtml}</div><div id="wizTeamToggle8" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('wizTeamExtra8'),b=document.getElementById('wizTeamToggle8');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rows.length - 3} more \\u25BC';}">Show ${rows.length - 3} more ▼</div>` : ''}</div>` : ''}
     `;
 
     // Restore buttons for Phase 2
@@ -2769,16 +2812,15 @@ function wizardBuildShareScreen() {
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    let html = '<h2 class="wizard-question">Tell your people</h2>';
-    html += '<p style="color:var(--text-muted);text-align:center;font-size:0.9rem;margin-bottom:16px;">Each person has a milestone worth sharing</p>';
+    let html = '<h2 class="wizard-question" style="font-size:1.2rem;margin-top:0;margin-bottom:var(--space-md);">Tell your people — each has a milestone worth sharing</h2>';
 
-    // For each person (skip "Me"), find their best upcoming milestone
+    // For each person (skip "Me"), find their best upcoming milestones
     appData.events.forEach(e => {
         if (e.name === 'Me') return;
         const d = e.date instanceof Date ? e.date : new Date(e.date);
         const ms = typeof findAllUpcomingMilestones === 'function'
-            ? findAllUpcomingMilestones(d, 5, 365, appSettings || {}) : [];
-        let best = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
+            ? findAllUpcomingMilestones(d, 8, 365, appSettings || {}) : [];
+        const sorted = ms.filter(m => m.timeUntil > 0 && !m.isCosmic)
             .sort((a, b) => {
                 let sa = 0, sb = 0;
                 if (a.value >= 1000 && a.value % 1000 === 0) sa += 100;
@@ -2788,19 +2830,35 @@ function wizardBuildShareScreen() {
                 sa += Math.max(0, 50 - a.timeUntil / (24*60*60*1000) * 0.15);
                 sb += Math.max(0, 50 - b.timeUntil / (24*60*60*1000) * 0.15);
                 return sb - sa;
-            })[0];
+            });
+        let best = sorted[0];
         if (!best && ms.length > 0) best = ms.filter(m => m.timeUntil > 0)[0];
         if (best) {
             const val = best.value.toLocaleString(locale);
             const unit = best.unitName || best.unit || '';
             const ds = formatMilestoneDate(best.date);
             const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
-            html += `<div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:10px;">
+            const uid = 'share9more_' + e.id.replace(/[^a-z0-9]/gi, '');
+            // More milestones for this person — each row shareable
+            let moreRows = '';
+            sorted.slice(1, 4).forEach(m => {
+                const v2 = m.value.toLocaleString(locale);
+                const u2 = m.unitName || m.unit || '';
+                const ds2 = formatMilestoneDate(m.date);
+                const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? happymoments.app';
+                moreRows += `<div onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${st2.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+                    <span style="color:var(--text);font-size:0.85rem;">${v2} ${u2}</span>
+                    <span style="color:var(--text-muted);font-size:0.8rem;">${ds2}</span>
+                </div>`;
+            });
+            html += `<div style="padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:8px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
                     <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${val} ${unit} &middot; ${ds}</span>
                 </div>
-                <button class="wizard-btn" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.9rem;width:100%;">Share with ${escapeHtml(e.name)}</button>
+                <button class="wizard-btn" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.9rem;width:100%;margin-top:0;">Share with ${escapeHtml(e.name)}</button>
+                ${moreRows ? `<div id="${uid}" style="display:none;margin-top:6px;">${moreRows}</div>
+                <div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:5px;text-align:center;font-size:0.78rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More milestones \\u25BC';}">More milestones ▼</div>` : ''}
             </div>`;
         }
     });
@@ -2818,7 +2876,9 @@ function wizardBuildShareScreen() {
     }
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep9')?.classList.add('wizard-step-active');
+    const step9El = document.getElementById('wizardStep9');
+    step9El?.classList.add('wizard-step-active');
+    step9El?.classList.add('wizard-step-top');
     _lastWizardStep = 9;
     window.scrollTo(0, 0);
 }
@@ -2829,7 +2889,7 @@ function wizardShareForPerson(name, message) {
 }
 
 function wizardShareGroup() {
-    const groupName = document.getElementById('groupBuilderTitle')?.textContent || 'Family';
+    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || 'Family';
     const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at happymoments.app';
     showSharePreview(message, groupName);
     _track('onboard_share_group');
@@ -2844,40 +2904,43 @@ function wizardCreateAnotherGroup() {
     const meEvent = allSets[0] ? (allSets[0].events.find(e => e.name === 'Me') || allSets[0].events[0]) : null;
     const userAge = meEvent ? Math.floor((Date.now() - new Date(meEvent.date).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 30;
 
+    // Examples about OTHER people (third person) \u2014 they illustrate, not address the user
     let groupExamples;
     if (userAge <= 20) {
         // School / class context
         groupExamples = [
-            'Your class has been together for 10,000 days \u2014 did anyone notice?',
-            'Your best friends hit 5,000 days of friendship \u2014 worth a party?',
-            'Your teammates crossed 50,000 combined days \u2014 that\u2019s a milestone.'
+            'Tina\u2019s class has been together for 10,000 days \u2014 she was the one who noticed.',
+            'Jan\u2019s best friends hit 5,000 days of friendship \u2014 that called for a party.',
+            'Maja\u2019s teammates crossed 50,000 combined days \u2014 only she knew.'
         ];
     } else if (userAge <= 25) {
         // University / early career
         groupExamples = [
-            'Your university crew is 100,000 hours old \u2014 only this app would know that.',
-            'Your flatmates crossed 30,000 combined days \u2014 time for a dinner?',
-            'Your study group hit 10,000 days since you met \u2014 worth celebrating.'
+            'Luka\u2019s university crew turned 100,000 hours old \u2014 he made it a dinner.',
+            'Sara\u2019s flatmates crossed 30,000 combined days \u2014 she got them together.',
+            'Tim\u2019s study group hit 10,000 days since they met \u2014 worth celebrating.'
         ];
     } else {
         // Office / adult life
         groupExamples = [
-            'Your office team crosses 50,000 combined days next month \u2014 reason for cake.',
-            'Your college friends are 100,000 hours since graduation \u2014 time for a reunion?',
-            'Your childhood friends hit 10,000 days of friendship \u2014 did anyone notice?'
+            'Tina\u2019s office team crossed 50,000 combined days \u2014 she brought the cake.',
+            'Mark\u2019s college friends hit 100,000 hours since graduation \u2014 reunion booked.',
+            'Tina\u2019s childhood friends just hit 10,000 days of friendship \u2014 she got them together.'
         ];
     }
     const groupExample = groupExamples[Math.floor(Math.random() * groupExamples.length)];
 
     el.innerHTML = `
-        <p style="color:var(--text);text-align:center;font-size:1rem;font-style:italic;margin-bottom:20px;line-height:1.5;">${groupExample}</p>
-        <input type="text" id="groupName" class="wizard-input" value="" placeholder="Name your new team" onfocus="if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+        <p style="color:var(--text);text-align:center;font-size:1rem;font-style:italic;margin-bottom:16px;line-height:1.5;">${groupExample}</p>
+        <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your new team</div>
+        <input type="text" id="groupTitleInput" class="wizard-input" value="" placeholder="Friends" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
     `;
 
     // Update buttons for "create another group" context
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
     if (addMoreBtn) {
         addMoreBtn.textContent = 'Add people and see your combined milestones \u2192';
+        addMoreBtn.style.fontSize = '1.05rem';
         addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
     }
     // Hide "Explore milestones now" — it's a leak in this context
@@ -2889,13 +2952,15 @@ function wizardCreateAnotherGroup() {
     if (backBtn) backBtn.setAttribute('onclick', 'wizardNext(8)');
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
-    document.getElementById('wizardStep6')?.classList.add('wizard-step-active');
+    const step6El = document.getElementById('wizardStep6');
+    step6El?.classList.add('wizard-step-active');
+    step6El?.classList.add('wizard-step-top'); // short content — avoid big gap above
     _lastWizardStep = 6;
     window.scrollTo(0, 0);
 }
 
 function wizardCreateGroupAndBuild() {
-    const groupName = document.getElementById('groupName')?.value?.trim() || 'Friends';
+    const groupName = document.getElementById('groupTitleInput')?.value?.trim() || 'Friends';
     _wizardRevealedIds = new Set(); // Reset for new group context
     saveData();
 
@@ -2921,7 +2986,7 @@ function wizardCreateGroupAndBuild() {
 
     // Show group builder with the new group
     const title = document.getElementById('groupBuilderTitle');
-    if (title) title.textContent = groupName;
+    if (title) title.value = groupName;
     _wizardGroupMembers = [...appData.events];
     wizardRenderGroupMembers();
 
@@ -4418,26 +4483,12 @@ function renderHomeScreen() {
     }
     listEl.innerHTML = html;
 
-    // Together section
-    if (togetherEl && appData.events.length >= 2) {
-        togetherEl.style.display = '';
-        const contentEl = document.getElementById('togetherContent');
-        if (contentEl) {
-            // Calculate combined age
-            let totalDays = 0;
-            appData.events.forEach(e => {
-                totalDays += Math.floor((now.getTime() - new Date(e.date).getTime()) / (24*60*60*1000));
-            });
-            // Find closest nice round number
-            const cands = [1000, 2500, 5000, 10000, 25000, 50000, 100000];
-            let bestT = 0, bestD = Infinity;
-            cands.forEach(s => { const t = Math.ceil(totalDays / s) * s; const d = t - totalDays; if (d > 0 && d < bestD) { bestD = d; bestT = t; } });
-            contentEl.innerHTML = `<p class="together-teaser">
-                <strong>${bestT.toLocaleString(locale)} days</strong> together in ${bestD.toLocaleString(locale)} days</p>`;
-        }
-    } else if (togetherEl) {
-        togetherEl.style.display = 'none';
-    }
+    // Together teaser removed from Solo — the Together tab covers it.
+    if (togetherEl) togetherEl.style.display = 'none';
+
+    // "+ Add more people" only while the list is nearly empty; afterwards the Edit tab covers it
+    const addPrompt = document.getElementById('homeAddPrompt');
+    if (addPrompt) addPrompt.style.display = appData.events.length <= 1 ? '' : 'none';
 }
 
 function toggleMoreMilestones() {
@@ -4544,53 +4595,10 @@ function renderMilestonesTab() {
 
     // NOTE: allMilestonesFlat is already set by renderHomeScreen() — do NOT reset it here
 
-    // Show "Today" highlight — personal milestones + history facts
+    // "Today" highlight removed — the explanations text cluttered the dashboard;
+    // milestones in the list are tappable and that is the share path.
     const todayBox = document.getElementById('todayHighlight');
-    if (todayBox) {
-        const today = getTodayHighlight();
-        let todayHtml = '';
-
-        // Personal milestones today
-        if (today.length > 0) {
-            todayHtml += today.map(t =>
-                `<span class="today-item">${escapeHtml(t.name)}: <strong>${t.value.toLocaleString()}</strong> ${escapeHtml(t.unit)} (${escapeHtml(t.why)})</span>`
-            ).join(' · ');
-        }
-
-        // History fact of the day — only show if years/days ago is a "nice" number
-        if (typeof getTodayHistoryFacts === 'function') {
-            const facts = getTodayHistoryFacts();
-            // Filter to only show facts where yearsAgo or daysAgo is special
-            const niceFact = facts.find(f => {
-                const y = f.yearsAgo;
-                const d = f.daysAgo;
-                // Nice years: multiples of 25, or round decade
-                if (y > 0 && (y % 25 === 0 || y % 50 === 0 || y % 100 === 0)) return true;
-                // Nice days: repdigit, palindrome, round, power of 10
-                const ds = String(d);
-                if (d >= 10000 && d % 10000 === 0) return true;
-                if (ds.length >= 4 && new Set(ds).size === 1) return true;
-                if (ds.length >= 5 && ds === ds.split('').reverse().join('')) return true;
-                if (typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(d)) return true;
-                return false;
-            });
-            if (niceFact) {
-                const historyHtml = `<div class="today-history">
-                    <span class="today-history-badge">${niceFact.yearsAgo} years ago today</span>
-                    <span class="today-history-event">${escapeHtml(niceFact.event)}</span>
-                    <span class="today-history-number">${escapeHtml(niceFact.numberFact)}</span>
-                </div>`;
-                todayHtml += historyHtml;
-            }
-        }
-
-        if (todayHtml) {
-            todayBox.innerHTML = todayHtml;
-            todayBox.style.display = 'block';
-        } else {
-            todayBox.style.display = 'none';
-        }
-    }
+    if (todayBox) todayBox.style.display = 'none';
 
     // Hero card disabled — all milestones shown equally in the time-chunked list
     // renderHeroMilestone();

@@ -162,15 +162,7 @@
                 <button class="wizard-back" onclick="wizardNext(3)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
-                    <input type="text" id="friendName" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:8px;">
-                    <p style="color:var(--text-muted,#888);font-size:0.78rem;margin-bottom:6px;">or choose:</p>
-                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
-                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Partner';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Partner</button>
-                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Mom';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Mom</button>
-                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Dad';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Dad</button>
-                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Sister';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Sister</button>
-                        <button class="wizard-role-chip" onclick="document.getElementById('friendName').value='Brother';document.getElementById('friendDay').focus();" style="font-size:0.75rem;padding:4px 10px;">Brother</button>
-                    </div>
+                    <input type="text" id="friendName" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:14px;" readonly onfocus="this.removeAttribute('readonly')">
                     <div class="wizard-date-fields">
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="friendDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'friendMonth', 2)">
                         <span class="wizard-date-sep">/</span>
@@ -213,13 +205,13 @@
             <div class="wizard-step" id="wizardStep7">
                 <button class="wizard-back" onclick="wizardNext(6)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question" id="groupBuilderTitle">Family</h2>
+                    <input type="text" id="groupBuilderTitle" value="Family" onchange="wizardGroupTitleChanged(this.value)" readonly onfocus="this.removeAttribute('readonly')" autocomplete="off" data-lpignore="true" data-1p-ignore style="font-family:var(--font-serif);font-size:1.45rem;font-weight:400;color:var(--text-primary);text-align:center;background:transparent;border:none;border-bottom:1px dashed var(--border,#444);width:100%;max-width:320px;padding:4px 8px;margin-bottom:var(--space-lg);" title="Tap to rename the group">
                     <div id="groupMembers" style="margin-bottom:12px;">
                         <!-- Me + Person 2 pre-filled by wizardGoToGroupBuilder() -->
                     </div>
                     <div id="groupAddForm">
                         <div style="display:flex;gap:8px;align-items:center;">
-                            <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;">
+                            <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;" readonly onfocus="this.removeAttribute('readonly')">
                             <div class="wizard-date-fields" style="flex:1.2;margin:0;">
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.2em;">
                                 <span class="wizard-date-sep">/</span>
@@ -254,7 +246,7 @@
                     <!-- Populated by wizardBuildShareScreen() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardFinish()">Go to my dashboard &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardFinish()">Go to my dashboard &rarr;<span style="display:block;font-size:0.78rem;font-weight:400;opacity:0.85;margin-top:3px;letter-spacing:0.04em;">Solo &middot; Together &middot; Edit</span></button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Another circle of people?</button>
                     <p id="wizardCircleHint9" style="color:var(--text-muted,#888);font-size:0.78rem;font-style:italic;text-align:center;margin-top:6px;"></p>
                     <script>
@@ -379,7 +371,7 @@
                 <p class="card-description">Tap a group to edit — rename, add or remove members.</p>
                 <div id="eventSetsList2" class="event-sets-list"></div>
                 <div style="margin-top:16px;display:flex;gap:8px;align-items:center;">
-                    <input type="text" id="newSetName2" placeholder="New group name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
+                    <input type="text" id="newSetName2" placeholder="New group name" autocomplete="off" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
                     <button onclick="handleAddSetFromPeopleTab()" style="padding:10px 14px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;white-space:nowrap;font-size:0.85rem;">+ New group</button>
                 </div>
             </div>
