@@ -39,11 +39,11 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq8flnho"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq8flnho"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq8h86xm"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq8h86xm"></script>
 
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
-    <link rel="stylesheet" href="styles.css?v=mq8flnho">
+    <link rel="stylesheet" href="styles.css?v=mq8h86xm">
 </head>
 <body>
     <div id="app">
@@ -162,7 +162,7 @@
                 <button class="wizard-back" onclick="wizardNext(3)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
-                    <input type="text" id="friendName" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:14px;" readonly onfocus="this.removeAttribute('readonly')">
+                    <input type="text" id="friendNameField" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:14px;" readonly onfocus="this.removeAttribute('readonly')">
                     <div class="wizard-date-fields">
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="friendDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'friendMonth', 2)">
                         <span class="wizard-date-sep">/</span>
@@ -211,7 +211,7 @@
                     </div>
                     <div id="groupAddForm">
                         <div style="display:flex;gap:8px;align-items:center;">
-                            <input type="text" id="groupPersonName" class="wizard-input" placeholder="Name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;" readonly onfocus="this.removeAttribute('readonly')">
+                            <input type="text" id="groupPersonField" class="wizard-input" placeholder="Name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;" readonly onfocus="this.removeAttribute('readonly')">
                             <div class="wizard-date-fields" style="flex:1.2;margin:0;">
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.2em;">
                                 <span class="wizard-date-sep">/</span>
@@ -246,17 +246,8 @@
                     <!-- Populated by wizardBuildShareScreen() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardFinish()">Go to my dashboard &rarr;<span style="display:block;font-size:0.78rem;font-weight:400;opacity:0.85;margin-top:3px;letter-spacing:0.04em;">Solo &middot; Together &middot; Edit</span></button>
+                    <button class="wizard-btn" onclick="wizardFinish()" style="line-height:1.4;">Go to my dashboard &rarr;<span style="display:block;font-weight:400;margin-top:2px;">Explore Solo &middot; Together &middot; Edit</span></button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Another circle of people?</button>
-                    <p id="wizardCircleHint9" style="color:var(--text-muted,#888);font-size:0.78rem;font-style:italic;text-align:center;margin-top:6px;"></p>
-                    <script>
-                    (function(){var h=['Colleagues, classmates, your gym buddies \u2014 everyone has milestones.','Every circle of people has numbers only they share.','Friends, neighbors, old classmates \u2014 each group unlocks new discoveries.'];document.getElementById('wizardCircleHint9').textContent=h[Math.floor(Math.random()*h.length)];})();
-                    </script>
-                    <p id="wizardTabGuide" style="margin-top:16px;color:var(--text-muted);font-size:0.78rem;text-align:center;line-height:1.5;">
-                        <strong style="color:var(--text);">Solo</strong> &mdash; individual milestones &nbsp;&middot;&nbsp;
-                        <strong style="color:var(--text);">Together</strong> &mdash; group milestones &nbsp;&middot;&nbsp;
-                        <strong style="color:var(--text);">Edit</strong> &mdash; manage groups &amp; people
-                    </p>
                 </div>
             </div>
 
@@ -371,7 +362,7 @@
                 <p class="card-description">Tap a group to edit — rename, add or remove members.</p>
                 <div id="eventSetsList2" class="event-sets-list"></div>
                 <div style="margin-top:16px;display:flex;gap:8px;align-items:center;">
-                    <input type="text" id="newSetName2" placeholder="New group name" autocomplete="off" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
+                    <input type="text" id="newGroupField" placeholder="New group name" autocomplete="off" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
                     <button onclick="handleAddSetFromPeopleTab()" style="padding:10px 14px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;white-space:nowrap;font-size:0.85rem;">+ New group</button>
                 </div>
             </div>
@@ -548,7 +539,7 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">HappyMoments &copy; 2026</span>
-            <div class="app-version" id="appVersion">Build: v81 &middot; 2026-06-10 18:58 UTC</div>
+            <div class="app-version" id="appVersion">Build: v82 &middot; 2026-06-10 19:43 UTC</div>
         </footer>
 
         <!-- Auth Modal -->
@@ -658,20 +649,20 @@
         </div>
     </div>
 
-    <script defer src="notifications.js?v=mq8flnho"></script>
-    <script defer src="historyFacts.js?v=mq8flnho"></script>
-    <script defer src="i18n.js?v=mq8flnho"></script>
-    <script defer src="specialNumbers.js?v=mq8flnho"></script>
-    <script defer src="milestoneCalculator.js?v=mq8flnho"></script>
-    <script defer src="combinations.js?v=mq8flnho"></script>
-    <script defer src="shareMessages.js?v=mq8flnho"></script>
-    <script defer src="giftStore.js?v=mq8flnho"></script>
-    <script defer src="dataProtection.js?v=mq8flnho"></script>
-    <script defer src="imageCard.js?v=mq8flnho"></script>
-    <script defer src="checkout.js?v=mq8flnho"></script>
-    <script defer src="analytics.js?v=mq8flnho"></script>
-    <script defer src="auth.js?v=mq8flnho"></script>
-    <script defer src="app.js?v=mq8flnho"></script>
+    <script defer src="notifications.js?v=mq8h86xm"></script>
+    <script defer src="historyFacts.js?v=mq8h86xm"></script>
+    <script defer src="i18n.js?v=mq8h86xm"></script>
+    <script defer src="specialNumbers.js?v=mq8h86xm"></script>
+    <script defer src="milestoneCalculator.js?v=mq8h86xm"></script>
+    <script defer src="combinations.js?v=mq8h86xm"></script>
+    <script defer src="shareMessages.js?v=mq8h86xm"></script>
+    <script defer src="giftStore.js?v=mq8h86xm"></script>
+    <script defer src="dataProtection.js?v=mq8h86xm"></script>
+    <script defer src="imageCard.js?v=mq8h86xm"></script>
+    <script defer src="checkout.js?v=mq8h86xm"></script>
+    <script defer src="analytics.js?v=mq8h86xm"></script>
+    <script defer src="auth.js?v=mq8h86xm"></script>
+    <script defer src="app.js?v=mq8h86xm"></script>
 
     <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
     <script>
