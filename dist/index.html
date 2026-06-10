@@ -17,13 +17,18 @@
     <meta property="og:title" content="HappyMoments - Celebrate Life's Special Numbers">
     <meta property="og:description" content="Discover when you turn 1 billion seconds old, 10,000 days, or hit a Fibonacci birthday. Track milestones for everyone you love.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="og-image.png">
+    <meta property="og:url" content="https://happymoments.app/">
+    <meta property="og:site_name" content="HappyMoments">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:image" content="https://happymoments.app/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="HappyMoments — discover life's special number milestones">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="HappyMoments — When's Your Billion?">
     <meta name="twitter:description" content="When's your billion? Discover life's special number milestones.">
-    <meta name="twitter:image" content="og-image.png">
+    <meta name="twitter:image" content="https://happymoments.app/og-image.png">
+    <meta name="twitter:image:alt" content="HappyMoments — discover life's special number milestones">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -34,11 +39,11 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq6fgpar"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq6fgpar"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq7y8t8b"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq7y8t8b"></script>
 
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
-    <link rel="stylesheet" href="styles.css?v=mq6fgpar">
+    <link rel="stylesheet" href="styles.css?v=mq7y8t8b">
 </head>
 <body>
     <div id="app">
@@ -551,7 +556,7 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">HappyMoments &copy; 2026</span>
-            <div class="app-version" id="appVersion">Build: v78 &middot; 2026-06-09 09:18 UTC</div>
+            <div class="app-version" id="appVersion">Build: v79 &middot; 2026-06-10 10:52 UTC</div>
         </footer>
 
         <!-- Auth Modal -->
@@ -653,7 +658,7 @@
 
         <!-- Consent Banner (first run) -->
         <div id="consentBanner" class="consent-banner hidden">
-            <p data-i18n="consent_text">HappyMoments stores your dates and preferences locally on your device. No data is sent to any server.</p>
+            <p data-i18n="consent_text">HappyMoments keeps your milestone data — names, dates, settings — on your device, encrypted in your browser. Nothing is sent to a server unless you choose to: signing in, sharing a milestone, or exporting your data. We also collect anonymous, cookie-free usage statistics (disabled if your browser sends "Do Not Track"). Full details in the policy.</p>
             <div class="consent-actions">
                 <button onclick="acceptConsent()" class="btn-primary btn-consent" data-i18n="consent_ok">OK, got it</button>
                 <a href="legal.html" target="_blank" class="consent-link" data-i18n="consent_read">Read full policy</a>
@@ -661,20 +666,20 @@
         </div>
     </div>
 
-    <script defer src="notifications.js?v=mq6fgpar"></script>
-    <script defer src="historyFacts.js?v=mq6fgpar"></script>
-    <script defer src="i18n.js?v=mq6fgpar"></script>
-    <script defer src="specialNumbers.js?v=mq6fgpar"></script>
-    <script defer src="milestoneCalculator.js?v=mq6fgpar"></script>
-    <script defer src="combinations.js?v=mq6fgpar"></script>
-    <script defer src="shareMessages.js?v=mq6fgpar"></script>
-    <script defer src="giftStore.js?v=mq6fgpar"></script>
-    <script defer src="dataProtection.js?v=mq6fgpar"></script>
-    <script defer src="imageCard.js?v=mq6fgpar"></script>
-    <script defer src="checkout.js?v=mq6fgpar"></script>
-    <script defer src="analytics.js?v=mq6fgpar"></script>
-    <script defer src="auth.js?v=mq6fgpar"></script>
-    <script defer src="app.js?v=mq6fgpar"></script>
+    <script defer src="notifications.js?v=mq7y8t8b"></script>
+    <script defer src="historyFacts.js?v=mq7y8t8b"></script>
+    <script defer src="i18n.js?v=mq7y8t8b"></script>
+    <script defer src="specialNumbers.js?v=mq7y8t8b"></script>
+    <script defer src="milestoneCalculator.js?v=mq7y8t8b"></script>
+    <script defer src="combinations.js?v=mq7y8t8b"></script>
+    <script defer src="shareMessages.js?v=mq7y8t8b"></script>
+    <script defer src="giftStore.js?v=mq7y8t8b"></script>
+    <script defer src="dataProtection.js?v=mq7y8t8b"></script>
+    <script defer src="imageCard.js?v=mq7y8t8b"></script>
+    <script defer src="checkout.js?v=mq7y8t8b"></script>
+    <script defer src="analytics.js?v=mq7y8t8b"></script>
+    <script defer src="auth.js?v=mq7y8t8b"></script>
+    <script defer src="app.js?v=mq7y8t8b"></script>
 
     <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
     <script>
@@ -703,12 +708,52 @@
             });
         }
     </script>
-    <!-- Service Worker Registration for PWA -->
+    <!-- Service Worker Registration for PWA (with update detection) -->
     <script>
         if ('serviceWorker' in navigator && !window.location.search.includes('reset')) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('HappyMoments: Service Worker registered'))
+                    .then(reg => {
+                        console.log('HappyMoments: Service Worker registered');
+
+                        function notifyUpdate() {
+                            if (document.getElementById('updateToast')) return;
+                            var toast = document.createElement('div');
+                            toast.id = 'updateToast';
+                            toast.className = 'toast toast-info';
+                            toast.style.display = 'flex';
+                            toast.style.alignItems = 'center';
+                            toast.style.gap = '12px';
+                            var msg = document.createElement('span');
+                            msg.textContent = (typeof t === 'function' && t('update_ready') !== 'update_ready') ? t('update_ready') : 'A new version is ready.';
+                            var btn = document.createElement('button');
+                            btn.textContent = (typeof t === 'function' && t('update_refresh') !== 'update_refresh') ? t('update_refresh') : 'Refresh';
+                            btn.style.cssText = 'background:var(--accent,#a855f7);color:#fff;border:none;border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer;flex-shrink:0;';
+                            btn.onclick = function() { window.location.reload(); };
+                            toast.appendChild(msg);
+                            toast.appendChild(btn);
+                            document.body.appendChild(toast);
+                            requestAnimationFrame(function() { toast.classList.add('show'); });
+                        }
+
+                        // Update already downloaded while page was loading
+                        if (reg.waiting && navigator.serviceWorker.controller) notifyUpdate();
+
+                        // Update found during this session
+                        reg.addEventListener('updatefound', () => {
+                            var nw = reg.installing;
+                            if (!nw) return;
+                            nw.addEventListener('statechange', () => {
+                                if (nw.state === 'installed' && navigator.serviceWorker.controller) notifyUpdate();
+                            });
+                        });
+
+                        // Re-check when the app regains focus, and hourly while open
+                        document.addEventListener('visibilitychange', () => {
+                            if (document.visibilityState === 'visible') reg.update().catch(() => {});
+                        });
+                        setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+                    })
                     .catch(err => console.log('HappyMoments: Service Worker registration failed', err));
             });
         }

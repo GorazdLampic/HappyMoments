@@ -113,9 +113,12 @@ const I18N = (() => {
             // Footer
             copyright: 'HappyMoments © 2026',
             // Consent
-            consent_text: 'HappyMoments stores your dates and preferences locally on your device. No data is sent to any server.',
+            consent_text: 'HappyMoments keeps your milestone data — names, dates, settings — on your device, encrypted in your browser. Nothing is sent to a server unless you choose to: signing in, sharing a milestone, or exporting your data. We also collect anonymous, cookie-free usage statistics (disabled if your browser sends "Do Not Track"). Full details in the policy.',
             consent_ok: 'OK, got it',
             consent_read: 'Read full policy',
+            // App update toast
+            update_ready: 'A new version is ready.',
+            update_refresh: 'Refresh',
             // Milestone descriptions
             turns_age: '{name} turns {value}!',
             is_old: '{name} will be {value} {unit} old',
@@ -230,7 +233,7 @@ const I18N = (() => {
             edit_event: 'Editar Evento', save: 'Guardar', delete: 'Eliminar',
             name: 'Nombre', type: 'Tipo', date: 'Fecha', notes: 'Notas', turns: 'Cumple',
             terms_privacy: 'Términos y Privacidad', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments almacena tus datos localmente en tu dispositivo. No se envían datos a ningún servidor.',
+            consent_text: 'HappyMoments guarda tus datos de hitos — nombres, fechas, ajustes — en tu dispositivo, cifrados en tu navegador. No se envía nada a un servidor a menos que tú lo elijas: iniciar sesión, compartir un hito o exportar tus datos. También recopilamos estadísticas de uso anónimas y sin cookies (desactivadas si tu navegador envía "Do Not Track"). Todos los detalles en la política.',
             consent_ok: 'Entendido', consent_read: 'Leer política completa',
             // Milestone descriptions
             turns_age: '¡{name} cumple {value}!',
@@ -285,7 +288,7 @@ const I18N = (() => {
             edit_event: 'Ereignis bearbeiten', save: 'Speichern', delete: 'Löschen',
             name: 'Name', type: 'Typ', date: 'Datum', notes: 'Notizen', turns: 'Wird',
             terms_privacy: 'AGB & Datenschutz', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments speichert deine Daten lokal auf deinem Gerät. Es werden keine Daten an Server gesendet.',
+            consent_text: 'HappyMoments speichert deine Meilenstein-Daten — Namen, Daten, Einstellungen — auf deinem Gerät, verschlüsselt im Browser. Nichts wird an einen Server gesendet, außer du entscheidest dich dafür: Anmelden, Teilen eines Meilensteins oder Exportieren deiner Daten. Außerdem erfassen wir anonyme, cookie-freie Nutzungsstatistiken (deaktiviert, wenn dein Browser "Do Not Track" sendet). Alle Details in der Datenschutzerklärung.',
             consent_ok: 'Verstanden', consent_read: 'Vollständige Richtlinie lesen',
             // Milestone descriptions
             turns_age: '{name} wird {value}!',
@@ -398,7 +401,7 @@ const I18N = (() => {
             edit_event: 'Editar Evento', save: 'Guardar', delete: 'Eliminar',
             name: 'Nome', type: 'Tipo', date: 'Data', notes: 'Notas', turns: 'Faz',
             terms_privacy: 'Termos e Privacidade', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments armazena os seus dados localmente. Nenhum dado é enviado para servidores.',
+            consent_text: 'O HappyMoments guarda os seus dados de marcos — nomes, datas, definições — no seu dispositivo, encriptados no navegador. Nada é enviado para um servidor, a menos que escolha: iniciar sessão, partilhar um marco ou exportar os seus dados. Também recolhemos estatísticas de utilização anónimas e sem cookies (desativadas se o navegador enviar "Do Not Track"). Todos os detalhes na política.',
             consent_ok: 'Entendido', consent_read: 'Ler política completa',
             // Milestone descriptions
             turns_age: '{name} faz {value}!',
@@ -452,7 +455,7 @@ const I18N = (() => {
             edit_event: 'Editar Evento', save: 'Salvar', delete: 'Excluir',
             name: 'Nome', type: 'Tipo', date: 'Data', notes: 'Notas', turns: 'Faz',
             terms_privacy: 'Termos e Privacidade', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments armazena seus dados localmente no seu dispositivo. Nenhum dado é enviado para servidores.',
+            consent_text: 'O HappyMoments mantém seus dados de marcos — nomes, datas, configurações — no seu dispositivo, criptografados no navegador. Nada é enviado a um servidor, a menos que você escolha: fazer login, compartilhar um marco ou exportar seus dados. Também coletamos estatísticas de uso anônimas e sem cookies (desativadas se o navegador enviar "Do Not Track"). Detalhes completos na política.',
             consent_ok: 'Entendi', consent_read: 'Ler política completa',
             // Milestone descriptions
             turns_age: '{name} faz {value}!',
@@ -506,7 +509,7 @@ const I18N = (() => {
             edit_event: 'Modifica Evento', save: 'Salva', delete: 'Elimina',
             name: 'Nome', type: 'Tipo', date: 'Data', notes: 'Note', turns: 'Compie',
             terms_privacy: 'Termini e Privacy', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments salva i tuoi dati localmente sul dispositivo. Nessun dato viene inviato a un server.',
+            consent_text: 'HappyMoments conserva i tuoi dati — nomi, date, impostazioni — sul tuo dispositivo, crittografati nel browser. Nulla viene inviato a un server, a meno che tu non lo scelga: accedere, condividere un traguardo o esportare i dati. Raccogliamo inoltre statistiche d\'uso anonime e senza cookie (disattivate se il browser invia "Do Not Track"). Tutti i dettagli nella policy.',
             consent_ok: 'Ho capito', consent_read: 'Leggi informativa completa',
             // Milestone descriptions
             turns_age: '{name} compie {value}!',
@@ -560,7 +563,7 @@ const I18N = (() => {
             edit_event: 'Modifier l\'événement', save: 'Enregistrer', delete: 'Supprimer',
             name: 'Nom', type: 'Type', date: 'Date', notes: 'Notes', turns: 'Aura',
             terms_privacy: 'Conditions et confidentialité', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments stocke vos données localement sur votre appareil. Aucune donnée n\'est envoyée.',
+            consent_text: 'HappyMoments conserve vos données — noms, dates, réglages — sur votre appareil, chiffrées dans votre navigateur. Rien n\'est envoyé à un serveur sauf si vous le choisissez : connexion, partage d\'un jalon ou export de vos données. Nous collectons aussi des statistiques d\'usage anonymes et sans cookies (désactivées si votre navigateur envoie « Do Not Track »). Tous les détails dans la politique.',
             consent_ok: 'Compris', consent_read: 'Lire la politique complète',
             // Milestone descriptions
             turns_age: '{name} fête ses {value} ans !',
@@ -673,7 +676,7 @@ const I18N = (() => {
             edit_event: 'Uredi događaj', save: 'Spremi', delete: 'Obriši',
             name: 'Ime', type: 'Vrsta', date: 'Datum', notes: 'Bilješke', turns: 'Puni',
             terms_privacy: 'Uvjeti i Privatnost', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments sprema vaše podatke lokalno na uređaju. Nikakvi podaci se ne šalju na poslužitelj.',
+            consent_text: 'HappyMoments čuva vaše podatke — imena, datume, postavke — na vašem uređaju, šifrirane u pregledniku. Ništa se ne šalje na poslužitelj osim ako to sami ne odaberete: prijava, dijeljenje prekretnice ili izvoz podataka. Prikupljamo i anonimnu statistiku korištenja bez kolačića (isključena ako preglednik šalje "Do Not Track"). Svi detalji u pravilima privatnosti.',
             consent_ok: 'U redu', consent_read: 'Pročitaj cijelu politiku',
             // Milestone descriptions
             turns_age: '{name} slavi {value}!',
@@ -727,7 +730,7 @@ const I18N = (() => {
             edit_event: 'Uredi dogodek', save: 'Shrani', delete: 'Izbriši',
             name: 'Ime', type: 'Vrsta', date: 'Datum', notes: 'Opombe', turns: 'Dopolni',
             terms_privacy: 'Pogoji in zasebnost', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments shranjuje tvoje podatke lokalno na napravi. Noben podatek se ne pošlje na strežnik.',
+            consent_text: 'HappyMoments hrani tvoje podatke — imena, datume, nastavitve — na tvoji napravi, šifrirane v brskalniku. Nič se ne pošlje na strežnik, razen če to sam izbereš: prijava, deljenje mejnika ali izvoz podatkov. Zbiramo tudi anonimno statistiko uporabe brez piškotkov (izklopljena, če brskalnik pošilja "Do Not Track"). Vse podrobnosti v pravilniku o zasebnosti.',
             consent_ok: 'V redu', consent_read: 'Preberi celotna pravila',
             // Milestone descriptions
             turns_age: '{name} praznuje {value}!',
@@ -840,7 +843,7 @@ const I18N = (() => {
             edit_event: 'Bewerken', save: 'Opslaan', delete: 'Verwijderen',
             name: 'Naam', type: 'Type', date: 'Datum', notes: 'Notities', turns: 'Wordt',
             terms_privacy: 'Voorwaarden & Privacy', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments slaat je gegevens lokaal op je apparaat op. Er worden geen gegevens naar servers verstuurd.',
+            consent_text: 'HappyMoments bewaart je gegevens — namen, datums, instellingen — op je apparaat, versleuteld in je browser. Er wordt niets naar een server gestuurd, tenzij je daarvoor kiest: inloggen, een mijlpaal delen of je gegevens exporteren. We verzamelen ook anonieme, cookievrije gebruiksstatistieken (uitgeschakeld als je browser "Do Not Track" stuurt). Alle details in het beleid.',
             consent_ok: 'Begrepen', consent_read: 'Lees volledig beleid',
             // Milestone descriptions
             turns_age: '{name} wordt {value}!',
@@ -894,7 +897,7 @@ const I18N = (() => {
             edit_event: 'Edytuj Wydarzenie', save: 'Zapisz', delete: 'Usuń',
             name: 'Imię', type: 'Typ', date: 'Data', notes: 'Notatki', turns: 'Skończy',
             terms_privacy: 'Regulamin i Prywatność', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments przechowuje dane lokalnie na Twoim urządzeniu. Żadne dane nie są wysyłane na serwery.',
+            consent_text: 'HappyMoments przechowuje Twoje dane — imiona, daty, ustawienia — na Twoim urządzeniu, zaszyfrowane w przeglądarce. Nic nie jest wysyłane na serwer, chyba że sam to wybierzesz: logowanie, udostępnienie kamienia milowego lub eksport danych. Zbieramy też anonimowe statystyki użycia bez plików cookie (wyłączone, gdy przeglądarka wysyła "Do Not Track"). Szczegóły w polityce prywatności.',
             consent_ok: 'Rozumiem', consent_read: 'Przeczytaj pełną politykę',
             // Milestone descriptions
             turns_age: '{name} kończy {value}!',
@@ -949,7 +952,7 @@ const I18N = (() => {
             edit_event: 'Редактировать', save: 'Сохранить', delete: 'Удалить',
             name: 'Имя', type: 'Тип', date: 'Дата', notes: 'Заметки', turns: 'Исполнится',
             terms_privacy: 'Условия и конфиденциальность', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments хранит ваши данные локально на устройстве. Никакие данные не отправляются на серверы.',
+            consent_text: 'HappyMoments хранит ваши данные — имена, даты, настройки — на вашем устройстве, в зашифрованном виде в браузере. Ничего не отправляется на сервер, если вы сами этого не выберете: вход в аккаунт, отправка вехи или экспорт данных. Мы также собираем анонимную статистику использования без cookie (отключается, если браузер отправляет "Do Not Track"). Подробности в политике конфиденциальности.',
             consent_ok: 'Понятно', consent_read: 'Читать полную политику',
             turns_age: '{name} исполняется {value}!',
             is_old: '{name} будет {value} {unit}',
@@ -1001,7 +1004,7 @@ const I18N = (() => {
             edit_event: '编辑事件', save: '保存', delete: '删除',
             name: '名称', type: '类型', date: '日期', notes: '备注', turns: '将满',
             terms_privacy: '条款与隐私', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments 将你的数据存储在本地设备上。不会向任何服务器发送数据。',
+            consent_text: 'HappyMoments 将你的里程碑数据（姓名、日期、设置）保存在你的设备上，并在浏览器中加密。除非你主动选择（登录、分享里程碑或导出数据），否则不会向服务器发送任何内容。我们还收集匿名、无 Cookie 的使用统计（若浏览器发送"Do Not Track"则自动停用）。详情请见隐私政策。',
             consent_ok: '知道了', consent_read: '阅读完整政策',
             // Milestone descriptions
             turns_age: '{name}{value}岁了！',
@@ -1055,7 +1058,7 @@ const I18N = (() => {
             edit_event: 'घटना संपादित करें', save: 'सेव', delete: 'हटाएं',
             name: 'नाम', type: 'प्रकार', date: 'तारीख', notes: 'नोट्स', turns: 'होंगे',
             terms_privacy: 'शर्तें और गोपनीयता', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments आपके डेटा को आपके डिवाइस पर स्थानीय रूप से संग्रहीत करता है। कोई डेटा सर्वर को नहीं भेजा जाता।',
+            consent_text: 'HappyMoments आपका माइलस्टोन डेटा — नाम, तारीखें, सेटिंग्स — आपके डिवाइस पर, ब्राउज़र में एन्क्रिप्ट करके रखता है। जब तक आप स्वयं न चुनें (साइन इन, माइलस्टोन साझा करना या डेटा निर्यात), सर्वर पर कुछ नहीं भेजा जाता। हम अनाम, कुकी-रहित उपयोग आँकड़े भी एकत्र करते हैं (यदि ब्राउज़र "Do Not Track" भेजता है तो बंद)। पूरी जानकारी नीति में।',
             consent_ok: 'समझ गया', consent_read: 'पूरी नीति पढ़ें',
             // Milestone descriptions
             turns_age: '{name} के {value} हो रहे हैं!',
@@ -1109,7 +1112,7 @@ const I18N = (() => {
             edit_event: 'تعديل الحدث', save: 'حفظ', delete: 'حذف',
             name: 'الاسم', type: 'النوع', date: 'التاريخ', notes: 'ملاحظات', turns: 'سيبلغ',
             terms_privacy: 'الشروط والخصوصية', copyright: 'HappyMoments © 2026',
-            consent_text: 'يخزن HappyMoments بياناتك محلياً على جهازك. لا يتم إرسال أي بيانات إلى أي خادم.',
+            consent_text: 'يحتفظ HappyMoments ببياناتك — الأسماء والتواريخ والإعدادات — على جهازك، مشفّرة في المتصفح. لا يُرسل أي شيء إلى الخادم إلا إذا اخترت ذلك: تسجيل الدخول، أو مشاركة مناسبة، أو تصدير بياناتك. كما نجمع إحصاءات استخدام مجهولة بدون ملفات تعريف الارتباط (تُعطَّل إذا أرسل متصفحك "Do Not Track"). التفاصيل الكاملة في السياسة.',
             consent_ok: 'فهمت', consent_read: 'اقرأ السياسة الكاملة',
             // Milestone descriptions
             turns_age: '{name} يبلغ {value}!',
@@ -1163,7 +1166,7 @@ const I18N = (() => {
             edit_event: 'ইভেন্ট সম্পাদনা', save: 'সেভ', delete: 'মুছুন',
             name: 'নাম', type: 'ধরন', date: 'তারিখ', notes: 'নোট', turns: 'হবে',
             terms_privacy: 'শর্তাবলী ও গোপনীয়তা', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments আপনার ডেটা আপনার ডিভাইসে স্থানীয়ভাবে সংরক্ষণ করে। কোনো ডেটা সার্ভারে পাঠানো হয় না।',
+            consent_text: 'HappyMoments আপনার মাইলফলক ডেটা — নাম, তারিখ, সেটিংস — আপনার ডিভাইসে, ব্রাউজারে এনক্রিপ্ট করে রাখে। আপনি নিজে না বেছে নিলে (সাইন ইন, মাইলফলক শেয়ার বা ডেটা এক্সপোর্ট) সার্ভারে কিছুই পাঠানো হয় না। আমরা বেনামী, কুকি-মুক্ত ব্যবহারের পরিসংখ্যানও সংগ্রহ করি (ব্রাউজার "Do Not Track" পাঠালে বন্ধ থাকে)। বিস্তারিত নীতিতে।',
             consent_ok: 'বুঝেছি', consent_read: 'সম্পূর্ণ নীতি পড়ুন',
             // Milestone descriptions
             turns_age: '{name}-এর {value} হচ্ছে!',
@@ -1217,7 +1220,7 @@ const I18N = (() => {
             edit_event: 'イベント編集', save: '保存', delete: '削除',
             name: '名前', type: 'タイプ', date: '日付', notes: 'メモ', turns: '歳になる',
             terms_privacy: '利用規約とプライバシー', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMomentsはデータをお使いのデバイスにローカル保存します。サーバーへのデータ送信はありません。',
+            consent_text: 'HappyMomentsはマイルストーンのデータ（名前・日付・設定）を端末内にブラウザで暗号化して保存します。サインイン、マイルストーンの共有、データのエクスポートなど、あなたが選択しない限りサーバーには何も送信されません。また、Cookieを使わない匿名の利用統計を収集します（ブラウザが「Do Not Track」を送信する場合は無効）。詳細はポリシーをご覧ください。',
             consent_ok: '了解', consent_read: 'ポリシー全文を読む',
             // Milestone descriptions
             turns_age: '{name}が{value}歳に！',
@@ -1271,7 +1274,7 @@ const I18N = (() => {
             edit_event: 'Sửa sự kiện', save: 'Lưu', delete: 'Xóa',
             name: 'Tên', type: 'Loại', date: 'Ngày', notes: 'Ghi chú', turns: 'Sẽ tròn',
             terms_privacy: 'Điều khoản & Quyền riêng tư', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments lưu dữ liệu cục bộ trên thiết bị. Không gửi dữ liệu đến máy chủ nào.',
+            consent_text: 'HappyMoments lưu dữ liệu cột mốc của bạn — tên, ngày tháng, cài đặt — trên thiết bị, được mã hóa trong trình duyệt. Không gì được gửi đến máy chủ trừ khi bạn chọn: đăng nhập, chia sẻ cột mốc hoặc xuất dữ liệu. Chúng tôi cũng thu thập thống kê sử dụng ẩn danh, không cookie (tắt nếu trình duyệt gửi "Do Not Track"). Chi tiết trong chính sách.',
             consent_ok: 'Đã hiểu', consent_read: 'Đọc chính sách đầy đủ',
             // Milestone descriptions
             turns_age: '{name} tròn {value}!',
@@ -1325,7 +1328,7 @@ const I18N = (() => {
             edit_event: 'Edit Acara', save: 'Simpan', delete: 'Hapus',
             name: 'Nama', type: 'Tipe', date: 'Tanggal', notes: 'Catatan', turns: 'Akan genap',
             terms_privacy: 'Ketentuan & Privasi', copyright: 'HappyMoments © 2026',
-            consent_text: 'HappyMoments menyimpan data Anda secara lokal di perangkat. Tidak ada data yang dikirim ke server.',
+            consent_text: 'HappyMoments menyimpan data milestone Anda — nama, tanggal, pengaturan — di perangkat Anda, terenkripsi di browser. Tidak ada yang dikirim ke server kecuali Anda memilihnya: masuk, membagikan milestone, atau mengekspor data. Kami juga mengumpulkan statistik penggunaan anonim tanpa cookie (nonaktif jika browser mengirim "Do Not Track"). Detail lengkap di kebijakan.',
             consent_ok: 'Mengerti', consent_read: 'Baca kebijakan lengkap',
             // Milestone descriptions
             turns_age: '{name} genap {value}!',
