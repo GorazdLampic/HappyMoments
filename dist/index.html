@@ -39,11 +39,11 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq7y8t8b"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq7y8t8b"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq815hm6"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq815hm6"></script>
 
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
-    <link rel="stylesheet" href="styles.css?v=mq7y8t8b">
+    <link rel="stylesheet" href="styles.css?v=mq815hm6">
 </head>
 <body>
     <div id="app">
@@ -225,7 +225,7 @@
                                 <span class="wizard-date-sep">/</span>
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupMonth" placeholder="MM" maxlength="2" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'groupYear', 2)" style="width:2.2em;">
                                 <span class="wizard-date-sep">/</span>
-                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.2em;">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.2em;" oninput="wizardGroupAutoAdd()">
                             </div>
                         </div>
                         <button class="wizard-btn-secondary" onclick="wizardAddGroupMember()" style="margin-top:10px;width:100%;">+ Add</button>
@@ -556,7 +556,7 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">HappyMoments &copy; 2026</span>
-            <div class="app-version" id="appVersion">Build: v79 &middot; 2026-06-10 10:52 UTC</div>
+            <div class="app-version" id="appVersion">Build: v80 &middot; 2026-06-10 12:13 UTC</div>
         </footer>
 
         <!-- Auth Modal -->
@@ -666,20 +666,20 @@
         </div>
     </div>
 
-    <script defer src="notifications.js?v=mq7y8t8b"></script>
-    <script defer src="historyFacts.js?v=mq7y8t8b"></script>
-    <script defer src="i18n.js?v=mq7y8t8b"></script>
-    <script defer src="specialNumbers.js?v=mq7y8t8b"></script>
-    <script defer src="milestoneCalculator.js?v=mq7y8t8b"></script>
-    <script defer src="combinations.js?v=mq7y8t8b"></script>
-    <script defer src="shareMessages.js?v=mq7y8t8b"></script>
-    <script defer src="giftStore.js?v=mq7y8t8b"></script>
-    <script defer src="dataProtection.js?v=mq7y8t8b"></script>
-    <script defer src="imageCard.js?v=mq7y8t8b"></script>
-    <script defer src="checkout.js?v=mq7y8t8b"></script>
-    <script defer src="analytics.js?v=mq7y8t8b"></script>
-    <script defer src="auth.js?v=mq7y8t8b"></script>
-    <script defer src="app.js?v=mq7y8t8b"></script>
+    <script defer src="notifications.js?v=mq815hm6"></script>
+    <script defer src="historyFacts.js?v=mq815hm6"></script>
+    <script defer src="i18n.js?v=mq815hm6"></script>
+    <script defer src="specialNumbers.js?v=mq815hm6"></script>
+    <script defer src="milestoneCalculator.js?v=mq815hm6"></script>
+    <script defer src="combinations.js?v=mq815hm6"></script>
+    <script defer src="shareMessages.js?v=mq815hm6"></script>
+    <script defer src="giftStore.js?v=mq815hm6"></script>
+    <script defer src="dataProtection.js?v=mq815hm6"></script>
+    <script defer src="imageCard.js?v=mq815hm6"></script>
+    <script defer src="checkout.js?v=mq815hm6"></script>
+    <script defer src="analytics.js?v=mq815hm6"></script>
+    <script defer src="auth.js?v=mq815hm6"></script>
+    <script defer src="app.js?v=mq815hm6"></script>
 
     <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
     <script>

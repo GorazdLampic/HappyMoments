@@ -62,6 +62,29 @@ function autoAdvance(field, nextFieldId, maxLen) {
     syncDateFields(field);
 }
 
+// Auto-add a member once name + a complete valid date are entered —
+// no need to tap "+ Add". Validation is silent (no error toasts mid-typing);
+// a wrong-but-valid date can still be edited or removed in the member list.
+function _dateFieldsComplete(prefix) {
+    const dd = parseInt(document.getElementById(prefix + 'Day')?.value, 10);
+    const mm = parseInt(document.getElementById(prefix + 'Month')?.value, 10);
+    const yStr = String(document.getElementById(prefix + 'Year')?.value || '');
+    if (yStr.length !== 4) return false;
+    const y = parseInt(yStr, 10);
+    if (!(dd >= 1 && dd <= 31 && mm >= 1 && mm <= 12 && y >= 1900 && y <= new Date().getFullYear())) return false;
+    return dd <= new Date(y, mm, 0).getDate();
+}
+
+function wizardGroupAutoAdd() {
+    const name = document.getElementById('groupPersonName')?.value?.trim();
+    if (name && _dateFieldsComplete('group')) wizardAddGroupMember();
+}
+
+function editorAutoAdd() {
+    const name = document.getElementById('editorPersonName')?.value?.trim();
+    if (name && _dateFieldsComplete('editor')) editorAddMember();
+}
+
 // Read DD/MM/YYYY fields and write ISO to the hidden date input
 function syncDateFields(anyField) {
     // Find the parent .date-fields container
@@ -1089,7 +1112,7 @@ function openGroupEditor(setId) {
                     <span style="color:var(--text-muted);">/</span>
                     <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorMonth" placeholder="MM" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorYear',2)">
                     <span style="color:var(--text-muted);">/</span>
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorYear" placeholder="YYYY" maxlength="4" style="width:3.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorYear" placeholder="YYYY" maxlength="4" style="width:3.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="editorAutoAdd()">
                 </div>
             </div>
             <button onclick="editorAddMember()" style="width:100%;margin-top:8px;padding:10px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;">+ Add to ${escapeHtml(currentSet.name)}</button>
@@ -1719,8 +1742,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 <div class="wizard-reveal-number-wrap">
                     <div class="wizard-reveal-number" id="${revealElId}Number" style="font-size:1.4rem;">${escapeHtml(m.description)}</div>
                 </div>
-                <div class="wizard-reveal-date">${dateDisplay}</div>
-                <div class="wizard-reveal-countdown">${countdownText}</div>
+                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
             `;
         } else {
             revealEl.innerHTML = `
@@ -1729,8 +1751,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
                 </div>
                 <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
-                <div class="wizard-reveal-date">${dateDisplay}</div>
-                <div class="wizard-reveal-countdown">${countdownText}</div>
+                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
             `;
         }
 
@@ -1930,8 +1951,7 @@ function wizardShowCombined(isRefresh) {
                 <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
             </div>
             <div class="wizard-reveal-unit">days combined</div>
-            <div class="wizard-reveal-date">${dateDisplay}</div>
-            <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
+            <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</span></div>
         `;
     } else {
         el.innerHTML = `
@@ -2391,8 +2411,7 @@ function wizardShowCombinedAndName() {
             <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
         </div>
         <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
-        <div class="wizard-reveal-date">${dateDisplay}</div>
-        <div class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</div>
+        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} days</span></div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <input type="text" id="groupName" class="wizard-input" value="" placeholder="Name your first group" onfocus="if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1px solid var(--border,#333);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
@@ -2625,7 +2644,7 @@ function wizardShowGroupReveal() {
     // Update buttons: only show "See team milestones" in Phase 1
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
-        shareBtn8.textContent = 'See ' + groupName + ' milestones \u2014 more members, more magic';
+        shareBtn8.textContent = 'See the combined milestones';
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
@@ -2703,8 +2722,7 @@ function wizardShowTeamMilestones() {
                 <div class="wizard-reveal-number" style="font-size:2.2rem;">${hero.value.toLocaleString(locale)}</div>
             </div>
             <div class="wizard-reveal-unit">${hero.unitName || hero.unit} combined</div>
-            <div class="wizard-reveal-date">${formatMilestoneDate(hero.date, { long: true })}</div>
-            <div class="wizard-reveal-countdown">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} days</div>
+            <div class="wizard-reveal-date">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} days</span></div>
             </div>
         ` : ''}
         ${combinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div class="wizard-milestone-list">${combinedHtml}</div></div>` : ''}
@@ -2778,12 +2796,11 @@ function wizardBuildShareScreen() {
             const ds = formatMilestoneDate(best.date);
             const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
             html += `<div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:10px;">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
                     <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${val} ${unit} &middot; ${ds}</span>
                 </div>
-                <div style="color:var(--text-muted);font-size:0.8rem;font-style:italic;padding:6px 10px;border-left:2px solid var(--warning,#d4b876);margin-bottom:8px;">${escapeHtml(shareText)}</div>
-                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:6px 12px;font-size:0.8rem;width:100%;">Share with ${escapeHtml(e.name)}</button>
+                <button class="wizard-btn" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.9rem;width:100%;">Share with ${escapeHtml(e.name)}</button>
             </div>`;
         }
     });
@@ -3670,10 +3687,16 @@ function findGapMilestones(event1, event2, maxResults, maxDaysAhead, settings) {
 function isStrictSpecialNumber(num) {
     // Powers of 10
     if (isPowerOf10(num)) return true;
-    // Round thousands
-    if (num >= 1000 && num % 1000 === 0) return true;
     // Large repdigits
     if (num >= 1000 && isRepdigit(num)) return true;
+    // Large numbers must read cleanly: "2 million", "1.5 billion" —
+    // not "1,150 million" (divisibility alone is not niceness)
+    if (num >= 1000000) {
+        const mantissa = String(num).replace(/0+$/, '');
+        return mantissa.length === 1 || (mantissa.length === 2 && mantissa[1] === '5');
+    }
+    // Round thousands
+    if (num >= 1000 && num % 1000 === 0) return true;
     // Round hundreds over 500
     if (num >= 500 && num % 500 === 0) return true;
     return false;
@@ -4368,15 +4391,29 @@ function renderHomeScreen() {
             </div>`;
         }
 
-        const TOP_COUNT = 3;
-        html += '<div class="time-chunk-label">Upcoming</div>';
-        merged.slice(0, TOP_COUNT).forEach((m, i) => { html += renderItem(m, i); });
+        // One milestone per person (their nearest), rest behind "Show more".
+        // Solo single-person view keeps the top 3 so the list doesn't feel empty.
+        let top;
+        if (filteredEvents.length >= 2) {
+            const seen = new Set();
+            top = merged.filter(m => {
+                if (seen.has(m.eventId)) return false;
+                seen.add(m.eventId);
+                return true;
+            });
+        } else {
+            top = merged.slice(0, 3);
+        }
+        const rest = merged.filter(m => !top.includes(m));
 
-        if (merged.length > TOP_COUNT) {
+        html += '<div class="time-chunk-label">Upcoming</div>';
+        top.forEach((m, i) => { html += renderItem(m, i); });
+
+        if (rest.length > 0) {
             html += `<div id="moreMs" style="display:none;">`;
-            merged.slice(TOP_COUNT).forEach((m, i) => { html += renderItem(m, TOP_COUNT + i); });
+            rest.forEach((m, i) => { html += renderItem(m, top.length + i); });
             html += `</div>`;
-            html += `<div id="moreMsToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:12px;text-align:center;font-size:0.85rem;" onclick="toggleMoreMilestones()">Show ${merged.length - TOP_COUNT} more milestones \u25BC</div>`;
+            html += `<div id="moreMsToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:12px;text-align:center;font-size:0.85rem;" onclick="toggleMoreMilestones()">Show ${rest.length} more milestones \u25BC</div>`;
         }
     }
     listEl.innerHTML = html;
@@ -5215,24 +5252,20 @@ function findSumMilestonesForEvents(events, maxResults, maxDaysAhead, settings) 
 function isCombinedSpecialNumber(num, unit) {
     const str = String(num);
 
-    // Big round billions (1B, 2B, 3B, etc.)
-    if (num >= 1000000000 && num % 1000000000 === 0) return true;
-
-    // Hundred millions (100M, 200M, 500M, etc.)
-    if (num >= 100000000 && num % 100000000 === 0) return true;
-
-    // Quarter and half billions (250M, 500M, 750M, 1.5B, 2.5B, etc.)
-    if (num >= 250000000 && num % 250000000 === 0) return true;
-
     // Large repdigits (11111111, 222222222, 1111111111, etc.)
-    if (str.length >= 8 && new Set(str).size === 1) return true;
     if (str.length >= 6 && new Set(str).size === 1) return true;
 
-    // Large round millions (1M, 2M, 5M, 10M, etc.)
-    if (num >= 1000000 && num % 1000000 === 0) return true;
+    // Large round numbers (>=1M) must read cleanly: 1 significant digit
+    // ("2 million", "300 million", "1 billion") or a clean half ("1.5 billion",
+    // "2.5 million", "750 million"). Divisibility alone — 1,150M, 87M — is not nice.
+    if (num >= 1000000 && num % 10 === 0) {
+        const mantissa = str.replace(/0+$/, '');
+        if (mantissa.length === 1) return true;
+        if (mantissa.length === 2 && mantissa[1] === '5') return true;
+    }
 
-    // Half millions (500k, 1.5M, 2.5M, etc.)
-    if (num >= 500000 && num % 500000 === 0) return true;
+    // Half million (500k)
+    if (num === 500000) return true;
 
     // For smaller units (days, weeks, months, years), be more selective
     if (unit === 'years' || unit === 'months') {

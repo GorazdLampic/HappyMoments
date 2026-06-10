@@ -763,6 +763,14 @@ function roundnessScore(num) {
     if (_classifyAsianLucky(num, s)) score += 15;
     if ([888, 8888, 9999, 5201314].includes(num)) score += 25;
 
+    // Large bland rounds: trailing zeros inflate the score, but a number like
+    // 1,150,000,000 is not actually round in any human sense. Penalise by mantissa.
+    if (num >= 1000000 && num % 10 === 0) {
+        const mantissa = s.replace(/0+$/, '');
+        if (mantissa.length >= 3) score -= 80;
+        else if (mantissa.length === 2 && mantissa[1] !== '5') score -= 40;
+    }
+
     return score;
 }
 
@@ -778,9 +786,22 @@ function nicenessGrade(num) {
 
     // Tier 1 (90-100): universally impressive
     if (POWERS_OF_TEN.includes(num)) return 100;
-    if (num >= 1000000 && num % 1000000 === 0) return 95;
     if (s.length >= 4 && new Set(s).size === 1) return 92; // 1111, 22222
-    if (num >= 1000000000 && num % 100000000 === 0) return 90;
+
+    // Large round numbers (>=1M): niceness comes from how the number READS,
+    // not from divisibility. "2 million" and "1.5 billion" are special;
+    // "870 million" and "1,150 million" are not — even though both divide 1M.
+    // Judged by significant digits (mantissa): 1 digit = clean, 2 digits
+    // ending in 5 = a clean half, anything else = bland filler.
+    // (Patterns are unaffected: numbers with trailing zeros can never be
+    // repdigits, palindromes, alternating, or sequential.)
+    if (num >= 1000000 && num % 10 === 0) {
+        const mantissa = s.replace(/0+$/, '');
+        if (mantissa.length === 1) return 95;                       // 2M, 900M, 3B
+        if (mantissa.length === 2 && mantissa[1] === '5') return 72; // 1.5M, 2.5B, 750M
+        if (mantissa.length === 2) return 45;                        // 87M, 1.1B — below adult threshold
+        return 22;                                                   // 1,150M, 2,340M — junk
+    }
 
     // Tier 2 (70-89): most people would appreciate
     if (num >= 100000 && num % 100000 === 0) return 85;
