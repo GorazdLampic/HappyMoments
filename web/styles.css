@@ -912,16 +912,22 @@ body {
     font-size: var(--font-size-lg);
     color: var(--warning);
     font-weight: 500;
-    flex-shrink: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .tc-value.starred { font-weight: 700; }
 .tc-person {
+    /* The owner's name must always stay visible — long milestone labels
+       (e.g. cosmic descriptions) ellipsize instead */
     font-family: var(--font-serif);
     font-size: var(--font-size-sm);
     color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex-shrink: 0;
+    max-width: 45%;
 }
 .tc-date {
     font-family: var(--font-serif);
@@ -2892,7 +2898,7 @@ body {
 
 .wizard-question {
     font-family: var(--font-serif);
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 400;
     color: var(--text-primary);
     margin-bottom: var(--space-xl);
@@ -3139,7 +3145,8 @@ body {
    centering left a large empty gap above the content */
 .wizard-step.wizard-step-top {
     justify-content: flex-start;
-    padding-top: var(--space-xl);
+    /* clears the fixed back arrow (top:14px + ~40px tap target) */
+    padding-top: 60px;
 }
 
 /* Short screens: tighter wizard layout so the action buttons stay visible */
@@ -3212,7 +3219,7 @@ body {
 /* Reveal animation — the number is THE moment. Make it huge. */
 .wizard-reveal-number {
     font-family: var(--font-mono);
-    font-size: min(3.5rem, 9vw);
+    font-size: min(3.2rem, 9vw);
     font-weight: 300;
     color: var(--warning);
     margin: var(--space-md) 0 var(--space-xs);
@@ -3234,7 +3241,7 @@ body {
 /* Unit label — explains WHAT the number means. Must be clearly readable. */
 .wizard-reveal-unit {
     font-family: var(--font-serif);
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: var(--text-primary);
     font-style: italic;
     margin-bottom: var(--space-lg);
@@ -3255,7 +3262,7 @@ body {
 /* Date — when it happens. This is actionable info. */
 .wizard-reveal-date {
     font-family: var(--font-serif);
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
     margin-bottom: var(--space-xs);
     overflow-wrap: break-word;
@@ -3280,7 +3287,7 @@ body {
 /* Countdown — the emotional punch. "In 13 days!" should hit hard. */
 .wizard-reveal-countdown {
     font-family: var(--font-serif);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: var(--warning);
     font-style: italic;
     font-weight: 500;
@@ -3428,7 +3435,7 @@ body {
     .wizard-date-large .wizard-date-field { width: 70px; padding: 16px 8px; font-size: 1.4rem; }
     .wizard-date-large .wizard-date-sep { font-size: 1.4rem; }
     .wizard-subtitle { font-size: 1.05rem; }
-    .wizard-question { font-size: 1.3rem; }
+    .wizard-question { font-size: 1.4rem; }
     .wizard-input { font-size: 1.1rem; padding: 14px 16px; }
     .wizard-date-field { width: 62px; font-size: 1.2rem; padding: 14px 6px; }
     .wizard-reveal-number { font-size: 3rem; max-width: 340px; }

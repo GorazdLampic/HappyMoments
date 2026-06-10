@@ -815,10 +815,12 @@ function setupEventListeners() {
         cb.addEventListener('change', handleComboTypeChange);
     });
 
-    // Individual Milestones tab
-    refreshMilestonesBtn.addEventListener('click', renderMilestonesTab);
-    copyShareBtn.addEventListener('click', handleCopyShare);
-    whatsappShareBtn.addEventListener('click', handleWhatsAppShare);
+    // Individual Milestones tab — every lookup guarded: a single missing element
+    // here used to throw and silently kill ALL listener setup below (export,
+    // import, settings, calendar) — found by the screenshot-tour page-error check
+    if (refreshMilestonesBtn) refreshMilestonesBtn.addEventListener('click', renderMilestonesTab);
+    if (copyShareBtn) copyShareBtn.addEventListener('click', handleCopyShare);
+    if (whatsappShareBtn) whatsappShareBtn.addEventListener('click', handleWhatsAppShare);
     if (viberShareBtn) viberShareBtn.addEventListener('click', handleViberShare);
     if (emailShareBtn) emailShareBtn.addEventListener('click', handleEmailShare);
 
@@ -845,9 +847,9 @@ function setupEventListeners() {
     });
 
     // Combined Milestones tab
-    refreshCombinedBtn.addEventListener('click', renderCombinedTab);
-    copyCombinedShareBtn.addEventListener('click', handleCopyCombinedShare);
-    whatsappCombinedShareBtn.addEventListener('click', handleWhatsAppCombinedShare);
+    if (refreshCombinedBtn) refreshCombinedBtn.addEventListener('click', renderCombinedTab);
+    if (copyCombinedShareBtn) copyCombinedShareBtn.addEventListener('click', handleCopyCombinedShare);
+    if (whatsappCombinedShareBtn) whatsappCombinedShareBtn.addEventListener('click', handleWhatsAppCombinedShare);
     if (viberCombinedShareBtn) viberCombinedShareBtn.addEventListener('click', handleViberCombinedShare);
     if (emailCombinedShareBtn) emailCombinedShareBtn.addEventListener('click', handleEmailCombinedShare);
 
@@ -860,11 +862,11 @@ function setupEventListeners() {
     if (icsCalCombinedBtn) icsCalCombinedBtn.addEventListener('click', handleIcsCalCombined);
 
     // Settings
-    addCustomNumberBtn.addEventListener('click', handleAddCustomNumber);
-    saveSettingsBtn.addEventListener('click', handleSaveSettings);
-    resetBtn.addEventListener('click', handleReset);
-    exportDataBtn.addEventListener('click', handleExportData);
-    importDataInput.addEventListener('change', handleImportData);
+    if (addCustomNumberBtn) addCustomNumberBtn.addEventListener('click', handleAddCustomNumber);
+    if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', handleSaveSettings);
+    if (resetBtn) resetBtn.addEventListener('click', handleReset);
+    if (exportDataBtn) exportDataBtn.addEventListener('click', handleExportData);
+    if (importDataInput) importDataInput.addEventListener('change', handleImportData);
     if (darkModeToggle) darkModeToggle.addEventListener('change', handleDarkModeToggle);
 
     document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -1033,7 +1035,7 @@ function switchHomeView(view) {
             if (appData.events.length >= 2 && !hasDateEvent) {
                 headerHtml += `<div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(212,184,118,0.06);border:1px dashed rgba(212,184,118,0.3);text-align:center;">
                     <p style="color:var(--text);font-size:0.92rem;margin-bottom:4px;">Anniversaries count too</p>
-                    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:10px;">Add your wedding day or the day you met — and see the numbers you share with it.</p>
+                    <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:10px;">Add your wedding day or the day you met — and see the numbers you share with it.</p>
                     <button onclick="openGroupEditorWithDateHint()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">+ Add a special date</button>
                 </div>`;
             }
@@ -1042,7 +1044,7 @@ function switchHomeView(view) {
             if (allSets.length === 1) {
                 headerHtml += `<div id="secondGroupNudge" style="margin-top:24px;padding:16px;border-radius:10px;background:rgba(212,184,118,0.06);border:1px dashed rgba(212,184,118,0.3);text-align:center;">
                     <p style="color:var(--text);font-size:0.95rem;margin-bottom:4px;">Got another circle?</p>
-                    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:12px;">Add a group for Friends, Colleagues, or another part of your life</p>
+                    <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:12px;">Add a group for Friends, Colleagues, or another part of your life</p>
                     <button onclick="promptNewGroupFromTogether()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">+ New group</button>
                 </div>`;
             }
@@ -1096,7 +1098,7 @@ function openGroupEditor(setId) {
     let html = `
         <div style="margin-bottom:16px;">
             <label style="font-size:0.8rem;color:var(--text-muted);display:block;margin-bottom:4px;">Group name</label>
-            <input type="text" id="editorGroupTitle" value="${escapeHtml(currentSet.name)}" readonly onfocus="this.removeAttribute('readonly')" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:1.1rem;font-weight:600;text-align:center;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+            <input type="text" id="editorGroupTitle" value="${escapeHtml(currentSet.name)}" readonly onfocus="this.removeAttribute('readonly')" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1.2rem;font-weight:600;text-align:center;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
         <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Members — edit name or date directly</div>
     `;
@@ -1108,12 +1110,12 @@ function openGroupEditor(setId) {
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const yyyy = d.getFullYear();
         html += `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;" autocomplete="off" data-lpignore="true" data-1p-ignore>
-            <input type="text" inputmode="numeric" value="${dd}" onchange="editorUpdateMemberDate('${e.id}','d',this.value)" maxlength="2" style="width:2em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
+            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+            <input type="text" inputmode="numeric" value="${dd}" onchange="editorUpdateMemberDate('${e.id}','d',this.value)" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
-            <input type="text" inputmode="numeric" value="${mm}" onchange="editorUpdateMemberDate('${e.id}','m',this.value)" maxlength="2" style="width:2em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
+            <input type="text" inputmode="numeric" value="${mm}" onchange="editorUpdateMemberDate('${e.id}','m',this.value)" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
-            <input type="text" inputmode="numeric" value="${yyyy}" onchange="editorUpdateMemberDate('${e.id}','y',this.value)" maxlength="4" style="width:3em;padding:6px 2px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-size:0.8rem;">
+            <input type="text" inputmode="numeric" value="${yyyy}" onchange="editorUpdateMemberDate('${e.id}','y',this.value)" maxlength="4" style="width:3.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
             <button onclick="editorRemoveMember('${e.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;" title="Remove">&times;</button>
         </div>`;
     });
@@ -1122,7 +1124,7 @@ function openGroupEditor(setId) {
     html += `
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#333);">
             <div style="display:flex;gap:8px;align-items:center;">
-                <input type="text" id="editorPersonField" placeholder="Name or date — e.g. Our wedding" readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" autocomplete="off" data-lpignore="true" data-1p-ignore>
+                <input type="text" id="editorPersonField" placeholder="Name or date" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);" autocomplete="off" data-lpignore="true" data-1p-ignore>
                 <div style="display:flex;gap:4px;align-items:center;">
                     <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorMonth',2)">
                     <span style="color:var(--text-muted);">/</span>
@@ -1975,7 +1977,7 @@ function wizardShowCombined(isRefresh) {
         el.innerHTML = `
             <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${escapeHtml(namesStr)} together</p>
             <div class="wizard-reveal-number-wrap">
-                <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
+                <div class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</div>
             </div>
             <div class="wizard-reveal-unit">days combined</div>
             <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
@@ -2328,7 +2330,7 @@ function wizardDiscoverFriendV2() {
                 html += wizardMilestoneRow(displayText, ds, name);
             });
             html += `</div>`;
-            html += `<div id="friendMoreToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('friendMoreExtra'),b=document.getElementById('friendMoreToggle');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${upcoming.length - TOP5} more \\u25BC';}">Show ${upcoming.length - TOP5} more \u25BC</div>`;
+            html += `<div id="friendMoreToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('friendMoreExtra'),b=document.getElementById('friendMoreToggle');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${upcoming.length - TOP5} more \\u25BC';}">Show ${upcoming.length - TOP5} more \u25BC</div>`;
         }
         html += '</div>';
         moreEl.innerHTML = html;
@@ -2439,11 +2441,11 @@ function wizardShowCombinedAndName() {
     el.innerHTML = `
         <p style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:8px;">Dates only you and ${escapeHtml(namesStr.replace(/^Me and |^You and /i, ''))} share</p>
         <div class="wizard-reveal-number-wrap">
-            <div class="wizard-reveal-number" style="font-size:2.2rem;">${bestTarget.toLocaleString(locale)}</div>
+            <div class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</div>
         </div>
         <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
         <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
-        ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
+        ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your first group</div>
             <input type="text" id="groupTitleInput" class="wizard-input" value="" placeholder="${escapeHtml(suggestedName)}" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
@@ -2501,11 +2503,11 @@ function wizardRenderGroupMembers() {
         // Editable rows \u2014 name and date can be corrected in place
         html += `<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
             <input type="text" value="${escapeHtml(m.name)}" onchange="wizardEditMember('${m.id}','name',this.value)" autocomplete="off" data-lpignore="true" data-1p-ignore readonly style="flex:1;min-width:0;padding:5px 8px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text);font-size:0.95rem;" onfocus="this.removeAttribute('readonly');this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
-            <input type="text" inputmode="numeric" value="${dd}" onchange="wizardEditMemberDate('${m.id}','d',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.82rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <input type="text" inputmode="numeric" value="${dd}" onchange="wizardEditMemberDate('${m.id}','d',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
-            <input type="text" inputmode="numeric" value="${mm}" onchange="wizardEditMemberDate('${m.id}','m',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.82rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <input type="text" inputmode="numeric" value="${mm}" onchange="wizardEditMemberDate('${m.id}','m',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
-            <input type="text" inputmode="numeric" value="${yyyy}" onchange="wizardEditMemberDate('${m.id}','y',this.value)" maxlength="4" style="width:3em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.82rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <input type="text" inputmode="numeric" value="${yyyy}" onchange="wizardEditMemberDate('${m.id}','y',this.value)" maxlength="4" style="width:3em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             ${m.name !== 'Me' ? `<button onclick="wizardRemoveMember('${m.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.05rem;padding:2px 5px;" title="Remove">&times;</button>` : '<span style="width:22px;"></span>'}
         </div>`;
     });
@@ -2672,7 +2674,7 @@ function wizardShowGroupReveal() {
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
                 });
                 individualHtml += `</div>`;
-                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rest.length} more \\u25BC';}">Show ${rest.length} more \u25BC</div>`;
+                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rest.length} more \\u25BC';}">Show ${rest.length} more \u25BC</div>`;
             }
         } else {
             // Multiple new members: show 1 best each + expand per person
@@ -2689,7 +2691,7 @@ function wizardShowGroupReveal() {
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val2 + ' ' + unit2, formatMilestoneDate(m.date), e.name);
                 });
                 individualHtml += `</div>`;
-                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.78rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More \\u25BC';}">More \u25BC</div>`;
+                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More \\u25BC';}">More \u25BC</div>`;
             }
         }
         newMemberCount++;
@@ -2702,22 +2704,26 @@ function wizardShowGroupReveal() {
     }
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.3rem;line-height:1.4;margin-top:0;margin-bottom:var(--space-md);">Imagine their face when you tell them</h2>
+        <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.4;margin-top:0;margin-bottom:var(--space-md);">Imagine their face when you tell them</h2>
         ${individualHtml}
     `;
 
     _track('onboard_group_reveal_individual', { members: newMemberCount });
 
-    // Update buttons: only show "See team milestones" in Phase 1
+    // Update buttons: Phase 1 forward action = combined milestones, always primary (gold)
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
+        shareBtn8.classList.add('wizard-btn');
+        shareBtn8.classList.remove('wizard-btn-secondary');
         shareBtn8.textContent = 'Your combined milestones →';
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
-    // Hide "Who else?" button during Phase 1 — it appears in Phase 2
+    // Hide "Who else?" and dashboard during Phase 1 — too early; they appear in Phase 2
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
     if (createAnotherBtn) createAnotherBtn.style.display = 'none';
+    const dashboardBtn8P1 = document.getElementById('wizardDashboardBtn8');
+    if (dashboardBtn8P1) dashboardBtn8P1.style.display = 'none';
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     const step8El = document.getElementById('wizardStep8');
@@ -2783,7 +2789,7 @@ function wizardShowTeamMilestones() {
     });
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.1rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">These milestones belong to all of you — get everyone together.</h2>
+        <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">These milestones belong to all of you — get everyone together.</h2>
         ${hero ? `
             <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + (hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
             <div class="wizard-reveal-number-wrap">
@@ -2793,39 +2799,38 @@ function wizardShowTeamMilestones() {
             <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:4px;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} ${plural(Math.ceil(hero.timeUntil / (24*60*60*1000)), 'day')}</span></div>
             </div>
         ` : ''}
-        ${combinedHtml ? `<div style="margin-top:10px;border-top:1px solid var(--border,#333);padding-top:8px;"><div class="wizard-milestone-list">${combinedHtml}</div>${combinedExtraHtml ? `<div id="wizTeamExtra8" style="display:none;" class="wizard-milestone-list">${combinedExtraHtml}</div><div id="wizTeamToggle8" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.82rem;" onclick="var m=document.getElementById('wizTeamExtra8'),b=document.getElementById('wizTeamToggle8');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rows.length - 3} more \\u25BC';}">Show ${rows.length - 3} more ▼</div>` : ''}</div>` : ''}
+        ${combinedHtml ? `<div style="margin-top:10px;border-top:1px solid var(--border,#333);padding-top:8px;"><div class="wizard-milestone-list">${combinedHtml}</div>${combinedExtraHtml ? `<div id="wizTeamExtra8" style="display:none;" class="wizard-milestone-list">${combinedExtraHtml}</div><div id="wizTeamToggle8" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizTeamExtra8'),b=document.getElementById('wizTeamToggle8');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rows.length - 3} more \\u25BC';}">Show ${rows.length - 3} more ▼</div>` : ''}</div>` : ''}
     `;
 
-    // Restore buttons for Phase 2
+    // Restore buttons for Phase 2 \u2014 the forward action is ALWAYS the single
+    // primary (gold) button; no post-share class swapping (removed: it left
+    // inverted button styles on every later visit to this screen)
     const shareBtn8 = document.getElementById('wizardShareBtn8');
     if (shareBtn8) {
+        shareBtn8.classList.add('wizard-btn');
+        shareBtn8.classList.remove('wizard-btn-secondary');
         shareBtn8.textContent = 'Share with your group \u2192';
         shareBtn8.onclick = function() {
-            // After sharing: demote Share, promote Who else + Dashboard
-            shareBtn8.classList.remove('wizard-btn');
-            shareBtn8.classList.add('wizard-btn-secondary');
-            const whoElse = document.getElementById('wizardCreateAnotherBtn8');
-            if (whoElse) {
-                whoElse.classList.remove('wizard-btn-secondary');
-                whoElse.classList.add('wizard-btn');
-            }
-            const dashBtn = document.getElementById('wizardDashboardBtn8');
-            if (dashBtn) {
-                dashBtn.style.display = '';
-                dashBtn.classList.remove('wizard-btn-secondary');
-                dashBtn.classList.add('wizard-btn');
-            }
             wizardBuildShareScreen();
         };
     }
 
-    // Show "Who else?" button in Phase 2
+    // Show "Who else?" button in Phase 2 (always secondary)
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
-    if (createAnotherBtn) createAnotherBtn.style.display = '';
-    // Dashboard exit always available — sharing stays the primary CTA,
-    // but users must not be forced through it to leave onboarding
+    if (createAnotherBtn) {
+        createAnotherBtn.style.display = '';
+        createAnotherBtn.classList.add('wizard-btn-secondary');
+        createAnotherBtn.classList.remove('wizard-btn');
+    }
+    // Dashboard exit available from Phase 2 on (not Phase 1 — too early),
+    // always secondary, same two-line content as Screen 9
     const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
-    if (dashboardBtn8) dashboardBtn8.style.display = '';
+    if (dashboardBtn8) {
+        dashboardBtn8.style.display = '';
+        dashboardBtn8.classList.add('wizard-btn-secondary');
+        dashboardBtn8.classList.remove('wizard-btn');
+        dashboardBtn8.innerHTML = 'Go to my dashboard →<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;">Explore Solo &middot; Together &middot; Edit</span>';
+    }
 
     _track('onboard_group_reveal_combined', { members: appData.events.length });
     window.scrollTo(0, 0);
@@ -2838,7 +2843,7 @@ function wizardBuildShareScreen() {
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    let html = '<h2 class="wizard-question" style="font-size:1.2rem;margin-top:0;margin-bottom:var(--space-md);">Tell your people — each has a milestone worth sharing</h2>';
+    let html = '<h2 class="wizard-question" style="font-size:1.4rem;margin-top:0;margin-bottom:var(--space-md);">Tell your people — each has a milestone worth sharing</h2>';
 
     // For each person (skip "Me"), find their best upcoming milestones
     appData.events.forEach(e => {
@@ -2882,9 +2887,9 @@ function wizardBuildShareScreen() {
                     <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${val} ${unit} &middot; ${ds}</span>
                 </div>
-                <button class="wizard-btn" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.9rem;width:100%;margin-top:0;">Share with ${escapeHtml(e.name)}</button>
+                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.95rem;width:100%;margin-top:0;">Share with ${escapeHtml(e.name)}</button>
                 ${moreRows ? `<div id="${uid}" style="display:none;margin-top:6px;">${moreRows}</div>
-                <div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:5px;text-align:center;font-size:0.78rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More milestones \\u25BC';}">More milestones ▼</div>` : ''}
+                <div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:5px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More milestones \\u25BC';}">More milestones ▼</div>` : ''}
             </div>`;
         }
     });
@@ -6253,7 +6258,7 @@ function renderEventSetsHTML() {
         set.events.forEach(e => {
             const d = typeof e.date === 'string' ? new Date(e.date) : e.date;
             const ds = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
-            membersHtml += `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:0.82rem;">
+            membersHtml += `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:0.88rem;">
                 <span style="color:var(--text);flex:1;">${escapeHtml(e.name)}</span>
                 <span style="color:var(--text-muted);">${ds}</span>
             </div>`;

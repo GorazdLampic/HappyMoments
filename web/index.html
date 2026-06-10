@@ -130,7 +130,7 @@
                         <span class="wizard-date-sep">/</span>
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="birthMonth" placeholder="MM" maxlength="2" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'birthYear', 2)">
                         <span class="wizard-date-sep">/</span>
-                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="birthYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" oninput="syncDateFields(this)">
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="birthYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.6em;" oninput="syncDateFields(this)">
                     </div>
                 </div>
                 <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscoverV5()">Show me</button>
@@ -186,7 +186,7 @@
                 </div>
                 <div class="wizard-actions">
                     <button class="wizard-btn" onclick="wizardShowCombinedAndName()">Check what you share together &rarr;</button>
-                    <button class="wizard-btn" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Share a milestone</button>
+                    <button class="wizard-btn-secondary" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Share a milestone</button>
                 </div>
             </div>
 
@@ -206,18 +206,18 @@
                 <button class="wizard-back" onclick="wizardNext(6)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
                 <div class="wizard-content">
                     <input type="text" id="groupBuilderTitle" value="Family" onchange="wizardGroupTitleChanged(this.value)" readonly onfocus="this.removeAttribute('readonly')" autocomplete="off" data-lpignore="true" data-1p-ignore style="font-family:var(--font-serif);font-size:1.45rem;font-weight:400;color:var(--text-primary);text-align:center;background:transparent;border:none;border-bottom:1px dashed var(--border,#444);width:100%;max-width:320px;padding:4px 8px;margin-bottom:var(--space-lg);" title="Tap to rename the group">
-                    <div id="groupMembers" style="margin-bottom:12px;">
+                    <div id="groupMembers" style="margin-bottom:12px;width:100%;">
                         <!-- Me + Person 2 pre-filled by wizardGoToGroupBuilder() -->
                     </div>
-                    <div id="groupAddForm">
-                        <div style="display:flex;gap:8px;align-items:center;">
-                            <input type="text" id="groupPersonField" class="wizard-input" placeholder="Name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;" readonly onfocus="this.removeAttribute('readonly')">
-                            <div class="wizard-date-fields" style="flex:1.2;margin:0;">
-                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.2em;">
+                    <div id="groupAddForm" style="width:100%;">
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <input type="text" id="groupPersonField" class="wizard-input" placeholder="Name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;min-width:0;font-size:1.05rem;padding:12px 10px;" readonly onfocus="this.removeAttribute('readonly')">
+                            <div class="wizard-date-fields" style="flex:none;margin:0;gap:2px;">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.1em;font-size:1.05rem;padding:12px 3px;">
                                 <span class="wizard-date-sep">/</span>
-                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupMonth" placeholder="MM" maxlength="2" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'groupYear', 2)" style="width:2.2em;">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupMonth" placeholder="MM" maxlength="2" min="1" max="12" class="wizard-date-field" oninput="autoAdvance(this, 'groupYear', 2)" style="width:2.1em;font-size:1.05rem;padding:12px 3px;">
                                 <span class="wizard-date-sep">/</span>
-                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.2em;" oninput="wizardGroupAutoAdd()">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.1em;font-size:1.05rem;padding:12px 3px;" oninput="wizardGroupAutoAdd()">
                             </div>
                         </div>
                         <button class="wizard-btn-secondary" onclick="wizardAddGroupMember()" style="margin-top:10px;width:100%;">+ Add</button>
@@ -246,7 +246,7 @@
                     <!-- Populated by wizardBuildShareScreen() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardFinish()" style="line-height:1.4;">Go to my dashboard &rarr;<span style="display:block;font-weight:400;margin-top:2px;">Explore Solo &middot; Together &middot; Edit</span></button>
+                    <button class="wizard-btn" onclick="wizardFinish()" style="line-height:1.4;">Go to my dashboard &rarr;<span style="display:block;font-weight:400;margin-top:2px;font-size:1.05rem;white-space:nowrap;">Explore Solo &middot; Together &middot; Edit</span></button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Another circle of people?</button>
                 </div>
             </div>
@@ -306,8 +306,8 @@
                 <div id="shareBarActive" style="display:none;">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <div style="flex:1;overflow:hidden;">
-                            <div id="shareBarText" style="color:var(--text);font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-                            <div id="shareBarPerson" style="color:var(--text-muted);font-size:0.75rem;"></div>
+                            <div id="shareBarText" style="color:var(--text);font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+                            <div id="shareBarPerson" style="color:var(--text-muted);font-size:0.88rem;"></div>
                         </div>
                         <button id="shareBarBtn" onclick="shareSelectedMilestone()" style="padding:8px 16px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;white-space:nowrap;">Share</button>
                         <button onclick="deselectMilestone()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;">&times;</button>
@@ -514,7 +514,7 @@
         </section>
 
         <!-- Group Editor Overlay (full-screen) -->
-        <div id="groupEditorOverlay" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:var(--bg-page,#1a1a1a);overflow-y:auto;padding:16px;">
+        <div id="groupEditorOverlay" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:var(--bg-page,#1a1a1a);overflow-y:auto;padding:16px;font-family:var(--font-serif);">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
                 <button onclick="closeGroupEditor()" style="background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;padding:8px;">&larr; Back</button>
                 <button onclick="closeGroupEditor()" style="background:var(--warning,#d4b876);color:#1a1a1a;border:none;padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;">Done</button>
