@@ -70,6 +70,14 @@ function plural(n, word) {
     return n === 1 ? word : word + 's';
 }
 
+// Translated template: tt('wiz_added', {name: 'Nastja'}) -> "Nastja added!"
+// Word order lives in the per-language template, never in code.
+function tt(key, vars) {
+    let s = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t(key) : key;
+    if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
+    return s;
+}
+
 // List rows: round giants read better (and shorter) as words — "850 million",
 // "2.66 billion". Pattern numbers (44,444,444) keep their digits: the digits
 // ARE the point. Heroes always keep full digits for the spectacle.
@@ -1092,18 +1100,18 @@ function switchHomeView(view) {
             const hasDateEvent = appData.events.some(e => /wedding|anniversar|poroka|obletnic|graduat|first day|we met|moved/i.test(e.name));
             if (appData.events.length >= 2 && !hasDateEvent) {
                 headerHtml += `<div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(212,184,118,0.06);border:1px dashed rgba(212,184,118,0.3);text-align:center;">
-                    <p style="color:var(--text);font-size:0.92rem;margin-bottom:4px;">Anniversaries count too</p>
-                    <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:10px;">Add your wedding day or the day you met — and see the numbers you share with it.</p>
-                    <button onclick="openGroupEditorWithDateHint()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">+ Add a special date</button>
+                    <p style="color:var(--text);font-size:0.92rem;margin-bottom:4px;">${tt('tog_anniv_title')}</p>
+                    <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:10px;">${tt('tog_anniv_body')}</p>
+                    <button onclick="openGroupEditorWithDateHint()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">${tt('tog_add_special')}</button>
                 </div>`;
             }
 
             // Nudge to create a second group if only 1 exists
             if (allSets.length === 1) {
                 headerHtml += `<div id="secondGroupNudge" style="margin-top:24px;padding:16px;border-radius:10px;background:rgba(212,184,118,0.06);border:1px dashed rgba(212,184,118,0.3);text-align:center;">
-                    <p style="color:var(--text);font-size:0.95rem;margin-bottom:4px;">Got another circle?</p>
-                    <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:12px;">Add a group for Friends, Colleagues, or another part of your life</p>
-                    <button onclick="promptNewGroupFromTogether()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">+ New group</button>
+                    <p style="color:var(--text);font-size:0.95rem;margin-bottom:4px;">${tt('tog_another_circle')}</p>
+                    <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:12px;">${tt('tog_another_body')}</p>
+                    <button onclick="promptNewGroupFromTogether()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">${tt('tog_new_group')}</button>
                 </div>`;
             }
 
@@ -1155,10 +1163,10 @@ function openGroupEditor(setId) {
 
     let html = `
         <div style="margin-bottom:16px;">
-            <label style="font-size:0.8rem;color:var(--text-muted);display:block;margin-bottom:4px;">Group name</label>
+            <label style="font-size:0.8rem;color:var(--text-muted);display:block;margin-bottom:4px;">${tt('ed_group_name')}</label>
             <input type="text" id="editorGroupTitle" name="hm_f5" value="${escapeHtml(currentSet.name)}" readonly onfocus="this.removeAttribute('readonly')" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1.2rem;font-weight:600;text-align:center;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
-        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Members — edit name or date directly</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">${tt('ed_members_hint')}</div>
     `;
 
     // Editable member list
@@ -1190,13 +1198,13 @@ function openGroupEditor(setId) {
                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorYear" placeholder="YYYY" maxlength="4" style="width:3.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.8rem;" oninput="editorAutoAdd()">
                 <span style="width:22px;"></span>
             </div>
-            <button onclick="editorAddMember()" style="width:100%;margin-top:8px;padding:10px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;">+ Add to ${escapeHtml(currentSet.name)}</button>
+            <button onclick="editorAddMember()" style="width:100%;margin-top:8px;padding:10px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;">${tt('ed_add_to', { group: escapeHtml(currentSet.name) })}</button>
         </div>
     `;
 
     // Delete group (if more than 1)
     if (allSets.length > 1) {
-        html += `<button onclick="editorDeleteGroup()" style="display:block;margin:24px auto 0;padding:10px 20px;border-radius:8px;background:none;border:1px solid #c66;color:#c66;cursor:pointer;font-size:0.85rem;">Delete this group</button>`;
+        html += `<button onclick="editorDeleteGroup()" style="display:block;margin:24px auto 0;padding:10px 20px;border-radius:8px;background:none;border:1px solid #c66;color:#c66;cursor:pointer;font-size:0.85rem;">${tt('ed_delete_group')}</button>`;
     }
 
     document.getElementById('groupEditorContent').innerHTML = html;
@@ -1255,7 +1263,7 @@ function editorAddMember() {
         });
         saveData();
     }
-    showToast(name + ' added!', 'success');
+    showToast(tt('toast_added', { name: name }), 'success');
     openGroupEditor(); // Re-render
 }
 
@@ -1552,11 +1560,11 @@ function _shareArrowSvg(size) {
 // Visible share chip for hero milestones
 function wizardHeroShareChip(shareText) {
     const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    return `<button class="hero-share-chip" onclick="event.stopPropagation();wizardSelectMsRow('','${safeMsg}')">Share ${_shareArrowSvg(15)}</button>`;
+    return `<button class="hero-share-chip" onclick="event.stopPropagation();wizardSelectMsRow('','${safeMsg}')">${tt('wiz_share')} ${_shareArrowSvg(15)}</button>`;
 }
 
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
-    const shareText = (personName ? personName + ': ' : '') + displayText + ' on ' + dateStr + ' \u2014 happymoments.app';
+    const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 happymoments.app';
     const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     // Tapping a row shares it directly. During onboarding the affordance is
     // labelled ("Share" + arrow) to teach the gesture; the dashboard uses the
@@ -1566,7 +1574,7 @@ function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
     return `<div class="wizard-milestone-row ${extraClass || ''}" onclick="wizardSelectMsRow('','${safeMsg}')" style="cursor:pointer;">
         <div class="wms-main">
             <span class="wizard-milestone-value">${displayText}</span>
-            <span class="row-share">Share ${_shareArrowSvg(14)}</span>
+            <span class="row-share">${tt('wiz_share')} ${_shareArrowSvg(14)}</span>
         </div>
         <div class="wizard-milestone-date">${dateStr}</div>
     </div>`;
@@ -1803,15 +1811,15 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         let countdownText = '';
         if (m.timeUntil <= 0) {
             const daysPast = Math.abs(daysAway);
-            countdownText = daysPast <= 1 ? 'That was yesterday!' : `You passed this ${countdown} ago`;
+            countdownText = daysPast <= 1 ? tt('wiz_was_yesterday') : tt('wiz_passed_ago', { time: countdown });
         } else if (daysAway <= 1) {
-            countdownText = 'That\u2019s today!';
+            countdownText = tt('wiz_today_excl');
         } else if (daysAway <= 7) {
-            countdownText = `That\u2019s this week!`;
+            countdownText = tt('wiz_this_week');
         } else if (daysAway <= 30) {
-            countdownText = `Coming in just ${daysAway} ${plural(daysAway, 'day')}`;
+            countdownText = tt('wiz_coming_days', { count: daysAway, noun: plural(daysAway, 'day') });
         } else {
-            countdownText = `in ${countdown}`;
+            countdownText = tt('wiz_in_time', { time: countdown });
         }
 
         // Build reveal HTML — clean, spacious, large type
@@ -1956,7 +1964,7 @@ function wizardShowMyMore() {
     let moreHtml = '';
     upcoming.slice(TOP).forEach(m => { moreHtml += renderMsRow(m); });
 
-    const heading = count > 0 ? `Your upcoming milestones` : 'Your milestones are being calculated';
+    const heading = count > 0 ? tt('wiz_upcoming_title') : tt('wiz_calculating');
     el.innerHTML = `
         <h2 class="wizard-question">${heading}</h2>
         <div class="wizard-milestone-list">${topHtml}</div>
@@ -2388,7 +2396,7 @@ function wizardDiscoverFriendV2() {
         const TOP5 = 3;
         // Hidden initially — revealed after counter animation finishes
         let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
-        html += '<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More milestones</div>';
+        html += `<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_milestones')}</div>`;
         upcoming.slice(0, TOP5).forEach(m => {
             const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
             const ds = formatMilestoneDate(m.date);
@@ -2525,14 +2533,14 @@ function wizardShowCombinedAndName() {
         </div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
-            <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your first group</div>
+            <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">${tt('wiz_name_first_group')}</div>
             <input type="text" id="groupTitleInput" name="hm_f6" class="wizard-input" value="" placeholder="${escapeHtml(suggestedName)}" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
     if (addMoreBtn) {
-        addMoreBtn.textContent = 'Add more people to ' + suggestedName;
+        addMoreBtn.textContent = tt('wiz_add_more_btn', { group: suggestedName });
         addMoreBtn.style.fontSize = '1.05rem';
     }
 
@@ -2688,7 +2696,7 @@ function wizardAddGroupMember() {
         if (el) el.value = '';
     });
 
-    showToast(name + ' added!', 'success');
+    showToast(tt('toast_added', { name: name }), 'success');
     _track('onboard_add_group_member', { event_count: appData.events.length });
 
     // Scroll form into view so next entry is immediately visible
@@ -2777,7 +2785,7 @@ function wizardShowGroupReveal() {
     }
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.4;margin-top:0;margin-bottom:var(--space-md);">Imagine their face when you tell them</h2>
+        <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.4;margin-top:0;margin-bottom:var(--space-md);">${tt('wiz_imagine_face')}</h2>
         <div class="wizard-milestone-list">${individualHtml}</div>
     `;
 
@@ -2788,7 +2796,7 @@ function wizardShowGroupReveal() {
     if (shareBtn8) {
         shareBtn8.classList.add('wizard-btn');
         shareBtn8.classList.remove('wizard-btn-secondary');
-        shareBtn8.textContent = 'Your combined milestones';
+        shareBtn8.textContent = tt('wiz_your_combined');
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
@@ -2862,7 +2870,7 @@ function wizardShowTeamMilestones() {
     });
 
     el.innerHTML = `
-        <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">These milestones belong to all of you — get everyone together.</h2>
+        <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">${tt('wiz_belong_all')}</h2>
         ${hero ? `
             <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + (hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
             <div class="wizard-reveal-number-wrap">
@@ -2895,10 +2903,10 @@ function wizardShowTeamMilestones() {
         shareBtn8.classList.add('wizard-btn');
         shareBtn8.classList.remove('wizard-btn-secondary');
         if (isFirstGroup) {
-            shareBtn8.innerHTML = 'Who else? Add another group<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:1.05rem;">Friends &middot; Colleagues &middot; Family</span>';
+            shareBtn8.innerHTML = tt('wiz_who_else') + '<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:1.05rem;">' + tt('wiz_who_else_sub') + '</span>';
             shareBtn8.onclick = function() { wizardCreateAnotherGroup(); };
         } else {
-            shareBtn8.innerHTML = 'Go to my dashboard<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:1.05rem;">Explore Solo &middot; Together &middot; Edit</span>';
+            shareBtn8.innerHTML = tt('wiz_go_dashboard') + '<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:1.05rem;">' + tt('wiz_explore_tabs') + '</span>';
             shareBtn8.onclick = function() { wizardFinish(); };
         }
     }
@@ -2912,7 +2920,7 @@ function wizardShowTeamMilestones() {
             createAnotherBtn.style.display = '';
             createAnotherBtn.classList.add('wizard-btn-secondary');
             createAnotherBtn.classList.remove('wizard-btn');
-            createAnotherBtn.textContent = 'One more group';
+            createAnotherBtn.textContent = tt('wiz_one_more_group');
         }
     }
     // Quiet dashboard exit on the FIRST pass only — the door is never locked,
@@ -2923,7 +2931,7 @@ function wizardShowTeamMilestones() {
             dashboardBtn8.style.display = '';
             dashboardBtn8.classList.add('wizard-btn-secondary');
             dashboardBtn8.classList.remove('wizard-btn');
-            dashboardBtn8.innerHTML = 'Go to my dashboard<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:0.88rem;opacity:0.85;">Explore Solo &middot; Together &middot; Edit</span>';
+            dashboardBtn8.innerHTML = tt('wiz_go_dashboard') + '<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:0.88rem;opacity:0.85;">' + tt('wiz_explore_tabs') + '</span>';
         } else {
             dashboardBtn8.style.display = 'none';
         }
@@ -3060,14 +3068,14 @@ function wizardCreateAnotherGroup() {
 
     el.innerHTML = `
         <p style="color:var(--text);text-align:center;font-size:1rem;font-style:italic;margin-bottom:16px;line-height:1.5;">${groupExample}</p>
-        <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your new team</div>
+        <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">${tt('wiz_name_new_team')}</div>
         <input type="text" id="groupTitleInput" name="hm_f7" class="wizard-input" value="" placeholder="Friends" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
     `;
 
     // Update buttons for "create another group" context
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
     if (addMoreBtn) {
-        addMoreBtn.textContent = 'Add people and see your combined milestones';
+        addMoreBtn.textContent = tt('wiz_add_people_combined');
         addMoreBtn.style.fontSize = '1.05rem';
         addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
     }
@@ -4399,7 +4407,7 @@ function heroShare() {
         navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied to clipboard!', 'success');
+            showToast(tt('toast_copied'), 'success');
         }).catch(() => {});
     }
     _track('hero_share', { value: m.value, unit: m.unit });
@@ -4426,7 +4434,7 @@ function renderHomeScreen() {
     if (!listEl) return;
 
     if (appData.events.length === 0) {
-        listEl.innerHTML = '<p class="empty-text" style="padding:32px;text-align:center;font-style:italic;color:var(--text-muted);">Enter a birthday to discover hidden milestones.</p>';
+        listEl.innerHTML = `<p class="empty-text" style="padding:32px;text-align:center;font-style:italic;color:var(--text-muted);">${tt('dash_enter_birthday')}</p>`;
         if (togetherEl) togetherEl.style.display = 'none';
         allMilestonesFlat = [];
         return;
@@ -4553,7 +4561,7 @@ function renderHomeScreen() {
 
     let html = '';
     if (merged.length === 0) {
-        html = '<p class="empty-text" style="padding:24px;text-align:center;font-style:italic;color:var(--text-muted);">Add more people &mdash; each birthday unlocks new milestones here.</p>';
+        html = `<p class="empty-text" style="padding:24px;text-align:center;font-style:italic;color:var(--text-muted);">${tt('dash_add_unlock')}</p>`;
     } else {
         // Render individual milestone item
         function renderItem(m, idx) {
@@ -4600,14 +4608,14 @@ function renderHomeScreen() {
         }
         const rest = merged.filter(m => !top.includes(m));
 
-        html += '<div class="time-chunk-label">Upcoming &middot; tap a milestone to share it</div>';
+        html += `<div class="time-chunk-label">${tt('dash_upcoming_tap')}</div>`;
         top.forEach((m, i) => { html += renderItem(m, i); });
 
         if (rest.length > 0) {
             html += `<div id="moreMs" style="display:none;">`;
             rest.forEach((m, i) => { html += renderItem(m, top.length + i); });
             html += `</div>`;
-            html += `<div id="moreMsToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:12px;text-align:center;font-size:0.85rem;" onclick="toggleMoreMilestones()">Show ${rest.length} more ${plural(rest.length, 'milestone')} \u25BC</div>`;
+            html += `<div id="moreMsToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:12px;text-align:center;font-size:0.85rem;" onclick="toggleMoreMilestones()">${tt('wiz_show_more_tpl', { count: rest.length, noun: plural(rest.length, 'milestone') })}</div>`;
         }
     }
     listEl.innerHTML = html;
@@ -4630,7 +4638,7 @@ function toggleMoreMilestones() {
     if (!isHidden) {
         // Restore "Show X more" text
         const count = more.querySelectorAll('.time-chunk-item').length;
-        btn.textContent = 'Show ' + count + ' more ' + plural(count, 'milestone') + ' \u25BC';
+        btn.textContent = tt('wiz_show_more_tpl', { count: count, noun: plural(count, 'milestone') });
     }
 }
 
@@ -4694,7 +4702,7 @@ function showSharePreview(message, recipientName) {
     if (navigator.share) {
         navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
     } else {
-        showToast('Copied to clipboard!', 'success');
+        showToast(tt('toast_copied'), 'success');
     }
 }
 
@@ -5722,7 +5730,7 @@ function quickShare(idx) {
         navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied to clipboard!', 'success');
+            showToast(tt('toast_copied'), 'success');
         }).catch(() => {});
     }
     _track('quick_share', { value: m.value, unit: m.unit });
@@ -5802,7 +5810,7 @@ function handleCopyShare() {
     const message = generateShareMessage(m);
     navigator.clipboard.writeText(message).then(() => {
         copyShareBtn.textContent = 'Copied!';
-        showToast('Copied to clipboard!', 'success');
+        showToast(tt('toast_copied'), 'success');
         setTimeout(() => {
             copyShareBtn.textContent = 'Copy Message';
         }, 2000);
@@ -5919,7 +5927,7 @@ function handleCopyCombinedShare() {
     const message = generateCombinedShareMessage(m);
     navigator.clipboard.writeText(message).then(() => {
         copyCombinedShareBtn.textContent = 'Copied!';
-        showToast('Copied to clipboard!', 'success');
+        showToast(tt('toast_copied'), 'success');
         setTimeout(() => {
             copyCombinedShareBtn.textContent = 'Copy Message';
         }, 2000);
@@ -6165,7 +6173,7 @@ function handleSaveSettings() {
         _specialNumbersCacheKey = null;
     }
 
-    showToast('Settings saved!', 'success');
+    showToast(tt('toast_settings_saved'), 'success');
 }
 
 function handleReset() {

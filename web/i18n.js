@@ -119,6 +119,88 @@ const I18N = (() => {
             // App update toast
             update_ready: 'A new version is ready.',
             update_refresh: 'Refresh',
+            // ── Onboarding wizard (extracted v91) ──
+            wiz_inspo_1: 'Luka just discovered he turned<br><strong>1,000,000,000 seconds</strong> last month.',
+            wiz_inspo_2: 'Sara and Maja have been friends for exactly<br><strong>10,000 days</strong> — that called for a celebration.',
+            wiz_what_about_you: 'What about you?',
+            wiz_show_me: 'Show me',
+            wiz_show_more_ms: 'Show me more milestones',
+            wiz_check_someone: 'Now check someone you care about',
+            wiz_someone_you_care: 'Someone you care about',
+            wiz_who_ph: 'Who?',
+            wiz_show_milestones: 'Show milestones',
+            wiz_check_together: 'Check what you share together',
+            wiz_share_milestone_with: 'Share a milestone with {name}',
+            wiz_add_more_btn: 'Add more people to {group}',
+            wiz_name_first_group: 'Name your first group',
+            wiz_name_new_team: 'Name your new team',
+            wiz_add_people_combined: 'Add people and see your combined milestones',
+            wiz_see_group_ms: 'See group milestones',
+            wiz_add_btn: '+ Add',
+            wiz_imagine_face: 'Imagine their face when you tell them',
+            wiz_your_combined: 'Your combined milestones',
+            wiz_belong_all: 'These milestones belong to all of you — get everyone together.',
+            wiz_more_milestones: 'More milestones',
+            wiz_more_together: 'More together milestones',
+            wiz_combined: 'combined',
+            wiz_who_else: 'Who else? Add another group',
+            wiz_who_else_sub: 'Friends · Colleagues · Family',
+            wiz_one_more_group: 'One more group',
+            wiz_go_dashboard: 'Go to my dashboard',
+            wiz_explore_tabs: 'Explore Solo · Together · Edit',
+            wiz_share: 'Share',
+            wiz_show_more_tpl: 'Show {count} more {noun} ▼',
+            wiz_show_more_short: 'Show {count} more ▼',
+            wiz_show_less: 'Show less ▲',
+            wiz_more_arrow: 'More ▼',
+            wiz_less_arrow: 'Less ▲',
+            wiz_today_excl: 'That’s today!',
+            wiz_this_week: 'That’s this week!',
+            wiz_coming_days: 'Coming in just {count} {noun}',
+            wiz_in_time: 'in {time}',
+            wiz_passed_ago: 'You passed this {time} ago',
+            wiz_was_yesterday: 'That was yesterday!',
+            wiz_upcoming_title: 'Your upcoming milestones',
+            wiz_calculating: 'Your milestones are being calculated',
+            wiz_dates_only_share: 'Dates only you and {name} share',
+            wiz_together_label: '{names} together',
+            wiz_days_combined: 'days combined',
+            wiz_units_combined: '{unit} combined',
+            // ── Dashboard (extracted v91) ──
+            dash_upcoming_tap: 'Upcoming · tap a milestone to share it',
+            dash_add_more_people: '+ Add more people',
+            dash_add_more_hint: 'More people = more milestones to celebrate together',
+            dash_enter_birthday: 'Enter a birthday to discover hidden milestones.',
+            dash_add_unlock: 'Add more people — each birthday unlocks new milestones here.',
+            // ── Together view (extracted v91) ──
+            tog_add_two: 'Add 2 or more people to discover combined milestones.',
+            tog_anniv_title: 'Anniversaries count too',
+            tog_anniv_body: 'Add your wedding day or the day you met — and see the numbers you share with it.',
+            tog_add_special: '+ Add a special date',
+            tog_another_circle: 'Got another circle?',
+            tog_another_body: 'Add a group for Friends, Colleagues, or another part of your life',
+            tog_new_group: '+ New group',
+            tog_new_group_hint: 'Family, friends, colleagues — see combined milestones',
+            ed_your_groups: 'Your Groups',
+            ed_tap_group_hint: 'Tap a group to edit — rename, add or remove members.',
+            ed_new_group_ph: 'New group title',
+            // ── Group editor (extracted v91) ──
+            ed_group_name: 'Group name',
+            ed_members_hint: 'Members — edit name or date directly',
+            ed_person_ph: 'Person or date',
+            ed_add_to: '+ Add to {group}',
+            ed_delete_group: 'Delete this group',
+            ed_back: '← Back',
+            ed_done: 'Done',
+            // ── Share text connectors (extracted v91) ──
+            share_on: 'on',
+            share_combined_on: 'combined on',
+            // ── Core toasts (extracted v91) ──
+            toast_added: '{name} added!',
+            toast_copied: 'Copied to clipboard!',
+            toast_settings_saved: 'Settings saved!',
+            toast_enter_name: 'Enter a name',
+            toast_enter_date: 'Enter a date',
             // Milestone descriptions
             turns_age: '{name} turns {value}!',
             is_old: '{name} will be {value} {unit} old',
@@ -1484,6 +1566,11 @@ const I18N = (() => {
             } else {
                 el.textContent = val;
             }
+        });
+        // Keys whose value contains markup (e.g. <strong>) — translations may
+        // only use the same tags as the English source (validated by tooling)
+        document.querySelectorAll('[data-i18n-html]').forEach(el => {
+            el.innerHTML = t(el.getAttribute('data-i18n-html'));
         });
 
         // Apply to data-i18n-placeholder

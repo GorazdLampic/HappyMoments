@@ -128,10 +128,10 @@
             <div class="wizard-step wizard-step-active" id="wizardStep1">
                 <div class="wizard-content wizard-content-centered">
                     <div class="wizard-inspiration">
-                        <p class="wizard-inspo-line">Luka just discovered he turned<br><strong>1,000,000,000 seconds</strong> last month.</p>
-                        <p class="wizard-inspo-line">Sara and Maja have been friends for exactly<br><strong>10,000 days</strong> &mdash; that called for a celebration.</p>
+                        <p class="wizard-inspo-line" data-i18n-html="wiz_inspo_1">Luka just discovered he turned<br><strong>1,000,000,000 seconds</strong> last month.</p>
+                        <p class="wizard-inspo-line" data-i18n-html="wiz_inspo_2">Sara and Maja have been friends for exactly<br><strong>10,000 days</strong> &mdash; that called for a celebration.</p>
                     </div>
-                    <p class="wizard-inspo-question">What about you?</p>
+                    <p class="wizard-inspo-question" data-i18n="wiz_what_about_you">What about you?</p>
                     <input type="hidden" id="birthName" value="Me">
                     <input type="hidden" id="birthDate">
                     <div class="wizard-date-fields wizard-date-large">
@@ -142,7 +142,7 @@
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="birthYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.6em;" oninput="syncDateFields(this)">
                     </div>
                 </div>
-                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscoverV5()">Show me</button>
+                <button id="startBtn" class="wizard-btn wizard-btn-discover" onclick="wizardDiscoverV5()" data-i18n="wiz_show_me">Show me</button>
             </div>
 
             <!-- Screen 2: YOUR Hero Reveal -->
@@ -151,7 +151,7 @@
                     <!-- Populated by wizardDiscoverV5() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShowMyMore()">Show me more milestones</button>
+                    <button class="wizard-btn" onclick="wizardShowMyMore()" data-i18n="wiz_show_more_ms">Show me more milestones</button>
                 </div>
             </div>
 
@@ -162,7 +162,7 @@
                     <!-- Populated by wizardShowMyMore() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardNext(4)">Now check someone you care about</button>
+                    <button class="wizard-btn" onclick="wizardNext(4)" data-i18n="wiz_check_someone">Now check someone you care about</button>
                 </div>
             </div>
 
@@ -170,8 +170,8 @@
             <div class="wizard-step" id="wizardStep4">
                 <button class="wizard-back" onclick="wizardNext(3)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
                 <div class="wizard-content">
-                    <h2 class="wizard-question">Someone you care about</h2>
-                    <input type="text" id="friendNameField" name="hm_f1" class="wizard-input" placeholder="Who?" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore style="margin-bottom:14px;" readonly onfocus="this.removeAttribute('readonly')">
+                    <h2 class="wizard-question" data-i18n="wiz_someone_you_care">Someone you care about</h2>
+                    <input type="text" id="friendNameField" name="hm_f1" class="wizard-input" placeholder="Who?" data-i18n-placeholder="wiz_who_ph" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore style="margin-bottom:14px;" readonly onfocus="this.removeAttribute('readonly')">
                     <div class="wizard-date-fields">
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="friendDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'friendMonth', 2)">
                         <span class="wizard-date-sep">/</span>
@@ -181,7 +181,7 @@
                     </div>
                     <input type="hidden" id="friendDate">
                 </div>
-                <button class="wizard-btn" onclick="wizardDiscoverFriendV2()" id="wizardShowTheirBtn">Show milestones</button>
+                <button class="wizard-btn" onclick="wizardDiscoverFriendV2()" id="wizardShowTheirBtn" data-i18n="wiz_show_milestones">Show milestones</button>
             </div>
 
             <!-- Screen 5: Their reveal + milestones (merged) -->
@@ -194,7 +194,7 @@
                     <!-- Milestones list populated by wizardDiscoverFriendV2() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShowCombinedAndName()">Check what you share together</button>
+                    <button class="wizard-btn" onclick="wizardShowCombinedAndName()" data-i18n="wiz_check_together">Check what you share together</button>
                 </div>
             </div>
 
@@ -219,7 +219,7 @@
                     </div>
                     <div id="groupAddForm" style="width:100%;">
                         <div style="display:flex;gap:6px;align-items:center;">
-                            <input type="text" id="groupPersonField" name="hm_f2" class="wizard-input" placeholder="Who?" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore style="flex:1;min-width:0;font-size:1.05rem;padding:12px 10px;" readonly onfocus="this.removeAttribute('readonly')">
+                            <input type="text" id="groupPersonField" name="hm_f2" class="wizard-input" placeholder="Who?" data-i18n-placeholder="wiz_who_ph" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore style="flex:1;min-width:0;font-size:1.05rem;padding:12px 10px;" readonly onfocus="this.removeAttribute('readonly')">
                             <div class="wizard-date-fields" style="flex:none;margin:0;gap:2px;">
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.1em;font-size:1.05rem;padding:12px 3px;">
                                 <span class="wizard-date-sep">/</span>
@@ -228,10 +228,10 @@
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupYear" placeholder="YYYY" maxlength="4" min="1900" max="2099" class="wizard-date-field" style="width:3.1em;font-size:1.05rem;padding:12px 3px;" oninput="wizardGroupAutoAdd()">
                             </div>
                         </div>
-                        <button class="wizard-btn-secondary" onclick="wizardAddGroupMember()" style="margin-top:10px;width:100%;">+ Add</button>
+                        <button class="wizard-btn-secondary" onclick="wizardAddGroupMember()" style="margin-top:10px;width:100%;" data-i18n="wiz_add_btn">+ Add</button>
                     </div>
                 </div>
-                <button class="wizard-btn" onclick="wizardShowGroupReveal()" id="groupContinueBtn" style="display:none;">See group milestones</button>
+                <button class="wizard-btn" onclick="wizardShowGroupReveal()" id="groupContinueBtn" style="display:none;" data-i18n="wiz_see_group_ms">See group milestones</button>
             </div>
 
             <!-- Screen 8: Group milestones + new group option -->
