@@ -132,6 +132,17 @@ async function run() {
         await page.waitForTimeout(600);
         await shot('group-editor');
 
+        await page.evaluate(() => closeGroupEditor());
+        await page.waitForTimeout(400);
+        await page.evaluate(() => toggleProfilePanel());
+        await page.waitForTimeout(600);
+        await page.evaluate(() => {
+            const adv = document.querySelector('button[onclick*="advancedSettings"]');
+            if (adv) adv.click();
+        });
+        await page.waitForTimeout(400);
+        await shot('settings-advanced');
+
         await ctx.close();
     }
 

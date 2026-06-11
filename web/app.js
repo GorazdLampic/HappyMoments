@@ -67,6 +67,21 @@ function plural(n, word) {
     return n === 1 ? word : word + 's';
 }
 
+// List rows: round giants read better (and shorter) as words — "850 million",
+// "2.66 billion". Pattern numbers (44,444,444) keep their digits: the digits
+// ARE the point. Heroes always keep full digits for the spectacle.
+function formatMilestoneValue(value, locale) {
+    if (value >= 1000000 && value % 100000 === 0) {
+        if (value >= 1000000000) {
+            const b = value / 1000000000;
+            return (Number.isInteger(b) ? b : parseFloat(b.toFixed(2))).toLocaleString(locale) + ' billion';
+        }
+        const mm = value / 1000000;
+        return (Number.isInteger(mm) ? mm : parseFloat(mm.toFixed(1))).toLocaleString(locale) + ' million';
+    }
+    return value.toLocaleString(locale);
+}
+
 // Auto-add a member once name + a complete valid date are entered —
 // no need to tap "+ Add". Validation is silent (no error toasts mid-typing);
 // a wrong-but-valid date can still be edited or removed in the member list.
@@ -1873,7 +1888,7 @@ function wizardShowMyMore() {
 
     function renderMsRow(m) {
         const dateStr = formatMilestoneDate(m.date);
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         return wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, 'Me', isBig ? 'wizard-milestone-star' : '');
     }
@@ -1926,7 +1941,7 @@ function wizardShowTheirMore() {
     let html = `<h2 class="wizard-question">${escapeHtml(friendEvent.name)}'s milestones</h2>`;
     html += '<div class="wizard-milestone-list">';
     upcoming.forEach(m => {
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
         const dateStr = formatMilestoneDate(m.date);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         html += wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, friendEvent.name, isBig ? 'wizard-milestone-star' : '');
@@ -2312,14 +2327,14 @@ function wizardDiscoverFriendV2() {
         let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
         html += '<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More milestones</div>';
         upcoming.slice(0, TOP5).forEach(m => {
-            const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
+            const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
             const ds = formatMilestoneDate(m.date);
             html += wizardMilestoneRow(displayText, ds, name);
         });
         if (upcoming.length > TOP5) {
             html += `<div id="friendMoreExtra" style="display:none;">`;
             upcoming.slice(TOP5).forEach(m => {
-                const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString(locale) + ' ' + m.unitName);
+                const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
                 const ds = formatMilestoneDate(m.date);
                 html += wizardMilestoneRow(displayText, ds, name);
             });
@@ -2422,12 +2437,12 @@ function wizardShowCombinedAndName() {
     const TOP6 = 3;
     let moreCombinedHtml = '';
     combinedList.slice(0, TOP6).forEach(m => {
-        const displayText = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        const displayText = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
         moreCombinedHtml += wizardMilestoneRow(displayText, formatMilestoneDate(m.date), namesStr);
     });
     let extraCombinedHtml = '';
     combinedList.slice(TOP6).forEach(m => {
-        const displayText = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        const displayText = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
         extraCombinedHtml += wizardMilestoneRow(displayText, formatMilestoneDate(m.date), namesStr);
     });
 
@@ -2655,7 +2670,7 @@ function wizardShowGroupReveal() {
             const top = sorted.slice(0, 3);
             const rest = sorted.slice(3);
             top.forEach(m => {
-                const val = m.value.toLocaleString(locale);
+                const val = formatMilestoneValue(m.value, locale);
                 const unit = m.unitName || m.unit || '';
                 individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
             });
@@ -2663,7 +2678,7 @@ function wizardShowGroupReveal() {
                 const uid = 'phase1more_' + e.id.replace(/[^a-z0-9]/gi, '');
                 individualHtml += `<div id="${uid}" style="display:none;">`;
                 rest.forEach(m => {
-                    const val = m.value.toLocaleString(locale);
+                    const val = formatMilestoneValue(m.value, locale);
                     const unit = m.unitName || m.unit || '';
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
                 });
@@ -2673,14 +2688,14 @@ function wizardShowGroupReveal() {
         } else {
             // Multiple new members: show 1 best each + expand per person
             const best = sorted[0];
-            const val = best.value.toLocaleString(locale);
+            const val = formatMilestoneValue(best.value, locale);
             const unit = best.unitName || best.unit || '';
             individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(best.date), e.name);
             if (sorted.length > 1) {
                 const uid = 'phase1more_' + e.id.replace(/[^a-z0-9]/gi, '');
                 individualHtml += `<div id="${uid}" style="display:none;">`;
                 sorted.slice(1, 8).forEach(m => {
-                    const val2 = m.value.toLocaleString(locale);
+                    const val2 = formatMilestoneValue(m.value, locale);
                     const unit2 = m.unitName || m.unit || '';
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val2 + ' ' + unit2, formatMilestoneDate(m.date), e.name);
                 });
@@ -2773,12 +2788,12 @@ function wizardShowTeamMilestones() {
     });
     let combinedHtml = '';
     rows.slice(0, 3).forEach(m => {
-        const dt = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        const dt = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
         combinedHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
     });
     let combinedExtraHtml = '';
     rows.slice(3).forEach(m => {
-        const dt = m.value.toLocaleString(locale) + ' ' + (m.unitName || m.unit);
+        const dt = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
         combinedExtraHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
     });
 
@@ -2877,7 +2892,7 @@ function wizardBuildShareScreen() {
         let best = sorted[0];
         if (!best && ms.length > 0) best = ms.filter(m => m.timeUntil > 0)[0];
         if (best) {
-            const val = best.value.toLocaleString(locale);
+            const val = formatMilestoneValue(best.value, locale);
             const unit = best.unitName || best.unit || '';
             const ds = formatMilestoneDate(best.date);
             const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
@@ -2885,7 +2900,7 @@ function wizardBuildShareScreen() {
             // More milestones for this person — each row shareable
             let moreRows = '';
             sorted.slice(1, 4).forEach(m => {
-                const v2 = m.value.toLocaleString(locale);
+                const v2 = formatMilestoneValue(m.value, locale);
                 const u2 = m.unitName || m.unit || '';
                 const ds2 = formatMilestoneDate(m.date);
                 const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? happymoments.app';
@@ -4421,7 +4436,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = m.value.toLocaleString(locale) + ' ' + m.unitName;
+                displayText = formatMilestoneValue(m.value, locale) + ' ' + m.unitName;
             }
             const mYear = m.date.getFullYear();
             const showYear = mYear !== thisYear;
@@ -4473,7 +4488,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = m.value.toLocaleString(locale) + ' ' + m.unitName;
+                displayText = formatMilestoneValue(m.value, locale) + ' ' + m.unitName;
             }
             const mYear = m.date.getFullYear();
             const showYear = mYear !== thisYear;

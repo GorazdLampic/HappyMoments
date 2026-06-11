@@ -2600,9 +2600,19 @@ body {
     display: flex;
 }
 
+/* The step itself only fades — a transform here would turn the position:fixed
+   back arrow into a child of the animated box and make it visibly jump when
+   the animation ends. The slide lives on .wizard-content instead. */
 @keyframes wizardFadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.wizard-step-active .wizard-content {
+    animation: wizardSlideIn 0.4s ease;
+}
+@keyframes wizardSlideIn {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
 }
 
 .wizard-content {
@@ -2747,7 +2757,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 16px;
+    gap: 6px;
+    padding: 14px 10px;
     border-bottom: 1px solid var(--border);
     font-family: var(--font-serif);
     font-size: 1.15rem;
@@ -2756,6 +2767,13 @@ body {
     transition: background 0.2s, border-left 0.2s;
     border-left: 3px solid transparent;
 }
+/* Long values trim inside the row (ellipsis) instead of being cut by the screen edge */
+.wizard-milestone-row .wizard-milestone-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.wizard-milestone-row .wizard-milestone-date { flex-shrink: 0; }
 .wizard-milestone-row:active {
     background: rgba(212, 184, 118, 0.1);
 }
