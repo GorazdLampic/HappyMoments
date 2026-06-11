@@ -1416,6 +1416,41 @@ const I18N = (() => {
         return strings[key] || TRANSLATIONS.en[key] || key;
     }
 
+    // ── Locale-aware plurals ──────────────────────────────────────────
+    // CLDR plural categories via Intl.PluralRules (built into browsers):
+    // Slovenian has one/two/few/other, Russian/Polish one/few/many, etc.
+    // Tables for non-EN locales are filled by the translation pipeline;
+    // missing entries fall back to the English table, then to naive +s.
+    const LOCALE_TAGS = {
+        en: 'en', es: 'es', de: 'de', pt: 'pt-PT', pt_BR: 'pt-BR', it: 'it',
+        fr: 'fr', hr: 'hr', sl: 'sl', nl: 'nl', pl: 'pl', ru: 'ru', zh: 'zh',
+        hi: 'hi', ar: 'ar', bn: 'bn', ja: 'ja', vi: 'vi', id: 'id', th: 'th', ko: 'ko'
+    };
+
+    const PLURALS = {
+        en: {
+            day:       { one: 'day', other: 'days' },
+            week:      { one: 'week', other: 'weeks' },
+            month:     { one: 'month', other: 'months' },
+            year:      { one: 'year', other: 'years' },
+            hour:      { one: 'hour', other: 'hours' },
+            minute:    { one: 'minute', other: 'minutes' },
+            second:    { one: 'second', other: 'seconds' },
+            milestone: { one: 'milestone', other: 'milestones' },
+            person:    { one: 'person', other: 'people' },
+            group:     { one: 'group', other: 'groups' },
+            member:    { one: 'member', other: 'members' }
+        }
+    };
+
+    function plural(n, noun) {
+        const table = (PLURALS[currentLocale] && PLURALS[currentLocale][noun]) || PLURALS.en[noun];
+        if (!table) return n === 1 ? noun : noun + 's';
+        let cat = 'other';
+        try { cat = new Intl.PluralRules(LOCALE_TAGS[currentLocale] || 'en').select(n); } catch (e) {}
+        return table[cat] || table.other || table.one || noun;
+    }
+
     function detectLocale() {
         // 1. Check saved preference
         const saved = localStorage.getItem('happymoments_locale');
@@ -1466,11 +1501,14 @@ const I18N = (() => {
         setLocale,
         getLocale,
         t,
+        plural,
         detectLocale,
         init,
         SUPPORTED_LOCALES,
         LOCALE_NAMES,
-        applyTranslations
+        applyTranslations,
+        TRANSLATIONS,   // exposed for tooling (i18n-check) — not for app use
+        PLURALS
     };
 })();
 

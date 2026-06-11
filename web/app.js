@@ -63,8 +63,10 @@ function autoAdvance(field, nextFieldId, maxLen) {
     syncDateFields(field);
 }
 
-// Singular/plural for count-based UI strings ("1 milestone" / "5 milestones")
+// Singular/plural for count-based UI strings — locale-aware via I18N
+// (Slovenian: 1 dan / 2 dneva / 3 dnevi / 5 dni; Russian/Polish 3 forms; etc.)
 function plural(n, word) {
+    if (typeof I18N !== 'undefined' && I18N.plural) return I18N.plural(n, word);
     return n === 1 ? word : word + 's';
 }
 

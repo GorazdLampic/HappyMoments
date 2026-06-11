@@ -28,10 +28,17 @@ function serve() {
     });
 }
 
-const VIEWPORTS = [
-    { name: 'iphone-390x844', width: 390, height: 844 },
-    { name: 'android-360x800', width: 360, height: 800 },
-];
+// --lang=de,sl,ru runs the tour per language at a single viewport (360x800),
+// writing to screenshots/audit/lang-<code>/ — for translation fit review
+const LANG_ARG = (process.argv.find(a => a.startsWith('--lang=')) || '').replace('--lang=', '');
+const LANGS = LANG_ARG ? LANG_ARG.split(',').filter(Boolean) : [null];
+
+const VIEWPORTS = LANG_ARG
+    ? [{ name: 'android-360x800', width: 360, height: 800 }]
+    : [
+        { name: 'iphone-390x844', width: 390, height: 844 },
+        { name: 'android-360x800', width: 360, height: 800 },
+    ];
 
 async function fillField(page, sel, value) {
     await page.click(sel);                    // removes readonly via onfocus
@@ -43,8 +50,9 @@ async function run() {
     const browser = await chromium.launch();
     const report = [];
 
+    for (const lang of LANGS) {
     for (const vp of VIEWPORTS) {
-        const dir = path.join(OUT, vp.name);
+        const dir = path.join(OUT, lang ? 'lang-' + lang : vp.name);
         fs.mkdirSync(dir, { recursive: true });
         const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
         const page = await ctx.newPage();
@@ -64,7 +72,10 @@ async function run() {
         }
 
         await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' });
-        await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+        await page.evaluate((l) => {
+            localStorage.clear(); sessionStorage.clear();
+            if (l) localStorage.setItem('happymoments_locale', l);
+        }, lang);
         await page.reload({ waitUntil: 'networkidle' });
         await page.waitForTimeout(800);
 
@@ -144,6 +155,7 @@ async function run() {
         await shot('settings-advanced');
 
         await ctx.close();
+    }
     }
 
     await browser.close();
