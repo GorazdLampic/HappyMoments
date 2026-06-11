@@ -73,7 +73,7 @@ const I18N = (() => {
             export_data: 'Export Data',
             import_data: 'Import Data',
             // Settings
-            number_patterns: 'Number Patterns',
+            number_patterns: 'Happy number types',
             round_numbers: 'Round Numbers (1000, 5000...)',
             repdigits: 'Repdigits (111, 2222...)',
             alternating: 'Alternating (1212, 737373...)',

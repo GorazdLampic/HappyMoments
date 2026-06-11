@@ -829,6 +829,15 @@ function setupEventListeners() {
         cb.addEventListener('change', handleComboTypeChange);
     });
 
+    // Happy number types — auto-save on toggle (the old Save button is hidden,
+    // so without this the checkboxes silently did nothing)
+    document.querySelectorAll('[data-pattern], [data-constant]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            handleSaveSettings();
+            renderMilestonesTab();
+        });
+    });
+
     // Individual Milestones tab — every lookup guarded: a single missing element
     // here used to throw and silently kill ALL listener setup below (export,
     // import, settings, calendar) — found by the screenshot-tour page-error check

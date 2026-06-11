@@ -39,11 +39,11 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Firebase Auth SDK (compat, for vanilla JS) — defer so page renders even if gstatic blocked -->
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq9gb5z8"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq9gb5z8"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js?v=mq9h81jk"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js?v=mq9h81jk"></script>
 
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
-    <link rel="stylesheet" href="styles.css?v=mq9gb5z8">
+    <link rel="stylesheet" href="styles.css?v=mq9h81jk">
 </head>
 <body>
     <div id="app">
@@ -431,12 +431,12 @@
                 </div>
             </div>
 
-            <!-- Advanced settings — collapsed by default -->
+            <!-- Happy number types — visible directly, toggles auto-save -->
             <div style="padding:8px 16px;">
-                <button onclick="document.getElementById('advancedSettings').classList.toggle('hidden');this.textContent=document.getElementById('advancedSettings').classList.contains('hidden')?'Advanced settings \u25BC':'Advanced settings \u25B2';" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.8rem;width:100%;text-align:center;padding:8px;">Advanced settings &#9660;</button>
-                <div id="advancedSettings" class="hidden">
+                <div id="advancedSettings">
                     <div class="card" style="margin-top:8px;">
-                        <h3 data-i18n="number_patterns" style="font-size:0.9rem;">Number Patterns</h3>
+                        <h3 data-i18n="number_patterns" style="font-size:0.95rem;">Happy number types</h3>
+                        <p class="card-description" style="font-size:0.82rem;">Choose which kinds of special numbers count as milestones.</p>
                         <div class="pattern-options">
                             <label class="pattern-option"><input type="checkbox" data-pattern="powers" checked><span data-i18n="round_numbers">Round Numbers (1000, 5000...)</span></label>
                             <label class="pattern-option"><input type="checkbox" data-pattern="repdigits" checked><span data-i18n="repdigits">Repdigits (111, 2222...)</span></label>
@@ -535,7 +535,7 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">HappyMoments &copy; 2026</span>
-            <div class="app-version" id="appVersion">Build: v86 &middot; 2026-06-11 12:05 UTC</div>
+            <div class="app-version" id="appVersion">Build: v87 &middot; 2026-06-11 12:31 UTC</div>
         </footer>
 
         <!-- Auth Modal -->
@@ -645,20 +645,20 @@
         </div>
     </div>
 
-    <script defer src="notifications.js?v=mq9gb5z8"></script>
-    <script defer src="historyFacts.js?v=mq9gb5z8"></script>
-    <script defer src="i18n.js?v=mq9gb5z8"></script>
-    <script defer src="specialNumbers.js?v=mq9gb5z8"></script>
-    <script defer src="milestoneCalculator.js?v=mq9gb5z8"></script>
-    <script defer src="combinations.js?v=mq9gb5z8"></script>
-    <script defer src="shareMessages.js?v=mq9gb5z8"></script>
-    <script defer src="giftStore.js?v=mq9gb5z8"></script>
-    <script defer src="dataProtection.js?v=mq9gb5z8"></script>
-    <script defer src="imageCard.js?v=mq9gb5z8"></script>
-    <script defer src="checkout.js?v=mq9gb5z8"></script>
-    <script defer src="analytics.js?v=mq9gb5z8"></script>
-    <script defer src="auth.js?v=mq9gb5z8"></script>
-    <script defer src="app.js?v=mq9gb5z8"></script>
+    <script defer src="notifications.js?v=mq9h81jk"></script>
+    <script defer src="historyFacts.js?v=mq9h81jk"></script>
+    <script defer src="i18n.js?v=mq9h81jk"></script>
+    <script defer src="specialNumbers.js?v=mq9h81jk"></script>
+    <script defer src="milestoneCalculator.js?v=mq9h81jk"></script>
+    <script defer src="combinations.js?v=mq9h81jk"></script>
+    <script defer src="shareMessages.js?v=mq9h81jk"></script>
+    <script defer src="giftStore.js?v=mq9h81jk"></script>
+    <script defer src="dataProtection.js?v=mq9h81jk"></script>
+    <script defer src="imageCard.js?v=mq9h81jk"></script>
+    <script defer src="checkout.js?v=mq9h81jk"></script>
+    <script defer src="analytics.js?v=mq9h81jk"></script>
+    <script defer src="auth.js?v=mq9h81jk"></script>
+    <script defer src="app.js?v=mq9h81jk"></script>
 
     <!-- Non-blocking Google Fonts loader — enhances typography when available, silent fail in China -->
     <script>

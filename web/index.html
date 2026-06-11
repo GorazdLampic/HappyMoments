@@ -431,12 +431,12 @@
                 </div>
             </div>
 
-            <!-- Advanced settings — collapsed by default -->
+            <!-- Happy number types — visible directly, toggles auto-save -->
             <div style="padding:8px 16px;">
-                <button onclick="document.getElementById('advancedSettings').classList.toggle('hidden');this.textContent=document.getElementById('advancedSettings').classList.contains('hidden')?'Advanced settings \u25BC':'Advanced settings \u25B2';" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.8rem;width:100%;text-align:center;padding:8px;">Advanced settings &#9660;</button>
-                <div id="advancedSettings" class="hidden">
+                <div id="advancedSettings">
                     <div class="card" style="margin-top:8px;">
-                        <h3 data-i18n="number_patterns" style="font-size:0.9rem;">Number Patterns</h3>
+                        <h3 data-i18n="number_patterns" style="font-size:0.95rem;">Happy number types</h3>
+                        <p class="card-description" style="font-size:0.82rem;">Choose which kinds of special numbers count as milestones.</p>
                         <div class="pattern-options">
                             <label class="pattern-option"><input type="checkbox" data-pattern="powers" checked><span data-i18n="round_numbers">Round Numbers (1000, 5000...)</span></label>
                             <label class="pattern-option"><input type="checkbox" data-pattern="repdigits" checked><span data-i18n="repdigits">Repdigits (111, 2222...)</span></label>
