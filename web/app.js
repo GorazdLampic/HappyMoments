@@ -306,9 +306,8 @@ function init() {
     const isReturningUser = appData.events.length > 0 || localStorage.getItem('hm_onboarded');
 
     if (isNewUser) {
-        // New user: hide header + tabs + all tab content, show onboarding wizard
-        const header = document.getElementById('appHeader');
-        if (header) header.style.display = 'none';
+        // New user: header STAYS visible during onboarding (brand + profile icon
+        // from the first moment); only tabs + tab content are hidden
         tabNav.classList.add('hidden');
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         const profilePanel = document.getElementById('profilePanel');
@@ -1486,15 +1485,28 @@ function validateDateFields(dateStr) {
 let _wizardSelectedRow = null;
 let _wizardSelectedMsg = '';
 
+// Bold north-east arrow \u2014 the app-wide "share" mark
+function _shareArrowSvg(size) {
+    const s = size || 15;
+    return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="18" x2="18" y2="6"/><polyline points="9 6 18 6 18 15"/></svg>';
+}
+
+// Visible share chip for hero milestones
+function wizardHeroShareChip(shareText) {
+    const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return `<button class="hero-share-chip" onclick="event.stopPropagation();wizardSelectMsRow('','${safeMsg}')">Share ${_shareArrowSvg(15)}</button>`;
+}
+
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
     const shareText = (personName ? personName + ': ' : '') + displayText + ' on ' + dateStr + ' \u2014 happymoments.app';
     const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    // Tapping a row shares it directly \u2014 the share affordance lives ON the
-    // milestone (no big share buttons, no floating bubble)
+    // Tapping a row shares it directly. During onboarding the affordance is
+    // labelled ("Share" + arrow) to teach the gesture; the dashboard uses the
+    // arrow alone once the user has learned it.
     return `<div class="wizard-milestone-row ${extraClass || ''}" onclick="wizardSelectMsRow('','${safeMsg}')" style="cursor:pointer;">
         <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
         <span class="wizard-milestone-date">${dateStr}</span>
-        <span class="ms-share-icon" title="Share">\u2197</span>
+        <span class="row-share">Share ${_shareArrowSvg(14)}</span>
     </div>`;
 }
 
@@ -1741,6 +1753,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         }
 
         // Build reveal HTML — clean, spacious, large type
+        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + m.unitName)) + ' on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
         if (m.isCosmic) {
             // Cosmic: show description as text (no animated number)
             revealEl.innerHTML = `
@@ -1748,6 +1761,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     <div class="wizard-reveal-number" id="${revealElId}Number" style="font-size:1.4rem;">${escapeHtml(m.description)}</div>
                 </div>
                 <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                ${wizardHeroShareChip(heroShareMsg)}
             `;
         } else {
             revealEl.innerHTML = `
@@ -1757,6 +1771,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 </div>
                 <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
                 <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                ${wizardHeroShareChip(heroShareMsg)}
             `;
         }
 
@@ -1959,6 +1974,7 @@ function wizardShowCombined(isRefresh) {
             </div>
             <div class="wizard-reveal-unit">days combined</div>
             <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
+            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — happymoments.app')}
         `;
     } else {
         el.innerHTML = `
@@ -2422,6 +2438,7 @@ function wizardShowCombinedAndName() {
         </div>
         <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
         <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
+        ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? (hero.unitName || hero.unit) : 'days') + ' combined on ' + dateDisplay + ' — happymoments.app')}
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your first group</div>
@@ -2629,7 +2646,7 @@ function wizardShowGroupReveal() {
     newMembers.forEach(e => {
         const d = e.date instanceof Date ? e.date : new Date(e.date);
         const ms = typeof findAllUpcomingMilestones === 'function'
-            ? findAllUpcomingMilestones(d, 8, 365, appSettings || {}) : [];
+            ? findAllUpcomingMilestones(d, 20, 730, appSettings || {}) : [];
         const sorted = _sortMs(ms);
         if (sorted.length === 0) return;
 
@@ -2662,7 +2679,7 @@ function wizardShowGroupReveal() {
             if (sorted.length > 1) {
                 const uid = 'phase1more_' + e.id.replace(/[^a-z0-9]/gi, '');
                 individualHtml += `<div id="${uid}" style="display:none;">`;
-                sorted.slice(1, 4).forEach(m => {
+                sorted.slice(1, 8).forEach(m => {
                     const val2 = m.value.toLocaleString(locale);
                     const unit2 = m.unitName || m.unit || '';
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val2 + ' ' + unit2, formatMilestoneDate(m.date), e.name);
@@ -2774,6 +2791,7 @@ function wizardShowTeamMilestones() {
             </div>
             <div class="wizard-reveal-unit" style="font-size:1.3rem;margin-bottom:8px;">${hero.unitName || hero.unit} combined</div>
             <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:4px;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} ${plural(Math.ceil(hero.timeUntil / (24*60*60*1000)), 'day')}</span></div>
+            <button class="hero-share-chip">Share ${_shareArrowSvg(15)}</button>
             </div>
         ` : ''}
         ${combinedHtml ? `<div style="margin-top:10px;border-top:1px solid var(--border,#333);padding-top:8px;"><div class="wizard-milestone-list">${combinedHtml}</div>${combinedExtraHtml ? `<div id="wizTeamExtra8" style="display:none;" class="wizard-milestone-list">${combinedExtraHtml}</div><div id="wizTeamToggle8" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizTeamExtra8'),b=document.getElementById('wizTeamToggle8');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rows.length - 3} more \\u25BC';}">Show ${rows.length - 3} more ▼</div>` : ''}</div>` : ''}
@@ -2820,7 +2838,7 @@ function wizardShowTeamMilestones() {
             dashboardBtn8.style.display = '';
             dashboardBtn8.classList.add('wizard-btn-secondary');
             dashboardBtn8.classList.remove('wizard-btn');
-            dashboardBtn8.textContent = 'Go to my dashboard';
+            dashboardBtn8.innerHTML = 'Go to my dashboard<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:0.88rem;opacity:0.85;">Explore Solo &middot; Together &middot; Edit</span>';
         } else {
             dashboardBtn8.style.display = 'none';
         }
@@ -3083,8 +3101,6 @@ function showOnboardingResumeBanner() {
         // Re-enter onboarding at the saved step
         onboardingSection.classList.remove('hidden');
         tabNav.classList.add('hidden');
-        const header = document.getElementById('appHeader');
-        if (header) header.style.display = 'none';
         wizardNext(parseInt(resumeStep, 10));
     };
 
@@ -4427,7 +4443,7 @@ function renderHomeScreen() {
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>
-                <span class="tc-share" title="Share">\u2197</span>
+                <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
             </div>`;
         });
         if (items.length > maxShow) {
@@ -4479,7 +4495,7 @@ function renderHomeScreen() {
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>
-                <span class="tc-share" title="Share">\u2197</span>
+                <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
             </div>`;
         }
 
@@ -4498,7 +4514,7 @@ function renderHomeScreen() {
         }
         const rest = merged.filter(m => !top.includes(m));
 
-        html += '<div class="time-chunk-label">Upcoming</div>';
+        html += '<div class="time-chunk-label">Upcoming &middot; tap a milestone to share it</div>';
         top.forEach((m, i) => { html += renderItem(m, i); });
 
         if (rest.length > 0) {
