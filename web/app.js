@@ -1098,7 +1098,7 @@ function openGroupEditor(setId) {
     let html = `
         <div style="margin-bottom:16px;">
             <label style="font-size:0.8rem;color:var(--text-muted);display:block;margin-bottom:4px;">Group name</label>
-            <input type="text" id="editorGroupTitle" value="${escapeHtml(currentSet.name)}" readonly onfocus="this.removeAttribute('readonly')" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1.2rem;font-weight:600;text-align:center;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+            <input type="text" id="editorGroupTitle" name="hm_f5" value="${escapeHtml(currentSet.name)}" readonly onfocus="this.removeAttribute('readonly')" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1.2rem;font-weight:600;text-align:center;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
         <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">Members — edit name or date directly</div>
     `;
@@ -1110,7 +1110,7 @@ function openGroupEditor(setId) {
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const yyyy = d.getFullYear();
         html += `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
             <input type="text" inputmode="numeric" value="${dd}" onchange="editorUpdateMemberDate('${e.id}','d',this.value)" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
             <input type="text" inputmode="numeric" value="${mm}" onchange="editorUpdateMemberDate('${e.id}','m',this.value)" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
@@ -1124,7 +1124,7 @@ function openGroupEditor(setId) {
     html += `
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#333);">
             <div style="display:flex;gap:8px;align-items:center;">
-                <input type="text" id="editorPersonField" placeholder="Name or date" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);" autocomplete="off" data-lpignore="true" data-1p-ignore>
+                <input type="text" id="editorPersonField" name="hm_f4" placeholder="Person or date" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
                 <div style="display:flex;gap:4px;align-items:center;">
                     <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorMonth',2)">
                     <span style="color:var(--text-muted);">/</span>
@@ -1489,50 +1489,28 @@ let _wizardSelectedMsg = '';
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
     const shareText = (personName ? personName + ': ' : '') + displayText + ' on ' + dateStr + ' \u2014 happymoments.app';
     const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    const rowId = 'wmsRow' + (Math.random() * 99999 | 0);
-    return `<div class="wizard-milestone-row ${extraClass || ''}" id="${rowId}" onclick="wizardSelectMsRow('${rowId}','${safeMsg}')" style="cursor:pointer;">
+    // Tapping a row shares it directly \u2014 the share affordance lives ON the
+    // milestone (no big share buttons, no floating bubble)
+    return `<div class="wizard-milestone-row ${extraClass || ''}" onclick="wizardSelectMsRow('','${safeMsg}')" style="cursor:pointer;">
         <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
         <span class="wizard-milestone-date">${dateStr}</span>
+        <span class="ms-share-icon" title="Share">\u2197</span>
     </div>`;
 }
 
+// Row tapped -> straight to the native share sheet.
+// (Kept the old two-arg signature \u2014 the 8.2 hero onclick also calls this.)
 function wizardSelectMsRow(rowId, msg) {
-    // Deselect previous
-    if (_wizardSelectedRow) {
-        const prev = document.getElementById(_wizardSelectedRow);
-        if (prev) prev.classList.remove('ms-selected');
-    }
-    // Select new
-    _wizardSelectedRow = rowId;
-    _wizardSelectedMsg = msg;
-    const row = document.getElementById(rowId);
-    if (row) row.classList.add('ms-selected');
-
-    // Show floating share bubble
-    showWizardShareBubble(msg);
-}
-
-function showWizardShareBubble(msg) {
-    let bubble = document.getElementById('wizardShareBubble');
-    if (!bubble) {
-        bubble = document.createElement('div');
-        bubble.id = 'wizardShareBubble';
-        bubble.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--warning,#d4b876);color:#1a1a1a;padding:12px 20px;border-radius:24px;font-weight:600;font-size:0.9rem;box-shadow:0 4px 16px rgba(0,0,0,0.3);cursor:pointer;white-space:nowrap;transition:opacity 0.3s;';
-        document.body.appendChild(bubble);
-    }
-    bubble.textContent = 'Share \u2192';
-    bubble.onclick = function() {
-        showSharePreview(msg);
-        bubble.style.opacity = '0';
-        setTimeout(() => { if (bubble.parentNode) bubble.remove(); _wizardSelectedRow = null; }, 300);
-    };
-    bubble.style.opacity = '1';
+    showSharePreview(msg);
 }
 
 
 // Helper: ensure clean wizard state (hide all non-wizard content)
 function _wizardEnsureClean() {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    // Legacy floating share bubble — remove if a stale one is still around
+    const bubble = document.getElementById('wizardShareBubble');
+    if (bubble) bubble.remove();
     const profilePanel = document.getElementById('profilePanel');
     if (profilePanel) profilePanel.classList.add('hidden');
     const footer = document.querySelector('.app-footer');
@@ -2340,8 +2318,7 @@ function wizardDiscoverFriendV2() {
     if (friendEvent) _wizardRevealedIds.add(friendEvent.id);
 
     window._wizardFriendName = name;
-    const shareBtn = document.getElementById('wizardShareFriendBtn');
-    if (shareBtn) shareBtn.textContent = 'Share a milestone with ' + name;
+    // Big share button removed — milestone rows share directly per row
 
     _track('onboard_add_person', { event_count: appData.events.length });
 
@@ -2448,7 +2425,7 @@ function wizardShowCombinedAndName() {
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your first group</div>
-            <input type="text" id="groupTitleInput" class="wizard-input" value="" placeholder="${escapeHtml(suggestedName)}" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+            <input type="text" id="groupTitleInput" name="hm_f6" class="wizard-input" value="" placeholder="${escapeHtml(suggestedName)}" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
         </div>
     `;
 
@@ -2502,7 +2479,7 @@ function wizardRenderGroupMembers() {
         const yyyy = d.getFullYear();
         // Editable rows \u2014 name and date can be corrected in place
         html += `<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <input type="text" value="${escapeHtml(m.name)}" onchange="wizardEditMember('${m.id}','name',this.value)" autocomplete="off" data-lpignore="true" data-1p-ignore readonly style="flex:1;min-width:0;padding:5px 8px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text);font-size:0.95rem;" onfocus="this.removeAttribute('readonly');this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <input type="text" value="${escapeHtml(m.name)}" onchange="wizardEditMember('${m.id}','name',this.value)" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore readonly style="flex:1;min-width:0;padding:5px 8px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text);font-size:0.95rem;" onfocus="this.removeAttribute('readonly');this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             <input type="text" inputmode="numeric" value="${dd}" onchange="wizardEditMemberDate('${m.id}','d',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
             <input type="text" inputmode="numeric" value="${mm}" onchange="wizardEditMemberDate('${m.id}','m',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
@@ -2715,7 +2692,7 @@ function wizardShowGroupReveal() {
     if (shareBtn8) {
         shareBtn8.classList.add('wizard-btn');
         shareBtn8.classList.remove('wizard-btn-secondary');
-        shareBtn8.textContent = 'Your combined milestones →';
+        shareBtn8.textContent = 'Your combined milestones';
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
@@ -2805,31 +2782,48 @@ function wizardShowTeamMilestones() {
     // Restore buttons for Phase 2 \u2014 the forward action is ALWAYS the single
     // primary (gold) button; no post-share class swapping (removed: it left
     // inverted button styles on every later visit to this screen)
+    // Stage-dependent CTA stack (one template, journey-aware):
+    // first group  -> the job is converting one group into two: primary = add another group
+    // later groups -> the job is handing over to the app: primary = dashboard.
+    // Milestones are shared per-row now; the big share button is gone.
     const shareBtn8 = document.getElementById('wizardShareBtn8');
+    const isFirstGroup = allSets.length <= 1;
     if (shareBtn8) {
         shareBtn8.classList.add('wizard-btn');
         shareBtn8.classList.remove('wizard-btn-secondary');
-        shareBtn8.textContent = 'Share with your group \u2192';
-        shareBtn8.onclick = function() {
-            wizardBuildShareScreen();
-        };
+        if (isFirstGroup) {
+            shareBtn8.innerHTML = 'Who else? Add another group<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:1.05rem;">Friends &middot; Colleagues &middot; Family</span>';
+            shareBtn8.onclick = function() { wizardCreateAnotherGroup(); };
+        } else {
+            shareBtn8.innerHTML = 'Go to my dashboard<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;font-size:1.05rem;">Explore Solo &middot; Together &middot; Edit</span>';
+            shareBtn8.onclick = function() { wizardFinish(); };
+        }
     }
 
-    // Show "Who else?" button in Phase 2 (always secondary)
+    // "One more group" only AFTER the first group (the primary covers it before)
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
     if (createAnotherBtn) {
-        createAnotherBtn.style.display = '';
-        createAnotherBtn.classList.add('wizard-btn-secondary');
-        createAnotherBtn.classList.remove('wizard-btn');
+        if (isFirstGroup) {
+            createAnotherBtn.style.display = 'none';
+        } else {
+            createAnotherBtn.style.display = '';
+            createAnotherBtn.classList.add('wizard-btn-secondary');
+            createAnotherBtn.classList.remove('wizard-btn');
+            createAnotherBtn.textContent = 'One more group';
+        }
     }
-    // Dashboard exit available from Phase 2 on (not Phase 1 — too early),
-    // always secondary, same two-line content as Screen 9
+    // Quiet dashboard exit on the FIRST pass only — the door is never locked,
+    // but it doesn't compete with the primary. Later passes have it as primary.
     const dashboardBtn8 = document.getElementById('wizardDashboardBtn8');
     if (dashboardBtn8) {
-        dashboardBtn8.style.display = '';
-        dashboardBtn8.classList.add('wizard-btn-secondary');
-        dashboardBtn8.classList.remove('wizard-btn');
-        dashboardBtn8.innerHTML = 'Go to my dashboard →<span style="display:block;font-weight:400;margin-top:2px;white-space:nowrap;">Explore Solo &middot; Together &middot; Edit</span>';
+        if (isFirstGroup) {
+            dashboardBtn8.style.display = '';
+            dashboardBtn8.classList.add('wizard-btn-secondary');
+            dashboardBtn8.classList.remove('wizard-btn');
+            dashboardBtn8.textContent = 'Go to my dashboard';
+        } else {
+            dashboardBtn8.style.display = 'none';
+        }
     }
 
     _track('onboard_group_reveal_combined', { members: appData.events.length });
@@ -2964,13 +2958,13 @@ function wizardCreateAnotherGroup() {
     el.innerHTML = `
         <p style="color:var(--text);text-align:center;font-size:1rem;font-style:italic;margin-bottom:16px;line-height:1.5;">${groupExample}</p>
         <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your new team</div>
-        <input type="text" id="groupTitleInput" class="wizard-input" value="" placeholder="Friends" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+        <input type="text" id="groupTitleInput" name="hm_f7" class="wizard-input" value="" placeholder="Friends" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
     `;
 
     // Update buttons for "create another group" context
     const addMoreBtn = document.getElementById('wizardAddMoreBtn6');
     if (addMoreBtn) {
-        addMoreBtn.textContent = 'Add people and see your combined milestones \u2192';
+        addMoreBtn.textContent = 'Add people and see your combined milestones';
         addMoreBtn.style.fontSize = '1.05rem';
         addMoreBtn.onclick = function() { wizardCreateGroupAndBuild(); };
     }
@@ -4427,12 +4421,13 @@ function renderHomeScreen() {
             }
             const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
             const mIdx = all.indexOf(m);
-            html += `<div class="time-chunk-item" onclick="selectMilestoneForBar(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
+            html += `<div class="time-chunk-item" onclick="homeShareMilestone(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
                 <div class="tc-left">
                     <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>
+                <span class="tc-share" title="Share">\u2197</span>
             </div>`;
         });
         if (items.length > maxShow) {
@@ -4478,12 +4473,13 @@ function renderHomeScreen() {
             }
             const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
             const mIdx = all.indexOf(m);
-            return `<div class="time-chunk-item" onclick="selectMilestoneForBar(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
+            return `<div class="time-chunk-item" onclick="homeShareMilestone(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
                 <div class="tc-left">
                     <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                     <span class="tc-person">${escapeHtml(m.eventName)}</span>
                 </div>
                 <span class="tc-date">${dateStr}</span>
+                <span class="tc-share" title="Share">\u2197</span>
             </div>`;
         }
 
@@ -4608,16 +4604,7 @@ function renderMilestonesTab() {
     const heroEl = document.getElementById('heroMilestone');
     if (heroEl) heroEl.style.display = 'none';
 
-    // Show sticky share bar on milestone screens
-    const shareBar = document.getElementById('stickyShareBar');
-    if (shareBar) shareBar.style.display = '';
-    deselectMilestone(); // Reset selection
-    // Fade out the hint after 10 seconds
-    const shareHint = document.getElementById('shareBarEmpty');
-    if (shareHint) {
-        shareHint.style.opacity = '1';
-        setTimeout(() => { if (shareHint && _selectedMilestoneIdx < 0) shareHint.style.opacity = '0'; }, 10000);
-    }
+    // Sticky share bar removed — milestones share directly per row (tap = share)
 
     // Legacy: keep old columns for compatibility but don't show
     if (appData.events.length === 0) {

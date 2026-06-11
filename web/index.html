@@ -153,7 +153,7 @@
                     <!-- Populated by wizardShowMyMore() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardNext(4)">Now check someone you care about &rarr;</button>
+                    <button class="wizard-btn" onclick="wizardNext(4)">Now check someone you care about</button>
                 </div>
             </div>
 
@@ -162,7 +162,7 @@
                 <button class="wizard-back" onclick="wizardNext(3)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
                 <div class="wizard-content">
                     <h2 class="wizard-question">Someone you care about</h2>
-                    <input type="text" id="friendNameField" class="wizard-input" placeholder="Their name" autocomplete="off" data-lpignore="true" data-1p-ignore style="margin-bottom:14px;" readonly onfocus="this.removeAttribute('readonly')">
+                    <input type="text" id="friendNameField" name="hm_f1" class="wizard-input" placeholder="Who?" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore style="margin-bottom:14px;" readonly onfocus="this.removeAttribute('readonly')">
                     <div class="wizard-date-fields">
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="friendDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'friendMonth', 2)">
                         <span class="wizard-date-sep">/</span>
@@ -185,8 +185,7 @@
                     <!-- Milestones list populated by wizardDiscoverFriendV2() -->
                 </div>
                 <div class="wizard-actions">
-                    <button class="wizard-btn" onclick="wizardShowCombinedAndName()">Check what you share together &rarr;</button>
-                    <button class="wizard-btn-secondary" id="wizardShareFriendBtn" onclick="wizardShareFriend()">Share a milestone</button>
+                    <button class="wizard-btn" onclick="wizardShowCombinedAndName()">Check what you share together</button>
                 </div>
             </div>
 
@@ -211,7 +210,7 @@
                     </div>
                     <div id="groupAddForm" style="width:100%;">
                         <div style="display:flex;gap:6px;align-items:center;">
-                            <input type="text" id="groupPersonField" class="wizard-input" placeholder="Name" autocomplete="off" data-lpignore="true" data-1p-ignore style="flex:1;min-width:0;font-size:1.05rem;padding:12px 10px;" readonly onfocus="this.removeAttribute('readonly')">
+                            <input type="text" id="groupPersonField" name="hm_f2" class="wizard-input" placeholder="Who?" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore style="flex:1;min-width:0;font-size:1.05rem;padding:12px 10px;" readonly onfocus="this.removeAttribute('readonly')">
                             <div class="wizard-date-fields" style="flex:none;margin:0;gap:2px;">
                                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="groupDay" placeholder="DD" maxlength="2" min="1" max="31" class="wizard-date-field" oninput="autoAdvance(this, 'groupMonth', 2)" style="width:2.1em;font-size:1.05rem;padding:12px 3px;">
                                 <span class="wizard-date-sep">/</span>
@@ -223,7 +222,7 @@
                         <button class="wizard-btn-secondary" onclick="wizardAddGroupMember()" style="margin-top:10px;width:100%;">+ Add</button>
                     </div>
                 </div>
-                <button class="wizard-btn" onclick="wizardShowGroupReveal()" id="groupContinueBtn" style="display:none;">See group milestones &rarr;</button>
+                <button class="wizard-btn" onclick="wizardShowGroupReveal()" id="groupContinueBtn" style="display:none;">See group milestones</button>
             </div>
 
             <!-- Screen 8: Group milestones + new group option -->
@@ -300,20 +299,7 @@
                 </div>
             </div>
 
-            <!-- Sticky share bar — always visible on milestone screens -->
-            <div id="stickyShareBar" style="position:fixed;bottom:60px;left:0;right:0;z-index:600;background:var(--card-bg,#222);border-top:1px solid var(--border,#333);padding:8px 16px;">
-                <div id="shareBarEmpty" style="text-align:center;color:var(--text-muted);font-size:0.9rem;padding:6px 0;opacity:1;transition:opacity 2s ease;">Tap a milestone to share it</div>
-                <div id="shareBarActive" style="display:none;">
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="flex:1;overflow:hidden;">
-                            <div id="shareBarText" style="color:var(--text);font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-                            <div id="shareBarPerson" style="color:var(--text-muted);font-size:0.88rem;"></div>
-                        </div>
-                        <button id="shareBarBtn" onclick="shareSelectedMilestone()" style="padding:8px 16px;border-radius:8px;background:var(--warning,#d4b876);color:#1a1a1a;border:none;font-weight:600;cursor:pointer;white-space:nowrap;">Share</button>
-                        <button onclick="deselectMilestone()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;">&times;</button>
-                    </div>
-                </div>
-            </div>
+            <!-- Sticky share bar removed — milestone rows share directly on tap -->
 
             <!-- Hidden elements (kept for JS compatibility) -->
             <div id="milestonesColumns" class="milestones-columns" style="display:none;"></div>
@@ -362,7 +348,7 @@
                 <p class="card-description">Tap a group to edit — rename, add or remove members.</p>
                 <div id="eventSetsList2" class="event-sets-list"></div>
                 <div style="margin-top:16px;display:flex;gap:8px;align-items:center;">
-                    <input type="text" id="newGroupField" placeholder="New group name" autocomplete="off" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
+                    <input type="text" id="newGroupField" name="hm_f3" placeholder="New group title" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
                     <button onclick="handleAddSetFromPeopleTab()" style="padding:10px 14px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;white-space:nowrap;font-size:0.85rem;">+ New group</button>
                 </div>
             </div>

@@ -116,11 +116,7 @@ async function run() {
         await page.waitForTimeout(1500);
         await shot('screen8-phase2-combined');
 
-        await page.click('#wizardShareBtn8');        // -> screen 9 share
-        await page.waitForTimeout(800);
-        await shot('screen9-share');
-
-        await page.click('#wizardStep9 .wizard-actions .wizard-btn');   // Go to my dashboard
+        await page.click('#wizardDashboardBtn8');    // quiet exit (first-group variant)
         await page.waitForTimeout(1200);
         await shot('dashboard-solo');
 
