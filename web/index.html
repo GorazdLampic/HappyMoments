@@ -42,6 +42,15 @@
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
+    <!-- Apply saved theme BEFORE first paint — prevents the dark->light flash on load -->
+    <script>
+        try {
+            var _t = localStorage.getItem('happymoments_theme');
+            if (!_t && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) _t = 'light';
+            if (_t && _t !== 'dark') document.documentElement.setAttribute('data-theme', _t);
+        } catch (e) {}
+    </script>
+
     <!-- Google Fonts loaded optionally via CSS; no blocking link tag (works behind Great Firewall) -->
     <link rel="stylesheet" href="styles.css">
 </head>

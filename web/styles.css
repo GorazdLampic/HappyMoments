@@ -880,6 +880,7 @@ body {
     padding: var(--space-md) 0 var(--space-xs);
 }
 
+.time-chunk-label { padding-left: var(--space-sm); padding-right: var(--space-sm); }
 .time-chunk-item {
     display: block;
     padding: 10px var(--space-sm);
@@ -1983,6 +1984,7 @@ body {
 .combined-milestone-item.selected-for-share { background: var(--bg-elevated); outline: 1px solid var(--text-muted); }
 
 .cmi-main { display: flex; align-items: baseline; gap: var(--space-sm); margin-bottom: 4px; min-width: 0; flex-wrap: wrap; }
+.cmi-main .cmi-share { margin-left: auto; }
 
 .cmi-value {
     font-family: var(--font-mono);

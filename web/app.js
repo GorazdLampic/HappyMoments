@@ -315,6 +315,7 @@ function init() {
     loadData();
     loadSettings();
     setupEventListeners();
+    moveSettingsIntoProfilePanel();
     upgradeLangFlags();
 
     // Date fields are now DD/MM/YYYY number inputs — no max needed
@@ -960,23 +961,27 @@ function toggleProfilePanel() {
         panel.classList.remove('visible');
         if (overlay) overlay.classList.add('hidden');
     } else {
-        // Move settings content into profile panel on first open
-        const body = document.getElementById('profilePanelBody');
-        if (body && body.children.length === 0 && settingsTab) {
-            // Move all cards from settings tab into profile panel
-            while (settingsTab.firstChild) {
-                body.appendChild(settingsTab.firstChild);
-            }
-            // Add lang picker into panel
-            const langPicker = document.getElementById('langPicker');
-            if (langPicker) {
-                langPicker.classList.remove('hidden');
-                body.insertBefore(langPicker, body.firstChild);
-            }
-        }
+        moveSettingsIntoProfilePanel();
+        if (typeof loadSettingsUI === 'function') loadSettingsUI();
         panel.classList.add('visible');
         panel.classList.remove('hidden');
         if (overlay) overlay.classList.remove('hidden');
+    }
+}
+
+// Settings content lives in the profile panel — moved there ONCE, at startup,
+// so it can never transiently appear inside the Edit tab
+function moveSettingsIntoProfilePanel() {
+    const body = document.getElementById('profilePanelBody');
+    if (body && body.children.length === 0 && settingsTab) {
+        while (settingsTab.firstChild) {
+            body.appendChild(settingsTab.firstChild);
+        }
+        const langPicker = document.getElementById('langPicker');
+        if (langPicker) {
+            langPicker.classList.remove('hidden');
+            body.insertBefore(langPicker, body.firstChild);
+        }
     }
 }
 
@@ -1016,17 +1021,17 @@ function switchTab(tabName) {
         switchHomeView('group');
         renderMilestonesTab();
     }
-    // "Manage" tab: people, groups, settings
+    // "Manage" tab: people + groups ONLY — settings live in the profile panel,
+    // never inline here (they used to show until the panel's first open moved them)
     else if (tabName === 'manage' || tabName === 'events') {
         milestonesTab.classList.add('hidden');
         combinedTab.classList.add('hidden');
         eventsTab.classList.remove('hidden');
-        if (settingsTab) settingsTab.classList.remove('hidden');
+        if (settingsTab) settingsTab.classList.add('hidden');
         const shareBar = document.getElementById('stickyShareBar');
         if (shareBar) shareBar.style.display = 'none';
         renderEventsTab();
         renderPeopleTabGroups();
-        if (typeof loadSettingsUI === 'function') loadSettingsUI();
         window.scrollTo(0, 0);
     }
     // Legacy: settings-only
@@ -1174,15 +1179,14 @@ function openGroupEditor(setId) {
     // Add member form
     html += `
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#333);">
-            <div style="display:flex;gap:8px;align-items:center;">
-                <input type="text" id="editorPersonField" name="hm_f4" placeholder="Person or date" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:8px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
-                <div style="display:flex;gap:4px;align-items:center;">
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorMonth',2)">
-                    <span style="color:var(--text-muted);">/</span>
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorMonth" placeholder="MM" maxlength="2" style="width:2.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="autoAdvance(this,'editorYear',2)">
-                    <span style="color:var(--text-muted);">/</span>
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorYear" placeholder="YYYY" maxlength="4" style="width:3.2em;padding:8px 4px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);" oninput="editorAutoAdd()">
-                </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;">
+                <input type="text" id="editorPersonField" name="hm_f4" placeholder="Person or date" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.8rem;" oninput="autoAdvance(this,'editorMonth',2)">
+                <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorMonth" placeholder="MM" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.8rem;" oninput="autoAdvance(this,'editorYear',2)">
+                <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorYear" placeholder="YYYY" maxlength="4" style="width:3.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.8rem;" oninput="editorAutoAdd()">
+                <span style="width:22px;"></span>
             </div>
             <button onclick="editorAddMember()" style="width:100%;margin-top:8px;padding:10px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;">+ Add to ${escapeHtml(currentSet.name)}</button>
         </div>
@@ -2772,7 +2776,7 @@ function wizardShowGroupReveal() {
 
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.4;margin-top:0;margin-bottom:var(--space-md);">Imagine their face when you tell them</h2>
-        ${individualHtml}
+        <div class="wizard-milestone-list">${individualHtml}</div>
     `;
 
     _track('onboard_group_reveal_individual', { members: newMemberCount });
@@ -3664,12 +3668,16 @@ function renderCombinedTab() {
 }
 
 function renderCombinedMilestonesList(milestones, type, eventNames = '') {
-    // Show all milestones without extra filtering for combined view
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    const gName = (allSets.find(s => s.id === currentSetId) || {}).name || 'Together';
+    // Rows share directly on tap — same model as everywhere else in the app
     return milestones.slice(0, 20).map((m, idx) => {
         const isVerySpecial = isVerySpecialNumber(m.value);
-        const globalIdx = allCombinedMilestonesFlat.indexOf(m);
         const timeUntilStr = formatTimeDistance(m.timeUntil);
         const dateStr = formatDateWithTime(m.date);
+        const displayVal = formatMilestoneValue(m.value, locale);
+        const shareText = gName + ': ' + displayVal + ' ' + m.unitName + ' combined on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
+        const safeMsg = shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
         // Show contributing events if available
         const contributingEvents = m.contributingEvents || [];
@@ -3678,11 +3686,12 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
             : '';
 
         return `
-            <div class="combined-milestone-item ${isVerySpecial ? 'very-special' : ''} ${selectedCombinedMilestone === globalIdx ? 'selected-for-share' : ''}"
-                 onclick="selectCombinedMilestoneForShare(${globalIdx})">
+            <div class="combined-milestone-item ${isVerySpecial ? 'very-special' : ''}"
+                 onclick="wizardSelectMsRow('','${safeMsg}')" style="cursor:pointer;">
                 <div class="cmi-main">
-                    <span class="cmi-value">${m.value.toLocaleString()}</span>
+                    <span class="cmi-value">${displayVal}</span>
                     <span class="cmi-unit">${m.unitName}</span>
+                    <span class="row-share cmi-share">Share ${_shareArrowSvg(14)}</span>
                 </div>
                 <div class="cmi-desc">${m.comboDescription || m.description || ''}</div>
                 ${eventsHtml}
