@@ -33,9 +33,9 @@ function formatMilestoneDate(date, options) {
     const thisYear = new Date().getFullYear();
     const year = date.getFullYear();
     if (options && options.long) {
-        const weekday = date.toLocaleDateString(locale, { weekday: 'long' });
-        const monthLong = date.toLocaleDateString(locale, { month: 'long' });
-        return year !== thisYear ? `${weekday}, ${monthLong} ${day}${suffix}, ${year}` : `${weekday}, ${monthLong} ${day}${suffix}`;
+        // Abbreviated weekday/month so "date · countdown" fits one hero line
+        const weekday = date.toLocaleDateString(locale, { weekday: 'short' });
+        return year !== thisYear ? `${weekday}, ${month} ${day}${suffix}, ${year}` : `${weekday}, ${month} ${day}${suffix}`;
     }
     // Short form ALWAYS carries the year — rows show it on their own smaller line
     return `${month} ${day}${suffix}, ${year}`;
@@ -1805,7 +1805,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         } else if (daysAway <= 30) {
             countdownText = `Coming in just ${daysAway} ${plural(daysAway, 'day')}`;
         } else {
-            countdownText = `${countdown} from now`;
+            countdownText = `in ${countdown}`;
         }
 
         // Build reveal HTML — clean, spacious, large type
@@ -1827,11 +1827,13 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
             revealEl.innerHTML = `
                 <div class="wizard-reveal-number-wrap">
                     <div class="wizard-reveal-sparkle"></div>
-                    <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
+                    <div class="wizard-reveal-number-line">
+                        <span class="wizard-reveal-number" id="${revealElId}Number">0</span>
+                        <span class="wizard-reveal-unit">${escapeHtml(m.unitName)}</span>
+                    </div>
                 </div>
                 <div class="hero-meta">
                     <div class="hero-meta-text">
-                        <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
                         <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
                     </div>
                     ${wizardHeroShareChip(heroShareMsg)}
@@ -2034,11 +2036,13 @@ function wizardShowCombined(isRefresh) {
         el.innerHTML = `
             <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${escapeHtml(namesStr)} together</p>
             <div class="wizard-reveal-number-wrap">
-                <div class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</div>
+                <div class="wizard-reveal-number-line">
+                    <span class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</span>
+                    <span class="wizard-reveal-unit">days combined</span>
+                </div>
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-text">
-                    <div class="wizard-reveal-unit">days combined</div>
                     <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
                 </div>
                 ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — happymoments.app')}
@@ -2502,11 +2506,13 @@ function wizardShowCombinedAndName() {
     el.innerHTML = `
         <p style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:8px;">Dates only you and ${escapeHtml(namesStr.replace(/^Me and |^You and /i, ''))} share</p>
         <div class="wizard-reveal-number-wrap">
-            <div class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</div>
+            <div class="wizard-reveal-number-line">
+                <span class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</span>
+                <span class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</span>
+            </div>
         </div>
         <div class="hero-meta">
             <div class="hero-meta-text">
-                <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
                 <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
             </div>
             ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? (hero.unitName || hero.unit) : 'days') + ' combined on ' + dateDisplay + ' — happymoments.app')}
@@ -2854,11 +2860,13 @@ function wizardShowTeamMilestones() {
         ${hero ? `
             <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + (hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
             <div class="wizard-reveal-number-wrap">
-                <div class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</div>
+                <div class="wizard-reveal-number-line">
+                    <span class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</span>
+                    <span class="wizard-reveal-unit" style="font-size:1.3rem;">${hero.unitName || hero.unit} combined</span>
+                </div>
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-text">
-                    <div class="wizard-reveal-unit" style="font-size:1.3rem;margin-bottom:2px;">${hero.unitName || hero.unit} combined</div>
                     <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:0;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} ${plural(Math.ceil(hero.timeUntil / (24*60*60*1000)), 'day')}</span></div>
                 </div>
                 <button class="hero-share-chip">Share ${_shareArrowSvg(15)}</button>

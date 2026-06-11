@@ -2761,10 +2761,10 @@ body {
 
 .wizard-milestone-row {
     display: block;
-    padding: 10px 10px;
+    padding: 11px 10px;
     border-bottom: 1px solid var(--border);
     font-family: var(--font-serif);
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     color: var(--text-secondary);
     cursor: pointer;
     transition: background 0.2s, border-left 0.2s;
@@ -2786,7 +2786,7 @@ body {
 }
 .wizard-milestone-row .wizard-milestone-date {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     line-height: 1.2;
     margin-top: 1px;
     color: var(--text-muted);
@@ -3220,14 +3220,22 @@ body {
 }
 .hero-share-chip svg { display: block; }
 .reveal-stagger .hero-share-chip { opacity: 0; }
-.reveal-done .hero-share-chip { animation: chipIn 0.5s ease forwards 1.2s; }
-@keyframes chipIn {
-    from { opacity: 0; transform: rotate(-4deg) translateY(10px); }
-    to   { opacity: 1; transform: rotate(-4deg) translateY(0); }
-}
+.reveal-done .hero-share-chip { animation: staggerIn 0.5s ease forwards 1.2s; }
 
-/* Hero meta row: unit + date left-aligned, share chip beside them on the
-   right, slightly tilted and straddling the lines — a "sticker", not a row */
+/* Big number + its unit on ONE line ("424,242 hours"); when the number is too
+   wide for the viewport the unit wraps tightly underneath, still glued to it */
+.wizard-reveal-number-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    column-gap: 10px;
+    row-gap: 0;
+}
+.wizard-reveal-number-line .wizard-reveal-unit { margin-bottom: 0; }
+
+/* Hero meta row: date · countdown left-aligned, share chip vertically
+   centered beside it on the right */
 .hero-meta {
     display: flex;
     align-items: center;
@@ -3235,16 +3243,17 @@ body {
     gap: 10px;
     width: 100%;
     max-width: 340px;
-    margin: 0 auto;
+    margin: 8px auto 0;
     text-align: left;
 }
 .hero-meta .hero-meta-text { min-width: 0; }
-.hero-meta .wizard-reveal-unit { margin-bottom: 2px; }
-.hero-meta .wizard-reveal-date { margin-bottom: 0; }
+.hero-meta .wizard-reveal-date { margin-bottom: 0; font-size: 1.05rem; }
+.hero-meta .wizard-reveal-countdown { font-size: 1.05rem; }
 .hero-meta .hero-share-chip {
     margin-top: 0;
     flex-shrink: 0;
-    transform: rotate(-4deg);
+    padding: 10px 22px;
+    font-size: 1.05rem;
 }
 
 /* Top-aligned wizard steps — for short-content screens where vertical
