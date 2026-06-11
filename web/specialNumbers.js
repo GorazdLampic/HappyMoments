@@ -803,6 +803,16 @@ function nicenessGrade(num) {
         return 22;                                                   // 1,150M, 2,340M — junk
     }
 
+    // Same principle one level down (10K–1M): "320,000" is fine but must rank
+    // BELOW real patterns (19,191,919); "13,500" (3 sig digits) isn't worth showing.
+    if (num >= 10000 && num % 10 === 0) {
+        const mantissa = s.replace(/0+$/, '');
+        if (mantissa.length === 1) return 90;                        // 20,000 / 500,000
+        if (mantissa.length === 2 && mantissa[1] === '5') return 72; // 25,000 / 150,000
+        if (mantissa.length === 2) return 65;                        // 320,000 / 13,000 — below patterns
+        return 40;                                                   // 13,500 / 12,250 — junk
+    }
+
     // Tier 2 (70-89): most people would appreciate
     if (num >= 100000 && num % 100000 === 0) return 85;
     if (POWERS_OF_TWO.includes(num) && Math.log2(num) >= 20) return 82;

@@ -37,7 +37,8 @@ function formatMilestoneDate(date, options) {
         const monthLong = date.toLocaleDateString(locale, { month: 'long' });
         return year !== thisYear ? `${weekday}, ${monthLong} ${day}${suffix}, ${year}` : `${weekday}, ${monthLong} ${day}${suffix}`;
     }
-    return year !== thisYear ? `${month} ${day}${suffix}, ${year}` : `${month} ${day}${suffix}`;
+    // Short form ALWAYS carries the year — rows show it on their own smaller line
+    return `${month} ${day}${suffix}, ${year}`;
 }
 
 function autoAdvance(field, nextFieldId, maxLen) {
@@ -314,6 +315,7 @@ function init() {
     loadData();
     loadSettings();
     setupEventListeners();
+    upgradeLangFlags();
 
     // Date fields are now DD/MM/YYYY number inputs — no max needed
 
@@ -529,13 +531,39 @@ const LANG_FLAGS = {
     vi: '🇻🇳', id: '🇮🇩'
 };
 
+// Real flag images — Windows browsers don't render flag emojis (show "GB" letters)
+const LANG_FLAG_FILES = {
+    en: 'gb', es: 'es', de: 'de', fr: 'fr', it: 'it', pt_BR: 'br', pt: 'pt',
+    hr: 'hr', sl: 'si', nl: 'nl', pl: 'pl', ru: 'ru', zh: 'cn', hi: 'in',
+    ar: 'sa', bn: 'bd', ja: 'jp', vi: 'vn', id: 'id', th: 'th', ko: 'kr'
+};
+
+function flagImgHtml(locale) {
+    const f = LANG_FLAG_FILES[locale];
+    return f ? `<img class="lang-flag-img" src="icons/flags/${f}.png" alt="">` : (LANG_FLAGS[locale] || '');
+}
+
+// Swap the emoji flags in the language picker for image flags (startup)
+function upgradeLangFlags() {
+    document.querySelectorAll('.lang-option').forEach(btn => {
+        const m = (btn.getAttribute('onclick') || '').match(/selectLanguage\('([a-zA-Z_]+)'\)/);
+        if (!m) return;
+        const span = btn.querySelector('.lang-option-flag');
+        if (span && LANG_FLAG_FILES[m[1]]) span.innerHTML = flagImgHtml(m[1]);
+    });
+    const flagEl = document.getElementById('langFlagDisplay');
+    if (flagEl && typeof I18N !== 'undefined' && I18N.getLocale) {
+        flagEl.innerHTML = flagImgHtml(I18N.getLocale());
+    }
+}
+
 function initLangPicker() {
     // Just update the displayed flag/code to match current locale
     if (typeof I18N === 'undefined') return;
     const loc = I18N.getLocale();
     const flagEl = document.getElementById('langFlagDisplay');
     const codeEl = document.getElementById('langCodeDisplay');
-    if (flagEl) flagEl.textContent = LANG_FLAGS[loc] || '';
+    if (flagEl) flagEl.innerHTML = flagImgHtml(loc);
     if (codeEl) codeEl.textContent = loc.toUpperCase();
 }
 
@@ -544,7 +572,7 @@ function selectLanguage(locale) {
     // Update button display
     const flagEl = document.getElementById('langFlagDisplay');
     const codeEl = document.getElementById('langCodeDisplay');
-    if (flagEl) flagEl.textContent = LANG_FLAGS[locale] || '';
+    if (flagEl) flagEl.innerHTML = flagImgHtml(locale);
     if (codeEl) codeEl.textContent = locale.toUpperCase();
     // Close dropdown
     const drop = document.getElementById('langDropFallback');
@@ -1527,10 +1555,14 @@ function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
     // Tapping a row shares it directly. During onboarding the affordance is
     // labelled ("Share" + arrow) to teach the gesture; the dashboard uses the
     // arrow alone once the user has learned it.
+    // Two tight lines: value + share on top, full date (with year) below in
+    // smaller text — fits any phone width without clipping
     return `<div class="wizard-milestone-row ${extraClass || ''}" onclick="wizardSelectMsRow('','${safeMsg}')" style="cursor:pointer;">
-        <span class="wizard-milestone-value" style="white-space:nowrap;">${displayText}</span>
-        <span class="wizard-milestone-date">${dateStr}</span>
-        <span class="row-share">Share ${_shareArrowSvg(14)}</span>
+        <div class="wms-main">
+            <span class="wizard-milestone-value">${displayText}</span>
+            <span class="row-share">Share ${_shareArrowSvg(14)}</span>
+        </div>
+        <div class="wizard-milestone-date">${dateStr}</div>
     </div>`;
 }
 
@@ -1738,8 +1770,8 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
             // STRONGLY prefer universally clear milestones for first reveal
             if (m.isBirthday) score += 150; // upcoming birthday — everyone understands
             if (m.isBigMilestone) score += 120; // billion seconds, 10K days — wow factor
-            if (m.value >= 1000 && m.value % 1000 === 0) score += 100; // round thousands
-            if (s.length >= 3 && new Set(s).size === 1) score += 90; // repdigit (11111)
+            // Engine niceness: patterns (19191919) outrank bland rounds (320,000)
+            if (!m.isCosmic && typeof nicenessGrade === 'function') score += nicenessGrade(m.value);
             if (m.isCosmic && m.isSaturnReturn) score += 60; // Saturn return — interesting but not dominant
             if (m.isCosmic && m.isVerySpecialCosmic) score += 20; // Jupiter/Chiron — low priority
             if (m.isCosmic && !m.isSaturnReturn && !m.isVerySpecialCosmic) score += 5; // Mercury/Mars/etc — very low
@@ -1784,8 +1816,12 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 <div class="wizard-reveal-number-wrap">
                     <div class="wizard-reveal-number" id="${revealElId}Number" style="font-size:1.4rem;">${escapeHtml(m.description)}</div>
                 </div>
-                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
-                ${wizardHeroShareChip(heroShareMsg)}
+                <div class="hero-meta">
+                    <div class="hero-meta-text">
+                        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                    </div>
+                    ${wizardHeroShareChip(heroShareMsg)}
+                </div>
             `;
         } else {
             revealEl.innerHTML = `
@@ -1793,9 +1829,13 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     <div class="wizard-reveal-sparkle"></div>
                     <div class="wizard-reveal-number" id="${revealElId}Number">0</div>
                 </div>
-                <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
-                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
-                ${wizardHeroShareChip(heroShareMsg)}
+                <div class="hero-meta">
+                    <div class="hero-meta-text">
+                        <div class="wizard-reveal-unit">${escapeHtml(m.unitName)}</div>
+                        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                    </div>
+                    ${wizardHeroShareChip(heroShareMsg)}
+                </div>
             `;
         }
 
@@ -1996,9 +2036,13 @@ function wizardShowCombined(isRefresh) {
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</div>
             </div>
-            <div class="wizard-reveal-unit">days combined</div>
-            <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
-            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — happymoments.app')}
+            <div class="hero-meta">
+                <div class="hero-meta-text">
+                    <div class="wizard-reveal-unit">days combined</div>
+                    <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
+                </div>
+                ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — happymoments.app')}
+            </div>
         `;
     } else {
         el.innerHTML = `
@@ -2460,9 +2504,13 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-number-wrap">
             <div class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</div>
         </div>
-        <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
-        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
-        ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? (hero.unitName || hero.unit) : 'days') + ' combined on ' + dateDisplay + ' — happymoments.app')}
+        <div class="hero-meta">
+            <div class="hero-meta-text">
+                <div class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</div>
+                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
+            </div>
+            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? (hero.unitName || hero.unit) : 'days') + ' combined on ' + dateDisplay + ' — happymoments.app')}
+        </div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">Name your first group</div>
@@ -2655,16 +2703,11 @@ function wizardShowGroupReveal() {
     const newMembers = appData.events.filter(e => e.name !== 'Me' && !_wizardRevealedIds.has(e.id));
 
     function _sortMs(ms) {
-        return ms.filter(m => m.timeUntil > 0 && !m.isCosmic).sort((a, b) => {
-            let sa = 0, sb = 0;
-            if (a.value >= 1000 && a.value % 1000 === 0) sa += 100;
-            if (b.value >= 1000 && b.value % 1000 === 0) sb += 100;
-            if (a.isBigMilestone) sa += 80;
-            if (b.isBigMilestone) sb += 80;
-            sa += Math.max(0, 50 - a.timeUntil / (24*60*60*1000) * 0.15);
-            sb += Math.max(0, 50 - b.timeUntil / (24*60*60*1000) * 0.15);
-            return sb - sa;
-        });
+        // Niceness grade drives ranking — patterns above bland rounds
+        const g = (m) => (typeof nicenessGrade === 'function' ? nicenessGrade(m.value) : 0)
+            + (m.isBigMilestone ? 15 : 0)
+            + Math.max(0, 30 - m.timeUntil / (24*60*60*1000) * 0.08);
+        return ms.filter(m => m.timeUntil > 0 && !m.isCosmic).sort((a, b) => g(b) - g(a));
     }
 
     newMembers.forEach(e => {
@@ -2813,9 +2856,13 @@ function wizardShowTeamMilestones() {
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</div>
             </div>
-            <div class="wizard-reveal-unit" style="font-size:1.3rem;margin-bottom:8px;">${hero.unitName || hero.unit} combined</div>
-            <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:4px;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} ${plural(Math.ceil(hero.timeUntil / (24*60*60*1000)), 'day')}</span></div>
-            <button class="hero-share-chip">Share ${_shareArrowSvg(15)}</button>
+            <div class="hero-meta">
+                <div class="hero-meta-text">
+                    <div class="wizard-reveal-unit" style="font-size:1.3rem;margin-bottom:2px;">${hero.unitName || hero.unit} combined</div>
+                    <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:0;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} ${plural(Math.ceil(hero.timeUntil / (24*60*60*1000)), 'day')}</span></div>
+                </div>
+                <button class="hero-share-chip">Share ${_shareArrowSvg(15)}</button>
+            </div>
             </div>
         ` : ''}
         ${combinedHtml ? `<div style="margin-top:10px;border-top:1px solid var(--border,#333);padding-top:8px;"><div class="wizard-milestone-list">${combinedHtml}</div>${combinedExtraHtml ? `<div id="wizTeamExtra8" style="display:none;" class="wizard-milestone-list">${combinedExtraHtml}</div><div id="wizTeamToggle8" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizTeamExtra8'),b=document.getElementById('wizTeamToggle8');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rows.length - 3} more \\u25BC';}">Show ${rows.length - 3} more ▼</div>` : ''}</div>` : ''}
@@ -4447,11 +4494,7 @@ function renderHomeScreen() {
             } else {
                 displayText = formatMilestoneValue(m.value, locale) + ' ' + m.unitName;
             }
-            const mYear = m.date.getFullYear();
-            const showYear = mYear !== thisYear;
-            const dateOpts = showYear
-                ? { month: 'short', day: 'numeric', year: 'numeric' }
-                : { weekday: 'short', month: 'short', day: 'numeric' };
+            const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
             if (m.recentlyPassed) {
                 const daysAgo = Math.round(Math.abs(m.timeUntil) / (24*60*60*1000));
@@ -4462,12 +4505,14 @@ function renderHomeScreen() {
             const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
             const mIdx = all.indexOf(m);
             html += `<div class="time-chunk-item" onclick="homeShareMilestone(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
-                <div class="tc-left">
-                    <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
-                    <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                <div class="tc-main">
+                    <div class="tc-left">
+                        <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
+                        <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                    </div>
+                    <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
-                <span class="tc-date">${dateStr}</span>
-                <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                <div class="tc-date">${dateStr}</div>
             </div>`;
         });
         if (items.length > maxShow) {
@@ -4499,11 +4544,7 @@ function renderHomeScreen() {
             } else {
                 displayText = formatMilestoneValue(m.value, locale) + ' ' + m.unitName;
             }
-            const mYear = m.date.getFullYear();
-            const showYear = mYear !== thisYear;
-            const dateOpts = showYear
-                ? { month: 'short', day: 'numeric', year: 'numeric' }
-                : { weekday: 'short', month: 'short', day: 'numeric' };
+            const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
             if (m.recentlyPassed) {
                 const daysAgo = Math.round(Math.abs(m.timeUntil) / (24*60*60*1000));
@@ -4514,12 +4555,14 @@ function renderHomeScreen() {
             const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
             const mIdx = all.indexOf(m);
             return `<div class="time-chunk-item" onclick="homeShareMilestone(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
-                <div class="tc-left">
-                    <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
-                    <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                <div class="tc-main">
+                    <div class="tc-left">
+                        <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
+                        <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                    </div>
+                    <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
-                <span class="tc-date">${dateStr}</span>
-                <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                <div class="tc-date">${dateStr}</div>
             </div>`;
         }
 
