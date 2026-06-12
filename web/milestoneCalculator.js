@@ -289,7 +289,8 @@ function formatTimeDistance(ms) {
 
 // Format date for display
 function getAppLocale() {
-    return (typeof I18N !== 'undefined') ? I18N.getLocale() : 'en';
+    // Locale keys use underscores (pt_BR) but Intl APIs need BCP-47 tags (pt-BR)
+    return (typeof I18N !== 'undefined') ? I18N.getLocale().replace('_', '-') : 'en';
 }
 
 function formatDate(date) {
