@@ -78,6 +78,24 @@ function tt(key, vars) {
     return s;
 }
 
+// "Show N more" / "Show less" expander lists — one named helper instead of
+// fragile JS-inside-onclick-attribute strings. moreKey/lessKey override the
+// default labels (e.g. 'wiz_more_arrow'/'wiz_less_arrow' pairs).
+function _moreListLabel(count, noun, moreKey) {
+    if (moreKey) return tt(moreKey, { count: count });
+    if (noun) return tt('wiz_show_more_tpl', { count: count, noun: plural(count, noun) });
+    return tt('wiz_show_more_short', { count: count });
+}
+function toggleMoreList(listId, btnId, count, noun, moreKey, lessKey) {
+    const list = document.getElementById(listId);
+    const btn = document.getElementById(btnId);
+    if (!list || !btn) return;
+    const isHidden = list.style.display === 'none';
+    list.style.display = isHidden ? '' : 'none';
+    btn.textContent = isHidden ? tt(lessKey || 'wiz_show_less') : _moreListLabel(count, noun, moreKey);
+}
+window.toggleMoreList = toggleMoreList;
+
 // List rows: round giants read better (and shorter) as words — "850 million",
 // "2.66 billion". Pattern numbers (44,444,444) keep their digits: the digits
 // ARE the point. Heroes always keep full digits for the spectacle.
@@ -85,10 +103,10 @@ function formatMilestoneValue(value, locale) {
     if (value >= 1000000 && value % 100000 === 0) {
         if (value >= 1000000000) {
             const b = value / 1000000000;
-            return (Number.isInteger(b) ? b : parseFloat(b.toFixed(2))).toLocaleString(locale) + ' billion';
+            return (Number.isInteger(b) ? b : parseFloat(b.toFixed(2))).toLocaleString(locale) + ' ' + tt('num_billion');
         }
         const mm = value / 1000000;
-        return (Number.isInteger(mm) ? mm : parseFloat(mm.toFixed(1))).toLocaleString(locale) + ' million';
+        return (Number.isInteger(mm) ? mm : parseFloat(mm.toFixed(1))).toLocaleString(locale) + ' ' + tt('num_million');
     }
     return value.toLocaleString(locale);
 }
@@ -507,11 +525,11 @@ function acceptDeepLink(name, dateStr) {
     const nameInput = document.getElementById('newEventName');
     if (nameInput) {
         nameInput.value = '';
-        nameInput.placeholder = 'Your name or another date...';
+        nameInput.placeholder = tt('dash_your_name_ph');
         nameInput.scrollIntoView({ behavior: 'smooth' });
         nameInput.focus();
     }
-    showToast(`${name} added! Now enter YOUR birthday to see your milestones.`, 'info', 5000);
+    showToast(tt('toast_added_enter_yours', { name: name }), 'info', 5000);
     _track('deeplink_accepted', { name: name });
 
     // Refresh views
@@ -623,10 +641,10 @@ async function toggleNotifications(enabled) {
     if (enabled) {
         await NOTIF.enable();
         _track('notifications_enabled', {});
-        showToast('Reminders enabled!', 'success');
+        showToast(tt('toast_reminders_enabled'), 'success');
         // Hide the toggle row, show confirmation — keeps settings clean
         const toggleRow = document.getElementById('notifToggle')?.closest('.toggle-option');
-        if (toggleRow) toggleRow.innerHTML = '<span style="color:var(--warning,#d4b876);font-size:0.85rem;">Reminders on &check;</span>';
+        if (toggleRow) toggleRow.innerHTML = '<span style="color:var(--warning,#d4b876);font-size:0.85rem;">' + tt('toast_reminders_on') + '</span>';
     } else {
         NOTIF.disable();
         _track('notifications_disabled', {});
@@ -817,11 +835,11 @@ function saveData() {
     if (typeof DATA_PROTECTION !== 'undefined' && DATA_PROTECTION.isAvailable()) {
         DATA_PROTECTION.saveSecure(STORAGE_KEY_DATA, dataObj).catch(() => {
             try { localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj)); }
-            catch (e) { showToast('Storage full — cannot save data.', 'error'); }
+            catch (e) { showToast(tt('toast_storage_full_data'), 'error'); }
         });
     } else {
         try { localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(dataObj)); }
-        catch (e) { showToast('Storage full — cannot save data.', 'error'); }
+        catch (e) { showToast(tt('toast_storage_full_data'), 'error'); }
     }
 
     // Re-schedule notifications whenever data changes
@@ -832,7 +850,7 @@ function saveData() {
 
 function saveSettings() {
     try { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(appSettings)); }
-    catch (e) { showToast('Storage full — cannot save settings.', 'error'); }
+    catch (e) { showToast(tt('toast_storage_full_settings'), 'error'); }
 }
 
 // ============================================================
@@ -1092,7 +1110,7 @@ function switchHomeView(view) {
                 if (combinedContent && combinedContent.innerHTML.trim()) {
                     headerHtml += combinedContent.innerHTML;
                 } else {
-                    headerHtml += '<p style="text-align:center;padding:24px;color:var(--text-muted);font-style:italic;">Add 2 or more people to discover combined milestones.</p>';
+                    headerHtml += '<p style="text-align:center;padding:24px;color:var(--text-muted);font-style:italic;">' + tt('tog_add_two') + '</p>';
                 }
             }
             // Invite anniversaries / special dates — the engine treats any date as a member,
@@ -1182,7 +1200,7 @@ function openGroupEditor(setId) {
             <input type="text" inputmode="numeric" value="${mm}" onchange="editorUpdateMemberDate('${e.id}','m',this.value)" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
             <input type="text" inputmode="numeric" value="${yyyy}" onchange="editorUpdateMemberDate('${e.id}','y',this.value)" maxlength="4" style="width:3.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
-            <button onclick="editorRemoveMember('${e.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;" title="Remove">&times;</button>
+            <button onclick="editorRemoveMember('${e.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;" title="${tt('ed_remove')}">&times;</button>
         </div>`;
     });
 
@@ -1216,7 +1234,7 @@ function openGroupEditorWithDateHint() {
     openGroupEditor(currentSetId);
     setTimeout(() => {
         const f = document.getElementById('editorPersonField');
-        if (f) { f.placeholder = 'Our wedding'; f.removeAttribute('readonly'); f.focus(); }
+        if (f) { f.placeholder = tt('tog_wedding_ph'); f.removeAttribute('readonly'); f.focus(); }
     }, 150);
 }
 
@@ -1244,8 +1262,8 @@ function closeGroupEditor() {
 function editorAddMember() {
     const name = document.getElementById('editorPersonField')?.value?.trim();
     const dateStr = buildDateFromFields('editor');
-    if (!name) { showToast('Enter a name', 'error'); return; }
-    if (!dateStr) { showToast('Enter a date', 'error'); return; }
+    if (!name) { showToast(tt('toast_enter_name'), 'error'); return; }
+    if (!dateStr) { showToast(tt('toast_enter_date'), 'error'); return; }
     if (!validateDateFields(dateStr)) return;
     const date = parseLocalDate(dateStr);
 
@@ -1300,9 +1318,9 @@ function editorRemoveMember(eventId) {
 }
 
 function editorDeleteGroup() {
-    if (allSets.length <= 1) { showToast('Cannot delete the last group', 'error'); return; }
+    if (allSets.length <= 1) { showToast(tt('toast_cannot_delete_last_group'), 'error'); return; }
     const currentSet = allSets.find(s => s.id === currentSetId);
-    if (!confirm('Delete "' + (currentSet ? currentSet.name : '') + '" and all its members?')) return;
+    if (!confirm(tt('ed_delete_group_confirm', { name: currentSet ? currentSet.name : '' }))) return;
     allSets = allSets.filter(s => s.id !== currentSetId);
     currentSetId = allSets[0].id;
     loadCurrentSet();
@@ -1409,14 +1427,14 @@ function togglePerson(personId) {
     } else if (selectedPersonIds.length === 1) {
         const person = appData.events.find(e => e.id === selectedPersonIds[0]);
         if (person) {
-            milestonesTitleEl.textContent = `${person.name}'s Milestones`;
+            milestonesTitleEl.textContent = tt('dash_person_milestones', { name: person.name });
         }
     } else {
         const names = selectedPersonIds.map(id => {
             const person = appData.events.find(e => e.id === id);
             return person ? person.name : '';
         }).filter(n => n).join(' + ');
-        milestonesTitleEl.textContent = `${names} Combined`;
+        milestonesTitleEl.textContent = tt('dash_names_combined', { names: names });
     }
 }
 
@@ -1429,7 +1447,7 @@ function calculateMilestone() {
     const unit = calcUnitSelect.value;
 
     if (isNaN(number) || number <= 0) {
-        showToast('Please enter a valid positive number', 'error');
+        showToast(tt('toast_enter_valid_number'), 'error');
         return;
     }
 
@@ -1439,7 +1457,7 @@ function calculateMilestone() {
         : appData.events;
 
     if (eventsToCalc.length === 0) {
-        showToast('No events to calculate for. Add an event first.', 'error');
+        showToast(tt('toast_no_events_calc'), 'error');
         return;
     }
 
@@ -1491,8 +1509,8 @@ function displayCalcResults(results, number, unit) {
 
         const timeAgo = formatTimeDistance(result.timeDiff);
         const statusClass = result.isPast ? 'past' : 'future';
-        const statusText = result.isPast ? `${timeAgo} ago` : `in ${timeAgo}`;
-        const titleText = result.isPast ? 'You reached' : 'You will reach';
+        const statusText = result.isPast ? tt('time_ago', { time: timeAgo }) : tt('wiz_in_time', { time: timeAgo });
+        const titleText = result.isPast ? tt('calc_you_reached') : tt('calc_you_will_reach');
 
         html += `
             <div class="calc-result-item ${statusClass}">
@@ -1525,23 +1543,23 @@ function validateDateFields(dateStr) {
 
     // Check ranges
     if (y < 1900 || y > new Date().getFullYear()) {
-        showToast('Please enter a valid year', 'error');
+        showToast(tt('toast_enter_valid_year'), 'error');
         return false;
     }
     if (m < 1 || m > 12) {
-        showToast('Month must be 1-12', 'error');
+        showToast(tt('toast_month_range'), 'error');
         return false;
     }
     // Check day-in-month (including leap years)
     const maxDay = new Date(y, m, 0).getDate();
     if (d < 1 || d > maxDay) {
-        showToast(`Day must be 1-${maxDay} for month ${m}`, 'error');
+        showToast(tt('toast_day_range', { max: maxDay, month: m }), 'error');
         return false;
     }
     // Future date warning
     const date = new Date(y, m - 1, d);
     if (date > new Date()) {
-        showToast('This date is in the future — milestones work best with past dates', 'info', 4000);
+        showToast(tt('toast_future_date'), 'info', 4000);
     }
     return true;
 }
@@ -1969,7 +1987,7 @@ function wizardShowMyMore() {
         <h2 class="wizard-question">${heading}</h2>
         <div class="wizard-milestone-list">${topHtml}</div>
         ${moreHtml ? `<div id="wizMoreMs3" style="display:none;" class="wizard-milestone-list">${moreHtml}</div>
-        <div id="wizMoreToggle3" style="cursor:pointer;color:var(--warning,#d4b876);padding:10px;text-align:center;font-size:0.85rem;" onclick="var m=document.getElementById('wizMoreMs3'),b=document.getElementById('wizMoreToggle3');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${count - TOP} more ${plural(count - TOP, 'milestone')} \\u25BC';}">Show ${count - TOP} more ${plural(count - TOP, 'milestone')} \u25BC</div>` : ''}
+        <div id="wizMoreToggle3" style="cursor:pointer;color:var(--warning,#d4b876);padding:10px;text-align:center;font-size:0.85rem;" onclick="toggleMoreList('wizMoreMs3','wizMoreToggle3',${count - TOP},'milestone')">${_moreListLabel(count - TOP, 'milestone')}</div>` : ''}
     `;
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
@@ -2003,7 +2021,7 @@ function wizardShowTheirMore() {
     }
     const upcoming = ms.filter(m => m.timeUntil > 0 && !m.isCosmic).sort((a, b) => a.timeUntil - b.timeUntil).slice(0, 6);
 
-    let html = `<h2 class="wizard-question">${escapeHtml(friendEvent.name)}'s milestones</h2>`;
+    let html = `<h2 class="wizard-question">${tt('wiz_their_milestones', { name: escapeHtml(friendEvent.name) })}</h2>`;
     html += '<div class="wizard-milestone-list">';
     upcoming.forEach(m => {
         const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
@@ -2048,24 +2066,24 @@ function wizardShowCombined(isRefresh) {
         });
 
         el.innerHTML = `
-            <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${escapeHtml(namesStr)} together</p>
+            <p style="font-size:1rem;color:var(--text);text-align:center;font-style:italic;margin-bottom:8px;">${tt('wiz_together_label', { names: escapeHtml(namesStr) })}</p>
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number-line">
                     <span class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</span>
-                    <span class="wizard-reveal-unit">days combined</span>
+                    <span class="wizard-reveal-unit">${tt('wiz_days_combined')}</span>
                 </div>
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-text">
-                    <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
+                    <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
                 </div>
                 ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — happymoments.app')}
             </div>
         `;
     } else {
         el.innerHTML = `
-            <h2 class="wizard-question">Your milestones are ready!</h2>
-            <p style="color:var(--text-muted);text-align:center;font-style:italic;font-size:1.1rem;">Add more people to discover combined milestones.</p>
+            <h2 class="wizard-question">${tt('wiz_ms_ready')}</h2>
+            <p style="color:var(--text-muted);text-align:center;font-style:italic;font-size:1.1rem;">${tt('wiz_add_more_combined')}</p>
         `;
     }
 
@@ -2085,7 +2103,7 @@ function wizardEnableReminders() {
             if (ok) {
                 _track('onboard_reminders_enabled');
                 const btn = document.getElementById('wizardReminderBtn');
-                if (btn) { btn.textContent = '\u2713 Reminders enabled!'; btn.disabled = true; }
+                if (btn) { btn.textContent = '\u2713 ' + tt('toast_reminders_enabled'); btn.disabled = true; }
             }
         });
     }
@@ -2107,13 +2125,13 @@ function wizardSelectRole(btn, role) {
         if (nameInput) {
             nameInput.classList.remove('hidden');
             nameInput.value = '';
-            nameInput.placeholder = role === 'Child' ? "Child\u2019s name" : "Friend\u2019s name";
+            nameInput.placeholder = role === 'Child' ? tt('wiz_child_name_ph') : tt('wiz_friend_name_ph');
             setTimeout(() => nameInput.focus(), 200);
         }
-        if (showBtn) showBtn.textContent = 'Show milestone';
+        if (showBtn) showBtn.textContent = tt('wiz_show_milestone');
     } else {
         if (nameInput) { nameInput.value = role; nameInput.classList.add('hidden'); }
-        if (showBtn) showBtn.textContent = `Show ${role}\u2019s milestone`;
+        if (showBtn) showBtn.textContent = tt('wiz_show_role_ms', { name: role });
         const dayField = document.getElementById('friendDay');
         if (dayField) setTimeout(() => dayField.focus(), 200);
     }
@@ -2135,7 +2153,7 @@ function wizardDiscoverFriend() {
     const dateStr = buildDateFromFields('friend');
 
     if (!name) {
-        showToast('Tap a role or enter a name', 'error');
+        showToast(tt('toast_tap_role_or_name'), 'error');
         return;
     }
     if (!dateStr) {
@@ -2173,7 +2191,7 @@ function wizardDiscoverFriend() {
 
     // Update share button text
     const shareBtn = document.getElementById('wizardShareFriendBtn');
-    if (shareBtn) shareBtn.textContent = isRole ? 'Send to your ' + name.toLowerCase() + ' \u2192' : 'Send to ' + name + ' \u2192';
+    if (shareBtn) shareBtn.textContent = isRole ? tt('wiz_send_to_your', { name: name.toLowerCase() }) : tt('wiz_send_to', { name: name });
 
     _track('onboard_add_person', { event_count: appData.events.length });
 
@@ -2247,7 +2265,7 @@ function wizardDiscoverPerson3() {
     const dateStr = buildDateFromFields('person3');
 
     if (!name) {
-        showToast('Tap a role or enter a name', 'error');
+        showToast(tt('toast_tap_role_or_name'), 'error');
         return;
     }
     if (!dateStr) {
@@ -2280,7 +2298,7 @@ function wizardSharePerson3() {
                 .catch(() => wizardNext(9));
         } else {
             navigator.clipboard.writeText(message).then(() => {
-                showToast('Copied! Send it to ' + name, 'success');
+                showToast(tt('toast_copied_send', { name: name }), 'success');
                 setTimeout(() => wizardNext(9), 1500);
             }).catch(() => wizardNext(9));
         }
@@ -2322,7 +2340,7 @@ function wizardAddPerson4() {
     const dateStr = buildDateFromFields('person4');
 
     if (!name) {
-        showToast('Tap a role or enter a name', 'error');
+        showToast(tt('toast_tap_role_or_name'), 'error');
         return;
     }
     if (!dateStr) {
@@ -2345,7 +2363,7 @@ function wizardAddPerson4() {
 
     // Hide the form, refresh combined milestone display
     document.getElementById('wizardPerson4Section').style.display = 'none';
-    showToast(name + ' added to your team!', 'success');
+    showToast(tt('toast_added_team', { name: name }), 'success');
     wizardShowCombined(true);
 }
 
@@ -2366,8 +2384,8 @@ function wizardDiscoverFriendV2() {
 
     console.log('[wizardDiscoverFriendV2] name:', name, 'dateStr:', dateStr);
 
-    if (!name) { showToast('Enter a name first', 'error'); return; }
-    if (!dateStr) { showToast('Enter a valid date (DD/MM/YYYY)', 'error'); return; }
+    if (!name) { showToast(tt('toast_enter_name_first'), 'error'); return; }
+    if (!dateStr) { showToast(tt('toast_enter_valid_date'), 'error'); return; }
 
     // Create event and show hero reveal
     const ok = _wizardCreateAndReveal(name, dateStr, 'wizardFriendHero', 'wizardStep5');
@@ -2410,7 +2428,7 @@ function wizardDiscoverFriendV2() {
                 html += wizardMilestoneRow(displayText, ds, name);
             });
             html += `</div>`;
-            html += `<div id="friendMoreToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('friendMoreExtra'),b=document.getElementById('friendMoreToggle');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${upcoming.length - TOP5} more \\u25BC';}">Show ${upcoming.length - TOP5} more \u25BC</div>`;
+            html += `<div id="friendMoreToggle" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('friendMoreExtra','friendMoreToggle',${upcoming.length - TOP5})">${_moreListLabel(upcoming.length - TOP5)}</div>`;
         }
         html += '</div>';
         moreEl.innerHTML = html;
@@ -2518,20 +2536,20 @@ function wizardShowCombinedAndName() {
     });
 
     el.innerHTML = `
-        <p style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:8px;">Dates only you and ${escapeHtml(namesStr.replace(/^Me and |^You and /i, ''))} share</p>
+        <p style="font-size:1rem;color:var(--text);text-align:center;margin-bottom:8px;">${tt('wiz_dates_only_share', { name: escapeHtml(namesStr.replace(/^Me and |^You and /i, '')) })}</p>
         <div class="wizard-reveal-number-wrap">
             <div class="wizard-reveal-number-line">
                 <span class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</span>
-                <span class="wizard-reveal-unit">${hero ? (hero.unitName || hero.unit) : 'days'} combined</span>
+                <span class="wizard-reveal-unit">${tt('wiz_units_combined', { unit: hero ? (hero.unitName || hero.unit) : 'days' })}</span>
             </div>
         </div>
         <div class="hero-meta">
             <div class="hero-meta-text">
-                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">in ${bestDist.toLocaleString(locale)} ${plural(bestDist, 'day')}</span></div>
+                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
             </div>
             ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? (hero.unitName || hero.unit) : 'days') + ' combined on ' + dateDisplay + ' — happymoments.app')}
         </div>
-        ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">More together milestones</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizCombExtra6'),b=document.getElementById('wizCombToggle6');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${combinedList.length - TOP6} more \\u25BC';}">Show ${combinedList.length - TOP6} more \u25BC</div>` : ''}</div>` : ''}
+        ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_together')}</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('wizCombExtra6','wizCombToggle6',${combinedList.length - TOP6})">${_moreListLabel(combinedList.length - TOP6)}</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
             <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">${tt('wiz_name_first_group')}</div>
             <input type="text" id="groupTitleInput" name="hm_f6" class="wizard-input" value="" placeholder="${escapeHtml(suggestedName)}" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='${escapeHtml(suggestedName)}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
@@ -2594,7 +2612,7 @@ function wizardRenderGroupMembers() {
             <input type="text" inputmode="numeric" value="${mm}" onchange="wizardEditMemberDate('${m.id}','m',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
             <input type="text" inputmode="numeric" value="${yyyy}" onchange="wizardEditMemberDate('${m.id}','y',this.value)" maxlength="4" style="width:3em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
-            ${m.name !== 'Me' ? `<button onclick="wizardRemoveMember('${m.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.05rem;padding:2px 5px;" title="Remove">&times;</button>` : '<span style="width:22px;"></span>'}
+            ${m.name !== 'Me' ? `<button onclick="wizardRemoveMember('${m.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.05rem;padding:2px 5px;" title="${tt('ed_remove')}">&times;</button>` : '<span style="width:22px;"></span>'}
         </div>`;
     });
     el.innerHTML = html;
@@ -2637,7 +2655,7 @@ function wizardSelectRoleGroup(btn, role) {
         if (nameInput) {
             nameInput.classList.remove('hidden');
             nameInput.value = '';
-            nameInput.placeholder = role === 'Child' ? "Child\u2019s name" : "Friend\u2019s name";
+            nameInput.placeholder = role === 'Child' ? tt('wiz_child_name_ph') : tt('wiz_friend_name_ph');
             setTimeout(() => nameInput.focus(), 200);
         }
     } else {
@@ -2659,7 +2677,7 @@ function wizardAddGroupMember() {
     const name = document.getElementById('groupPersonField')?.value?.trim();
     const dateStr = buildDateFromFields('group');
 
-    if (!name) { showToast('Tap a role or enter a name', 'error'); return; }
+    if (!name) { showToast(tt('toast_tap_role_or_name'), 'error'); return; }
     if (!dateStr) { showToast(_t('wizard_please_enter_date') || 'Please enter a date', 'error'); return; }
     if (!validateDateFields(dateStr)) return;
     const date = parseLocalDate(dateStr);
@@ -2755,7 +2773,7 @@ function wizardShowGroupReveal() {
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
                 });
                 individualHtml += `</div>`;
-                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rest.length} more \\u25BC';}">Show ${rest.length} more \u25BC</div>`;
+                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('${uid}','${uid}t',${rest.length})">${_moreListLabel(rest.length)}</div>`;
             }
         } else {
             // Multiple new members: show 1 best each + expand per person
@@ -2772,7 +2790,7 @@ function wizardShowGroupReveal() {
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val2 + ' ' + unit2, formatMilestoneDate(m.date), e.name);
                 });
                 individualHtml += `</div>`;
-                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More \\u25BC';}">More \u25BC</div>`;
+                individualHtml += `<div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('${uid}','${uid}t',0,null,'wiz_more_arrow','wiz_less_arrow')">${tt('wiz_more_arrow')}</div>`;
             }
         }
         newMemberCount++;
@@ -2876,18 +2894,18 @@ function wizardShowTeamMilestones() {
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number-line">
                     <span class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</span>
-                    <span class="wizard-reveal-unit" style="font-size:1.3rem;">${hero.unitName || hero.unit} combined</span>
+                    <span class="wizard-reveal-unit" style="font-size:1.3rem;">${tt('wiz_units_combined', { unit: hero.unitName || hero.unit })}</span>
                 </div>
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-text">
-                    <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:0;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">in ${Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale)} ${plural(Math.ceil(hero.timeUntil / (24*60*60*1000)), 'day')}</span></div>
+                    <div class="wizard-reveal-date" style="font-size:1.05rem;margin-bottom:0;">${formatMilestoneDate(hero.date, { long: true })} &middot; <span class="wizard-reveal-countdown" style="font-size:1.05rem;">${tt('wiz_in_time', { time: Math.ceil(hero.timeUntil / (24*60*60*1000)).toLocaleString(locale) + ' ' + plural(Math.ceil(hero.timeUntil / (24*60*60*1000)), 'day') })}</span></div>
                 </div>
-                <button class="hero-share-chip">Share ${_shareArrowSvg(15)}</button>
+                <button class="hero-share-chip">${tt('wiz_share')} ${_shareArrowSvg(15)}</button>
             </div>
             </div>
         ` : ''}
-        ${combinedHtml ? `<div style="margin-top:10px;border-top:1px solid var(--border,#333);padding-top:8px;"><div class="wizard-milestone-list">${combinedHtml}</div>${combinedExtraHtml ? `<div id="wizTeamExtra8" style="display:none;" class="wizard-milestone-list">${combinedExtraHtml}</div><div id="wizTeamToggle8" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('wizTeamExtra8'),b=document.getElementById('wizTeamToggle8');if(m.style.display==='none'){m.style.display='';b.textContent='Show less \\u25B2';}else{m.style.display='none';b.textContent='Show ${rows.length - 3} more \\u25BC';}">Show ${rows.length - 3} more ▼</div>` : ''}</div>` : ''}
+        ${combinedHtml ? `<div style="margin-top:10px;border-top:1px solid var(--border,#333);padding-top:8px;"><div class="wizard-milestone-list">${combinedHtml}</div>${combinedExtraHtml ? `<div id="wizTeamExtra8" style="display:none;" class="wizard-milestone-list">${combinedExtraHtml}</div><div id="wizTeamToggle8" style="cursor:pointer;color:var(--warning,#d4b876);padding:6px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('wizTeamExtra8','wizTeamToggle8',${rows.length - 3})">${_moreListLabel(rows.length - 3)}</div>` : ''}</div>` : ''}
     `;
 
     // Restore buttons for Phase 2 \u2014 the forward action is ALWAYS the single
@@ -2992,15 +3010,15 @@ function wizardBuildShareScreen() {
                     <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${val} ${unit} &middot; ${ds}</span>
                 </div>
-                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.95rem;width:100%;margin-top:0;">Share with ${escapeHtml(e.name)}</button>
+                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.95rem;width:100%;margin-top:0;">${tt('wiz_share_with', { name: escapeHtml(e.name) })}</button>
                 ${moreRows ? `<div id="${uid}" style="display:none;margin-top:6px;">${moreRows}</div>
-                <div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:5px;text-align:center;font-size:0.88rem;" onclick="var m=document.getElementById('${uid}'),b=document.getElementById('${uid}t');if(m.style.display==='none'){m.style.display='';b.textContent='Less \\u25B2';}else{m.style.display='none';b.textContent='More milestones \\u25BC';}">More milestones ▼</div>` : ''}
+                <div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:5px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('${uid}','${uid}t',0,null,'wiz_more_ms_arrow','wiz_less_arrow')">${tt('wiz_more_ms_arrow')}</div>` : ''}
             </div>`;
         }
     });
 
     if (appData.events.length <= 1) {
-        html += '<p style="color:var(--text-muted);text-align:center;font-style:italic;">Add people to share their milestones!</p>';
+        html += '<p style="color:var(--text-muted);text-align:center;font-style:italic;">' + tt('wiz_add_people_share') + '</p>';
     }
 
     el.innerHTML = html;
@@ -3045,23 +3063,23 @@ function wizardCreateAnotherGroup() {
     if (userAge <= 20) {
         // School / class context
         groupExamples = [
-            'Tina\u2019s class has been together for 10,000 days \u2014 she was the one who noticed.',
-            'Jan\u2019s best friends hit 5,000 days of friendship \u2014 that called for a party.',
-            'Maja\u2019s teammates crossed 50,000 combined days \u2014 only she knew.'
+            tt('wiz_ex_school_1'),
+            tt('wiz_ex_school_2'),
+            tt('wiz_ex_school_3')
         ];
     } else if (userAge <= 25) {
         // University / early career
         groupExamples = [
-            'Luka\u2019s university crew turned 100,000 hours old \u2014 he made it a dinner.',
-            'Sara\u2019s flatmates crossed 30,000 combined days \u2014 she got them together.',
-            'Tim\u2019s study group hit 10,000 days since they met \u2014 worth celebrating.'
+            tt('wiz_ex_uni_1'),
+            tt('wiz_ex_uni_2'),
+            tt('wiz_ex_uni_3')
         ];
     } else {
         // Office / adult life
         groupExamples = [
-            'Tina\u2019s office team crossed 50,000 combined days \u2014 she brought the cake.',
-            'Mark\u2019s college friends hit 100,000 hours since graduation \u2014 reunion booked.',
-            'Tina\u2019s childhood friends just hit 10,000 days of friendship \u2014 she got them together.'
+            tt('wiz_ex_office_1'),
+            tt('wiz_ex_office_2'),
+            tt('wiz_ex_office_3')
         ];
     }
     const groupExample = groupExamples[Math.floor(Math.random() * groupExamples.length)];
@@ -3185,8 +3203,8 @@ function showOnboardingResumeBanner() {
     banner.id = 'onboardResumeBanner';
     banner.style.cssText = 'padding:12px 16px;background:rgba(212,184,118,0.1);border:1px solid rgba(212,184,118,0.3);border-radius:8px;margin:8px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;';
     banner.innerHTML = `
-        <span style="flex:1;color:var(--text);font-size:0.9rem;">Continue setting up your groups</span>
-        <span style="color:var(--warning);font-weight:600;font-size:0.85rem;">Continue &rarr;</span>
+        <span style="flex:1;color:var(--text);font-size:0.9rem;">${tt('dash_resume_setup')}</span>
+        <span style="color:var(--warning);font-weight:600;font-size:0.85rem;">${tt('dash_resume_continue')}</span>
     `;
     banner.onclick = function() {
         banner.remove();
@@ -3207,7 +3225,7 @@ function handleStart() {
     const dateStr = birthDateInput.value || buildDateFromFields('birth');
 
     if (!name || !dateStr) {
-        showToast('Please enter name and date', 'error');
+        showToast(tt('toast_enter_name_date'), 'error');
         return;
     }
     if (!validateDateFields(dateStr)) return;
@@ -3265,7 +3283,7 @@ function renderEventsTab() {
 
 function renderEventsList() {
     if (appData.events.length === 0) {
-        eventsListEl.innerHTML = '<p class="empty-text">No events yet. Add your first date below!</p>';
+        eventsListEl.innerHTML = '<p class="empty-text">' + tt('ev_none_yet') + '</p>';
         return;
     }
 
@@ -3274,10 +3292,10 @@ function renderEventsList() {
         const typeIcon = getEventTypeIcon(type);
         const dateObj = e.date instanceof Date ? e.date : new Date(e.date);
         const dateStr = dateObj.toLocaleDateString(getAppLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
-        const typeLabel = type === 'birthday' ? 'Birthday' : type === 'beginning' ? 'Event' : 'Milestone';
+        const typeLabel = type === 'birthday' ? tt('type_birthday') : type === 'beginning' ? tt('ev_type_event') : tt('type_milestone');
 
         return `
-            <div class="event-item compact" onclick="openEditModal('${e.id}')" title="Tap to edit">
+            <div class="event-item compact" onclick="openEditModal('${e.id}')" title="${tt('ev_tap_to_edit')}">
                 <div class="event-item-main">
                     <span class="event-type-icon">${typeIcon}</span>
                     <span class="event-name">${escapeHtml(e.name)}</span>
@@ -3312,7 +3330,7 @@ function handleAddEvent() {
     const dateStr = newEventDateInput.value || buildDateFromFields('newEvent');
 
     if (!name || !dateStr) {
-        showToast('Please enter event name and date', 'error');
+        showToast(tt('toast_enter_event_name_date'), 'error');
         _addingEvent = false;
         return;
     }
@@ -3375,14 +3393,14 @@ function handleAddEvent() {
     renderPersonFilter();
     renderMilestonesTab();
     renderConnectionMatrix();
-    showToast(`${name} added!`, 'success');
+    showToast(tt('toast_added', { name: name }), 'success');
     _track('event_added', { event_count: appData.events.length });
 
     // After adding 2nd person, suggest Team tab (one-time)
     if (appData.events.length === 2 && !localStorage.getItem('hm_team_hint_shown')) {
         localStorage.setItem('hm_team_hint_shown', '1');
         setTimeout(() => {
-            showToast('You have 2 people now! Check the Team tab to see combined milestones.', 'info', 5000);
+            showToast(tt('toast_two_people_hint'), 'info', 5000);
         }, 1500);
     }
 
@@ -3424,7 +3442,7 @@ function handleSaveEdit() {
     const dateStr = editEventDateInput.value || buildDateFromFields('editEvent');
 
     if (!name || !dateStr) {
-        showToast('Please enter event name and date', 'error');
+        showToast(tt('toast_enter_event_name_date'), 'error');
         return;
     }
     if (!validateDateFields(dateStr)) return;
@@ -3448,7 +3466,7 @@ function handleSaveEdit() {
 function handleDeleteEdit() {
     if (!editingEventId) return;
 
-    if (!confirm('Delete this event?')) return;
+    if (!confirm(tt('ev_delete_confirm'))) return;
 
     appData.events = appData.events.filter(e => e.id !== editingEventId);
 
@@ -3477,7 +3495,7 @@ function handleDeleteEdit() {
 function renderCombinedTab() {
     try {
     if (appData.events.length < 2) {
-        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">Add at least 2 events to see combined milestones.</p>';
+        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">' + tt('tog_add_two_events') + '</p>';
         return;
     }
 
@@ -3486,9 +3504,9 @@ function renderCombinedTab() {
         _track('premium_gate_hit', { reason: 'team_view_limit' });
         combinedMilestonesContentEl.innerHTML = `
             <div class="premium-gate-overlay">
-                <p>You've used your ${FREE_TEAM_VIEWS} free Team views.</p>
-                <p>Upgrade to Premium for unlimited access.</p>
-                <button class="btn-primary" onclick="showUpgradePrompt('team')" style="margin-top: 12px;">Upgrade &mdash; &euro;1.49/year</button>
+                <p>${tt('prem_gate_used_views', { count: FREE_TEAM_VIEWS })}</p>
+                <p>${tt('prem_gate_upgrade_for')}</p>
+                <button class="btn-primary" onclick="showUpgradePrompt('team')" style="margin-top: 12px;">${tt('prem_gate_upgrade_btn')}</button>
             </div>`;
         return;
     }
@@ -3523,7 +3541,7 @@ function renderCombinedTab() {
     // Check if any connections exist
     const activeKeys = Object.keys(appData.connections).filter(k => appData.connections[k]);
     if (activeKeys.length === 0) {
-        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">Enable event connections in Settings to see combined milestones.</p>';
+        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">' + tt('tog_enable_connections') + '</p>';
         return;
     }
 
@@ -3546,7 +3564,7 @@ function renderCombinedTab() {
     const connectedEvents = appData.events.filter(e => connectedIds.has(e.id));
 
     if (connectedEvents.length < 2) {
-        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">No connected events found.</p>';
+        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">' + tt('tog_no_connected') + '</p>';
         return;
     }
 
@@ -3606,7 +3624,7 @@ function renderCombinedTab() {
 
             html += `
                 <div class="combined-subsection">
-                    <h4>Relationships & Ratios</h4>
+                    <h4>${tt('tog_ratios_title')}</h4>
                     <div class="combined-milestones-list">
                         ${renderCombinedMilestonesList(allRatioMilestones.slice(0, 25), 'ratio')}
                     </div>
@@ -3645,7 +3663,7 @@ function renderCombinedTab() {
 
             html += `
                 <div class="combined-subsection">
-                    <h4>Time Comparisons</h4>
+                    <h4>${tt('tog_time_comparisons')}</h4>
                     <div class="combined-milestones-list">
                         ${renderCombinedMilestonesList(allDurationMilestones.slice(0, 25), 'duration')}
                     </div>
@@ -3655,14 +3673,14 @@ function renderCombinedTab() {
     }
 
     if (html === '') {
-        html = '<p class="empty-text">No combined milestones found. Check connections in Settings.</p>';
+        html = '<p class="empty-text">' + tt('tog_no_combined') + '</p>';
     }
 
     // Show views remaining for free users
     if (!isPremium()) {
         const remaining = FREE_TEAM_VIEWS - getTeamViewCount();
         if (remaining > 0 && remaining <= 3) {
-            html += `<p class="team-views-hint">${remaining} free view${remaining === 1 ? '' : 's'} remaining</p>`;
+            html += `<p class="team-views-hint">${tt(remaining === 1 ? 'tog_views_remaining_one' : 'tog_views_remaining_many', { count: remaining })}</p>`;
         }
     }
 
@@ -3673,7 +3691,7 @@ function renderCombinedTab() {
     updateCombinedSharePreview();
     } catch (err) {
         console.error('Combined tab error:', err);
-        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">Error loading combined milestones. Check console for details.</p>';
+        combinedMilestonesContentEl.innerHTML = '<p class="empty-text">' + tt('tog_error_loading') + '</p>';
     }
 }
 
@@ -3701,7 +3719,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
                 <div class="cmi-main">
                     <span class="cmi-value">${displayVal}</span>
                     <span class="cmi-unit">${m.unitName}</span>
-                    <span class="row-share cmi-share">Share ${_shareArrowSvg(14)}</span>
+                    <span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(14)}</span>
                 </div>
                 <div class="cmi-desc">${m.comboDescription || m.description || ''}</div>
                 ${eventsHtml}
@@ -3942,7 +3960,7 @@ function renderConnectionMatrix() {
     const events = appData.events;
 
     if (events.length < 2) {
-        connectionMatrixEl.innerHTML = '<p class="empty-text">Add at least 2 events to see the matrix.</p>';
+        connectionMatrixEl.innerHTML = '<p class="empty-text">' + tt('tog_matrix_two') + '</p>';
         return;
     }
 
@@ -4071,11 +4089,11 @@ function getCombinedMilestoneWording(events) {
     const names = events.map(e => escapeHtml(e.name));
 
     if (allBirthdays) {
-        return { prefix: 'Together we are', verb: 'reach', names };
+        return { prefix: tt('tog_prefix_together_we_are'), verb: 'reach', names };
     } else if (hasBirthdays) {
-        return { prefix: 'Our combined journey', verb: 'totals', names };
+        return { prefix: tt('tog_prefix_combined_journey'), verb: 'totals', names };
     } else {
-        return { prefix: 'Total time together', verb: 'reaches', names };
+        return { prefix: tt('tog_prefix_total_time'), verb: 'reaches', names };
     }
 }
 
@@ -4387,8 +4405,8 @@ function renderHeroMilestone() {
                 <span class="hero-countdown">${timeUntilStr}</span>
             </div>
             <div class="hero-actions">
-                <button class="hero-share-btn" onclick="heroShare()">Share</button>
-                <button class="hero-remind-btn" onclick="heroRemind()">Remind me</button>
+                <button class="hero-share-btn" onclick="heroShare()">${tt('wiz_share')}</button>
+                <button class="hero-remind-btn" onclick="heroRemind()">${tt('dash_remind_me')}</button>
             </div>
         </div>
     `;
@@ -4417,12 +4435,12 @@ function heroRemind() {
     if (typeof NOTIF !== 'undefined' && !NOTIF.isEnabled()) {
         NOTIF.enable().then(ok => {
             if (ok) {
-                showToast('Reminders enabled! We\u2019ll notify you before this milestone.', 'success');
+                showToast(tt('toast_reminders_before_ms'), 'success');
                 _track('hero_remind_enabled');
             }
         });
     } else {
-        showToast('Reminder set! We\u2019ll notify you the day before.', 'success');
+        showToast(tt('toast_reminder_set'), 'success');
         _track('hero_remind');
     }
 }
@@ -4634,8 +4652,9 @@ function toggleMoreMilestones() {
     if (!more || !btn) return;
     const isHidden = more.style.display === 'none';
     more.style.display = isHidden ? '' : 'none';
-    btn.textContent = isHidden ? 'Show less \u25B2' : btn.textContent.replace('Show less \u25B2', '');
-    if (!isHidden) {
+    if (isHidden) {
+        btn.textContent = tt('wiz_show_less');
+    } else {
         // Restore "Show X more" text
         const count = more.querySelectorAll('.time-chunk-item').length;
         btn.textContent = tt('wiz_show_more_tpl', { count: count, noun: plural(count, 'milestone') });
@@ -5500,7 +5519,7 @@ function selectMilestoneForShare(idx) {
 
 function updateSharePreview() {
     if (allMilestonesFlat.length === 0) {
-        sharePreviewEl.innerHTML = '<p class="empty-text small">No milestones to share yet.</p>';
+        sharePreviewEl.innerHTML = '<p class="empty-text small">' + tt('share_no_ms_yet') + '</p>';
         return;
     }
 
@@ -5509,7 +5528,7 @@ function updateSharePreview() {
     const m = allMilestonesFlat[idx];
 
     if (!m) {
-        sharePreviewEl.innerHTML = '<p class="empty-text small">Select a milestone to share.</p>';
+        sharePreviewEl.innerHTML = '<p class="empty-text small">' + tt('share_select_ms') + '</p>';
         return;
     }
 
@@ -5520,7 +5539,7 @@ function updateSharePreview() {
         '<a href="https://$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">$1</a>'
     );
     const hintCount = parseInt(localStorage.getItem('hm_share_hint_count') || '0');
-    const hintHtml = hintCount < 3 ? '<p class="share-hint">Click any milestone above to select it for sharing</p>' : '';
+    const hintHtml = hintCount < 3 ? '<p class="share-hint">' + tt('share_click_hint') + '</p>' : '';
     sharePreviewEl.innerHTML = `
         <div class="share-message-preview">
             <p>${messageHtml}</p>
@@ -5678,14 +5697,14 @@ function generateChallengeMessage(m) {
 function handleChallengeFriends() {
     const idx = selectedMilestone !== null ? selectedMilestone : 0;
     const m = allMilestonesFlat[idx];
-    if (!m) { showToast('Select a milestone first', 'info'); return; }
+    if (!m) { showToast(tt('toast_select_milestone_first'), 'info'); return; }
 
     const message = generateChallengeMessage(m);
     if (navigator.share) {
         navigator.share({ title: 'HappyMoments', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied! Share it with your friends.', 'success');
+            showToast(tt('wizard_copied_share'), 'success');
         }).catch(() => {
             showToast(message, 'info', 8000);
         });
@@ -5716,7 +5735,7 @@ function handleChallengeGroup() {
         navigator.share({ title: 'HappyMoments', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
-            showToast('Copied! Share it with your group.', 'success');
+            showToast(tt('toast_copied_group'), 'success');
         }).catch(() => {});
     }
     _track('group_challenge', { locale });
@@ -5743,9 +5762,9 @@ function shareAppLink() {
         navigator.share({ title: 'HappyMoments', text }).catch(() => {});
     } else {
         navigator.clipboard.writeText(text).then(() => {
-            showToast('Link copied! Share it with your friends.', 'success');
+            showToast(tt('toast_link_copied'), 'success');
         }).catch(() => {
-            showToast('Share this link: https://happymoments.app', 'info', 5000);
+            showToast(tt('toast_share_link'), 'info', 5000);
         });
     }
     _track('share_app', { source: 'settings' });
@@ -5754,7 +5773,7 @@ function shareAppLink() {
 function submitFeedback() {
     const text = document.getElementById('feedbackText')?.value?.trim();
     if (!text) {
-        showToast('Please write something first.', 'info');
+        showToast(tt('toast_write_first'), 'info');
         return;
     }
     // Send feedback as analytics event (stored in D1)
@@ -5765,7 +5784,7 @@ function submitFeedback() {
         user: (typeof HM_AUTH !== 'undefined' && HM_AUTH.isLoggedIn()) ? HM_AUTH.getUserEmail() : 'anonymous'
     });
     document.getElementById('feedbackText').value = '';
-    showToast('Thank you! Your feedback helps us improve.', 'success');
+    showToast(tt('toast_feedback_thanks'), 'success');
 }
 
 let _shareAppPromptCount = 0;
@@ -5776,7 +5795,7 @@ function promptShareApp() {
     if (_shareAppPromptCount > 6) return;
 
     setTimeout(() => {
-        showToast('Know someone who\u2019d love this? The app link is included in your message!', 'info', 4000);
+        showToast(tt('toast_invite_hint'), 'info', 4000);
     }, 1500);
 }
 
@@ -5809,14 +5828,14 @@ function handleCopyShare() {
 
     const message = generateShareMessage(m);
     navigator.clipboard.writeText(message).then(() => {
-        copyShareBtn.textContent = 'Copied!';
+        copyShareBtn.textContent = tt('share_copied_btn');
         showToast(tt('toast_copied'), 'success');
         setTimeout(() => {
-            copyShareBtn.textContent = 'Copy Message';
+            copyShareBtn.textContent = tt('share_copy_message');
         }, 2000);
         promptShareApp();
     }).catch(() => {
-        showToast('Could not copy. Please select the text manually.', 'error');
+        showToast(tt('toast_copy_failed'), 'error');
     });
 }
 
@@ -5865,7 +5884,7 @@ function handleEmailShare() {
     if (!m) return;
 
     const message = generateShareMessage(m);
-    const subject = encodeURIComponent('A special moment to celebrate!');
+    const subject = encodeURIComponent(tt('share_email_subject'));
     const body = encodeURIComponent(message);
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
     _track('share_email', { value: m.value, unit: m.unitName });
@@ -5880,7 +5899,7 @@ function selectCombinedMilestoneForShare(idx) {
 
 function updateCombinedSharePreview() {
     if (allCombinedMilestonesFlat.length === 0) {
-        combinedSharePreviewEl.innerHTML = '<p class="empty-text small">No combined milestones to share yet.</p>';
+        combinedSharePreviewEl.innerHTML = '<p class="empty-text small">' + tt('share_no_combined_yet') + '</p>';
         return;
     }
 
@@ -5888,7 +5907,7 @@ function updateCombinedSharePreview() {
     const m = allCombinedMilestonesFlat[idx];
 
     if (!m) {
-        combinedSharePreviewEl.innerHTML = '<p class="empty-text small">Select a milestone to share.</p>';
+        combinedSharePreviewEl.innerHTML = '<p class="empty-text small">' + tt('share_select_ms') + '</p>';
         return;
     }
 
@@ -5902,7 +5921,7 @@ function updateCombinedSharePreview() {
         <div class="share-message-preview">
             <p>${messageHtml}</p>
         </div>
-        <p class="share-hint">Click any combined milestone above to select it for sharing</p>
+        <p class="share-hint">${tt('share_click_hint_combined')}</p>
     `;
 }
 
@@ -5926,13 +5945,13 @@ function handleCopyCombinedShare() {
 
     const message = generateCombinedShareMessage(m);
     navigator.clipboard.writeText(message).then(() => {
-        copyCombinedShareBtn.textContent = 'Copied!';
+        copyCombinedShareBtn.textContent = tt('share_copied_btn');
         showToast(tt('toast_copied'), 'success');
         setTimeout(() => {
-            copyCombinedShareBtn.textContent = 'Copy Message';
+            copyCombinedShareBtn.textContent = tt('share_copy_message');
         }, 2000);
     }).catch(() => {
-        showToast('Could not copy. Please select the text manually.', 'error');
+        showToast(tt('toast_copy_failed'), 'error');
     });
 }
 
@@ -5964,7 +5983,7 @@ function handleEmailCombinedShare() {
     if (!m) return;
 
     const message = generateCombinedShareMessage(m);
-    const subject = encodeURIComponent('A special moment to celebrate!');
+    const subject = encodeURIComponent(tt('share_email_subject'));
     const body = encodeURIComponent(message);
     window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
     _track('share_email', { type: 'combined', value: m.value, unit: m.unitName });
@@ -5997,7 +6016,7 @@ function getCalendarEventDetails(milestone) {
 
 function openGoogleCalendar(milestone) {
     const ev = getCalendarEventDetails(milestone);
-    if (!ev) { showToast('Select a milestone first', 'error'); return; }
+    if (!ev) { showToast(tt('toast_select_milestone_first'), 'error'); return; }
 
     const params = new URLSearchParams({
         action: 'TEMPLATE',
@@ -6010,7 +6029,7 @@ function openGoogleCalendar(milestone) {
 
 function openOutlookCalendar(milestone) {
     const ev = getCalendarEventDetails(milestone);
-    if (!ev) { showToast('Select a milestone first', 'error'); return; }
+    if (!ev) { showToast(tt('toast_select_milestone_first'), 'error'); return; }
 
     const d = milestone.date;
     const iso = d.toISOString().split('T')[0];
@@ -6032,7 +6051,7 @@ function openOutlookCalendar(milestone) {
 
 function downloadIcsFile(milestone) {
     const ev = getCalendarEventDetails(milestone);
-    if (!ev) { showToast('Select a milestone first', 'error'); return; }
+    if (!ev) { showToast(tt('toast_select_milestone_first'), 'error'); return; }
 
     const now = new Date();
     const pad = n => String(n).padStart(2, '0');
@@ -6060,7 +6079,7 @@ function downloadIcsFile(milestone) {
     a.download = 'happymoment.ics';
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Calendar file downloaded', 'success');
+    showToast(tt('toast_calendar_downloaded'), 'success');
 }
 
 // Individual milestone calendar handlers
@@ -6114,7 +6133,7 @@ function loadSettingsUI() {
 
 function renderCustomNumbers() {
     if (appSettings.customNumbers.length === 0) {
-        customNumbersListEl.innerHTML = '<p class="empty-text small">No custom numbers.</p>';
+        customNumbersListEl.innerHTML = '<p class="empty-text small">' + tt('no_custom_numbers') + '</p>';
         return;
     }
 
@@ -6129,7 +6148,7 @@ function renderCustomNumbers() {
 function handleAddCustomNumber() {
     const value = parseInt(customNumberInput.value, 10);
     if (isNaN(value) || value <= 0) {
-        showToast('Please enter a valid positive number', 'error');
+        showToast(tt('toast_enter_valid_number'), 'error');
         return;
     }
     addCustomNumber(value);
@@ -6177,7 +6196,7 @@ function handleSaveSettings() {
 }
 
 function handleReset() {
-    if (!confirm('Delete all data and settings?')) return;
+    if (!confirm(tt('reset_confirm'))) return;
 
     localStorage.removeItem(STORAGE_KEY_DATA);
     localStorage.removeItem(STORAGE_KEY_SETTINGS);
@@ -6238,7 +6257,7 @@ function handleExportData() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast('Data exported successfully!', 'success');
+    showToast(tt('toast_data_exported'), 'success');
 }
 
 function handleImportData(e) {
@@ -6252,11 +6271,11 @@ function handleImportData(e) {
 
             // Basic structure validation
             if (!importedData || typeof importedData !== 'object') {
-                showToast('Invalid backup file format', 'error');
+                showToast(tt('toast_invalid_backup'), 'error');
                 return;
             }
 
-            if (!confirm('This will replace all your current data. Continue?')) {
+            if (!confirm(tt('import_confirm'))) {
                 return;
             }
 
@@ -6289,7 +6308,7 @@ function handleImportData(e) {
                 }];
                 currentSetId = 'set_imported';
             } else {
-                showToast('Invalid backup file format', 'error');
+                showToast(tt('toast_invalid_backup'), 'error');
                 return;
             }
 
@@ -6314,9 +6333,9 @@ function handleImportData(e) {
                 showDashboard();
             }
 
-            showToast('Data imported successfully!', 'success');
+            showToast(tt('toast_data_imported'), 'success');
         } catch (err) {
-            showToast('Error importing data: ' + err.message, 'error');
+            showToast(tt('toast_import_error', { error: err.message }), 'error');
         }
     };
     reader.readAsText(file);
@@ -6334,7 +6353,7 @@ function updateSetSwitcher() {
     let options = allSets.map(set =>
         `<option value="${set.id}" ${set.id === currentSetId ? 'selected' : ''}>${set.name}</option>`
     ).join('');
-    options += '<option value="__new__">+ New Group</option>';
+    options += '<option value="__new__">' + tt('ed_new_group_option') + '</option>';
     currentSetSelect.innerHTML = options;
 
     // Hide the set switcher — simplified UI, sets managed in People tab
@@ -6345,7 +6364,7 @@ function updateSetSwitcher() {
 }
 
 function renderEventSetsHTML() {
-    if (allSets.length === 0) return '<p class="empty-text small">No groups yet.</p>';
+    if (allSets.length === 0) return '<p class="empty-text small">' + tt('ed_no_groups') + '</p>';
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     return allSets.map(set => {
         const isCurrent = set.id === currentSetId;
@@ -6365,7 +6384,7 @@ function renderEventSetsHTML() {
             <div class="event-set-item ${isCurrent ? 'current' : ''}" onclick="openGroupEditor('${set.id}')" style="padding:12px;margin-bottom:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid ${isCurrent ? 'var(--warning,#d4b876)' : 'var(--border,#333)'};cursor:pointer;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
                     <strong style="flex:1;font-size:1rem;color:var(--text);">${escapeHtml(set.name)}</strong>
-                    ${isCurrent ? '<span style="color:var(--warning);font-size:0.65rem;font-weight:700;padding:2px 8px;border:1px solid var(--warning);border-radius:10px;">ACTIVE</span>' : '<span style="color:var(--text-muted);font-size:0.7rem;">tap to edit</span>'}
+                    ${isCurrent ? '<span style="color:var(--warning);font-size:0.65rem;font-weight:700;padding:2px 8px;border:1px solid var(--warning);border-radius:10px;">' + tt('ed_active_badge') + '</span>' : '<span style="color:var(--text-muted);font-size:0.7rem;">' + tt('ed_tap_to_edit') + '</span>'}
                     <span style="color:var(--text-muted);font-size:1rem;">&#9998;</span>
                 </div>
                 <div style="padding-left:4px;">${membersHtml}</div>
@@ -6390,14 +6409,14 @@ function renameSet(setId) {
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `
         <div class="modal-content">
-            <h3>Rename Group</h3>
+            <h3>${tt('ed_rename_group')}</h3>
             <div class="form-group">
-                <label>Group name</label>
+                <label>${tt('ed_group_name')}</label>
                 <input type="text" id="renameInput" value="${escapeHtml(set.name)}" class="checkout-email-input" style="font-size: 1rem;">
             </div>
             <div class="modal-buttons">
-                <button class="btn-primary" onclick="confirmRename('${setId}')">Save</button>
-                <button class="btn-secondary" onclick="document.getElementById('renameModal').remove()">Cancel</button>
+                <button class="btn-primary" onclick="confirmRename('${setId}')">${tt('save')}</button>
+                <button class="btn-secondary" onclick="document.getElementById('renameModal').remove()">${tt('cancel')}</button>
             </div>
         </div>
     `;
@@ -6420,7 +6439,7 @@ function confirmRename(setId) {
             renderEventSetsList();
             renderPeopleTabGroups();
             updateSetSwitcher();
-            showToast(`Group renamed to "${newName}"`, 'success');
+            showToast(tt('toast_group_renamed', { name: newName }), 'success');
         }
     }
     const modal = document.getElementById('renameModal');
@@ -6438,7 +6457,7 @@ function handleSwitchSet() {
     if (newSetId === '__new__') {
         if (!checkGroupLimit()) return;
         // Prompt for new group name
-        const name = prompt('Name for the new group:');
+        const name = prompt(tt('ed_new_group_prompt'));
         if (name && name.trim()) {
             const newSet = {
                 id: 'set_' + Date.now(),
@@ -6457,7 +6476,7 @@ function handleSwitchSet() {
             renderEventsTab();
             renderPersonFilter();
             renderMilestonesTab();
-            showToast('Group "' + name.trim() + '" created. Add people to this group.', 'success');
+            showToast(tt('toast_group_created', { name: name.trim() }), 'success');
         } else {
             // Reset dropdown to current
             currentSetSelect.value = currentSetId;
@@ -6495,7 +6514,7 @@ function switchToSet(setId) {
     // Show toast with group name
     const set = allSets.find(s => s.id === setId);
     if (set) {
-        showToast(`Switched to group: ${set.name}`, 'info');
+        showToast(tt('toast_switched_group', { name: set.name }), 'info');
     }
 }
 
@@ -6503,7 +6522,7 @@ function handleAddSet() {
     if (!checkGroupLimit()) return;
     const name = newSetNameInput.value.trim();
     if (!name) {
-        showToast('Please enter a name for the new set', 'error');
+        showToast(tt('toast_enter_set_name'), 'error');
         return;
     }
 
@@ -6540,7 +6559,7 @@ function handleAddSet() {
 }
 
 function promptNewGroupFromTogether() {
-    const name = prompt('Name for the new group:');
+    const name = prompt(tt('ed_new_group_prompt'));
     if (!name || !name.trim()) return;
 
     // Auto-add "Me" from first set
@@ -6566,7 +6585,7 @@ function promptNewGroupFromTogether() {
 function handleAddSetFromPeopleTab() {
     const input = document.getElementById('newGroupField');
     const name = input ? input.value.trim() : '';
-    if (!name) { showToast('Please enter a group name', 'error'); return; }
+    if (!name) { showToast(tt('toast_enter_group_name'), 'error'); return; }
 
     // Auto-add "Me" from first set
     const firstSet = allSets[0];
@@ -6598,12 +6617,12 @@ function renderPeopleTabGroups() {
 
 function deleteSet(setId) {
     if (allSets.length <= 1) {
-        showToast('Cannot delete the last set', 'error');
+        showToast(tt('toast_cannot_delete_last_set'), 'error');
         return;
     }
 
     const set = allSets.find(s => s.id === setId);
-    if (!confirm(`Delete "${set.name}" and all its events?`)) {
+    if (!confirm(tt('ed_delete_set_confirm', { name: set.name }))) {
         return;
     }
 
@@ -6703,7 +6722,7 @@ async function handleGoogleSignIn() {
     const result = await HM_AUTH.signInWithGoogle();
     if (result.success) {
         closeAuthModal();
-        showToast('Signed in!', 'success');
+        showToast(tt('auth_signed_in'), 'success');
     } else {
         showAuthError('authError', result.error);
     }
@@ -6714,7 +6733,7 @@ async function handleAppleSignIn() {
     const result = await HM_AUTH.signInWithApple();
     if (result.success) {
         closeAuthModal();
-        showToast('Signed in!', 'success');
+        showToast(tt('auth_signed_in'), 'success');
     } else {
         showAuthError('authError', result.error);
     }
@@ -6725,7 +6744,7 @@ async function handleFacebookSignIn() {
     const result = await HM_AUTH.signInWithFacebook();
     if (result.success) {
         closeAuthModal();
-        showToast('Signed in!', 'success');
+        showToast(tt('auth_signed_in'), 'success');
     } else {
         showAuthError('authError', result.error);
     }
@@ -6735,18 +6754,18 @@ async function handlePhoneSend() {
     if (typeof HM_AUTH === 'undefined') return;
     const phone = document.getElementById('authPhone')?.value?.trim();
     if (!phone || !phone.startsWith('+')) {
-        showAuthError('phoneError', 'Enter phone with country code (e.g. +386 40...)');
+        showAuthError('phoneError', tt('auth_enter_phone'));
         return;
     }
     const btn = document.getElementById('phoneSignInBtn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
+    if (btn) { btn.disabled = true; btn.textContent = tt('auth_loading'); }
     const result = await HM_AUTH.sendPhoneCode(phone);
     if (result.success && result.needsCaptcha) {
         // reCAPTCHA widget shown — user solves it, then code sends automatically
         if (btn) btn.classList.add('hidden');
     } else if (!result.success) {
         showAuthError('phoneError', result.error);
-        if (btn) { btn.disabled = false; btn.textContent = 'Send Verification Code'; }
+        if (btn) { btn.disabled = false; btn.textContent = tt('auth_send_code'); }
     }
 }
 
@@ -6754,13 +6773,13 @@ async function handlePhoneVerify() {
     if (typeof HM_AUTH === 'undefined') return;
     const code = document.getElementById('authPhoneCode')?.value?.trim();
     if (!code || code.length < 6) {
-        showAuthError('phoneError', 'Enter the 6-digit code.');
+        showAuthError('phoneError', tt('auth_enter_code'));
         return;
     }
     const result = await HM_AUTH.verifyPhoneCode(code);
     if (result.success) {
         closeAuthModal();
-        showToast('Signed in!', 'success');
+        showToast(tt('auth_signed_in'), 'success');
     } else {
         showAuthError('phoneError', result.error);
     }
@@ -6782,21 +6801,18 @@ async function handleEmailSignIn() {
     const email = document.getElementById('authEmail')?.value?.trim();
     const password = document.getElementById('authPassword')?.value;
     if (!email || !password) {
-        showAuthError('authError', 'Please enter both email and password.');
+        showAuthError('authError', tt('auth_enter_email_password'));
         return;
     }
     const result = await HM_AUTH.signInWithEmail(email, password);
     if (result.success) {
         closeAuthModal();
-        showToast('Signed in!', 'success');
+        showToast(tt('auth_signed_in'), 'success');
     } else {
         // Provide helpful guidance based on the error
         let hint = result.error;
         if (hint && (hint.includes('Invalid') || hint.includes('No account') || hint.includes('Incorrect'))) {
-            hint = 'No account found with this email and password. You can:\n'
-                 + '- Check your spelling and try again\n'
-                 + '- Use "Create account" to make a new one\n'
-                 + '- Use "Continue with Google" if you signed up with Google';
+            hint = tt('auth_no_account_hint');
         }
         showAuthError('authError', hint);
     }
@@ -6808,29 +6824,29 @@ async function handleEmailSignUp() {
     const password = document.getElementById('signupPassword')?.value;
     const confirmPassword = document.getElementById('signupPasswordConfirm')?.value;
     if (!name) {
-        showAuthError('signupError', 'Please enter your name.');
+        showAuthError('signupError', tt('auth_enter_name'));
         return;
     }
     if (!email || !password) {
-        showAuthError('signupError', 'Please enter email and password.');
+        showAuthError('signupError', tt('auth_enter_email_password_signup'));
         return;
     }
     if (password.length < 8) {
-        showAuthError('signupError', 'Password must be at least 8 characters.');
+        showAuthError('signupError', tt('auth_password_length'));
         return;
     }
     if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
-        showAuthError('signupError', 'Password needs at least one uppercase letter and one number.');
+        showAuthError('signupError', tt('auth_password_complexity'));
         return;
     }
     if (password !== confirmPassword) {
-        showAuthError('signupError', 'Passwords do not match.');
+        showAuthError('signupError', tt('auth_passwords_no_match'));
         return;
     }
     const result = await HM_AUTH.signUpWithEmail(email, password, name);
     if (result.success) {
         closeAuthModal();
-        showToast('Account created! Welcome to HappyMoments.', 'success');
+        showToast(tt('auth_account_created'), 'success');
     } else {
         showAuthError('signupError', result.error);
     }
@@ -6839,13 +6855,13 @@ async function handleEmailSignUp() {
 async function handlePasswordReset() {
     const email = document.getElementById('resetEmail')?.value?.trim();
     if (!email) {
-        showAuthError('resetMessage', 'Please enter your email.');
+        showAuthError('resetMessage', tt('auth_enter_email'));
         return;
     }
     await HM_AUTH.resetPassword(email);
     const el = document.getElementById('resetMessage');
     if (el) {
-        el.textContent = 'If an account exists, a reset link has been sent.';
+        el.textContent = tt('auth_reset_sent');
         el.className = 'auth-error success';
         el.classList.remove('hidden');
     }
@@ -6854,7 +6870,7 @@ async function handlePasswordReset() {
 async function handleSignOut() {
     if (typeof HM_AUTH === 'undefined') return;
     await HM_AUTH.signOut();
-    showToast('Signed out.', 'success');
+    showToast(tt('auth_signed_out'), 'success');
 }
 
 async function handleDeleteAccount() {
@@ -6862,8 +6878,8 @@ async function handleDeleteAccount() {
 
     // Double confirmation
     const name = HM_AUTH.getUserDisplayName() || 'your account';
-    if (!confirm(`Delete ${name}? This will permanently remove your account and all cloud data. Local data on this device will remain.`)) return;
-    if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
+    if (!confirm(tt('auth_delete_confirm_1', { name: name }))) return;
+    if (!confirm(tt('auth_delete_confirm_2'))) return;
 
     try {
         const user = HM_AUTH.getUser();
@@ -6880,12 +6896,12 @@ async function handleDeleteAccount() {
         // Clear local premium status
         localStorage.removeItem('happymoments_premium_until');
         _track('account_deleted', {});
-        showToast('Account deleted.', 'success');
+        showToast(tt('auth_account_deleted'), 'success');
     } catch (error) {
         if (error.code === 'auth/requires-recent-login') {
-            showToast('For security, please sign out and sign back in, then try deleting again.', 'error', 5000);
+            showToast(tt('auth_recent_login'), 'error', 5000);
         } else {
-            showToast('Could not delete account. Try signing out and back in first.', 'error');
+            showToast(tt('auth_delete_failed'), 'error');
         }
     }
 }
@@ -6895,9 +6911,9 @@ async function resendVerification() {
     if (user) {
         try {
             await user.sendEmailVerification();
-            showToast('Verification email sent!', 'success');
+            showToast(tt('auth_verification_sent'), 'success');
         } catch (e) {
-            showToast('Please wait before requesting again.', 'error');
+            showToast(tt('auth_wait_retry'), 'error');
         }
     }
 }
@@ -6932,10 +6948,10 @@ function updateAccountUI(user) {
         if (statusEl) {
             const isPrem = localStorage.getItem('happymoments_premium_until');
             if (isPrem && parseInt(isPrem) * 1000 > Date.now()) {
-                statusEl.textContent = 'Premium';
+                statusEl.textContent = tt('prem_status_premium');
                 statusEl.className = 'account-status premium';
             } else {
-                statusEl.textContent = 'Free';
+                statusEl.textContent = tt('prem_status_free');
                 statusEl.className = 'account-status free';
             }
         }
@@ -7097,13 +7113,13 @@ function promptForDisplayName(user) {
         modal.id = 'namePromptModal';
         modal.innerHTML = `
             <div class="modal-content auth-modal">
-                <h3>Choose a nickname</h3>
-                <p class="auth-subtitle">How would you like to be called?</p>
+                <h3>${tt('auth_nickname_title')}</h3>
+                <p class="auth-subtitle">${tt('auth_nickname_subtitle')}</p>
                 <div class="auth-form">
-                    <input type="text" id="namePromptInput" placeholder="Your nickname" value="${escapeHtml(suggestion)}" class="auth-input" autocomplete="name">
-                    <button class="btn-primary auth-submit" onclick="saveDisplayName()">Save</button>
+                    <input type="text" id="namePromptInput" placeholder="${tt('auth_nickname_ph')}" value="${escapeHtml(suggestion)}" class="auth-input" autocomplete="name">
+                    <button class="btn-primary auth-submit" onclick="saveDisplayName()">${tt('save')}</button>
                 </div>
-                <button class="auth-skip" onclick="document.getElementById('namePromptModal').remove()">Skip</button>
+                <button class="auth-skip" onclick="document.getElementById('namePromptModal').remove()">${tt('auth_skip')}</button>
             </div>
         `;
         document.body.appendChild(modal);
@@ -7120,7 +7136,7 @@ async function saveDisplayName() {
         if (user) {
             await user.updateProfile({ displayName: name });
             updateAccountUI(user);
-            showToast(`Welcome, ${name}!`, 'success');
+            showToast(tt('auth_welcome', { name: name }), 'success');
         }
     } catch {}
     const modal = document.getElementById('namePromptModal');
@@ -7141,10 +7157,10 @@ function showUpgradePrompt(reason) {
     }
 
     const reasons = {
-        people: `You've reached the free limit of ${FREE_PEOPLE_LIMIT} people.`,
-        groups: 'Free accounts include 3 groups.',
-        team: `You've used your ${FREE_TEAM_VIEWS} free Team tab views.`,
-        default: 'Unlock the full HappyMoments experience.'
+        people: tt('prem_reason_people', { count: FREE_PEOPLE_LIMIT }),
+        groups: tt('prem_reason_groups'),
+        team: tt('prem_reason_team', { count: FREE_TEAM_VIEWS }),
+        default: tt('prem_reason_default')
     };
     const subtitle = reasons[reason] || reasons.default;
 
@@ -7154,16 +7170,16 @@ function showUpgradePrompt(reason) {
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `
         <div class="modal-content auth-modal">
-            <h3>HappyMoments Premium</h3>
+            <h3>${tt('prem_modal_title')}</h3>
             <p class="auth-subtitle">${subtitle}</p>
             <div style="margin: 16px 0; padding: 16px; background: var(--bg-elevated); border-radius: var(--radius-sm);">
-                <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 12px;">&euro;1.49<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> / year</span></div>
+                <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 12px;">&euro;1.49<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> ${tt('prem_per_year')}</span></div>
                 <ul style="text-align: left; font-size: var(--font-size-sm); color: var(--text-secondary); list-style: none; padding: 0;">
-                    <li>&#10003; Unlimited people &amp; groups</li>
-                    <li>&#10003; Unlimited Team tab views</li>
-                    <li>&#10003; No gift banners &mdash; clean milestone view</li>
-                    <li>&#10003; Clean image cards &mdash; no watermark</li>
-                    <li>&#10003; Support an independent developer</li>
+                    <li>&#10003; ${tt('prem_feat_unlimited')}</li>
+                    <li>&#10003; ${tt('prem_feat_views')}</li>
+                    <li>&#10003; ${tt('prem_feat_no_banners')}</li>
+                    <li>&#10003; ${tt('prem_feat_clean_cards')}</li>
+                    <li>&#10003; ${tt('prem_feat_support')}</li>
                 </ul>
             </div>
             <button class="btn-primary" onclick="handleUpgrade()" style="width:100%;">${_ut('upgrade_now')}</button>
@@ -7202,10 +7218,10 @@ async function handleUpgrade() {
         if (data.url) {
             window.location.href = data.url;
         } else {
-            showToast('Payment is not yet configured. Coming soon!', 'info');
+            showToast(tt('prem_payment_not_configured'), 'info');
         }
     } catch (err) {
-        showToast('Payment is not yet configured. Coming soon!', 'info');
+        showToast(tt('prem_payment_not_configured'), 'info');
     }
 }
 
@@ -7243,14 +7259,14 @@ function checkPremiumReturn() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('checkout') === 'premium_success') {
         _track('payment_complete', { product: 'premium' });
-        showToast('Welcome to Premium! Thank you!', 'success');
+        showToast(tt('prem_welcome'), 'success');
         // Re-check status from backend
         setTimeout(checkPremiumStatus, 2000);
         // Clean URL
         window.history.replaceState({}, '', window.location.pathname);
     } else if (params.get('checkout') === 'premium_cancelled') {
         _track('payment_cancelled', { product: 'premium' });
-        showToast('Upgrade cancelled.', 'info');
+        showToast(tt('prem_cancelled'), 'info');
         window.history.replaceState({}, '', window.location.pathname);
     }
 }
@@ -7290,14 +7306,14 @@ function handleHappyClick() {
     }
 
     // Show toast
-    showToast('You made someone happy!', 'success', 2500);
+    showToast(tt('prem_happy_click'), 'success', 2500);
 }
 
 function updateHappyCounter() {
     const count = parseInt(localStorage.getItem('hm_happy_count') || '0', 10);
     const el = document.getElementById('happyCount');
     if (el) {
-        el.textContent = count > 0 ? count + ' happy moment' + (count !== 1 ? 's' : '') + ' shared' : '';
+        el.textContent = count > 0 ? tt(count === 1 ? 'prem_happy_count_one' : 'prem_happy_count_many', { count: count }) : '';
     }
 
     // Reflect session guard: disable button if already clicked this session
