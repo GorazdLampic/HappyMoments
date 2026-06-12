@@ -110,7 +110,7 @@
     "wiz_who_else_sub": "Amis · Collègues · Famille",
     "wiz_one_more_group": "Encore un groupe",
     "wiz_go_dashboard": "Aller à mon tableau de bord",
-    "wiz_explore_tabs": "Explore Solo · Ensemble · Édition",
+    "wiz_explore_tabs": "Explore Perso · Ensemble · Données",
     "wiz_share": "Partager",
     "wiz_show_more_tpl": "Voir {count} {noun} de plus ▼",
     "wiz_show_more_short": "Voir {count} de plus ▼",
@@ -253,7 +253,7 @@
     "toast_enter_name_date": "Entre un nom et une date",
     "toast_enter_event_name_date": "Entre le nom et la date de l’événement",
     "toast_two_people_hint": "Tu as 2 personnes maintenant ! Va voir l’onglet Ensemble pour vos moments forts cumulés.",
-    "toast_added_enter_yours": "C’est noté pour {name} ! Maintenant entre TON anniversaire pour voir tes moments forts.",
+    "toast_added_enter_yours": "C’est noté pour {name} ! Maintenant entre ton anniversaire à toi pour voir tes moments forts.",
     "toast_reminders_before_ms": "Rappels activés ! On te préviendra avant ce moment fort.",
     "toast_reminder_set": "Rappel créé ! On te préviendra la veille.",
     "toast_select_milestone_first": "Choisis d’abord un moment fort",
@@ -331,8 +331,8 @@
     "calc_you_reached": "Tu as atteint",
     "calc_you_will_reach": "Tu atteindras",
     "time_ago": "il y a {time}",
-    "num_million": "millions",
-    "num_billion": "milliards",
+    "num_million": "M",
+    "num_billion": "Md",
     "no_custom_numbers": "Aucun nombre personnalisé.",
     "reset_confirm": "Tout supprimer, données et réglages ?",
     "import_confirm": "Cela remplacera toutes tes données actuelles. Continuer ?",
@@ -377,7 +377,7 @@
     "prem_status_free": "Gratuit",
     "prem_payment_not_configured": "Le paiement n’est pas encore configuré. Bientôt disponible !",
     "prem_welcome": "Bienvenue dans Premium, et merci !",
-    "prem_cancelled": "Passage à Premium annulé.",
+    "prem_cancelled": "Achat non finalisé — rien ne t’a été débité.",
     "prem_happy_click": "Tu as rendu quelqu’un heureux !",
     "prem_happy_count_one": "{count} moment de bonheur partagé",
     "prem_happy_count_many": "{count} moments de bonheur partagés",
@@ -495,10 +495,10 @@
       "Comme un battement de cœur : les {value} {unit} de {name} alterneront parfaitement le {date}."
     ],
     "combined": [
-      "Ensemble, vous atteindrez {value} {unit} le {date} ! Les moments forts partagés sont les meilleurs.",
-      "À vous tous, ça fera {value} {unit} le {date} — autant de moments partagés !",
+      "Ensemble, on atteindra {value} {unit} le {date} ! Les moments forts partagés sont les meilleurs.",
+      "À nous tous, ça fera {value} {unit} le {date} — autant de moments partagés !",
       "Additionne tous les {unit} et tu obtiens {value}. Additionne tout l’amour et tu obtiens l’infini.",
-      "Le {date}, votre compteur commun affichera {value} {unit}. Ça vaut bien une soirée ensemble !"
+      "Le {date}, notre compteur commun affichera {value} {unit}. Ça vaut bien une soirée ensemble !"
     ],
     "ratio": [
       "Le {date}, le rapport entre vos âges sera exactement {value} ! Un petit miracle mathématique.",

@@ -110,7 +110,7 @@
     "wiz_who_else_sub": "Bạn bè · Đồng nghiệp · Gia đình",
     "wiz_one_more_group": "Thêm một nhóm nữa",
     "wiz_go_dashboard": "Đến trang chính của tôi",
-    "wiz_explore_tabs": "Khám phá Cá nhân · Cùng nhau · Chỉnh sửa",
+    "wiz_explore_tabs": "Khám phá Cá nhân · Cùng nhau · Dữ liệu",
     "wiz_share": "Chia sẻ",
     "wiz_show_more_tpl": "Xem thêm {count} {noun} ▼",
     "wiz_show_more_short": "Xem thêm {count} ▼",
@@ -253,7 +253,7 @@
     "toast_enter_name_date": "Hãy nhập tên và ngày",
     "toast_enter_event_name_date": "Hãy nhập tên sự kiện và ngày",
     "toast_two_people_hint": "Bạn đã có 2 người! Mở thẻ Cùng nhau để xem cột mốc chung.",
-    "toast_added_enter_yours": "Đã thêm {name}! Giờ nhập ngày sinh CỦA BẠN để xem cột mốc của bạn.",
+    "toast_added_enter_yours": "Đã thêm {name}! Giờ nhập ngày sinh của chính bạn để xem cột mốc của bạn.",
     "toast_reminders_before_ms": "Đã bật nhắc nhở! Bạn sẽ được thông báo trước cột mốc này.",
     "toast_reminder_set": "Đã đặt nhắc nhở! Bạn sẽ được thông báo trước một ngày.",
     "toast_select_milestone_first": "Hãy chọn một cột mốc trước",
@@ -377,7 +377,7 @@
     "prem_status_free": "Miễn phí",
     "prem_payment_not_configured": "Thanh toán chưa được thiết lập. Sắp ra mắt!",
     "prem_welcome": "Chào mừng đến với Premium! Cảm ơn bạn!",
-    "prem_cancelled": "Đã hủy nâng cấp.",
+    "prem_cancelled": "Thanh toán chưa hoàn tất — bạn chưa bị trừ tiền.",
     "prem_happy_click": "Bạn vừa làm ai đó hạnh phúc!",
     "prem_happy_count_one": "Đã chia sẻ {count} khoảnh khắc vui",
     "prem_happy_count_many": "Đã chia sẻ {count} khoảnh khắc vui",
@@ -452,7 +452,7 @@
       "Qua lại đều đặn như nhịp tim: {value} {unit} của {name} sẽ xen kẽ hoàn hảo vào {date}."
     ],
     "combined": [
-      "Cùng nhau, mọi người sẽ chạm {value} {unit} vào {date}! Cột mốc chung là cột mốc vui nhất.",
+      "Cùng nhau, chúng ta sẽ chạm {value} {unit} vào {date}! Cột mốc chung là cột mốc vui nhất.",
       "{value} {unit} cộng lại — bao nhiêu là kỷ niệm chung, đến hẹn vào {date}!",
       "Cộng hết {unit} lại thì được {value}. Còn cộng hết yêu thương lại thì... vô tận.",
       "Tin vui cho cả hội: cùng nhau chúng ta sẽ đạt {value} {unit} vào {date}. Tụ họp thôi!"

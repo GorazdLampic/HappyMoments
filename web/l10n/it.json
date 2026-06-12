@@ -110,7 +110,7 @@
     "wiz_who_else_sub": "Amici · Colleghi · Famiglia",
     "wiz_one_more_group": "Un altro gruppo",
     "wiz_go_dashboard": "Vai alla home",
-    "wiz_explore_tabs": "Esplora Personale · Insieme · Modifica",
+    "wiz_explore_tabs": "Esplora Personale · Insieme · Dati",
     "wiz_share": "Condividi",
     "wiz_show_more_tpl": "Mostra ancora {count} {noun} ▼",
     "wiz_show_more_short": "Mostrane ancora {count} ▼",
@@ -253,7 +253,7 @@
     "toast_enter_name_date": "Inserisci nome e data",
     "toast_enter_event_name_date": "Inserisci nome e data dell'evento",
     "toast_two_people_hint": "Ora ci sono 2 persone! Apri la scheda Insieme per vedere i traguardi combinati.",
-    "toast_added_enter_yours": "{name} è in lista! Ora inserisci il TUO compleanno per vedere i tuoi traguardi.",
+    "toast_added_enter_yours": "{name} è in lista! Ora inserisci anche il tuo compleanno per vedere i tuoi traguardi.",
     "toast_reminders_before_ms": "Promemoria attivati! Ti avviseremo prima di questo traguardo.",
     "toast_reminder_set": "Promemoria impostato! Ti avviseremo il giorno prima.",
     "toast_select_milestone_first": "Seleziona prima un traguardo",
@@ -331,8 +331,8 @@
     "calc_you_reached": "Hai raggiunto",
     "calc_you_will_reach": "Raggiungerai",
     "time_ago": "{time} fa",
-    "num_million": "milioni",
-    "num_billion": "miliardi",
+    "num_million": "mln",
+    "num_billion": "mld",
     "no_custom_numbers": "Nessun numero personalizzato",
     "reset_confirm": "Eliminare tutti i dati e le impostazioni?",
     "import_confirm": "Questo sostituirà tutti i tuoi dati attuali. Continuare?",
@@ -377,7 +377,7 @@
     "prem_status_free": "Gratuito",
     "prem_payment_not_configured": "Il pagamento non è ancora configurato. Arriva presto!",
     "prem_welcome": "Eccoti in Premium. Grazie di cuore!",
-    "prem_cancelled": "Acquisto annullato.",
+    "prem_cancelled": "Acquisto non completato — non ti è stato addebitato nulla.",
     "prem_happy_click": "Hai reso felice qualcuno!",
     "prem_happy_count_one": "{count} momento felice condiviso",
     "prem_happy_count_many": "{count} momenti felici condivisi",
@@ -397,17 +397,61 @@
     "prem_gate_upgrade_btn": "Passa a Premium — €1.49/anno"
   },
   "plurals": {
-    "day": { "one": "giorno", "many": "di giorni", "other": "giorni" },
-    "week": { "one": "settimana", "many": "di settimane", "other": "settimane" },
-    "month": { "one": "mese", "many": "di mesi", "other": "mesi" },
-    "year": { "one": "anno", "many": "di anni", "other": "anni" },
-    "hour": { "one": "ora", "many": "di ore", "other": "ore" },
-    "minute": { "one": "minuto", "many": "di minuti", "other": "minuti" },
-    "second": { "one": "secondo", "many": "di secondi", "other": "secondi" },
-    "milestone": { "one": "traguardo", "many": "di traguardi", "other": "traguardi" },
-    "person": { "one": "persona", "many": "di persone", "other": "persone" },
-    "group": { "one": "gruppo", "many": "di gruppi", "other": "gruppi" },
-    "member": { "one": "membro", "many": "di membri", "other": "membri" }
+    "day": {
+      "one": "giorno",
+      "many": "di giorni",
+      "other": "giorni"
+    },
+    "week": {
+      "one": "settimana",
+      "many": "di settimane",
+      "other": "settimane"
+    },
+    "month": {
+      "one": "mese",
+      "many": "di mesi",
+      "other": "mesi"
+    },
+    "year": {
+      "one": "anno",
+      "many": "di anni",
+      "other": "anni"
+    },
+    "hour": {
+      "one": "ora",
+      "many": "di ore",
+      "other": "ore"
+    },
+    "minute": {
+      "one": "minuto",
+      "many": "di minuti",
+      "other": "minuti"
+    },
+    "second": {
+      "one": "secondo",
+      "many": "di secondi",
+      "other": "secondi"
+    },
+    "milestone": {
+      "one": "traguardo",
+      "many": "di traguardi",
+      "other": "traguardi"
+    },
+    "person": {
+      "one": "persona",
+      "many": "di persone",
+      "other": "persone"
+    },
+    "group": {
+      "one": "gruppo",
+      "many": "di gruppi",
+      "other": "gruppi"
+    },
+    "member": {
+      "one": "membro",
+      "many": "di membri",
+      "other": "membri"
+    }
   },
   "shareMessages": {
     "birthday": [
@@ -452,10 +496,10 @@
       "Avanti e indietro, come un ritmo: {name} arriva a {value} {unit} il {date}."
     ],
     "combined": [
-      "Insieme arriverete a {value} {unit} il {date}! I traguardi condivisi sono i più belli.",
+      "Insieme arriveremo a {value} {unit} il {date}! I traguardi condivisi sono i più belli.",
       "{value} {unit} di vita in totale — quanti momenti condivisi, tutti in una data: {date}!",
       "Somma tutto e arrivi a {value} {unit}. Somma l'affetto, e il conto non torna più.",
-      "Il {date} fate {value} {unit} in totale. Serve solo una torta abbastanza grande!"
+      "Il {date} facciamo {value} {unit} in totale. Serve solo una torta abbastanza grande!"
     ],
     "ratio": [
       "Il {date} il rapporto tra le vostre età sarà esattamente {value}! Armonia matematica pura.",

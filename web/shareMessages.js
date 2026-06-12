@@ -1099,6 +1099,19 @@ const APP_SHARE_LINK_I18N = {
     zh: "\n\n发现你的特别数字 → https://happymoments.app",
     ja: "\n\nあなたの特別な数字を発見 → https://happymoments.app",
     es: "\n\nDescubre tus números especiales → https://happymoments.app",
+    bn: "\n\nতোমার বিশেষ সংখ্যাগুলো খুঁজে দেখো → https://happymoments.app",
+    de: "\n\nEntdecke deine besonderen Zahlen → https://happymoments.app",
+    fr: "\n\nDécouvre tes nombres spéciaux → https://happymoments.app",
+    hr: "\n\nOtkrij svoje posebne brojeve → https://happymoments.app",
+    id: "\n\nTemukan angka spesialmu → https://happymoments.app",
+    it: "\n\nScopri i tuoi numeri speciali → https://happymoments.app",
+    ko: "\n\n나만의 특별한 숫자를 찾아보세요 → https://happymoments.app",
+    nl: "\n\nOntdek jouw bijzondere getallen → https://happymoments.app",
+    pl: "\n\nOdkryj swoje wyjątkowe liczby → https://happymoments.app",
+    ru: "\n\nОткрой свои особые числа → https://happymoments.app",
+    sl: "\n\nOdkrij svoja posebna števila → https://happymoments.app",
+    th: "\n\nค้นหาเลขพิเศษของคุณ → https://happymoments.app",
+    vi: "\n\nKhám phá những con số đặc biệt của bạn → https://happymoments.app",
 };
 
 // Fallback text appended when a template has no {date}/{countdown} placeholder
@@ -1109,6 +1122,19 @@ const SHARE_DATE_FALLBACK_I18N = {
     zh: " {date}——还有{countdown}！",
     ja: " {date}——あと{countdown}！",
     es: " El {date} — ¡faltan {countdown}!",
+    bn: " {date} তারিখে — আজ থেকে {countdown} পরে!",
+    de: " Am {date} – nur noch {countdown}!",
+    fr: " Le {date} — c’est dans {countdown} !",
+    hr: " Na dan {date} — još samo {countdown}!",
+    id: " Pada {date} — {countdown} lagi!",
+    it: " Il {date} — tra {countdown}!",
+    ko: " {date}, 지금부터 {countdown} 후예요!",
+    nl: " Op {date} — over {countdown}!",
+    pl: " Już {date} — za {countdown}!",
+    ru: " Это {date} — уже через {countdown}!",
+    sl: " To se zgodi {date} — že čez {countdown}!",
+    th: " ในวันที่ {date} — อีกแค่ {countdown} เท่านั้น!",
+    vi: " Vào {date} — còn {countdown} nữa!",
 };
 
 const SHARE_MESSAGES_I18N = {
@@ -1610,6 +1636,818 @@ const SHARE_MESSAGES_I18N = {
             "¡El hito de {value} {unit} de {name} se acerca — un número que es {why}! ¡Celebra el {date}!",
             "No todos llegan a {value} {unit}. {name}, tú eres de los afortunados.",
             "{value} {unit} de {name}. Un número que merece compartirse y celebrarse el {date}.",
+        ],
+    },
+    bn: {
+        birthday: [
+            "{name} {date} তারিখে পুরো {value} {unit} বেঁচে থাকার মাইলফলক ছুঁতে যাচ্ছে! প্রতিটাই উদযাপনের মতো।",
+            "{value} {unit} ধরে {name} চারপাশ আলো করে রেখেছে — {date} আসছে সেই বিশেষ দিন!",
+            "জানো? {date} তারিখে {name} ঠিক {value} {unit} পূর্ণ করবে। আর সেটা {why}!",
+            "ক্যালেন্ডারে দাগ দিয়ে রাখো — {date} তারিখে {name}-এর {value} {unit}। এমন দিন বারবার আসে না!",
+        ],
+        round: [
+            "{name} ছুঁতে চলেছে {value} {unit}! এত শূন্য একসাথে — উদযাপন না করলে চলে?",
+            "একদম রাউন্ড ফিগার: {name} {date} তারিখে {value} {unit}-এ পৌঁছাবে। হাততালি তো প্রাপ্য!",
+            "{value} {unit} — এক্কেবারে গোল একটা সংখ্যা। {name}-এর জন্য {date} বড় দিন!",
+        ],
+        repdigit: [
+            "{date} তারিখে {name} ছোঁবে {value} {unit} — প্রতিটা অঙ্ক একই রকম। সেটা {why}!",
+            "সব অঙ্ক যখন এক, বুঝবে দিনটা বিশেষ। {name}, {value} {unit}, {date} — মিলিয়ে নিও!",
+            "{value} {unit} — সংখ্যাটা যেন প্রতিধ্বনি। {name}-এর ছাপটাও তেমনই। {date} আসছে।",
+        ],
+        palindrome: [
+            "{name} {date} তারিখে {value} {unit} ছোঁবে — সামনে থেকে পড়ো বা পেছন থেকে, একই! খাঁটি প্যালিনড্রোম।",
+            "আয়নায় দেখা সংখ্যা: {name}-এর {value} {unit} হবে নিখুঁত প্যালিনড্রোম, {date} তারিখে!",
+        ],
+        fibonacci: [
+            "{name} {date} তারিখে ছোঁবে {value} {unit} — একেবারে ফিবোনাচি মাইলফলক! প্রকৃতির নিজের সংখ্যা।",
+            "সোনালি সর্পিল এবার {name}-এর দরজায়: {value} {unit}, {date} তারিখে। ফুলের পাপড়িও এই ছন্দে গোনে!",
+        ],
+        power_of_2: [
+            "{name} {date} তারিখে পৌঁছাবে {value} {unit}-এ — একদম ২-এর ঘাত! কম্পিউটারও সালাম জানাবে।",
+            "বাইনারির চোখে নিখুঁত: {name} ছুঁতে যাচ্ছে {value} {unit}। ২-এর ঘাতে আনন্দ মাপা গেলে এটাই মাপ!",
+        ],
+        scientific: [
+            "{name} {date} তারিখে {value} {unit} ছোঁবে — সংখ্যাটা জড়িয়ে আছে {why}-এর সাথে! বিজ্ঞানও খুশি হবে।",
+            "একেবারে বৈজ্ঞানিক মাইলফলক: {name}, {value} {unit}, {date} তারিখে। {why} — ভাবা যায়?",
+        ],
+        sequential: [
+            "{name} {date} তারিখে ছোঁবে {value} {unit} — অঙ্কগুলো লাইন ধরে সাজানো! একদম প্যারেডের মতো।",
+            "১, ২, ৩... এভাবে এগিয়ে {value}! {date} তারিখে {name}-এর অঙ্কগুলো নিখুঁত সারিতে দাঁড়াবে।",
+        ],
+        alternating: [
+            "{name} {date} তারিখে {value} {unit} ছোঁবে — অঙ্কগুলো পালা করে নাচছে! নিজস্ব ছন্দওয়ালা সংখ্যা।",
+            "হৃৎস্পন্দনের মতো এদিক-ওদিক: {name}-এর {value} {unit} {date} তারিখে নিখুঁত পালায় বসবে।",
+        ],
+        combined: [
+            "সবাই মিলে আমরা {date} তারিখে {value} {unit} ছোঁব! মিলিত মাইলফলকের মজাই আলাদা।",
+            "মিলিয়ে {value} {unit} — ভাবো, কত ভাগ করা মুহূর্ত! {date} তারিখটা মনে রেখো।",
+            "সব {unit} যোগ করলে {value}। আর ভালোবাসা যোগ করলে? সেটার কোনো শেষ নেই।",
+            "আমাদের সবার {unit} মিলিয়ে {date} তারিখে দাঁড়াবে {value}! এক কাপ চা অন্তত হয়ে যাক।",
+        ],
+        ratio: [
+            "{date} তারিখে তোমাদের বয়সের অনুপাত হবে ঠিক {value}! অঙ্কের এমন মিল রোজ আসে না।",
+            "{date} তারিখে তোমাদের দুজনের বয়স মিলবে ঠিক {value} অনুপাতে — কী চমৎকার হিসাব!",
+        ],
+        generic: [
+            "{name} ছুঁতে যাচ্ছে {value} {unit}! সেটা {why}। উদযাপনের আয়োজন শুরু করে দাও।",
+            "জানো? {date} তারিখে {name} ঠিক {value} {unit}-এ পৌঁছাবে। কী দারুণ মাইলফলক!",
+            "দিনটা টুকে রাখো: {name}, {value} {unit}, {date}। এমন বিশেষ সংখ্যা নজর কাড়েই।",
+            "সংখ্যারাও মাঝে মাঝে উৎসব ডাকে — {name}-এর {value} {unit} আসছে {date} তারিখে। তৈরি থেকো!",
+        ],
+    },
+    de: {
+        birthday: [
+            "{name} ist am {date} genau {value} {unit} auf der Welt! Wenn das kein Grund zum Feiern ist.",
+            "Schon gewusst? {name} erreicht am {date} genau {value} {unit}. Das ist {why}!",
+            "{value} {unit} {name} – die Welt darf sich freuen! Am {date} ist es so weit.",
+            "Am {date} wird {name} {value} {unit} alt. Klingt nach einer guten Ausrede zum Anstoßen!",
+        ],
+        round: [
+            "{name} knackt bald {value} {unit}! So eine runde Zahl muss gefeiert werden.",
+            "{value} {unit} – so viele Nullen, und null Gründe, {name} nicht zu feiern! Am {date} ist es so weit.",
+        ],
+        repdigit: [
+            "{name} erreicht am {date} {value} {unit} – eine echte Schnapszahl! Da ist Anstoßen Pflicht.",
+            "Alle Ziffern gleich: {value}! {name} erreicht diese Schnapszahl am {date}. Das ist {why}!",
+        ],
+        palindrome: [
+            "{name} erreicht am {date} {value} {unit} – ein Palindrom! Vorwärts wie rückwärts dieselbe Zahl.",
+            "{value} vorwärts, {value} rückwärts – perfekte Symmetrie für {name} am {date}!",
+        ],
+        fibonacci: [
+            "{name} erreicht am {date} {value} {unit} – eine Fibonacci-Zahl! Die Natur feiert mit.",
+            "Fibonacci hätte seine Freude: {name} kommt am {date} auf {value} {unit}!",
+        ],
+        power_of_2: [
+            "{name} erreicht am {date} {value} {unit} – eine Zweierpotenz! Da schlägt jedes Nerd-Herz höher.",
+            "Binär perfekt: {name} kommt am {date} auf {value} {unit} – eine Zahl, bei der Computer ins Schwärmen geraten!",
+        ],
+        scientific: [
+            "{name} erreicht am {date} {value} {unit} – das hängt mit {why} zusammen! Die Wissenschaft gratuliert.",
+            "Ein wissenschaftlicher Meilenstein: {name} erreicht am {date} {value} {unit}. {why}!",
+        ],
+        sequential: [
+            "{name} erreicht am {date} {value} {unit} – die Ziffern marschieren der Reihe nach!",
+            "1, 2, 3 ... {value}! Bei {name} stellen sich am {date} alle Ziffern ordentlich in eine Reihe.",
+        ],
+        alternating: [
+            "{name} erreicht am {date} {value} {unit} – die Ziffern wechseln sich im Takt ab!",
+            "Hin und her wie ein Herzschlag: {value} {unit} für {name} am {date}.",
+        ],
+        combined: [
+            "Zusammen erreicht ihr am {date} {value} {unit}! Gemeinsame Meilensteine sind die schönsten.",
+            "{value} {unit} gemeinsames Leben – was für eine Menge schöner Momente! Am {date} ist es so weit.",
+            "Zählt alle {unit} zusammen und ihr kommt auf {value}. Zählt die schönen Momente zusammen – unendlich.",
+            "Am {date} habt ihr zusammen {value} {unit} auf dem Konto. Das ruft nach einem Treffen!",
+        ],
+        ratio: [
+            "Am {date} steht euer Altersverhältnis exakt bei {value}! Ein kleiner mathematischer Glücksmoment.",
+            "Am {date} stehen eure Lebenszeiten genau im Verhältnis {value}. Wie schön ist das denn?",
+        ],
+        cosmic: [
+            "Am {date} ist es so weit: {value} für {name}! {why}.",
+            "Ein kosmischer Meilenstein für {name}: {value} am {date}. Da feiert das Universum mit!",
+            "Bei {name} steht am {date} etwas Kosmisches an: {value}. Die Sterne stehen günstig!",
+        ],
+        generic: [
+            "{name} erreicht bald {value} {unit}! Das ist {why}. Zeit, die Feier vorzubereiten!",
+            "Schon gewusst? {name} kommt am {date} auf genau {value} {unit}. Was für ein Moment!",
+            "Merk dir den {date}: {name} erreicht {value} {unit}. So besondere Zahlen verdienen Aufmerksamkeit.",
+            "Am {date} erreicht {name} {value} {unit} – solche Zahlen kommen nur einmal vorbei!",
+        ],
+    },
+    fr: {
+        birthday: [
+            "Le {date}, {name} atteindra {value} {unit} de vie. Ça se fête, non ?",
+            "{value} {unit} de {name} qui illumine le monde — rendez-vous le {date} !",
+            "Devine quoi : {name} atteindra pile {value} {unit} le {date}. Et c’est {why} !",
+            "Réserve le {date} : {name} passera le cap des {value} {unit}. Pas besoin d’attendre le prochain anniversaire pour trinquer !",
+        ],
+        round: [
+            "{name} va passer le cap des {value} {unit} ! Un nombre tout rond pour quelqu’un d’exceptionnel.",
+            "{value} {unit} en vue le {date}. Autant de zéros, et zéro excuse pour ne pas fêter {name} !",
+            "Un nombre bien rond, ça se fête en grand : {name} à {value} {unit} le {date}.",
+        ],
+        repdigit: [
+            "{name} atteindra {value} {unit} le {date}. Le même chiffre partout — c’est {why} !",
+            "Quand tous les chiffres sont identiques, c’est un signe. {name} à {value} {unit} le {date} !",
+        ],
+        palindrome: [
+            "{name} à {value} {unit} le {date} — un palindrome ! Ça se lit pareil dans les deux sens.",
+            "Miroir, mon beau miroir : les {value} {unit} de {name} formeront un palindrome le {date}.",
+            "{value} à l’endroit, {value} à l’envers. Le moment fort de {name} sera parfaitement symétrique !",
+        ],
+        fibonacci: [
+            "{name} à {value} {unit} le {date} — un nombre de Fibonacci ! Le nombre préféré de la nature.",
+            "La spirale dorée atteindra {value} pour {name}. Rendez-vous le {date} pour fêter ça !",
+        ],
+        power_of_2: [
+            "{name} à {value} {unit} le {date} — une puissance de 2 ! Même les ordinateurs applaudiront.",
+            "Perfection binaire en vue : {name} va atteindre {value} {unit}. 2 puissance génial !",
+        ],
+        scientific: [
+            "{name} à {value} {unit} le {date} — un nombre lié à {why} ! La science approuve.",
+            "Moment fort scientifique : {name} à {value} {unit} le {date}. {why} !",
+        ],
+        sequential: [
+            "{name} à {value} {unit} le {date} — les chiffres défileront dans l’ordre parfait !",
+            "1, 2, 3... {value} ! Les chiffres de {name} marcheront au pas le {date}.",
+        ],
+        alternating: [
+            "{name} à {value} {unit} le {date} — un motif alterné ! Des chiffres qui dansent.",
+            "Comme un battement de cœur : les {value} {unit} de {name} alterneront parfaitement le {date}.",
+        ],
+        combined: [
+            "Ensemble, on atteindra {value} {unit} le {date} ! Les moments forts partagés sont les meilleurs.",
+            "À nous tous, ça fera {value} {unit} le {date} — autant de moments partagés !",
+            "Additionne tous les {unit} et tu obtiens {value}. Additionne tout l’amour et tu obtiens l’infini.",
+            "Le {date}, notre compteur commun affichera {value} {unit}. Ça vaut bien une soirée ensemble !",
+        ],
+        ratio: [
+            "Le {date}, le rapport entre vos âges sera exactement {value} ! Un petit miracle mathématique.",
+            "Le {date}, vos âges formeront le ratio {value}. Satisfaisant, non ?",
+        ],
+        cosmic: [
+            "Le {value} de {name} arrive le {date} ! {why}.",
+            "Moment cosmique pour {name} : {value} le {date}. Les planètes s’alignent !",
+        ],
+        generic: [
+            "{name} va atteindre {value} {unit} — c’est {why}. À toi de préparer la fête !",
+            "Petite info : {name} atteindra exactement {value} {unit} le {date}. Ça ne se rate pas !",
+            "Note bien la date : {name} à {value} {unit} le {date}. Un nombre pareil mérite qu’on s’arrête.",
+            "Les calendriers oublient ces moments-là : {name} à {value} {unit} le {date}. Heureusement, on veille !",
+        ],
+    },
+    hr: {
+        birthday: [
+            "{name} će {date} na svijetu biti već {value} {unit} — kakav razlog za tortu!",
+            "{value} {unit} otkako {name} uljepšava svijet — stiže {date}!",
+            "Znaš da {name} {date} puni točno {value} {unit}? To je {why}!",
+            "Pripremi tortu: {name} {date} slavi {value} {unit}!",
+        ],
+        round: [
+            "Još malo i {name} je na {value} {unit}! Savršeno okrugao broj za savršeno posebnu osobu.",
+            "Pred tobom je {value} {unit}! Toliko nula, a nijedan razlog da se ne slavi — {name}, spremi se!",
+            "Okrugli brojevi traže velik pljesak: {name} na {value} {unit} — stiže {date}!",
+        ],
+        repdigit: [
+            "{name} će {date} biti na {value} {unit}! Sve iste znamenke — to je {why}!",
+            "Kad su sve znamenke iste, znaš da je posebno. {name} na {value} {unit} — {date}!",
+            "{value} {unit} — broj od samih jednakih znamenki. {name}, to se mora proslaviti! {date}.",
+        ],
+        palindrome: [
+            "{name} će {date} doseći {value} {unit} — palindrom! Čita se isto naprijed i natrag.",
+            "Ogledalce, ogledalce: {name} {date} stiže na {value} {unit} — savršeni palindrom!",
+            "{value} naprijed, {value} natrag — {name} slavi prekretnicu savršene simetrije!",
+        ],
+        fibonacci: [
+            "{name} {date} stiže na {value} {unit} — Fibonaccijeva prekretnica! Broj iz same prirode.",
+            "Zlatna spirala pokazuje {value} {unit}. {name} raste kako priroda nalaže — {date}!",
+        ],
+        power_of_2: [
+            "{name} {date} stiže na {value} {unit} — potencija broja 2! Digitalni svijet skida kapu.",
+            "Binarno savršenstvo: {name} će napuniti {value} {unit}. To je 2 na potenciju genijalnosti!",
+            "{value} {unit} — broj od kojeg računala zapjevaju. Pripremi se, {name}! {date}.",
+        ],
+        scientific: [
+            "{name} {date} stiže na {value} {unit} — broj povezan s {why}! I znanost slavi!",
+            "Znanstveno značajna prekretnica: {name} na {value} {unit} — {date}. {why}!",
+        ],
+        sequential: [
+            "{name} {date} stiže na {value} {unit} — uzastopne znamenke! Brojevi marširaju po redu.",
+            "1, 2, 3... {value}! Znamenke će se {date} posložiti u savršen niz — {name}, slavi se!",
+        ],
+        alternating: [
+            "{name} {date} stiže na {value} {unit} — izmjenični uzorak! Znamenke plešu.",
+            "Naprijed-natrag, kao otkucaji srca: {value} {unit} u savršenom ritmu — {name}, vidimo se {date}!",
+        ],
+        combined: [
+            "Zajedno ćete {date} doseći {value} {unit}! Zajedničke prekretnice najslađe su prekretnice.",
+            "{value} {unit} zajedničkog života — koliko je to tek zajedničkih trenutaka! Stiže {date}.",
+            "Zbroji sve {unit} i dobiješ {value}. Zbroji svu ljubav i dobiješ beskonačno.",
+            "Vaša ekipa {date} puni {value} {unit} zajedno — to se mora proslaviti!",
+        ],
+        ratio: [
+            "Omjer vaših godina bit će {date} točno {value}! Matematički trenutak sklada.",
+            "Vaše će godine {date} stajati u omjeru {value}. Savršeno, zar ne?",
+        ],
+        cosmic: [
+            "{name} — {value} stiže {date}! {why}.",
+            "Kozmička prekretnica: {name} {date} slavi {value}. Planeti se poravnavaju!",
+        ],
+        generic: [
+            "Još malo pa je {name} na {value} {unit}! To je {why}. Vrijeme je za slavlje!",
+            "Znaš da će {name} {date} doseći točno {value} {unit}? Kakva prekretnica!",
+            "Zabilježi trenutak: {name} na {value} {unit} — {date}. Ovako posebni brojevi zaslužuju pažnju.",
+            "Rezerviraj {date}: {name} tada puni {value} {unit}!",
+        ],
+    },
+    id: {
+        birthday: [
+            "Pada {date}, {name} genap {value} {unit} hidup di dunia! Semuanya layak dirayakan.",
+            "{value} {unit} {name} menerangi dunia — genap pada {date}!",
+            "Tahu nggak? {name} akan mencapai tepat {value} {unit} pada {date}. Itu {why}!",
+            "Siap-siap, {date} nanti {name} genap {value} {unit}. Alasan sempurna buat kumpul bareng!",
+        ],
+        round: [
+            "{name} sebentar lagi mencapai {value} {unit}! Angka bulat sempurna untuk orang yang luar biasa.",
+            "{value} {unit} di depan mata! Nolnya banyak, tapi nol alasan buat nggak merayakan momen {name}.",
+            "Angka bulat, tepuk tangan paling meriah: {name} tembus {value} {unit} pada {date}!",
+        ],
+        repdigit: [
+            "{name} akan mencapai {value} {unit} pada {date} — semua digitnya kembar. Itu {why}!",
+            "Kalau semua digitnya sama, pasti spesial. {name} tembus {value} {unit} pada {date}!",
+        ],
+        palindrome: [
+            "{name} mencapai {value} {unit} pada {date} — momen palindrom! Dibaca dari depan atau belakang tetap sama.",
+            "Cermin ajaib: {value} {unit} milik {name} akan jadi palindrom pada {date}!",
+            "{value} dari depan, {value} dari belakang. Momen {name} punya simetri sempurna!",
+        ],
+        fibonacci: [
+            "{name} genap {value} {unit} pada {date} — angka Fibonacci! Angka kesayangan alam.",
+            "Spiral emas mencapai {value} untuk {name}! Perayaan {unit} Fibonacci pada {date}.",
+        ],
+        power_of_2: [
+            "{name} mencapai {value} {unit} pada {date} — pangkat 2! Dunia digital ikut memberi hormat.",
+            "{value} {unit} — angka yang bikin komputer bernyanyi. Bersiaplah, {name}! {date}.",
+        ],
+        scientific: [
+            "{name} genap {value} {unit} pada {date} — angka yang berkaitan dengan {why}! Sains pun ikut merayakan.",
+            "Momen ilmiah: {name} mencapai {value} {unit} pada {date}. {why}!",
+        ],
+        sequential: [
+            "{name} tembus {value} {unit} pada {date} — angka berurutan! Digitnya berbaris rapi seperti antre.",
+            "1, 2, 3... {value}! Digit {name} berbaris sempurna pada {date}.",
+        ],
+        alternating: [
+            "{name} mencapai {value} {unit} pada {date} — pola selang-seling! Digitnya seperti sedang menari.",
+            "Naik turun seperti detak jantung: {value} {unit} milik {name} berselang-seling sempurna pada {date}.",
+        ],
+        combined: [
+            "Bersama, kita akan mencapai {value} {unit} pada {date}! Momen gabungan memang yang paling seru.",
+            "Total {value} {unit} kita jalani bareng — genap pada {date}. Banyak banget momennya!",
+            "Jumlahkan semua {unit}, hasilnya {value}. Jumlahkan semua sayangnya, hasilnya tak terhingga.",
+            "Kabar seru: pada {date}, total kebersamaan kita mencapai {value} {unit}. Wajib kumpul!",
+        ],
+        ratio: [
+            "Rasio usia kalian akan tepat {value} pada {date}! Momen matematika yang harmonis.",
+            "Pada {date}, usia kalian membentuk rasio {value}. Pas banget, kan?",
+        ],
+        cosmic: [
+            "{value} {name} tiba pada {date}! {why}.",
+            "Momen kosmik untuk {name}: {value} pada {date}. Planet-planet pun sejajar!",
+        ],
+        generic: [
+            "{name} sebentar lagi mencapai {value} {unit} — itu {why}. Waktunya siapkan perayaan!",
+            "Tahu nggak? {name} akan mencapai tepat {value} {unit} pada {date}. Momen yang luar biasa!",
+            "Catat tanggalnya: {name} genap {value} {unit} pada {date}. Angka sespesial ini layak dirayakan.",
+            "Angka nggak pernah bohong: {value} {unit} untuk {name} pada {date}. Yuk rayakan bareng!",
+        ],
+    },
+    it: {
+        birthday: [
+            "{name} compirà {value} {unit} il {date}! E ogni singolo momento merita una festa.",
+            "{value} {unit} di {name} che illuminano il mondo — ci siamo il {date}!",
+            "Lo sapevi? Il {date} {name} raggiungerà esattamente {value} {unit}. È {why}!",
+            "Segna la data: il {date} {name} compie {value} {unit}. Una cosa così non capita due volte!",
+        ],
+        round: [
+            "{name} sta per toccare quota {value} {unit}! Un numero tondo per una persona unica.",
+            "{value} {unit} in arrivo — quanti zeri, e zero scuse per non festeggiare {name}!",
+            "Numero tondo, applauso a tutto tondo: {name} a {value} {unit} il {date}!",
+        ],
+        repdigit: [
+            "Il {date} {name} arriva a {value} {unit}. Tutte cifre uguali — è {why}!",
+            "Quando tutte le cifre sono uguali, è un segno. {name} a {value} {unit} il {date}!",
+            "{value} {unit} — un numero che fa eco. Proprio come {name}. Arriva il {date}.",
+        ],
+        palindrome: [
+            "{name} a {value} {unit} il {date} — un traguardo palindromo! Si legge uguale da sinistra e da destra.",
+            "Specchio delle mie brame: il {date} {name} tocca quota {value} {unit} — un palindromo perfetto!",
+            "{value} all'andata, {value} al ritorno. Il traguardo di {name} sarà perfettamente simmetrico!",
+        ],
+        fibonacci: [
+            "{name} a {value} {unit} il {date} — un numero di Fibonacci! Il numero preferito della natura.",
+            "La spirale aurea passa da {name}: {value} {unit} il {date}, in puro stile Fibonacci.",
+        ],
+        power_of_2: [
+            "{name} a {value} {unit} il {date} — una potenza di 2! Anche i computer faranno festa.",
+            "Perfezione binaria in arrivo: {name} tocca {value} {unit}. Due elevato alla... festa!",
+        ],
+        scientific: [
+            "{name} a {value} {unit} il {date} — un numero legato a {why}! La scienza approva.",
+            "Traguardo scientifico in vista: {name} a {value} {unit} il {date}. {why}!",
+        ],
+        sequential: [
+            "{name} a {value} {unit} il {date} — cifre in fila perfetta, una dopo l'altra!",
+            "1, 2, 3... {value}! Il {date} le cifre di {name} sfileranno in ordine perfetto.",
+        ],
+        alternating: [
+            "{name} a {value} {unit} il {date} — cifre che si alternano come un battito!",
+            "Avanti e indietro, come un ritmo: {name} arriva a {value} {unit} il {date}.",
+        ],
+        combined: [
+            "Insieme arriveremo a {value} {unit} il {date}! I traguardi condivisi sono i più belli.",
+            "{value} {unit} di vita in totale — quanti momenti condivisi, tutti in una data: {date}!",
+            "Somma tutto e arrivi a {value} {unit}. Somma l'affetto, e il conto non torna più.",
+            "Il {date} facciamo {value} {unit} in totale. Serve solo una torta abbastanza grande!",
+        ],
+        ratio: [
+            "Il {date} il rapporto tra le vostre età sarà esattamente {value}! Armonia matematica pura.",
+            "Il {date} le vostre età formeranno il rapporto {value}. Che soddisfazione quando i numeri tornano.",
+        ],
+        cosmic: [
+            "Traguardo cosmico per {name}: {value} il {date}. I pianeti si allineano!",
+            "Il {date} il cielo segna {value} per {name} — un appuntamento astronomico da non perdere!",
+            "Ogni {value} segna un capitolo cosmico. Il prossimo di {name} arriva il {date}!",
+        ],
+        generic: [
+            "{name} sta per raggiungere {value} {unit}! È {why}. Meglio iniziare a pensare alla festa.",
+            "Lo sapevi? Il {date} {name} arriverà esattamente a {value} {unit}. Mica male come traguardo!",
+            "Segnatelo: {name} a {value} {unit} il {date}. Numeri così non capitano tutti i giorni.",
+            "Allerta traguardo: il {date} {name} tocca quota {value} {unit}. Un buon motivo per farsi sentire!",
+        ],
+    },
+    ko: {
+        birthday: [
+            "{date}에 {name}님은 태어난 지 딱 {value}{unit}째가 돼요! 하루하루가 다 축하할 이유죠.",
+            "세상을 밝혀 온 {name}님의 {value}{unit} — {date}에 찾아와요!",
+            "알고 있었나요? {name}님이 {date}에 정확히 {value}{unit}째를 맞아요. 바로 {why}!",
+            "케이크 준비하세요! {date}, {name}님의 {value}{unit} 기념일이에요. 백 번 축하해도 모자라죠.",
+        ],
+        round: [
+            "{name}님이 곧 {value}{unit}째를 맞아요! 동그라미가 가득한 숫자, 축하하지 않을 이유는 0개죠.",
+            "0이 이렇게 많이 모이는 날은 흔치 않아요. {date}, {name}님의 {value}{unit}째!",
+            "딱 떨어지는 숫자에는 박수가 어울리죠. {date}에 {name}님이 {value}{unit}째를 맞아요!",
+        ],
+        repdigit: [
+            "{date}에 {name}님이 {value}{unit}째가 돼요. 모든 자리가 같은 숫자 — 바로 {why}!",
+            "같은 숫자가 줄줄이 이어지면 특별한 날이라는 뜻이죠. {date}, {name}님의 {value}{unit}째예요!",
+            "{value} — 메아리처럼 울리는 숫자예요. {name}님의 존재감처럼요. {date}에 만나요.",
+        ],
+        palindrome: [
+            "{date}의 {name}님: {value}{unit}째, 대칭수예요! 앞으로 읽어도 뒤로 읽어도 똑같죠.",
+            "거울아 거울아 — {name}님의 {value}{unit}째가 {date}에 완벽한 대칭을 이뤄요!",
+            "앞으로 {value}, 뒤로도 {value}. {name}님의 이 순간은 완벽한 균형 그 자체예요!",
+        ],
+        fibonacci: [
+            "{date}에 {name}님이 {value}{unit}째를 맞아요 — 피보나치 수! 자연이 직접 고른 숫자예요.",
+            "황금비처럼 자라나는 {name}님 — {date}에 피보나치 수 {value}{unit}째가 돼요!",
+        ],
+        power_of_2: [
+            "{date}에 {name}님이 {value}{unit}째가 돼요 — 2의 거듭제곱! 컴퓨터도 반할 숫자예요.",
+            "이진법으로도 완벽해요: {name}님이 곧 {value}{unit}째를 맞아요. 2의 멋짐 제곱이죠!",
+        ],
+        scientific: [
+            "{date}에 {name}님이 {value}{unit}째가 돼요. 이 숫자의 비밀은? 바로 {why}!",
+            "과학적으로 의미 있는 순간이에요: {name}님이 {date}에 {value}{unit}째를 맞아요. {why}!",
+        ],
+        sequential: [
+            "{name}님이 {date}에 {value}{unit}째가 돼요 — 숫자들이 줄 맞춰 행진하는 연속 수예요!",
+            "1, 2, 3... {value}! {date}, {name}님의 숫자들이 한 줄로 나란히 서요.",
+        ],
+        alternating: [
+            "{name}님의 {value}{unit}째가 {date}에 찾아와요 — 숫자들이 번갈아 춤추는 패턴이에요!",
+            "두근두근 심장 박동처럼 — {date}, {name}님의 {value}{unit}째 숫자가 완벽하게 엇갈려요.",
+        ],
+        combined: [
+            "우리 모두의 시간을 합치면 {date}에 {value}{unit}째가 돼요! 함께라서 더 특별하죠.",
+            "시간을 전부 더하면 {value}{unit}. 마음까지 더하면? 무한대죠.",
+            "{date}에 우리의 합산 시간이 {value}{unit}에 도달해요 — 그만큼 많은 순간을 함께했다는 뜻이에요!",
+            "함께 쌓아 온 {value}{unit} — {date}에 완성돼요! 이런 날엔 다 같이 모여야죠.",
+        ],
+        ratio: [
+            "우리 나이의 비율이 딱 {value}! {date}, 수학이 빚어낸 조화로운 순간이에요.",
+            "{date}, 두 사람의 나이가 {value} 비율을 이뤄요. 이렇게 딱 떨어질 수가!",
+        ],
+        cosmic: [
+            "{date}, {name}님에게 {value}의 순간이 찾아와요. {why}!",
+            "우주가 보내는 신호예요: {name}님의 {value}, {date}에 만나요. 행성도 함께 축하하는 날이죠!",
+            "{name}님이 {date}에 {value}에 도달해요. 천문학적으로도 축하할 만한 사실이죠!",
+        ],
+        generic: [
+            "{name}님이 곧 {value}{unit}째를 맞아요! 바로 {why}. 슬슬 축하 준비를 시작할 시간이에요.",
+            "알고 있었나요? {name}님이 {date}에 정확히 {value}{unit}째가 돼요. 정말 특별한 순간이죠!",
+            "달력에 표시해 두세요: {date}, {name}님의 {value}{unit}째. 이렇게 특별한 숫자는 그냥 지나칠 수 없죠.",
+            "{name}님에게 다가오는 숫자: {value}{unit}. 이유는? {why}. 함께 축하해 줄 사람이 필요해요!",
+        ],
+    },
+    nl: {
+        birthday: [
+            "Op {date} is {name} precies {value} {unit} oud. Stuk voor stuk het vieren waard!",
+            "Al {value} {unit} maakt {name} de wereld vrolijker — het is zover op {date}!",
+            "Wist je dat {name} op {date} precies {value} {unit} bereikt? Dat is {why}!",
+            "Zet {date} in je agenda: dan is {name} precies {value} {unit} oud. Taart lijkt me wel op z'n plek!",
+        ],
+        round: [
+            "{name} zit bijna op {value} {unit}! Een perfect rond getal voor iemand die net zo bijzonder is.",
+            "{value} {unit} in aantocht! Zoveel nullen — en nul redenen om het niet te vieren met {name}.",
+            "Rond getal, applausrondje: {name} bereikt {value} {unit} op {date}!",
+        ],
+        repdigit: [
+            "Op {date} bereikt {name} {value} {unit} — alle cijfers hetzelfde. Dat is {why}!",
+            "Als elk cijfer hetzelfde is, weet je dat het bijzonder is. {name} bereikt {value} {unit} op {date}!",
+            "{value} {unit} — een getal dat zichzelf blijft herhalen. Net zo onvergetelijk als {name}. Het is zover op {date}.",
+        ],
+        palindrome: [
+            "{name} bereikt {value} {unit} op {date} — een palindroom! Leest van beide kanten precies hetzelfde.",
+            "Spiegeltje, spiegeltje: de {value} {unit} van {name} is op {date} een perfect palindroom!",
+            "{value} vooruit, {value} achteruit. De mijlpaal van {name} is perfect symmetrisch!",
+        ],
+        fibonacci: [
+            "{name} bereikt {value} {unit} op {date} — een Fibonacci-mijlpaal! Het getal van de natuur zelf.",
+            "De gulden spiraal komt voor {name} uit bij {value} {unit} — een Fibonacci-feestje op {date}!",
+        ],
+        power_of_2: [
+            "{name} bereikt op {date} {value} {unit} — een macht van 2! Elke computer zou hiervoor applaudisseren.",
+            "Binaire perfectie op komst: {name} haalt {value} {unit}. Dat is 2 tot de macht geweldig!",
+            "{value} {unit} — een getal waar computers blij van worden. Hou je vast, {name}! {date}.",
+        ],
+        scientific: [
+            "{name} bereikt {value} {unit} op {date} — dat getal hoort bij {why}! Een feestje waard, zegt de wetenschap.",
+            "Een wetenschappelijk bijzondere mijlpaal: {name} bereikt {value} {unit} op {date}. {why}!",
+        ],
+        sequential: [
+            "{name} bereikt {value} {unit} op {date} — de cijfers staan keurig in de rij!",
+            "1, 2, 3... {value}! De cijfers van {name} lopen op {date} in een perfecte optocht.",
+        ],
+        alternating: [
+            "Op {date} bereikt {name} {value} {unit} — een afwisselend patroon! De cijfers dansen heen en weer.",
+            "Heen en weer als een hartslag: {value} {unit} voor {name} op {date} — de cijfers wisselen elkaar perfect af.",
+        ],
+        combined: [
+            "Samen bereiken we {value} {unit} op {date}! Gezamenlijke mijlpalen zijn de mooiste.",
+            "Op {date} hebben we samen {value} {unit} geleefd — dat zijn een hoop gedeelde momenten!",
+            "Tel al onze {unit} bij elkaar op en je krijgt {value}. Tel alle liefde op en je komt op oneindig.",
+            "We halen samen {value} {unit} op {date}. Dat verdient minstens een taart — of twee.",
+        ],
+        ratio: [
+            "De verhouding tussen onze leeftijden is op {date} precies {value}! Een wiskundig moment van harmonie.",
+            "Op {date} vormen onze leeftijden precies de verhouding {value}. Hoe mooi wil je het hebben?",
+        ],
+        cosmic: [
+            "De {value} van {name} komt eraan op {date}! {why}.",
+            "Een kosmische mijlpaal voor {name}: {value} op {date}. De sterren staan er goed voor!",
+            "Op {date} bereikt {name} de {value}. Astronomisch gezien een feestje waard!",
+        ],
+        generic: [
+            "{name} zit bijna op {value} {unit} — dat is {why}. Tijd om de slingers op te hangen!",
+            "Wist je dit? Op {date} bereikt {name} precies {value} {unit}. Wat een mijlpaal!",
+            "Zet het in je agenda: op {date} bereikt {name} {value} {unit}. Zulke bijzondere getallen verdienen aandacht.",
+            "Niet vergeten: op {date} staat de teller van {name} op {value} {unit}. Dit zie je maar één keer voorbijkomen!",
+        ],
+    },
+    pl: {
+        birthday: [
+            "{name} będzie na świecie już {value} {unit} — dokładnie {date}! Brzmi jak powód do świętowania.",
+            "Wiesz, że {name} skończy równo {value} {unit} {date}? To {why} — taka okazja się nie powtórzy.",
+            "Szykuj tort — {name} dobija do {value} {unit} już {date}!",
+            "Mały sekret: {date} {name} osiągnie dokładnie {value} {unit}. Idealny pretekst, żeby świętować!",
+        ],
+        round: [
+            "{name} zaraz przekroczy {value} {unit}! Tylu zer naraz nie widuje się co dzień — trzeba to uczcić.",
+            "Okrągłe {value} {unit} — {name} osiąga je już {date}. Takie zera aż proszą się o świętowanie!",
+            "Okrągła liczba, gromkie brawa: {name} osiąga {value} {unit} już {date}!",
+        ],
+        repdigit: [
+            "{name} osiągnie {value} {unit} {date}! Same identyczne cyfry — to {why}.",
+            "Kiedy wszystkie cyfry są takie same, to musi coś znaczyć. {name}: {value} {unit}, już {date}!",
+            "Liczba z samych powtórzeń — jak ulubiona piosenka puszczana w kółko. {name} wskakuje na {value} {unit} {date}!",
+        ],
+        palindrome: [
+            "{name} osiągnie {value} {unit} {date} — palindrom! Od przodu i od tyłu czyta się tak samo.",
+            "Lustereczko, powiedz przecie: {name} osiąga {value} {unit} — idealny palindrom! Już {date}.",
+            "{value} od przodu, {value} od tyłu. {name} osiąga moment o idealnej symetrii — {date}!",
+        ],
+        fibonacci: [
+            "{name} osiągnie {value} {unit} {date} — liczba Fibonacciego! Sama natura tak liczy.",
+            "Złota spirala dociera do {value} — Fibonacci byłby dumny. {name} świętuje {date}!",
+        ],
+        power_of_2: [
+            "{name} osiągnie {value} {unit} {date} — potęga dwójki! Komputery całego świata się kłaniają.",
+            "Binarna perfekcja: {name} osiąga {value} {unit}. Dwa do potęgi „wow”!",
+        ],
+        scientific: [
+            "{name} osiągnie {value} {unit} {date} — liczba związana z {why}! Nauka też świętuje.",
+            "Naukowo potwierdzony powód do radości: {name}, {value} {unit}, {date}. {why}!",
+        ],
+        sequential: [
+            "{name} osiągnie {value} {unit} {date} — cyfry ustawią się w idealnym szeregu!",
+            "1, 2, 3… {value}! Cyfry idealnie po kolei — {name} osiąga ten moment {date}.",
+        ],
+        alternating: [
+            "{name} osiągnie {value} {unit} {date} — naprzemienny wzór! Cyfry tańczą raz w jedną, raz w drugą stronę.",
+            "Jak bicie serca, raz w jedną, raz w drugą stronę: {name} osiąga {value} {unit} już {date}!",
+        ],
+        combined: [
+            "Razem osiągniemy {value} {unit} — dokładnie {date}! Wspólne momenty smakują najlepiej.",
+            "{value} {unit} przeżytych razem — to morze wspólnych chwil. Wielki dzień już {date}!",
+            "Zsumujcie wszystkie {unit}, a wyjdzie {value}. Zsumujcie wspomnienia — wyjdzie nieskończoność.",
+            "Nasza ekipa dobija razem do {value} {unit} {date}! Taka okazja zasługuje na spotkanie.",
+        ],
+        ratio: [
+            "Stosunek naszego wieku wyniesie dokładnie {value} — {date}! Matematyczna harmonia w czystej postaci.",
+            "{date} nasz wiek ułoży się w proporcję {value}. Jak nuty w akordzie!",
+        ],
+        cosmic: [
+            "{name} osiąga {value} już {date}! {why} — nawet kosmos to zauważy.",
+            "Kosmiczny moment {date}: {name} osiąga {value}. Planety właśnie się układają!",
+        ],
+        generic: [
+            "{name} zaraz osiągnie {value} {unit}! To {why}. Pora szykować imprezę.",
+            "Wiesz, że {name} osiągnie równo {value} {unit} {date}? Taka liczba zasługuje na uwagę.",
+            "Zapisz tę datę: {name}, {value} {unit}, {date}. Liczby tak wyjątkowe nie zdarzają się codziennie.",
+            "Mam newsa: {name} osiąga {value} {unit} już {date}! Coś czuję, że będzie tort.",
+        ],
+    },
+    ru: {
+        birthday: [
+            "{name} будет на свете уже {value} {unit} — это случится {date}! Такое нельзя пропустить.",
+            "{date} исполнится {value} {unit}, как {name} украшает этот мир. Отмечаем!",
+            "Знаешь что? {date} {name} наберёт ровно {value} {unit}. Это {why}!",
+            "Готовь поздравление: {date} {name} отметит {value} {unit}!",
+        ],
+        round: [
+            "{name} вот-вот разменяет {value} {unit}! Идеально круглое число для прекрасного человека.",
+            "Впереди {value} {unit}! Столько нулей — и ноль причин не праздновать. {name}, готовься!",
+            "Круглое число — круглый повод: {name} отметит {value} {unit} {date}!",
+        ],
+        repdigit: [
+            "{name} наберёт {value} {unit} {date}! Все цифры одинаковые — это {why}!",
+            "Когда все цифры совпадают — это знак. {name}: {value} {unit}, уже {date}!",
+        ],
+        palindrome: [
+            "{name} наберёт {value} {unit} {date} — это палиндром! Читается одинаково в обе стороны.",
+            "Свет мой, зеркальце, скажи: {date} {name} отметит {value} {unit} — число-палиндром!",
+            "{value} слева направо, {value} справа налево. Идеальная симметрия — и всё это {name}!",
+        ],
+        fibonacci: [
+            "{name} отметит {value} {unit} {date} — число Фибоначчи! Сама природа считает вместе с нами.",
+            "Число Фибоначчи: {value} {unit}! {name} растёт по законам природы. Ждём {date}.",
+        ],
+        power_of_2: [
+            "{name} наберёт {value} {unit} {date} — степень двойки! Даже компьютеры аплодируют.",
+            "Двоичное совершенство: {value} {unit}! {name}, это твой день — {date}.",
+        ],
+        scientific: [
+            "{name} отметит {value} {unit} {date} — это число связано с {why}! Наука одобряет.",
+            "Научно значимый момент: {date} {name} отметит {value} {unit}. {why}!",
+        ],
+        sequential: [
+            "{name} наберёт {value} {unit} {date} — цифры выстроятся по порядку!",
+            "1, 2, 3... {value}! Цифры шагают ровным строем, и всё это — {name}, {date}.",
+        ],
+        alternating: [
+            "{name} наберёт {value} {unit} {date} — узор из чередующихся цифр!",
+            "Туда-сюда, как сердцебиение: {value} {unit} с идеальным ритмом. {name} отметит это {date}.",
+        ],
+        combined: [
+            "{date} у вас вместе будет {value} {unit}! Общие даты — самые тёплые.",
+            "{value} {unit} на всех — сколько же это общих моментов! Уже {date}.",
+            "Если сложить вас всех — выйдет {value} {unit}. Если сложить дружбу — выйдет бесконечность.",
+            "{date} вы вместе наберёте {value} {unit}. Такое отмечают только всей компанией!",
+        ],
+        ratio: [
+            "{date} соотношение ваших возрастов будет ровно {value}! Математическая гармония.",
+            "Ваши возрасты сойдутся в соотношении {value} — {date}. До чего же красиво!",
+        ],
+        cosmic: [
+            "{name} встречает {value} — уже {date}! {why}.",
+            "Космическое событие: {name} и {value}, {date}. Планеты выстроились!",
+        ],
+        generic: [
+            "{name} вот-вот наберёт {value} {unit}! Это {why}. Пора готовить праздник.",
+            "А ты знаешь? {date} {name} наберёт ровно {value} {unit}. Вот это дата!",
+            "Запомни момент: {name}, {value} {unit}, {date}. Такие числа заслуживают внимания.",
+            "Цифры сошлись! {name} отметит {value} {unit} {date} — не пропусти.",
+        ],
+    },
+    sl: {
+        birthday: [
+            "{name} bo {date} na svetu že celih {value} {unit} — to je treba proslaviti!",
+            "Veš, kaj? {name} {date} doseže natanko {value} {unit}. To je {why}!",
+            "Pripravi torto — {name} {date} praznuje {value} {unit}!",
+            "{value} {unit} življenja! {name} ta mejnik doseže {date}. Kdo prinese šampanjec?",
+        ],
+        round: [
+            "{name} kmalu doseže {value} {unit}! Tako okroglo število si zasluži pošteno praznovanje.",
+            "Same ničle: {name} {date} doseže {value} {unit}. Aplavz!",
+            "Okroglo število, okrogel aplavz: {name} doseže {value} {unit} — že {date}!",
+        ],
+        repdigit: [
+            "{name} {date} doseže {value} {unit} — same enake števke! To se ne zgodi pogosto.",
+            "Ko so vse števke enake, je dan zares poseben: {name}, {value} {unit}, {date}!",
+        ],
+        palindrome: [
+            "{name} {date} doseže {value} {unit} — palindrom! Število se bere enako naprej in nazaj.",
+            "Zrcalce, zrcalce: {name} {date} doseže {value} {unit} — popolna simetrija!",
+            "{value} naprej, {value} nazaj. Mejnik, ki ga {name} doseže {date}, je popolnoma simetričen.",
+        ],
+        fibonacci: [
+            "{name} {date} doseže {value} {unit} — Fibonaccijevo število! Po njem raste vsa narava.",
+            "Fibonacci bi bil ponosen: {name} {date} dopolni {value} {unit}. Narava ve, kaj dela.",
+        ],
+        power_of_2: [
+            "{name} {date} doseže {value} {unit} — potenco števila 2! Vsak računalnik bi bil navdušen.",
+            "Binarna popolnost: {name} {date} doseže {value} {unit}. Število, ob katerem računalniki zapojejo.",
+        ],
+        scientific: [
+            "{name} {date} doseže {value} {unit}. Razlog za slavje: {why}!",
+            "Znanstveno pomemben mejnik: {name} {date} doseže {value} {unit}. {why}!",
+        ],
+        sequential: [
+            "{name} {date} doseže {value} {unit} — števke si sledijo v popolnem zaporedju!",
+            "1, 2, 3 ... {value}! Števke gredo lepo po vrsti — {name} ta mejnik doseže {date}.",
+        ],
+        alternating: [
+            "{name} {date} doseže {value} {unit} — izmenični vzorec! Števke kar plešejo.",
+            "Sem in tja, kot srčni utrip: {value} {unit}. {name} ta ritem ujame {date}.",
+        ],
+        combined: [
+            "Skupaj {date} nanese kar {value} {unit}! Skupni mejniki so najboljši mejniki.",
+            "{value} {unit} skupnega življenja — toliko se nabere do {date}. To je ogromno skupnih trenutkov!",
+            "Seštej vse {unit} in dobiš {value}. Seštej vse lepe trenutke in dobiš neskončno.",
+            "Tega mejnika nima nihče sam: {value} {unit} skupaj, {date}. Se vidimo na proslavi?",
+        ],
+        ratio: [
+            "Razmerje vajinih starosti bo {date} natanko {value}! Matematika ima očitno smisel za harmonijo.",
+            "{date} bosta vajini starosti v razmerju {value}. Kako lepo se izide!",
+        ],
+        cosmic: [
+            "Nekaj kozmičnega: {name} {date} doseže {value}. {why}!",
+            "Vesolje ima svoj koledar — {name} {date} dočaka {value}. {why}!",
+        ],
+        generic: [
+            "{name} kmalu dopolni {value} {unit}! Razlog: {why}. Čas je, da pripravimo praznovanje.",
+            "Veš, kaj se zgodi {date}? {name} doseže natanko {value} {unit}. Kakšen mejnik!",
+            "Zabeleži si datum: {name} {date} dopolni {value} {unit}. Tako posebna števila si zaslužijo pozornost.",
+            "Števila ne lažejo: {name} {date} doseže {value} {unit}. Jaz že pripravljam konfete.",
+        ],
+    },
+    th: {
+        birthday: [
+            "{name} จะมีชีวิตมาครบ {value} {unit} ในวันที่ {date} เลยนะ! ทุกช่วงเวลาที่ผ่านมาล้วนน่าฉลอง",
+            "{value} {unit} ที่ {name} ทำให้โลกใบนี้สดใสขึ้น — จะครบในวันที่ {date} นะ",
+            "รู้ไหม? {name} จะครบ {value} {unit} พอดีในวันที่ {date} นั่นคือ {why} เลยนะ",
+            "อีกไม่นาน {name} จะครบ {value} {unit} แล้วนะ มาเตรียมเซอร์ไพรส์กันเถอะ",
+        ],
+        round: [
+            "{name} กำลังจะครบ {value} {unit} แล้วนะ เลขกลมเป๊ะสำหรับคนที่ยอดเยี่ยมแบบนี้!",
+            "อีกนิดเดียวจะถึง {value} {unit} แล้ว เลขศูนย์เยอะขนาดนี้ ไม่มีเหตุผลที่จะไม่ฉลองให้ {name} เลย!",
+            "เลขกลมๆ ต้องมีเสียงปรบมือดังๆ: {name} จะครบ {value} {unit} ในวันที่ {date} นะ",
+        ],
+        repdigit: [
+            "{name} จะครบ {value} {unit} ในวันที่ {date} ตัวเลขเหมือนกันทุกหลักเลยนะ นั่นคือ {why}!",
+            "เมื่อทุกหลักเป็นเลขเดียวกัน ก็รู้ได้ทันทีว่าพิเศษ {name} จะครบ {value} {unit} ในวันที่ {date} นะ",
+        ],
+        palindrome: [
+            "{name} จะครบ {value} {unit} ในวันที่ {date} — พาลินโดรม อ่านจากหน้าไปหลังหรือจากหลังมาหน้าก็เหมือนกันเลยนะ",
+            "กระจกวิเศษบอกข้าเถิด: {value} {unit} ของ {name} จะเป็นพาลินโดรมในวันที่ {date} นะ",
+            "{value} อ่านไปข้างหน้า {value} อ่านย้อนกลับ ช่วงเวลาพิเศษของ {name} สมมาตรเป๊ะเลยนะ",
+        ],
+        fibonacci: [
+            "{name} จะครบ {value} {unit} ในวันที่ {date} — เลขฟีโบนัชชี เลขของธรรมชาติเลยนะ",
+            "เกลียวทองกำลังหมุนมาถึง {value} ของ {name} แล้ว มาฉลองฟีโบนัชชี {unit} กันในวันที่ {date} นะ",
+        ],
+        power_of_2: [
+            "{name} จะครบ {value} {unit} ในวันที่ {date} — เลขยกกำลังของ 2 โลกดิจิทัลต้องปรบมือให้เลยนะ",
+            "{value} {unit} — เลขที่ทำให้คอมพิวเตอร์ร้องเพลงได้ เตรียมตัวได้เลยนะ {name} วันที่ {date}!",
+        ],
+        scientific: [
+            "{name} จะครบ {value} {unit} ในวันที่ {date} เลขนี้เกี่ยวข้องกับ {why} เลยนะ วงการวิทยาศาสตร์ต้องร่วมฉลอง!",
+            "ช่วงเวลาพิเศษเชิงวิทยาศาสตร์: {name} จะครบ {value} {unit} ในวันที่ {date} — {why} นะ",
+        ],
+        sequential: [
+            "{name} จะครบ {value} {unit} ในวันที่ {date} — เลขเรียงลำดับ ตัวเลขเดินเรียงแถวกันเป๊ะเลยนะ",
+            "1, 2, 3... {value}! ตัวเลขของ {name} จะเรียงแถวสวยงามในวันที่ {date} นะ",
+        ],
+        alternating: [
+            "{name} จะครบ {value} {unit} ในวันที่ {date} — เลขสลับ ตัวเลขเต้นระบำกันเลยนะ",
+            "สลับไปสลับมาเหมือนจังหวะหัวใจ: {value} {unit} ของ {name} จะมาถึงในวันที่ {date} นะ",
+        ],
+        combined: [
+            "พวกเราจะมีเวลารวมกันครบ {value} {unit} ในวันที่ {date} เลยนะ! ช่วงเวลาพิเศษรวมกันคือช่วงเวลาที่ดีที่สุด",
+            "{value} {unit} ของชีวิตเรารวมกัน — ความทรงจำร่วมกันเพียบเลยนะ มาฉลองกันวันที่ {date}",
+            "เอา {unit} ของทุกคนมาบวกกันจะได้ {value} แต่ถ้าเอาความรักมาบวกกัน ได้อนันต์เลยนะ",
+            "ในวันที่ {date} พวกเราจะครบ {value} {unit} รวมกัน — ต้องนัดเจอกันแล้วนะ",
+        ],
+        ratio: [
+            "อัตราส่วนอายุของพวกคุณจะเป็น {value} พอดีในวันที่ {date} เลยนะ ช่างเป็นความลงตัวทางคณิตศาสตร์!",
+            "ในวันที่ {date} อายุของพวกคุณจะเป็นอัตราส่วน {value} — ลงตัวน่าพอใจสุดๆ เลยนะ",
+        ],
+        cosmic: [
+            "{value} ของ {name} กำลังจะมาถึงในวันที่ {date} นะ — {why}",
+            "ช่วงเวลาพิเศษระดับจักรวาลของ {name}: {value} ในวันที่ {date} ดวงดาวเรียงตัวต้อนรับเลยนะ",
+        ],
+        generic: [
+            "{name} กำลังจะครบ {value} {unit} แล้วนะ นั่นคือ {why} ได้เวลาเตรียมฉลองแล้ว!",
+            "รู้ไหม? {name} จะครบ {value} {unit} พอดีในวันที่ {date} ช่วงเวลาพิเศษสุดๆ เลยนะ",
+            "จดไว้เลยนะ: {name} จะครบ {value} {unit} ในวันที่ {date} เลขพิเศษขนาดนี้ต้องใส่ใจหน่อย",
+            "ตัวเลขดีๆ แบบนี้ไม่ได้มีมาบ่อย {name} จะครบ {value} {unit} ในวันที่ {date} นะ",
+        ],
+    },
+    vi: {
+        birthday: [
+            "{name} sẽ tròn {value} {unit} trên đời vào {date}! Mỗi khoảnh khắc đều đáng ăn mừng.",
+            "Biết gì chưa? Vào {date}, {name} sẽ chạm đúng {value} {unit} — {why} đó nha!",
+            "{value} {unit} {name} làm thế giới này vui hơn — đến hẹn vào {date}!",
+            "Sắp có chuyện lớn: {name} tròn {value} {unit} vào {date}. Chuẩn bị ăn mừng thôi!",
+        ],
+        round: [
+            "{name} sắp chạm {value} {unit}! Một con số tròn trĩnh cho một người tuyệt vời.",
+            "{value} {unit} đang đến gần! Bao nhiêu số 0 là bấy nhiêu lý do để chúc mừng {name} nha.",
+            "Số tròn thì phải có tràng vỗ tay thật giòn: {name} đạt {value} {unit} vào {date}!",
+        ],
+        repdigit: [
+            "Vào {date}, {name} sẽ chạm {value} {unit} — tất cả chữ số giống hệt nhau, {why} đó!",
+            "Khi mọi chữ số đều giống nhau thì chắc chắn là dịp đặc biệt. {name} đạt {value} {unit} vào {date}!",
+            "{value} {unit} — một con số như tiếng vọng. Hợp với dấu ấn của {name} ghê. Hẹn ngày {date} nha.",
+        ],
+        palindrome: [
+            "{name} đạt {value} {unit} vào {date} — cột mốc đối xứng, đọc xuôi đọc ngược đều như nhau!",
+            "Gương kia ngự ở trên tường: {value} {unit} của {name} sẽ là số đối xứng vào {date}!",
+            "{value} đọc xuôi, {value} đọc ngược — cột mốc của {name} cân đối hoàn hảo!",
+        ],
+        fibonacci: [
+            "{name} đạt {value} {unit} vào {date} — một số Fibonacci, con số của tự nhiên đó!",
+            "Vòng xoắn vàng sẽ chạm {value} với {name} — ăn mừng kiểu Fibonacci vào {date} thôi!",
+        ],
+        power_of_2: [
+            "{name} đạt {value} {unit} vào {date} — lũy thừa của 2 hẳn hoi, dân máy tính sẽ vỗ tay!",
+            "{value} {unit} — con số khiến máy tính cũng phải reo lên. Sẵn sàng chưa {name}? Hẹn {date} nha.",
+        ],
+        scientific: [
+            "{name} đạt {value} {unit} vào {date} — con số gắn với {why}! Khoa học cũng phải ăn mừng.",
+            "Một cột mốc đậm chất khoa học: {name} đạt {value} {unit} vào {date}. {why} đó!",
+        ],
+        sequential: [
+            "{name} đạt {value} {unit} vào {date} — các chữ số xếp hàng nối tiếp nhau thẳng tắp!",
+            "1, 2, 3... {value}! Vào {date}, các chữ số của {name} sẽ đi đều tăm tắp.",
+        ],
+        alternating: [
+            "{name} đạt {value} {unit} vào {date} — các chữ số thay phiên nhảy múa theo nhịp!",
+            "Qua lại đều đặn như nhịp tim: {value} {unit} của {name} sẽ xen kẽ hoàn hảo vào {date}.",
+        ],
+        combined: [
+            "Cùng nhau, chúng ta sẽ chạm {value} {unit} vào {date}! Cột mốc chung là cột mốc vui nhất.",
+            "{value} {unit} cộng lại — bao nhiêu là kỷ niệm chung, đến hẹn vào {date}!",
+            "Cộng hết {unit} lại thì được {value}. Còn cộng hết yêu thương lại thì... vô tận.",
+            "Tin vui cho cả hội: cùng nhau chúng ta sẽ đạt {value} {unit} vào {date}. Tụ họp thôi!",
+        ],
+        ratio: [
+            "Vào {date}, tỷ lệ tuổi giữa hai bạn sẽ đúng bằng {value}! Một khoảnh khắc hài hòa của những con số.",
+            "Ngày {date}, tuổi của các bạn sẽ tạo thành tỷ lệ {value}. Vừa vặn đến lạ!",
+        ],
+        cosmic: [
+            "{value} của {name} sẽ đến vào {date}! {why}.",
+            "Cột mốc vũ trụ cho {name}: {value} vào {date}. Các hành tinh cũng xếp hàng chúc mừng!",
+        ],
+        generic: [
+            "{name} sắp chạm {value} {unit}! Đó là {why}. Chuẩn bị ăn mừng thôi!",
+            "Biết gì chưa? Vào {date}, {name} sẽ đạt đúng {value} {unit}. Một cột mốc đáng nhớ ghê.",
+            "Đánh dấu lại nha: {name} đạt {value} {unit} vào {date}. Con số đặc biệt thế này không thể bỏ qua đâu.",
+            "Có một con số đang đợi {name}: {value} {unit} vào {date}. Không phải ngày nào cũng có dịp như vậy đâu!",
         ],
     },
 };

@@ -110,7 +110,7 @@
     "wiz_who_else_sub": "Teman · Rekan kerja · Keluarga",
     "wiz_one_more_group": "Satu grup lagi",
     "wiz_go_dashboard": "Buka dasborku",
-    "wiz_explore_tabs": "Jelajahi Pribadi · Bersama · Edit",
+    "wiz_explore_tabs": "Jelajahi Pribadi · Bersama · Data",
     "wiz_share": "Bagikan",
     "wiz_show_more_tpl": "Tampilkan {count} {noun} lagi ▼",
     "wiz_show_more_short": "Tampilkan {count} lagi ▼",
@@ -377,7 +377,7 @@
     "prem_status_free": "Gratis",
     "prem_payment_not_configured": "Pembayaran belum tersedia. Segera hadir!",
     "prem_welcome": "Selamat datang di Premium! Terima kasih!",
-    "prem_cancelled": "Upgrade dibatalkan.",
+    "prem_cancelled": "Pembelian belum selesai — kamu tidak dikenai biaya.",
     "prem_happy_click": "Kamu bikin seseorang bahagia!",
     "prem_happy_count_one": "{count} momen bahagia dibagikan",
     "prem_happy_count_many": "{count} momen bahagia dibagikan",
@@ -418,7 +418,7 @@
     ],
     "round": [
       "{name} sebentar lagi mencapai {value} {unit}! Angka bulat sempurna untuk orang yang luar biasa.",
-      "{value} {unit} di depan mata! Nolnya banyak, tapi nol alasan buat nggak merayakan {name}.",
+      "{value} {unit} di depan mata! Nolnya banyak, tapi nol alasan buat nggak merayakan momen {name}.",
       "Angka bulat, tepuk tangan paling meriah: {name} tembus {value} {unit} pada {date}!"
     ],
     "repdigit": [

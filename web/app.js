@@ -5604,7 +5604,9 @@ function fillShareTemplate(template, m) {
         .replace(/\{unit\}/g, unit)
         .replace(/\{date\}/g, dateStr)
         .replace(/\{countdown\}/g, countdown)
-        .replace(/\{why\}/g, why);
+        .replace(/\{why\}/g, why)
+        // Cosmic milestones have unit='' — collapse the gap the empty slot leaves
+        .replace(/  +/g, ' ').replace(/ ([,.!?])/g, '$1');
 
     // Ensure the message communicates WHEN it will happen
     // If template doesn't mention date/countdown, append it
