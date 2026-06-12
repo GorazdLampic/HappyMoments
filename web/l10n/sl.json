@@ -5,7 +5,7 @@
     "tab_team": "Skupaj",
     "tab_data": "Podatki",
     "tab_settings": "Nastavitve",
-    "tagline": "Poezija števil v tvojem življenju — razkrita.",
+    "tagline": "Odkrij poezijo števil v svojem življenju.",
     "welcome": "Lepo, da si tu",
     "onboarding_text": "Vnesi datum, ki je pomemben zate ali za tvoje prijatelje. Skupaj poiščeva razloge za praznovanje.",
     "what_is_this": "Za kakšen trenutek gre?",
@@ -32,7 +32,7 @@
     "order_now": "Naroči",
     "cancel": "Prekliči",
     "combined_milestones": "Skupni mejniki",
-    "combined_desc": "Skupni mejniki za vse v skupini — ko vaša starost, skupni čas ali razmerja dosežejo posebna števila.",
+    "combined_desc": "Skupni mejniki za vse v skupini — ko vaša leta, skupni čas ali razmerja dosežejo posebna števila.",
     "share_this_moment": "Deli ta trenutek",
     "share_combined_desc": "Deli skupni mejnik z vsemi, ki so zraven!",
     "dates_events": "Datumi in dogodki",
@@ -78,7 +78,7 @@
     "turns": "Dopolni",
     "terms_privacy": "Pogoji in zasebnost",
     "copyright": "HappyMoments © 2026",
-    "consent_text": "HappyMoments hrani tvoje podatke o mejnikih — imena, datume, nastavitve — na tvoji napravi, šifrirane v brskalniku. Nič se ne pošlje na strežnik, razen če to sam izbereš: prijava, deljenje mejnika ali izvoz podatkov. Zbiramo tudi anonimno statistiko uporabe brez piškotkov (izklopljena, če brskalnik pošilja \"Do Not Track\"). Vse podrobnosti so v pravilniku.",
+    "consent_text": "HappyMoments hrani tvoje podatke o mejnikih — imena, datume, nastavitve — na tvoji napravi, šifrirane v brskalniku. Nič se ne pošlje na strežnik, razen kadar to izbereš ti: ob prijavi, deljenju mejnika ali izvozu podatkov. Zbiramo tudi anonimno statistiko uporabe brez piškotkov (izklopljena, če brskalnik pošilja »Do Not Track«). Vse podrobnosti so v pravilniku.",
     "consent_ok": "V redu, razumem",
     "consent_read": "Preberi celoten pravilnik",
     "update_ready": "Na voljo je nova različica.",
@@ -102,24 +102,24 @@
     "wiz_add_btn": "+ Dodaj",
     "wiz_imagine_face": "Predstavljaj si njihove obraze, ko jim to poveš",
     "wiz_your_combined": "Vaši skupni mejniki",
-    "wiz_belong_all": "Ti mejniki pripadajo vsem vam — zberite se in proslavite.",
-    "wiz_more_milestones": "Več mejnikov",
-    "wiz_more_together": "Več skupnih mejnikov",
+    "wiz_belong_all": "Ti mejniki pripadajo vsem vam — zberi družbo in proslavite skupaj.",
+    "wiz_more_milestones": "Pokaži več mejnikov",
+    "wiz_more_together": "Pokaži več skupnih mejnikov",
     "wiz_combined": "skupaj",
     "wiz_who_else": "Kdo še? Dodaj novo skupino",
     "wiz_who_else_sub": "Prijatelji · Sodelavci · Družina",
     "wiz_one_more_group": "Še ena skupina",
     "wiz_go_dashboard": "Pojdi na moj pregled",
-    "wiz_explore_tabs": "Razišči Osebno · Skupaj · Uredi",
+    "wiz_explore_tabs": "Razišči Osebno · Skupaj · Podatki",
     "wiz_share": "Deli",
-    "wiz_show_more_tpl": "Pokaži še {count} {noun} ▼",
+    "wiz_show_more_tpl": "Še {count} {noun} ▼",
     "wiz_show_more_short": "Pokaži še {count} ▼",
     "wiz_show_less": "Pokaži manj ▲",
-    "wiz_more_arrow": "Več ▼",
-    "wiz_less_arrow": "Manj ▲",
+    "wiz_more_arrow": "Pokaži več ▼",
+    "wiz_less_arrow": "Pokaži manj ▲",
     "wiz_today_excl": "To je danes!",
     "wiz_this_week": "To je ta teden!",
-    "wiz_coming_days": "Že čez {count} {noun}",
+    "wiz_coming_days": "Samo še {count} {noun}",
     "wiz_in_time": "čez {time}",
     "wiz_passed_ago": "To je bilo pred {time}",
     "wiz_was_yesterday": "To je bilo včeraj!",
@@ -136,7 +136,7 @@
     "dash_add_unlock": "Dodaj več ljudi — vsak rojstni dan odklene nove mejnike.",
     "tog_add_two": "Dodaj vsaj 2 osebi in odkrij skupne mejnike.",
     "tog_anniv_title": "Tudi obletnice štejejo",
-    "tog_anniv_body": "Dodaj dan poroke ali dan, ko ste se spoznali — in poglej števila, ki vas z njim povezujejo.",
+    "tog_anniv_body": "Dodaj dan poroke ali dan prvega srečanja — in poglej, kakšna posebna števila se skrivajo v njem.",
     "tog_add_special": "+ Dodaj poseben datum",
     "tog_another_circle": "Imaš še kakšno družbo?",
     "tog_another_body": "Dodaj skupino za prijatelje, sodelavce ali drug del svojega življenja",
@@ -243,7 +243,7 @@
     "toast_no_events_calc": "Ni dogodkov za izračun. Najprej dodaj dogodek.",
     "toast_enter_valid_year": "Vnesi veljavno leto",
     "toast_month_range": "Mesec mora biti med 1 in 12",
-    "toast_day_range": "Dan mora biti med 1 in {max} za mesec {month}",
+    "toast_day_range": "Za {month}. mesec mora biti dan med 1 in {max}",
     "toast_future_date": "Ta datum je v prihodnosti — mejniki najbolje delujejo s preteklimi datumi",
     "toast_tap_role_or_name": "Izberi vlogo ali vnesi ime",
     "toast_copied_send": "Kopirano! Pošlji osebi {name}",
@@ -275,7 +275,7 @@
     "toast_enter_set_name": "Vnesi ime nove zbirke",
     "toast_enter_group_name": "Vnesi ime skupine",
     "toast_cannot_delete_last_set": "Zadnje zbirke ni mogoče izbrisati",
-    "wiz_more_ms_arrow": "Več mejnikov ▼",
+    "wiz_more_ms_arrow": "Pokaži več mejnikov ▼",
     "wiz_show_milestone": "Pokaži mejnik",
     "wiz_show_role_ms": "Pokaži, kaj praznuje {name}",
     "wiz_child_name_ph": "Ime otroka",
@@ -312,8 +312,8 @@
     "ed_delete_group_confirm": "Izbrišem skupino »{name}« z vsemi člani?",
     "ed_delete_set_confirm": "Izbrišem »{name}« z vsemi dogodki?",
     "tog_wedding_ph": "Najina poroka",
-    "tog_prefix_together_we_are": "Skupaj štejemo",
-    "tog_prefix_combined_journey": "Naša skupna pot",
+    "tog_prefix_together_we_are": "Skupaj na svetu že",
+    "tog_prefix_combined_journey": "Skupna pot",
     "tog_prefix_total_time": "Ves čas skupaj",
     "tog_ratios_title": "Odnosi in razmerja",
     "tog_time_comparisons": "Časovne primerjave",
@@ -323,7 +323,7 @@
     "tog_no_combined": "Ni skupnih mejnikov. Preveri povezave v nastavitvah.",
     "tog_error_loading": "Napaka pri nalaganju skupnih mejnikov. Podrobnosti so v konzoli.",
     "tog_views_remaining_one": "Še {count} brezplačen ogled",
-    "tog_views_remaining_many": "Še {count} brezplačnih ogledov",
+    "tog_views_remaining_many": "Brezplačni ogledi: še {count}",
     "ev_none_yet": "Ni še dogodkov. Spodaj dodaj svoj prvi datum!",
     "ev_type_event": "Dogodek",
     "ev_tap_to_edit": "Tapni za urejanje",
@@ -332,7 +332,7 @@
     "calc_you_will_reach": "Pred tabo je",
     "time_ago": "pred {time}",
     "num_million": "milijonov",
-    "num_billion": "milijard",
+    "num_billion": "milijarde",
     "no_custom_numbers": "Ni števil po meri.",
     "reset_confirm": "Izbrišem vse podatke in nastavitve?",
     "import_confirm": "To bo zamenjalo vse tvoje trenutne podatke. Nadaljujem?",
@@ -342,8 +342,8 @@
     "share_no_ms_yet": "Ni še mejnikov za deljenje.",
     "share_no_combined_yet": "Ni še skupnih mejnikov za deljenje.",
     "share_select_ms": "Izberi mejnik, ki ga želiš deliti.",
-    "share_click_hint": "Klikni mejnik zgoraj, da ga izbereš za deljenje",
-    "share_click_hint_combined": "Klikni skupni mejnik zgoraj, da ga izbereš za deljenje",
+    "share_click_hint": "Tapni mejnik zgoraj, da ga izbereš za deljenje",
+    "share_click_hint_combined": "Tapni skupni mejnik zgoraj, da ga izbereš za deljenje",
     "tog_matrix_two": "Dodaj vsaj 2 dogodka, da vidiš matriko.",
     "auth_signed_in": "Prijava uspešna!",
     "auth_account_created": "Račun je ustvarjen! Lepo, da si z nami.",
@@ -377,10 +377,10 @@
     "prem_status_free": "Brezplačno",
     "prem_payment_not_configured": "Plačila še niso na voljo. Kmalu!",
     "prem_welcome": "Premium je tvoj. Hvala ti!",
-    "prem_cancelled": "Nadgradnja je preklicana.",
+    "prem_cancelled": "Nakup ni bil dokončan.",
     "prem_happy_click": "To je nekoga osrečilo!",
     "prem_happy_count_one": "{count} deljen srečen trenutek",
-    "prem_happy_count_many": "{count} deljenih srečnih trenutkov",
+    "prem_happy_count_many": "Deljenih srečnih trenutkov: {count}",
     "prem_modal_title": "HappyMoments Premium",
     "prem_reason_people": "Brezplačni račun omogoča do {count} oseb.",
     "prem_reason_groups": "Brezplačni računi vključujejo 3 skupine.",
@@ -389,8 +389,8 @@
     "prem_per_year": "/ leto",
     "prem_feat_unlimited": "Neomejeno oseb in skupin",
     "prem_feat_views": "Neomejeni ogledi zavihka Skupaj",
-    "prem_feat_no_banners": "Brez pasic z darili — čist pogled na mejnike",
-    "prem_feat_clean_cards": "Čiste slikovne kartice — brez vodnega žiga",
+    "prem_feat_no_banners": "Brez darilnih pasic — samo tvoji mejniki",
+    "prem_feat_clean_cards": "Slikovne kartice brez vodnega žiga",
     "prem_feat_support": "Podpri neodvisnega razvijalca",
     "prem_gate_used_views": "Porabljenih je vseh {count} brezplačnih ogledov.",
     "prem_gate_upgrade_for": "Nadgradi na Premium za neomejen dostop.",
@@ -417,30 +417,30 @@
       "{value} {unit} življenja! {name} ta mejnik doseže {date}. Kdo prinese šampanjec?"
     ],
     "round": [
-      "{name} bo kmalu pri {value} {unit}! Tako okroglo število si zasluži pošteno praznovanje.",
+      "{name} kmalu doseže {value} {unit}! Tako okroglo število si zasluži pošteno praznovanje.",
       "Same ničle: {name} {date} doseže {value} {unit}. Aplavz!",
-      "Okroglo število, okrogel aplavz: {name} pri {value} {unit} — že {date}!"
+      "Okroglo število, okrogel aplavz: {name} doseže {value} {unit} — že {date}!"
     ],
     "repdigit": [
       "{name} {date} doseže {value} {unit} — same enake števke! To se ne zgodi pogosto.",
-      "Ko so vse števke enake, veš, da je dan poseben. {name} pri {value} {unit}, {date}!"
+      "Ko so vse števke enake, je dan zares poseben: {name}, {value} {unit}, {date}!"
     ],
     "palindrome": [
       "{name} {date} doseže {value} {unit} — palindrom! Število se bere enako naprej in nazaj.",
-      "Zrcalce, zrcalce: {name} bo {date} pri {value} {unit} — popolna simetrija!",
+      "Zrcalce, zrcalce: {name} {date} doseže {value} {unit} — popolna simetrija!",
       "{value} naprej, {value} nazaj. Mejnik, ki ga {name} doseže {date}, je popolnoma simetričen."
     ],
     "fibonacci": [
       "{name} {date} doseže {value} {unit} — Fibonaccijevo število! Po njem raste vsa narava.",
-      "Fibonacci bi bil ponosen: {name} {date} pri {value} {unit}. Narava ve, kaj dela."
+      "Fibonacci bi bil ponosen: {name} {date} dopolni {value} {unit}. Narava ve, kaj dela."
     ],
     "power_of_2": [
       "{name} {date} doseže {value} {unit} — potenco števila 2! Vsak računalnik bi bil navdušen.",
-      "Binarna popolnost: {name} bo {date} pri {value} {unit}. Število, ob katerem računalniki zapojejo."
+      "Binarna popolnost: {name} {date} doseže {value} {unit}. Število, ob katerem računalniki zapojejo."
     ],
     "scientific": [
       "{name} {date} doseže {value} {unit}. Razlog za slavje: {why}!",
-      "Znanstveno pomemben mejnik: {name} pri {value} {unit}, {date}. {why}!"
+      "Znanstveno pomemben mejnik: {name} {date} doseže {value} {unit}. {why}!"
     ],
     "sequential": [
       "{name} {date} doseže {value} {unit} — števke si sledijo v popolnem zaporedju!",
@@ -451,8 +451,8 @@
       "Sem in tja, kot srčni utrip: {value} {unit}. {name} ta ritem ujame {date}."
     ],
     "combined": [
-      "Skupaj boste {date} dosegli {value} {unit}! Skupni mejniki so najboljši mejniki.",
-      "{value} {unit} skupnega življenja — toliko se vas nabere do {date}. To je ogromno skupnih trenutkov!",
+      "Skupaj {date} nanese kar {value} {unit}! Skupni mejniki so najboljši mejniki.",
+      "{value} {unit} skupnega življenja — toliko se nabere do {date}. To je ogromno skupnih trenutkov!",
       "Seštej vse {unit} in dobiš {value}. Seštej vse lepe trenutke in dobiš neskončno.",
       "Tega mejnika nima nihče sam: {value} {unit} skupaj, {date}. Se vidimo na proslavi?"
     ],
@@ -465,10 +465,10 @@
       "Vesolje ima svoj koledar — {name} {date} dočaka {value}. {why}!"
     ],
     "generic": [
-      "{name} bo kmalu pri {value} {unit}! Razlog: {why}. Čas je, da pripravimo praznovanje.",
+      "{name} kmalu dopolni {value} {unit}! Razlog: {why}. Čas je, da pripravimo praznovanje.",
       "Veš, kaj se zgodi {date}? {name} doseže natanko {value} {unit}. Kakšen mejnik!",
-      "Zabeleži si datum: {name} pri {value} {unit}, {date}. Tako posebna števila si zaslužijo pozornost.",
-      "Številke ne lažejo: {name} {date} doseže {value} {unit}. Jaz že pripravljam konfete."
+      "Zabeleži si datum: {name} {date} dopolni {value} {unit}. Tako posebna števila si zaslužijo pozornost.",
+      "Števila ne lažejo: {name} {date} doseže {value} {unit}. Jaz že pripravljam konfete."
     ]
   },
   "shareLink": "\n\nOdkrij svoja posebna števila → https://happymoments.app",

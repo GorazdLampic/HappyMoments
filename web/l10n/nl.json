@@ -23,7 +23,7 @@
     "copy": "Kopiëren",
     "save_to_calendar": "Opslaan in agenda:",
     "create_card": "Kaart maken",
-    "card_desc": "Maak een deelbare afbeeldingskaart van deze mijlpaal.",
+    "card_desc": "Maak een deelbare kaart van deze mijlpaal.",
     "download_png": "PNG downloaden",
     "share_image": "Afbeelding delen",
     "celebrate_gift": "Vier het met een cadeau",
@@ -54,7 +54,7 @@
     "lucky_digits": "Gelukscijfers",
     "custom_numbers": "Eigen getallen",
     "quick_add": "Snel toevoegen:",
-    "appearance": "Weergave",
+    "appearance": "Uiterlijk",
     "dark_mode": "Donkere modus",
     "save_settings": "Instellingen opslaan",
     "reset_all": "Alle gegevens wissen",
@@ -65,7 +65,7 @@
     "unit_min": "min",
     "unit_hrs": "uur",
     "unit_d": "d",
-    "unit_w": "w",
+    "unit_w": "wk",
     "unit_mo": "mnd",
     "unit_y": "jr",
     "edit_event": "Gebeurtenis bewerken",
@@ -110,7 +110,7 @@
     "wiz_who_else_sub": "Vrienden · Collega's · Familie",
     "wiz_one_more_group": "Nog één groep",
     "wiz_go_dashboard": "Naar mijn dashboard",
-    "wiz_explore_tabs": "Ontdek Solo · Samen · Bewerken",
+    "wiz_explore_tabs": "Ontdek Persoonlijk · Samen · Gegevens",
     "wiz_share": "Delen",
     "wiz_show_more_tpl": "Toon nog {count} {noun} ▼",
     "wiz_show_more_short": "Toon nog {count} ▼",
@@ -121,7 +121,7 @@
     "wiz_this_week": "Dat is deze week!",
     "wiz_coming_days": "Al over {count} {noun}",
     "wiz_in_time": "over {time}",
-    "wiz_passed_ago": "Je passeerde dit {time} geleden",
+    "wiz_passed_ago": "Dit heb je {time} geleden bereikt",
     "wiz_was_yesterday": "Dat was gisteren!",
     "wiz_upcoming_title": "Je komende mijlpalen",
     "wiz_calculating": "Je mijlpalen worden berekend",
@@ -136,7 +136,7 @@
     "dash_add_unlock": "Voeg meer mensen toe — elke verjaardag ontgrendelt hier nieuwe mijlpalen.",
     "tog_add_two": "Voeg 2 of meer mensen toe om gezamenlijke mijlpalen te ontdekken.",
     "tog_anniv_title": "Jubilea tellen ook mee",
-    "tog_anniv_body": "Voeg je trouwdag toe of de dag dat jullie elkaar ontmoetten — en zie de getallen die je ermee deelt.",
+    "tog_anniv_body": "Voeg je trouwdag toe of de dag dat jullie elkaar ontmoetten — en zie welke bijzondere getallen erbij horen.",
     "tog_add_special": "+ Speciale datum toevoegen",
     "tog_another_circle": "Heb je nog een kring?",
     "tog_another_body": "Voeg een groep toe voor vrienden, collega's of een ander deel van je leven",
@@ -192,7 +192,7 @@
     "wizard_pref_sacred_ex": "7, 12, 33, 40, 108, 786",
     "wizard_pref_cosmic": "Kosmische cycli",
     "wizard_pref_cosmic_ex": "Saturnusterugkeer, Jupiterterugkeer, maancycli",
-    "wizard_pref_hint": "We raden aan alles aan te laten. Je kunt dit later aanpassen bij Instellingen.",
+    "wizard_pref_hint": "We raden aan om alles aan te laten staan. Je kunt dit later aanpassen bij Instellingen.",
     "wizard_next": "Volgende",
     "wizard_who_title": "Laten we beginnen met...",
     "wizard_who_self": "Mijn eigen verjaardag",
@@ -208,7 +208,7 @@
     "wizard_friend_title": "Wie wil je verrassen?",
     "wizard_friend_subtitle": "Voer naam en verjaardag in om het bijzondere getal te vinden",
     "wizard_friend_placeholder": "bijv. Daan, papa, beste vriend",
-    "wizard_friend_discover": "Ontdek die van hen",
+    "wizard_friend_discover": "Ontdek het getal",
     "wizard_friend_skip": "Nu even overslaan",
     "wizard_friend_share": "Delen",
     "wizard_my_birthday": "Mijn verjaardag",
@@ -252,7 +252,7 @@
     "toast_enter_valid_date": "Voer een geldige datum in (DD/MM/JJJJ)",
     "toast_enter_name_date": "Voer een naam en datum in",
     "toast_enter_event_name_date": "Voer een naam en datum voor de gebeurtenis in",
-    "toast_two_people_hint": "Je hebt nu 2 mensen! Bekijk het tabblad Samen voor jullie gezamenlijke mijlpalen.",
+    "toast_two_people_hint": "Je hebt nu 2 mensen toegevoegd! Bekijk het tabblad Samen voor jullie gezamenlijke mijlpalen.",
     "toast_added_enter_yours": "{name} toegevoegd! Voer nu JOUW verjaardag in om je eigen mijlpalen te zien.",
     "toast_reminders_before_ms": "Herinneringen ingeschakeld! We sturen je een melding vóór deze mijlpaal.",
     "toast_reminder_set": "Herinnering ingesteld! We sturen je de dag ervoor een melding.",
@@ -261,7 +261,7 @@
     "toast_link_copied": "Link gekopieerd! Deel hem met je vrienden.",
     "toast_share_link": "Deel deze link: https://happymoments.app",
     "toast_write_first": "Schrijf eerst iets.",
-    "toast_feedback_thanks": "Dank je wel! Jouw feedback helpt ons verbeteren.",
+    "toast_feedback_thanks": "Dank je wel! Met jouw feedback maken we de app beter.",
     "toast_invite_hint": "Ken je iemand die dit leuk zou vinden? De app-link zit al in je bericht!",
     "toast_copy_failed": "Kopiëren mislukt. Selecteer de tekst handmatig.",
     "toast_calendar_downloaded": "Agendabestand gedownload",
@@ -298,7 +298,7 @@
     "wiz_ex_office_3": "De jeugdvrienden van Emma haalden net 10.000 dagen vriendschap — zij bracht ze bij elkaar.",
     "dash_person_milestones": "Mijlpalen van {name}",
     "dash_names_combined": "{names} samen",
-    "dash_remind_me": "Herinner mij",
+    "dash_remind_me": "Herinner me eraan",
     "dash_resume_setup": "Ga verder met je groepen instellen",
     "dash_resume_continue": "Verder →",
     "dash_your_name_ph": "Jouw naam of een andere datum...",
@@ -312,7 +312,7 @@
     "ed_delete_group_confirm": "\"{name}\" en alle leden verwijderen?",
     "ed_delete_set_confirm": "\"{name}\" en alle gebeurtenissen verwijderen?",
     "tog_wedding_ph": "Onze bruiloft",
-    "tog_prefix_together_we_are": "Samen zijn we",
+    "tog_prefix_together_we_are": "Samen goed voor",
     "tog_prefix_combined_journey": "Onze gezamenlijke reis",
     "tog_prefix_total_time": "Totale tijd samen",
     "tog_ratios_title": "Relaties & verhoudingen",
@@ -377,22 +377,22 @@
     "prem_status_free": "Gratis",
     "prem_payment_not_configured": "Betalen is nog niet ingesteld. Komt binnenkort!",
     "prem_welcome": "Welkom bij Premium! Dank je wel!",
-    "prem_cancelled": "Upgrade geannuleerd.",
+    "prem_cancelled": "Aankoop niet afgerond.",
     "prem_happy_click": "Je hebt iemand blij gemaakt!",
-    "prem_happy_count_one": "{count} gelukkig moment gedeeld",
-    "prem_happy_count_many": "{count} gelukkige momenten gedeeld",
+    "prem_happy_count_one": "{count} vrolijk moment gedeeld",
+    "prem_happy_count_many": "{count} vrolijke momenten gedeeld",
     "prem_modal_title": "HappyMoments Premium",
     "prem_reason_people": "Je hebt de gratis limiet van {count} personen bereikt.",
     "prem_reason_groups": "Bij een gratis account horen 3 groepen.",
     "prem_reason_team": "Je hebt je {count} gratis weergaven van het tabblad Samen gebruikt.",
     "prem_reason_default": "Ontgrendel de volledige HappyMoments-ervaring.",
     "prem_per_year": "/ jaar",
-    "prem_feat_unlimited": "Onbeperkt personen & groepen",
-    "prem_feat_views": "Onbeperkte weergaven van Samen",
-    "prem_feat_no_banners": "Geen cadeaubanners — schone mijlpaalweergave",
-    "prem_feat_clean_cards": "Strakke afbeeldingskaarten — zonder watermerk",
+    "prem_feat_unlimited": "Onbeperkt aantal personen & groepen",
+    "prem_feat_views": "Onbeperkt tabblad Samen bekijken",
+    "prem_feat_no_banners": "Geen cadeaubanners — opgeruimde mijlpaalweergave",
+    "prem_feat_clean_cards": "Strakke kaarten — zonder watermerk",
     "prem_feat_support": "Steun een onafhankelijke ontwikkelaar",
-    "prem_gate_used_views": "Je hebt je {count} gratis Samen-weergaven gebruikt.",
+    "prem_gate_used_views": "Je {count} gratis weergaven van tabblad Samen zijn op.",
     "prem_gate_upgrade_for": "Upgrade naar Premium voor onbeperkte toegang.",
     "prem_gate_upgrade_btn": "Upgrade — €1.49/jaar"
   },
@@ -412,7 +412,7 @@
   "shareMessages": {
     "birthday": [
       "Op {date} is {name} precies {value} {unit} oud. Stuk voor stuk het vieren waard!",
-      "{value} {unit} {name} — daar wordt de wereld vrolijker van. Het is zover op {date}!",
+      "Al {value} {unit} maakt {name} de wereld vrolijker — het is zover op {date}!",
       "Wist je dat {name} op {date} precies {value} {unit} bereikt? Dat is {why}!",
       "Zet {date} in je agenda: dan is {name} precies {value} {unit} oud. Taart lijkt me wel op z'n plek!"
     ],
@@ -423,17 +423,17 @@
     ],
     "repdigit": [
       "Op {date} bereikt {name} {value} {unit} — alle cijfers hetzelfde. Dat is {why}!",
-      "Als elk cijfer hetzelfde is, weet je dat het bijzonder is. {name} op {value} {unit}, op {date}!",
+      "Als elk cijfer hetzelfde is, weet je dat het bijzonder is. {name} bereikt {value} {unit} op {date}!",
       "{value} {unit} — een getal dat zichzelf blijft herhalen. Net zo onvergetelijk als {name}. Het is zover op {date}."
     ],
     "palindrome": [
-      "{name} bereikt {value} {unit} op {date} — een palindroom! Van voren naar achteren precies hetzelfde.",
+      "{name} bereikt {value} {unit} op {date} — een palindroom! Leest van beide kanten precies hetzelfde.",
       "Spiegeltje, spiegeltje: de {value} {unit} van {name} is op {date} een perfect palindroom!",
       "{value} vooruit, {value} achteruit. De mijlpaal van {name} is perfect symmetrisch!"
     ],
     "fibonacci": [
       "{name} bereikt {value} {unit} op {date} — een Fibonacci-mijlpaal! Het getal van de natuur zelf.",
-      "De gulden spiraal komt bij {value} uit voor {name}! Een Fibonacci-feestje in {unit}, op {date}."
+      "De gulden spiraal komt voor {name} uit bij {value} {unit} — een Fibonacci-feestje op {date}!"
     ],
     "power_of_2": [
       "{name} bereikt op {date} {value} {unit} — een macht van 2! Elke computer zou hiervoor applaudisseren.",
@@ -442,30 +442,35 @@
     ],
     "scientific": [
       "{name} bereikt {value} {unit} op {date} — dat getal hoort bij {why}! Een feestje waard, zegt de wetenschap.",
-      "Een wetenschappelijk bijzondere mijlpaal: {name} op {value} {unit}, op {date}. {why}!"
+      "Een wetenschappelijk bijzondere mijlpaal: {name} bereikt {value} {unit} op {date}. {why}!"
     ],
     "sequential": [
       "{name} bereikt {value} {unit} op {date} — de cijfers staan keurig in de rij!",
       "1, 2, 3... {value}! De cijfers van {name} lopen op {date} in een perfecte optocht."
     ],
     "alternating": [
-      "{name} op {value} {unit}, op {date} — een afwisselend patroon! De cijfers dansen heen en weer.",
-      "Heen en weer, als een hartslag: de {value} {unit} van {name} wisselen op {date} perfect af."
+      "Op {date} bereikt {name} {value} {unit} — een afwisselend patroon! De cijfers dansen heen en weer.",
+      "Heen en weer als een hartslag: {value} {unit} voor {name} op {date} — de cijfers wisselen elkaar perfect af."
     ],
     "combined": [
-      "Samen bereiken jullie {value} {unit} op {date}! Gezamenlijke mijlpalen zijn de mooiste.",
-      "{value} {unit} samen geleefd op {date} — dat zijn een hoop gedeelde momenten!",
-      "Tel alle {unit} bij elkaar op en je krijgt {value}. Tel alle liefde op en je komt op oneindig.",
-      "Jullie halen samen {value} {unit} op {date}. Dat verdient minstens een taart — of twee."
+      "Samen bereiken we {value} {unit} op {date}! Gezamenlijke mijlpalen zijn de mooiste.",
+      "Op {date} hebben we samen {value} {unit} geleefd — dat zijn een hoop gedeelde momenten!",
+      "Tel al onze {unit} bij elkaar op en je krijgt {value}. Tel alle liefde op en je komt op oneindig.",
+      "We halen samen {value} {unit} op {date}. Dat verdient minstens een taart — of twee."
     ],
     "ratio": [
-      "De verhouding tussen jullie leeftijden is op {date} precies {value}! Een wiskundig moment van harmonie.",
-      "Op {date} vormen jullie leeftijden precies de verhouding {value}. Hoe mooi wil je het hebben?"
+      "De verhouding tussen onze leeftijden is op {date} precies {value}! Een wiskundig moment van harmonie.",
+      "Op {date} vormen onze leeftijden precies de verhouding {value}. Hoe mooi wil je het hebben?"
+    ],
+    "cosmic": [
+      "De {value} van {name} komt eraan op {date}! {why}.",
+      "Een kosmische mijlpaal voor {name}: {value} op {date}. De sterren staan er goed voor!",
+      "Op {date} bereikt {name} de {value}. Astronomisch gezien een feestje waard!"
     ],
     "generic": [
       "{name} zit bijna op {value} {unit} — dat is {why}. Tijd om de slingers op te hangen!",
       "Wist je dit? Op {date} bereikt {name} precies {value} {unit}. Wat een mijlpaal!",
-      "Zet het in je agenda: {name} op {value} {unit}, op {date}. Zulke bijzondere getallen verdienen aandacht.",
+      "Zet het in je agenda: op {date} bereikt {name} {value} {unit}. Zulke bijzondere getallen verdienen aandacht.",
       "Niet vergeten: op {date} staat de teller van {name} op {value} {unit}. Dit zie je maar één keer voorbijkomen!"
     ]
   },

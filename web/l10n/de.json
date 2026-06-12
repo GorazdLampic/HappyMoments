@@ -110,7 +110,7 @@
     "wiz_who_else_sub": "Freunde · Kollegen · Familie",
     "wiz_one_more_group": "Noch eine Gruppe",
     "wiz_go_dashboard": "Zu meiner Übersicht",
-    "wiz_explore_tabs": "Entdecke Solo · Zusammen · Bearbeiten",
+    "wiz_explore_tabs": "Entdecke Persönlich · Team · Daten",
     "wiz_share": "Teilen",
     "wiz_show_more_tpl": "Noch {count} {noun} zeigen ▼",
     "wiz_show_more_short": "Noch {count} zeigen ▼",
@@ -194,8 +194,8 @@
     "wizard_pref_cosmic_ex": "Saturnrückkehr, Jupiterrückkehr, Mondzyklen",
     "wizard_pref_hint": "Wir empfehlen, alle aktiv zu lassen. Du kannst das später in den Einstellungen anpassen.",
     "wizard_next": "Weiter",
-    "wizard_who_title": "Fangen wir an mit ...",
-    "wizard_who_self": "Meinem Geburtstag",
+    "wizard_who_title": "Womit fangen wir an?",
+    "wizard_who_self": "Mein Geburtstag",
     "wizard_who_other": "Jemand, der mir wichtig ist",
     "wizard_name_title": "Wie lautet der Name?",
     "wizard_name_self": "Wie heißt du?",
@@ -235,7 +235,7 @@
     "sign_out": "Abmelden",
     "delete_account": "Konto löschen",
     "toast_reminders_enabled": "Erinnerungen aktiviert!",
-    "toast_reminders_on": "Erinnerungen an ✓",
+    "toast_reminders_on": "Erinnerungen aktiv ✓",
     "toast_storage_full_data": "Speicher voll – Daten nicht gespeichert.",
     "toast_storage_full_settings": "Speicher voll – Einstellungen nicht gespeichert.",
     "toast_cannot_delete_last_group": "Die letzte Gruppe kann nicht gelöscht werden",
@@ -253,7 +253,7 @@
     "toast_enter_name_date": "Bitte gib einen Namen und ein Datum ein",
     "toast_enter_event_name_date": "Bitte gib Namen und Datum des Ereignisses ein",
     "toast_two_people_hint": "Du hast jetzt 2 Personen! Im Team-Tab siehst du eure gemeinsamen Meilensteine.",
-    "toast_added_enter_yours": "{name} hinzugefügt! Gib jetzt DEINEN Geburtstag ein, um deine Meilensteine zu sehen.",
+    "toast_added_enter_yours": "{name} hinzugefügt! Gib jetzt deinen eigenen Geburtstag ein, um deine Meilensteine zu sehen.",
     "toast_reminders_before_ms": "Erinnerungen aktiviert! Wir melden uns vor diesem Meilenstein.",
     "toast_reminder_set": "Erinnerung gesetzt! Wir melden uns am Tag davor.",
     "toast_select_milestone_first": "Wähle zuerst einen Meilenstein",
@@ -411,7 +411,7 @@
   },
   "shareMessages": {
     "birthday": [
-      "{name} ist am {date} genau {value} {unit} auf der Welt! Jeder einzelne davon ein Grund zum Feiern.",
+      "{name} ist am {date} genau {value} {unit} auf der Welt! Wenn das kein Grund zum Feiern ist.",
       "Schon gewusst? {name} erreicht am {date} genau {value} {unit}. Das ist {why}!",
       "{value} {unit} {name} – die Welt darf sich freuen! Am {date} ist es so weit.",
       "Am {date} wird {name} {value} {unit} alt. Klingt nach einer guten Ausrede zum Anstoßen!"
@@ -438,7 +438,7 @@
     ],
     "scientific": [
       "{name} erreicht am {date} {value} {unit} – das hängt mit {why} zusammen! Die Wissenschaft gratuliert.",
-      "Ein wissenschaftlicher Meilenstein: {name} bei {value} {unit} am {date}. {why}!"
+      "Ein wissenschaftlicher Meilenstein: {name} erreicht am {date} {value} {unit}. {why}!"
     ],
     "sequential": [
       "{name} erreicht am {date} {value} {unit} – die Ziffern marschieren der Reihe nach!",
@@ -450,24 +450,24 @@
     ],
     "combined": [
       "Zusammen erreicht ihr am {date} {value} {unit}! Gemeinsame Meilensteine sind die schönsten.",
-      "{value} {unit} gemeinsames Leben – das sind eine Menge geteilte Momente! Am {date} ist es so weit.",
+      "{value} {unit} gemeinsames Leben – was für eine Menge schöner Momente! Am {date} ist es so weit.",
       "Zählt alle {unit} zusammen und ihr kommt auf {value}. Zählt die schönen Momente zusammen – unendlich.",
       "Am {date} habt ihr zusammen {value} {unit} auf dem Konto. Das ruft nach einem Treffen!"
     ],
     "ratio": [
       "Am {date} steht euer Altersverhältnis exakt bei {value}! Ein kleiner mathematischer Glücksmoment.",
-      "Eure Alter bilden am {date} genau das Verhältnis {value}. Wie schön ist das denn?"
+      "Am {date} stehen eure Lebenszeiten genau im Verhältnis {value}. Wie schön ist das denn?"
     ],
     "cosmic": [
       "Am {date} ist es so weit: {value} für {name}! {why}.",
       "Ein kosmischer Meilenstein für {name}: {value} am {date}. Da feiert das Universum mit!",
-      "{name} erreicht am {date}: {value}. Die Sterne stehen günstig!"
+      "Bei {name} steht am {date} etwas Kosmisches an: {value}. Die Sterne stehen günstig!"
     ],
     "generic": [
       "{name} erreicht bald {value} {unit}! Das ist {why}. Zeit, die Feier vorzubereiten!",
       "Schon gewusst? {name} kommt am {date} auf genau {value} {unit}. Was für ein Moment!",
       "Merk dir den {date}: {name} erreicht {value} {unit}. So besondere Zahlen verdienen Aufmerksamkeit.",
-      "{name} bei {value} {unit} am {date} – solche Zahlen kommen nur einmal vorbei!"
+      "Am {date} erreicht {name} {value} {unit} – solche Zahlen kommen nur einmal vorbei!"
     ]
   },
   "shareLink": "\n\nEntdecke deine besonderen Zahlen → https://happymoments.app",

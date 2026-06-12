@@ -110,7 +110,7 @@
     "wiz_who_else_sub": "Przyjaciele · Współpracownicy · Rodzina",
     "wiz_one_more_group": "Jeszcze jedna grupa",
     "wiz_go_dashboard": "Przejdź do mojego panelu",
-    "wiz_explore_tabs": "Odkrywaj Solo · Razem · Edycja",
+    "wiz_explore_tabs": "Odkrywaj: Osobiste · Razem · Dane",
     "wiz_share": "Udostępnij",
     "wiz_show_more_tpl": "Pokaż jeszcze {count} {noun} ▼",
     "wiz_show_more_short": "Pokaż jeszcze {count} ▼",
@@ -377,7 +377,7 @@
     "prem_status_free": "Darmowe",
     "prem_payment_not_configured": "Płatności nie są jeszcze skonfigurowane. Już wkrótce!",
     "prem_welcome": "Witaj w Premium. Dziękujemy!",
-    "prem_cancelled": "Zakup anulowany.",
+    "prem_cancelled": "Zakup przerwany.",
     "prem_happy_click": "Ktoś się właśnie ucieszył!",
     "prem_happy_count_one": "Udostępniono {count} szczęśliwy moment",
     "prem_happy_count_many": "Udostępnione szczęśliwe momenty: {count}",
@@ -452,18 +452,18 @@
       "Jak bicie serca, raz w jedną, raz w drugą stronę: {name} osiąga {value} {unit} już {date}!"
     ],
     "combined": [
-      "Razem osiągniecie {value} {unit} — dokładnie {date}! Wspólne momenty smakują najlepiej.",
+      "Razem osiągniemy {value} {unit} — dokładnie {date}! Wspólne momenty smakują najlepiej.",
       "{value} {unit} przeżytych razem — to morze wspólnych chwil. Wielki dzień już {date}!",
       "Zsumujcie wszystkie {unit}, a wyjdzie {value}. Zsumujcie wspomnienia — wyjdzie nieskończoność.",
-      "Wasza ekipa dobija razem do {value} {unit} {date}! Taka okazja zasługuje na spotkanie."
+      "Nasza ekipa dobija razem do {value} {unit} {date}! Taka okazja zasługuje na spotkanie."
     ],
     "ratio": [
-      "Stosunek Waszego wieku wyniesie dokładnie {value} — {date}! Matematyczna harmonia w czystej postaci.",
-      "{date} Wasz wiek ułoży się w proporcję {value}. Jak nuty w akordzie!"
+      "Stosunek naszego wieku wyniesie dokładnie {value} — {date}! Matematyczna harmonia w czystej postaci.",
+      "{date} nasz wiek ułoży się w proporcję {value}. Jak nuty w akordzie!"
     ],
     "cosmic": [
       "{name} osiąga {value} już {date}! {why} — nawet kosmos to zauważy.",
-      "Kosmiczny moment {date}: {name} i {value}. Planety właśnie się układają!"
+      "Kosmiczny moment {date}: {name} osiąga {value}. Planety właśnie się układają!"
     ],
     "generic": [
       "{name} zaraz osiągnie {value} {unit}! To {why}. Pora szykować imprezę.",
