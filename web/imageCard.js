@@ -70,7 +70,7 @@ function generateMilestoneCard(milestone, options) {
 
     // Content
     const val = milestone.value.toLocaleString();
-    const unit = milestone.unitName || '';
+    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
@@ -186,7 +186,7 @@ function generateStoryCard(milestone, options) {
     drawDecorations(ctx, W, H, theme);
 
     const val = milestone.value.toLocaleString();
-    const unit = milestone.unitName || '';
+    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
@@ -582,7 +582,7 @@ function generateGiftDesign(milestone, productType, options) {
     // Layout depends on aspect ratio
     const isWide = W > H; // mug is wide
     const val = milestone.value.toLocaleString();
-    const unit = milestone.unitName || '';
+    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
     const name = milestone.eventName || '';
     const message = options.message || '';
 

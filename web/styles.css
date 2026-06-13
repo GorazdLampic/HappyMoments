@@ -4391,3 +4391,28 @@ body::after {
 .tab-hint-dismiss:hover {
     color: var(--text-primary);
 }
+
+/* ═══ Locale-specific typography fixes (html lang set by I18N.setLocale) ═══ */
+
+/* Korean: never break inside a word (확인 must not split across lines).
+   keep-all breaks only at spaces/allowed points for CJK text. */
+:lang(ko) body,
+:lang(ko) button,
+:lang(ko) h1, :lang(ko) h2, :lang(ko) h3,
+:lang(ko) .wizard-btn,
+:lang(ko) .wizard-btn-secondary,
+:lang(ko) .tab-label,
+:lang(ko) .card-description {
+    word-break: keep-all;
+}
+
+/* Russian: EB Garamond (loaded at weights 400/500 only; buttons render
+   font-weight 600 via synthetic bold) shows a defective hollow Cyrillic
+   "в" glyph on gold CTA buttons — fall back to system serifs with solid
+   Cyrillic coverage for CTA buttons only. */
+:lang(ru) .wizard-btn,
+:lang(ru) .wizard-btn-discover,
+:lang(ru) .wizard-btn-secondary,
+:lang(ru) .wizard-btn-tertiary {
+    font-family: 'Georgia', 'Cambria', 'Times New Roman', serif;
+}

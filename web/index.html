@@ -107,15 +107,15 @@
         <nav id="tabNav" class="tab-nav-bottom hidden">
             <button class="tab-btn-bottom active" data-tab="me" onclick="switchTab('me')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <span class="tab-label">Solo</span>
+                <span class="tab-label" data-i18n="tabbar_solo">Solo</span>
             </button>
             <button class="tab-btn-bottom" data-tab="together" onclick="switchTab('together')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="7" r="3"/><circle cx="12" cy="7" r="3"/><circle cx="18.5" cy="7" r="3"/><path d="M2 21v-1.5a3.5 3.5 0 0 1 7 0V21"/><path d="M8.5 21v-1.5a3.5 3.5 0 0 1 7 0V21"/><path d="M15 21v-1.5a3.5 3.5 0 0 1 7 0V21"/></svg>
-                <span class="tab-label">Together</span>
+                <span class="tab-label" data-i18n="tabbar_together">Together</span>
             </button>
             <button class="tab-btn-bottom" data-tab="manage" onclick="switchTab('manage')">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                <span class="tab-label">Edit</span>
+                <span class="tab-label" data-i18n="tabbar_edit">Edit</span>
             </button>
         </nav>
 
@@ -303,8 +303,8 @@
                     <!-- Populated by switchHomeView('group') — reuses renderCombinedTab -->
                 </div>
                 <div class="home-add-person" onclick="openGroupEditor()">
-                    <strong>+ New group</strong><br>
-                    <span style="font-size:0.9rem;color:var(--text-muted);">Family, friends, colleagues &mdash; see combined milestones</span>
+                    <strong data-i18n="tog_new_group">+ New group</strong><br>
+                    <span style="font-size:0.9rem;color:var(--text-muted);" data-i18n="tog_new_group_hint">Family, friends, colleagues &mdash; see combined milestones</span>
                 </div>
             </div>
 
@@ -353,12 +353,12 @@
         <!-- Data Tab — unified group-first view -->
         <section id="eventsTab" class="tab-content hidden">
             <div class="card">
-                <h2>Your Groups</h2>
-                <p class="card-description">Tap a group to edit — rename, add or remove members.</p>
+                <h2 data-i18n="ed_your_groups">Your Groups</h2>
+                <p class="card-description" data-i18n="ed_tap_group_hint">Tap a group to edit — rename, add or remove members.</p>
                 <div id="eventSetsList2" class="event-sets-list"></div>
                 <div style="margin-top:16px;display:flex;gap:8px;align-items:center;">
-                    <input type="text" id="newGroupField" name="hm_f3" placeholder="New group title" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
-                    <button onclick="handleAddSetFromPeopleTab()" style="padding:10px 14px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;white-space:nowrap;font-size:0.85rem;">+ New group</button>
+                    <input type="text" id="newGroupField" name="hm_f3" placeholder="New group title" data-i18n-placeholder="ed_new_group_ph" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore readonly onfocus="this.removeAttribute('readonly')" style="flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-size:0.9rem;">
+                    <button onclick="handleAddSetFromPeopleTab()" data-i18n="tog_new_group" style="padding:10px 14px;border-radius:8px;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.25);color:var(--warning,#d4b876);font-weight:600;cursor:pointer;white-space:nowrap;font-size:0.85rem;">+ New group</button>
                 </div>
             </div>
 
@@ -445,7 +445,7 @@
                 <div id="advancedSettings">
                     <div class="card" style="margin-top:8px;">
                         <h3 data-i18n="number_patterns" style="font-size:0.95rem;">Happy number types</h3>
-                        <p class="card-description" style="font-size:0.82rem;">Choose which kinds of special numbers count as milestones.</p>
+                        <p class="card-description" style="font-size:0.82rem;" data-i18n="settings_subtitle">Choose which kinds of special numbers count as milestones.</p>
                         <div class="pattern-options">
                             <label class="pattern-option"><input type="checkbox" data-pattern="powers" checked><span data-i18n="round_numbers">Round Numbers (1000, 5000...)</span></label>
                             <label class="pattern-option"><input type="checkbox" data-pattern="repdigits" checked><span data-i18n="repdigits">Repdigits (111, 2222...)</span></label>
@@ -521,8 +521,8 @@
         <!-- Group Editor Overlay (full-screen) -->
         <div id="groupEditorOverlay" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:var(--bg-page,#1a1a1a);overflow-y:auto;padding:16px;font-family:var(--font-serif);">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-                <button onclick="closeGroupEditor()" style="background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;padding:8px;">&larr; Back</button>
-                <button onclick="closeGroupEditor()" style="background:var(--warning,#d4b876);color:#1a1a1a;border:none;padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;">Done</button>
+                <button onclick="closeGroupEditor()" data-i18n="ed_back" style="background:none;border:none;color:var(--text-muted);font-size:1.3rem;cursor:pointer;padding:8px;">&larr; Back</button>
+                <button onclick="closeGroupEditor()" data-i18n="ed_done" style="background:var(--warning,#d4b876);color:#1a1a1a;border:none;padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;">Done</button>
             </div>
             <div id="groupEditorContent">
                 <!-- Populated by openGroupEditor() -->
@@ -532,7 +532,7 @@
         <!-- Profile Panel (slide-in from right) -->
         <div class="profile-panel hidden" id="profilePanel">
             <div class="profile-panel-header">
-                <h2>Settings</h2>
+                <h2 data-i18n="tab_settings">Settings</h2>
                 <button class="profile-close" onclick="toggleProfilePanel()">&times;</button>
             </div>
             <div class="profile-panel-body" id="profilePanelBody">

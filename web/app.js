@@ -28,7 +28,9 @@ function parseLocalDate(dateStr) {
 function formatMilestoneDate(date, options) {
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
     const day = date.getDate();
-    const suffix = (day >= 11 && day <= 13) ? 'th' : ['th','st','nd','rd','th','th','th','th','th','th'][day % 10];
+    // Ordinal suffix ("24th") is English-only — other locales get the plain day number
+    const isEn = !locale || String(locale).toLowerCase().startsWith('en');
+    const suffix = !isEn ? '' : (day >= 11 && day <= 13) ? 'th' : ['th','st','nd','rd','th','th','th','th','th','th'][day % 10];
     const month = date.toLocaleDateString(locale, { month: 'short' });
     const thisYear = new Date().getFullYear();
     const year = date.getFullYear();
@@ -76,6 +78,20 @@ function tt(key, vars) {
     let s = (typeof I18N !== 'undefined' && I18N.t) ? I18N.t(key) : key;
     if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
     return s;
+}
+
+// Localized display form of milestoneCalculator's English unitName ('days' →
+// 'dni'/'Tage'/...). Display sites only — never use for unitName comparisons.
+// Unknown units (cosmic names, 'x', '%') pass through unchanged.
+function localizedUnit(count, unitName) {
+    const map = { seconds: 'second', minutes: 'minute', hours: 'hour', days: 'day', weeks: 'week', months: 'month', years: 'year' };
+    const noun = map[unitName];
+    return noun && typeof I18N !== 'undefined' ? I18N.plural(count, noun) : unitName;
+}
+
+// Stored data keeps the canonical 'Me'; render sites show the localized label.
+function displayPersonName(name) {
+    return name === 'Me' ? tt('me_label') : name;
 }
 
 // "Show N more" / "Show less" expander lists — one named helper instead of
@@ -484,7 +500,7 @@ function showDeepLinkPreview(name, date) {
         milestonesHtml += `
             <div class="deeplink-milestone">
                 <span class="deeplink-value">${m.value.toLocaleString()}</span>
-                <span class="deeplink-unit">${m.unitName}</span>
+                <span class="deeplink-unit">${localizedUnit(m.value, m.unitName)}</span>
                 <span class="deeplink-date">${dateStr} &middot; ${timeStr}</span>
             </div>
         `;
@@ -1098,7 +1114,7 @@ function switchHomeView(view) {
         // Render content for current group
         const content = document.getElementById('groupMilestonesContent');
         const currentSet = allSets.find(s => s.id === currentSetId);
-        const gName = currentSet ? currentSet.name : 'My Group';
+        const gName = currentSet ? currentSet.name : tt('wiz_my_group_ph');
         if (content) {
             let headerHtml = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;">
                 <span style="font-size:1.1rem;font-weight:600;color:var(--text);">${escapeHtml(gName)}</span>
@@ -1194,7 +1210,7 @@ function openGroupEditor(setId) {
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const yyyy = d.getFullYear();
         html += `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <input type="text" value="${escapeHtml(e.name)}" onchange="editorUpdateMember('${e.id}','name',this.value)" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
+            <input type="text" value="${escapeHtml(displayPersonName(e.name))}" onchange="editorUpdateMember('${e.id}','name',this.value)" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
             <input type="text" inputmode="numeric" value="${dd}" onchange="editorUpdateMemberDate('${e.id}','d',this.value)" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
             <input type="text" inputmode="numeric" value="${mm}" onchange="editorUpdateMemberDate('${e.id}','m',this.value)" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:0.8rem;">
@@ -1208,7 +1224,7 @@ function openGroupEditor(setId) {
     html += `
         <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#333);">
             <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;">
-                <input type="text" id="editorPersonField" name="hm_f4" placeholder="Person or date" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
+                <input type="text" id="editorPersonField" name="hm_f4" placeholder="${tt('ed_person_ph')}" readonly onfocus="this.removeAttribute('readonly')" size="1" style="flex:1;min-width:0;padding:6px 8px;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-serif);font-size:1rem;" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore>
                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorDay" placeholder="DD" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.8rem;" oninput="autoAdvance(this,'editorMonth',2)">
                 <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
                 <input type="text" inputmode="numeric" pattern="[0-9]*" id="editorMonth" placeholder="MM" maxlength="2" style="width:2.2em;padding:6px 1px;text-align:center;border-radius:6px;border:1px solid var(--border,#333);background:transparent;color:var(--text);font-family:var(--font-mono);font-size:0.8rem;" oninput="autoAdvance(this,'editorYear',2)">
@@ -1355,7 +1371,7 @@ function renderPersonFilter() {
         html += `
             <button class="person-filter-btn ${isActive ? 'active' : ''}"
                     onclick="togglePerson('${e.id}')">
-                ${escapeHtml(e.name)}
+                ${escapeHtml(displayPersonName(e.name))}
             </button>
         `;
     });
@@ -1841,7 +1857,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         }
 
         // Build reveal HTML — clean, spacious, large type
-        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + m.unitName)) + ' on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
+        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
         if (m.isCosmic) {
             // Cosmic: show description as text (no animated number)
             revealEl.innerHTML = `
@@ -1861,7 +1877,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     <div class="wizard-reveal-sparkle"></div>
                     <div class="wizard-reveal-number-line">
                         <span class="wizard-reveal-number" id="${revealElId}Number">0</span>
-                        <span class="wizard-reveal-unit">${escapeHtml(m.unitName)}</span>
+                        <span class="wizard-reveal-unit">${escapeHtml(localizedUnit(m.value, m.unitName))}</span>
                     </div>
                 </div>
                 <div class="hero-meta">
@@ -1971,9 +1987,9 @@ function wizardShowMyMore() {
 
     function renderMsRow(m) {
         const dateStr = formatMilestoneDate(m.date);
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
-        return wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, 'Me', isBig ? 'wizard-milestone-star' : '');
+        return wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, tt('me_label'), isBig ? 'wizard-milestone-star' : '');
     }
 
     const TOP = 3;
@@ -2024,7 +2040,7 @@ function wizardShowTheirMore() {
     let html = `<h2 class="wizard-question">${tt('wiz_their_milestones', { name: escapeHtml(friendEvent.name) })}</h2>`;
     html += '<div class="wizard-milestone-list">';
     upcoming.forEach(m => {
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
         const dateStr = formatMilestoneDate(m.date);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         html += wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, friendEvent.name, isBig ? 'wizard-milestone-star' : '');
@@ -2173,7 +2189,7 @@ function wizardDiscoverFriend() {
         if (isRole) {
             const displayText = friendM.isCosmic
                 ? (friendM.description || friendM.unitName)
-                : (friendM.value.toLocaleString() + ' ' + friendM.unitName);
+                : (friendM.value.toLocaleString() + ' ' + localizedUnit(friendM.value, friendM.unitName));
             const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
             const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
             const dateStr2 = friendM.date.toLocaleDateString(locale, dateOpts);
@@ -2416,14 +2432,14 @@ function wizardDiscoverFriendV2() {
         let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
         html += `<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_milestones')}</div>`;
         upcoming.slice(0, TOP5).forEach(m => {
-            const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
+            const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
             const ds = formatMilestoneDate(m.date);
             html += wizardMilestoneRow(displayText, ds, name);
         });
         if (upcoming.length > TOP5) {
             html += `<div id="friendMoreExtra" style="display:none;">`;
             upcoming.slice(TOP5).forEach(m => {
-                const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + m.unitName);
+                const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
                 const ds = formatMilestoneDate(m.date);
                 html += wizardMilestoneRow(displayText, ds, name);
             });
@@ -2511,8 +2527,8 @@ function wizardShowCombinedAndName() {
     // Auto-suggest group name based on role
     const FAMILY_ROLES = ['Mom', 'Dad', 'Partner', 'Sister', 'Brother', 'Child'];
     const lastPerson = appData.events[appData.events.length - 1];
-    const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? 'Family'
-        : (lastPerson && lastPerson.name === 'Friend' ? 'Friends' : 'My Group');
+    const suggestedName = lastPerson && FAMILY_ROLES.includes(lastPerson.name) ? tt('wiz_group_family')
+        : (lastPerson && lastPerson.name === 'Friend' ? tt('wiz_group_friends') : tt('wiz_my_group_ph'));
 
     // Build more combined milestones — show 3, rest expandable
     const shown = new Set([hero ? hero.value + '_' + hero.unit : '']);
@@ -2526,12 +2542,12 @@ function wizardShowCombinedAndName() {
     const TOP6 = 3;
     let moreCombinedHtml = '';
     combinedList.slice(0, TOP6).forEach(m => {
-        const displayText = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
+        const displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName || m.unit);
         moreCombinedHtml += wizardMilestoneRow(displayText, formatMilestoneDate(m.date), namesStr);
     });
     let extraCombinedHtml = '';
     combinedList.slice(TOP6).forEach(m => {
-        const displayText = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
+        const displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName || m.unit);
         extraCombinedHtml += wizardMilestoneRow(displayText, formatMilestoneDate(m.date), namesStr);
     });
 
@@ -2540,14 +2556,14 @@ function wizardShowCombinedAndName() {
         <div class="wizard-reveal-number-wrap">
             <div class="wizard-reveal-number-line">
                 <span class="wizard-reveal-number" style="font-size:2.5rem;">${bestTarget.toLocaleString(locale)}</span>
-                <span class="wizard-reveal-unit">${tt('wiz_units_combined', { unit: hero ? (hero.unitName || hero.unit) : 'days' })}</span>
+                <span class="wizard-reveal-unit">${tt('wiz_units_combined', { unit: hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days') })}</span>
             </div>
         </div>
         <div class="hero-meta">
             <div class="hero-meta-text">
                 <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
             </div>
-            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? (hero.unitName || hero.unit) : 'days') + ' combined on ' + dateDisplay + ' — happymoments.app')}
+            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — happymoments.app')}
         </div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_together')}</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('wizCombExtra6','wizCombToggle6',${combinedList.length - TOP6})">${_moreListLabel(combinedList.length - TOP6)}</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
@@ -2606,7 +2622,7 @@ function wizardRenderGroupMembers() {
         const yyyy = d.getFullYear();
         // Editable rows \u2014 name and date can be corrected in place
         html += `<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-            <input type="text" value="${escapeHtml(m.name)}" onchange="wizardEditMember('${m.id}','name',this.value)" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore readonly style="flex:1;min-width:0;padding:5px 8px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text);font-size:0.95rem;" onfocus="this.removeAttribute('readonly');this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
+            <input type="text" value="${escapeHtml(displayPersonName(m.name))}" onchange="wizardEditMember('${m.id}','name',this.value)" autocomplete="hm-no-fill" data-lpignore="true" data-1p-ignore readonly style="flex:1;min-width:0;padding:5px 8px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text);font-size:0.95rem;" onfocus="this.removeAttribute('readonly');this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             <input type="text" inputmode="numeric" value="${dd}" onchange="wizardEditMemberDate('${m.id}','d',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
             <span style="color:var(--text-muted);font-size:0.8rem;">/</span>
             <input type="text" inputmode="numeric" value="${mm}" onchange="wizardEditMemberDate('${m.id}','m',this.value)" maxlength="2" style="width:2em;padding:5px 2px;text-align:center;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:0.88rem;" onfocus="this.style.borderColor='var(--border,#444)'" onblur="this.style.borderColor='transparent'">
@@ -2761,7 +2777,7 @@ function wizardShowGroupReveal() {
             const rest = sorted.slice(3);
             top.forEach(m => {
                 const val = formatMilestoneValue(m.value, locale);
-                const unit = m.unitName || m.unit || '';
+                const unit = localizedUnit(m.value, m.unitName || m.unit || '');
                 individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
             });
             if (rest.length > 0) {
@@ -2769,7 +2785,7 @@ function wizardShowGroupReveal() {
                 individualHtml += `<div id="${uid}" style="display:none;">`;
                 rest.forEach(m => {
                     const val = formatMilestoneValue(m.value, locale);
-                    const unit = m.unitName || m.unit || '';
+                    const unit = localizedUnit(m.value, m.unitName || m.unit || '');
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(m.date), e.name);
                 });
                 individualHtml += `</div>`;
@@ -2779,14 +2795,14 @@ function wizardShowGroupReveal() {
             // Multiple new members: show 1 best each + expand per person
             const best = sorted[0];
             const val = formatMilestoneValue(best.value, locale);
-            const unit = best.unitName || best.unit || '';
+            const unit = localizedUnit(best.value, best.unitName || best.unit || '');
             individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val + ' ' + unit, formatMilestoneDate(best.date), e.name);
             if (sorted.length > 1) {
                 const uid = 'phase1more_' + e.id.replace(/[^a-z0-9]/gi, '');
                 individualHtml += `<div id="${uid}" style="display:none;">`;
                 sorted.slice(1, 8).forEach(m => {
                     const val2 = formatMilestoneValue(m.value, locale);
-                    const unit2 = m.unitName || m.unit || '';
+                    const unit2 = localizedUnit(m.value, m.unitName || m.unit || '');
                     individualHtml += wizardMilestoneRow(escapeHtml(e.name) + ': ' + val2 + ' ' + unit2, formatMilestoneDate(m.date), e.name);
                 });
                 individualHtml += `</div>`;
@@ -2878,23 +2894,23 @@ function wizardShowTeamMilestones() {
     });
     let combinedHtml = '';
     rows.slice(0, 3).forEach(m => {
-        const dt = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
+        const dt = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName || m.unit);
         combinedHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
     });
     let combinedExtraHtml = '';
     rows.slice(3).forEach(m => {
-        const dt = formatMilestoneValue(m.value, locale) + ' ' + (m.unitName || m.unit);
+        const dt = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName || m.unit);
         combinedExtraHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
     });
 
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">${tt('wiz_belong_all')}</h2>
         ${hero ? `
-            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + (hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
+            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number-line">
                     <span class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</span>
-                    <span class="wizard-reveal-unit" style="font-size:1.3rem;">${tt('wiz_units_combined', { unit: hero.unitName || hero.unit })}</span>
+                    <span class="wizard-reveal-unit" style="font-size:1.3rem;">${tt('wiz_units_combined', { unit: localizedUnit(hero.value, hero.unitName || hero.unit) })}</span>
                 </div>
             </div>
             <div class="hero-meta">
@@ -2989,7 +3005,7 @@ function wizardBuildShareScreen() {
         if (!best && ms.length > 0) best = ms.filter(m => m.timeUntil > 0)[0];
         if (best) {
             const val = formatMilestoneValue(best.value, locale);
-            const unit = best.unitName || best.unit || '';
+            const unit = localizedUnit(best.value, best.unitName || best.unit || '');
             const ds = formatMilestoneDate(best.date);
             const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
             const uid = 'share9more_' + e.id.replace(/[^a-z0-9]/gi, '');
@@ -2997,7 +3013,7 @@ function wizardBuildShareScreen() {
             let moreRows = '';
             sorted.slice(1, 4).forEach(m => {
                 const v2 = formatMilestoneValue(m.value, locale);
-                const u2 = m.unitName || m.unit || '';
+                const u2 = localizedUnit(m.value, m.unitName || m.unit || '');
                 const ds2 = formatMilestoneDate(m.date);
                 const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? happymoments.app';
                 moreRows += `<div onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${st2.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer;">
@@ -3087,7 +3103,7 @@ function wizardCreateAnotherGroup() {
     el.innerHTML = `
         <p style="color:var(--text);text-align:center;font-size:1rem;font-style:italic;margin-bottom:16px;line-height:1.5;">${groupExample}</p>
         <div style="font-size:0.8rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:6px;">${tt('wiz_name_new_team')}</div>
-        <input type="text" id="groupTitleInput" name="hm_f7" class="wizard-input" value="" placeholder="Friends" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='Friends';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
+        <input type="text" id="groupTitleInput" name="hm_f7" class="wizard-input" value="" placeholder="${tt('wiz_group_friends')}" readonly onfocus="this.removeAttribute('readonly');if(!this.value)this.value='${tt('wiz_group_friends').replace(/'/g, "\\'")}';this.select();" style="text-align:center;font-size:1.1rem;background:transparent;border:1.5px solid rgba(212,184,118,0.55);color:var(--text);padding:10px;border-radius:8px;width:100%;" autocomplete="off" data-lpignore="true" data-1p-ignore>
     `;
 
     // Update buttons for "create another group" context
@@ -3704,7 +3720,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
         const timeUntilStr = formatTimeDistance(m.timeUntil);
         const dateStr = formatDateWithTime(m.date);
         const displayVal = formatMilestoneValue(m.value, locale);
-        const shareText = gName + ': ' + displayVal + ' ' + m.unitName + ' combined on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
+        const shareText = gName + ': ' + displayVal + ' ' + localizedUnit(m.value, m.unitName) + ' combined on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
         const safeMsg = shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
         // Show contributing events if available
@@ -3718,7 +3734,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
                  onclick="wizardSelectMsRow('','${safeMsg}')" style="cursor:pointer;">
                 <div class="cmi-main">
                     <span class="cmi-value">${displayVal}</span>
-                    <span class="cmi-unit">${m.unitName}</span>
+                    <span class="cmi-unit">${localizedUnit(m.value, m.unitName)}</span>
                     <span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(14)}</span>
                 </div>
                 <div class="cmi-desc">${m.comboDescription || m.description || ''}</div>
@@ -4072,12 +4088,12 @@ function getEventMilestoneDescription(event, milestone) {
                 return tmpl.replace('{name}', name).replace('{value}', value);
             }
             const tmpl2 = _t('is_old') || '{name} turns {value} {unit}';
-            return tmpl2.replace('{name}', name).replace('{value}', value).replace('{unit}', unit);
+            return tmpl2.replace('{name}', name).replace('{value}', value).replace('{unit}', localizedUnit(milestone.value, unit));
         case 'beginning':
         case 'milestone':
         default:
             const tmpl3 = _t('since') || '{value} {unit} since {name}';
-            return tmpl3.replace('{name}', name).replace('{value}', value).replace('{unit}', unit);
+            return tmpl3.replace('{name}', name).replace('{value}', value).replace('{unit}', localizedUnit(milestone.value, unit));
     }
 }
 
@@ -4375,7 +4391,7 @@ function renderHeroMilestone() {
         displayUnit = '';
     } else {
         displayValue = hero.value.toLocaleString();
-        displayUnit = hero.unitName;
+        displayUnit = localizedUnit(hero.value, hero.unitName);
     }
 
     // Build a human-readable sentence
@@ -4537,7 +4553,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = formatMilestoneValue(m.value, locale) + ' ' + m.unitName;
+                displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName);
             }
             const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
@@ -4587,7 +4603,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = formatMilestoneValue(m.value, locale) + ' ' + m.unitName;
+                displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName);
             }
             const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
@@ -4682,7 +4698,7 @@ function selectMilestoneForBar(idx) {
     if (barEmpty) barEmpty.style.display = 'none';
     if (barActive) barActive.style.display = '';
     if (barText && barPerson) {
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + m.unitName);
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName));
         barText.textContent = displayText;
         barPerson.textContent = m.eventName + ' \u2014 ' + formatMilestoneDate(m.date);
     }
@@ -4708,7 +4724,7 @@ function homeShareMilestone(idx) {
     if (!m) return;
     const fallbackText = m.isCosmic
         ? `${m.eventName}: ${m.description || m.unitName}`
-        : `${m.eventName}: ${m.value.toLocaleString()} ${m.unitName}`;
+        : `${m.eventName}: ${m.value.toLocaleString()} ${localizedUnit(m.value, m.unitName)}`;
     const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : fallbackText;
     // Show preview before sharing
     showSharePreview(message, m.eventName);
@@ -4837,7 +4853,7 @@ function renderMostSpecialMilestones() {
                          onclick="selectMilestoneForShare(${idx})">
                         <div class="miv-left">
                             <div class="miv-value">${m.value.toLocaleString()}</div>
-                            <div class="miv-unit">${m.unitName}</div>
+                            <div class="miv-unit">${localizedUnit(m.value, m.unitName)}</div>
                         </div>
                         <div class="miv-right">
                             <div class="miv-person">${m.eventName}</div>
@@ -5047,7 +5063,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${m.isBigMilestone ? 'big-milestone' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${m.unitName}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}<button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${localizedUnit(m.value, m.unitName)}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}<button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
                                 ${showAlt ? `<span class="cm-alt-b">${showAlt}</span>` : ''}
@@ -5129,7 +5145,7 @@ function renderSinglePersonMilestones() {
                  onclick="selectMilestoneForShare(${idx})">
                 <div class="miv-left">
                     <div class="miv-value">${m.value.toLocaleString()}</div>
-                    <div class="miv-unit">${m.unitName}</div>
+                    <div class="miv-unit">${localizedUnit(m.value, m.unitName)}</div>
                 </div>
                 <div class="miv-right">
                     <div class="miv-when">${dateStr}</div>
@@ -5184,7 +5200,7 @@ function renderCombinedPersonMilestones() {
                      onclick="selectMilestoneForShare(${idx})">
                     <div class="miv-left">
                         <div class="miv-value">${m.value.toLocaleString()}</div>
-                        <div class="miv-unit">${m.unitName}</div>
+                        <div class="miv-unit">${localizedUnit(m.value, m.unitName)}</div>
                     </div>
                     <div class="miv-right">
                         <div class="miv-combo-desc">${m.comboDescription || ''}</div>
@@ -5290,7 +5306,7 @@ function renderColumnMilestones(milestones, eventId) {
                  onclick="selectMilestoneForShare(${globalIdx})">
                 <div class="cm-main">
                     <span class="cm-value">${m.value.toLocaleString()}</span>
-                    <span class="cm-unit">${m.unitName}</span>
+                    <span class="cm-unit">${localizedUnit(m.value, m.unitName)}</span>
                 </div>
                 <div class="cm-when-compact">${dateStr} (${timeUntilStr})</div>
             </div>
@@ -5591,7 +5607,7 @@ function fillShareTemplate(template, m) {
         why = m.description || 'a cosmic cycle milestone';
     } else {
         val = m.value.toLocaleString();
-        unit = m.unitName;
+        unit = localizedUnit(m.value, m.unitName);
         why = m.description || m.type || 'special';
     }
 
@@ -6001,7 +6017,7 @@ function getCalendarEventDetails(milestone) {
     const d = milestone.date;
     const title = milestone.isBirthday
         ? milestone.fullDescription.replace(/[🎂🎉]\s*/g, '')
-        : `HappyMoment: ${milestone.value.toLocaleString()} ${milestone.unitName}` +
+        : `HappyMoment: ${milestone.value.toLocaleString()} ${localizedUnit(milestone.value, milestone.unitName)}` +
           (milestone.eventName ? ` — ${milestone.eventName}` : '');
 
     const description = milestone.fullDescription || generateShareMessage(milestone);
@@ -6377,7 +6393,7 @@ function renderEventSetsHTML() {
             const d = typeof e.date === 'string' ? new Date(e.date) : e.date;
             const ds = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
             membersHtml += `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:0.88rem;">
-                <span style="color:var(--text);flex:1;">${escapeHtml(e.name)}</span>
+                <span style="color:var(--text);flex:1;">${escapeHtml(displayPersonName(e.name))}</span>
                 <span style="color:var(--text-muted);">${ds}</span>
             </div>`;
         });
