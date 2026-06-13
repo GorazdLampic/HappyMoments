@@ -2031,7 +2031,7 @@ function wizardShowMyMore() {
         return wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, tt('me_label'), isBig ? 'wizard-milestone-star' : '');
     }
 
-    const TOP = 3;
+    const TOP = 2;
     let topHtml = '';
     upcoming.slice(0, TOP).forEach(m => { topHtml += renderMsRow(m); });
     let moreHtml = '';
@@ -2466,7 +2466,7 @@ function wizardDiscoverFriendV2() {
 
     const moreEl = document.getElementById('wizardFriendMore');
     if (moreEl && upcoming.length > 0) {
-        const TOP5 = 3;
+        const TOP5 = 2;
         // Hidden initially — revealed after counter animation finishes
         let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
         html += `<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_milestones')}</div>`;
@@ -2578,7 +2578,7 @@ function wizardShowCombinedAndName() {
         shown.add(key);
         combinedList.push(m);
     });
-    const TOP6 = 3;
+    const TOP6 = 2;
     let moreCombinedHtml = '';
     combinedList.slice(0, TOP6).forEach(m => {
         const displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName || m.unit);
@@ -2811,9 +2811,9 @@ function wizardShowGroupReveal() {
         if (sorted.length === 0) return;
 
         if (newMembers.length === 1) {
-            // Single new member: show 3 milestones + expand
-            const top = sorted.slice(0, 3);
-            const rest = sorted.slice(3);
+            // Single new member: show 2 milestones + expand the rest
+            const top = sorted.slice(0, 2);
+            const rest = sorted.slice(2);
             top.forEach(m => {
                 const val = formatMilestoneValue(m.value, locale);
                 const unit = localizedUnit(m.value, m.unitName || m.unit || '');
@@ -2932,12 +2932,12 @@ function wizardShowTeamMilestones() {
         rows.push(m);
     });
     let combinedHtml = '';
-    rows.slice(0, 3).forEach(m => {
+    rows.slice(0, 2).forEach(m => {
         const dt = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName || m.unit);
         combinedHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
     });
     let combinedExtraHtml = '';
-    rows.slice(3).forEach(m => {
+    rows.slice(2).forEach(m => {
         const dt = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName || m.unit);
         combinedExtraHtml += wizardMilestoneRow(dt, formatMilestoneDate(m.date), groupName);
     });
@@ -4677,7 +4677,7 @@ function renderHomeScreen() {
                 return true;
             });
         } else {
-            top = merged.slice(0, 3);
+            top = merged.slice(0, 2);
         }
         const rest = merged.filter(m => !top.includes(m));
 
@@ -5430,8 +5430,11 @@ function findSumMilestonesForEvents(events, maxResults, maxDaysAhead, settings) 
         const maxForUnit = unitConfig.maxReasonable * numEvents;
         const relevantNumbers = getSpecialNumbersUpTo(maxForUnit, settings);
 
-        // Use ALL special numbers - no extra filtering!
         for (const num of relevantNumbers) {
+            // Skip bland large numbers (e.g. "2.66 billion") — only genuinely nice
+            // values are worth showing. nicenessGrade rejects 3-significant-digit
+            // mantissas while keeping 2B / 2.5B / repdigits / palindromes / powers.
+            if (num >= 1000000 && typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
             if (num > currentSum) {
                 const unitsNeeded = (num - currentSum) / numEvents;
                 const msNeeded = unitsNeeded * unitConfig.msMultiplier;
