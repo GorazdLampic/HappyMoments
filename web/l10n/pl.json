@@ -5,7 +5,7 @@
     "tab_team": "Razem",
     "tab_data": "Dane",
     "tab_settings": "Ustawienia",
-    "tabbar_solo": "Ja",
+    "tabbar_solo": "Osobiste",
     "tabbar_together": "Razem",
     "tabbar_edit": "Edytuj",
     "tagline": "Poezja liczb ukryta w Twoim życiu.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Przyjaciele · Współpracownicy · Rodzina",
     "wiz_one_more_group": "Jeszcze jedna grupa",
     "wiz_go_dashboard": "Przejdź do mojego panelu",
-    "wiz_explore_tabs": "Odkrywaj: Ja · Razem · Edytuj",
+    "wiz_explore_tabs": "Odkrywaj: Osobiste · Razem · Edytuj",
     "wiz_share": "Udostępnij",
     "wiz_show_more_tpl": "Pokaż jeszcze {count} {noun} ▼",
     "wiz_show_more_short": "Pokaż jeszcze {count} ▼",
@@ -405,17 +405,72 @@
     "prem_gate_upgrade_btn": "Premium — €1.49/rok"
   },
   "plurals": {
-    "day": { "one": "dzień", "few": "dni", "many": "dni", "other": "dnia" },
-    "week": { "one": "tydzień", "few": "tygodnie", "many": "tygodni", "other": "tygodnia" },
-    "month": { "one": "miesiąc", "few": "miesiące", "many": "miesięcy", "other": "miesiąca" },
-    "year": { "one": "rok", "few": "lata", "many": "lat", "other": "roku" },
-    "hour": { "one": "godzina", "few": "godziny", "many": "godzin", "other": "godziny" },
-    "minute": { "one": "minuta", "few": "minuty", "many": "minut", "other": "minuty" },
-    "second": { "one": "sekunda", "few": "sekundy", "many": "sekund", "other": "sekundy" },
-    "milestone": { "one": "wyjątkowy moment", "few": "wyjątkowe momenty", "many": "wyjątkowych momentów", "other": "wyjątkowego momentu" },
-    "person": { "one": "osoba", "few": "osoby", "many": "osób", "other": "osoby" },
-    "group": { "one": "grupa", "few": "grupy", "many": "grup", "other": "grupy" },
-    "member": { "one": "członek", "few": "członków", "many": "członków", "other": "członka" }
+    "day": {
+      "one": "dzień",
+      "few": "dni",
+      "many": "dni",
+      "other": "dnia"
+    },
+    "week": {
+      "one": "tydzień",
+      "few": "tygodnie",
+      "many": "tygodni",
+      "other": "tygodnia"
+    },
+    "month": {
+      "one": "miesiąc",
+      "few": "miesiące",
+      "many": "miesięcy",
+      "other": "miesiąca"
+    },
+    "year": {
+      "one": "rok",
+      "few": "lata",
+      "many": "lat",
+      "other": "roku"
+    },
+    "hour": {
+      "one": "godzina",
+      "few": "godziny",
+      "many": "godzin",
+      "other": "godziny"
+    },
+    "minute": {
+      "one": "minuta",
+      "few": "minuty",
+      "many": "minut",
+      "other": "minuty"
+    },
+    "second": {
+      "one": "sekunda",
+      "few": "sekundy",
+      "many": "sekund",
+      "other": "sekundy"
+    },
+    "milestone": {
+      "one": "wyjątkowy moment",
+      "few": "wyjątkowe momenty",
+      "many": "wyjątkowych momentów",
+      "other": "wyjątkowego momentu"
+    },
+    "person": {
+      "one": "osoba",
+      "few": "osoby",
+      "many": "osób",
+      "other": "osoby"
+    },
+    "group": {
+      "one": "grupa",
+      "few": "grupy",
+      "many": "grup",
+      "other": "grupy"
+    },
+    "member": {
+      "one": "członek",
+      "few": "członków",
+      "many": "członków",
+      "other": "członka"
+    }
   },
   "shareMessages": {
     "birthday": [

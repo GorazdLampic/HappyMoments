@@ -5,7 +5,7 @@
     "tab_team": "함께",
     "tab_data": "데이터",
     "tab_settings": "설정",
-    "tabbar_solo": "나",
+    "tabbar_solo": "개인",
     "tabbar_together": "함께",
     "tabbar_edit": "편집",
     "tagline": "내 삶에 숨어 있던 숫자의 시를 만나 보세요.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "친구 · 동료 · 가족",
     "wiz_one_more_group": "그룹 하나 더",
     "wiz_go_dashboard": "내 대시보드로 가기",
-    "wiz_explore_tabs": "나 · 함께 · 편집 탭을 둘러보세요",
+    "wiz_explore_tabs": "개인 · 함께 · 편집 탭을 둘러보세요",
     "wiz_share": "공유",
     "wiz_show_more_tpl": "{noun} {count}개 더 보기 ▼",
     "wiz_show_more_short": "{count}개 더 보기 ▼",
@@ -405,17 +405,39 @@
     "prem_gate_upgrade_btn": "업그레이드 — €1.49/년"
   },
   "plurals": {
-    "day": { "other": "일" },
-    "week": { "other": "주" },
-    "month": { "other": "개월" },
-    "year": { "other": "년" },
-    "hour": { "other": "시간" },
-    "minute": { "other": "분" },
-    "second": { "other": "초" },
-    "milestone": { "other": "특별한 순간" },
-    "person": { "other": "명" },
-    "group": { "other": "그룹" },
-    "member": { "other": "멤버" }
+    "day": {
+      "other": "일"
+    },
+    "week": {
+      "other": "주"
+    },
+    "month": {
+      "other": "개월"
+    },
+    "year": {
+      "other": "년"
+    },
+    "hour": {
+      "other": "시간"
+    },
+    "minute": {
+      "other": "분"
+    },
+    "second": {
+      "other": "초"
+    },
+    "milestone": {
+      "other": "특별한 순간"
+    },
+    "person": {
+      "other": "명"
+    },
+    "group": {
+      "other": "그룹"
+    },
+    "member": {
+      "other": "멤버"
+    }
   },
   "shareMessages": {
     "birthday": [

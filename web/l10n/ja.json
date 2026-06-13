@@ -5,7 +5,7 @@
     "tab_team": "チーム",
     "tab_data": "データ",
     "tab_settings": "設定",
-    "tabbar_solo": "自分",
+    "tabbar_solo": "個人",
     "tabbar_together": "チーム",
     "tabbar_edit": "編集",
     "tagline": "あなたの人生にひそむ、数字の詩。",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "友達・同僚・家族",
     "wiz_one_more_group": "もうひとつのグループ",
     "wiz_go_dashboard": "ダッシュボードへ",
-    "wiz_explore_tabs": "自分・チーム・編集をのぞいてみましょう",
+    "wiz_explore_tabs": "個人・チーム・編集をのぞいてみましょう",
     "wiz_share": "共有",
     "wiz_show_more_tpl": "あと{count}{noun}を表示 ▼",
     "wiz_show_more_short": "あと{count}件を表示 ▼",
@@ -405,17 +405,39 @@
     "prem_gate_upgrade_btn": "アップグレード — €1.49／年"
   },
   "plurals": {
-    "day": { "other": "日" },
-    "week": { "other": "週間" },
-    "month": { "other": "か月" },
-    "year": { "other": "年" },
-    "hour": { "other": "時間" },
-    "minute": { "other": "分" },
-    "second": { "other": "秒" },
-    "milestone": { "other": "件の節目" },
-    "person": { "other": "人" },
-    "group": { "other": "グループ" },
-    "member": { "other": "名" }
+    "day": {
+      "other": "日"
+    },
+    "week": {
+      "other": "週間"
+    },
+    "month": {
+      "other": "か月"
+    },
+    "year": {
+      "other": "年"
+    },
+    "hour": {
+      "other": "時間"
+    },
+    "minute": {
+      "other": "分"
+    },
+    "second": {
+      "other": "秒"
+    },
+    "milestone": {
+      "other": "件の節目"
+    },
+    "person": {
+      "other": "人"
+    },
+    "group": {
+      "other": "グループ"
+    },
+    "member": {
+      "other": "名"
+    }
   },
   "shareMessages": null,
   "shareLink": null,

@@ -5,7 +5,7 @@
     "tab_team": "Juntos",
     "tab_data": "Dados",
     "tab_settings": "Ajustes",
-    "tabbar_solo": "Eu",
+    "tabbar_solo": "Pessoal",
     "tabbar_together": "Juntos",
     "tabbar_edit": "Editar",
     "tagline": "A poesia dos números da sua vida, revelada.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Amigos · Colegas · Família",
     "wiz_one_more_group": "Mais um grupo",
     "wiz_go_dashboard": "Ir para o meu painel",
-    "wiz_explore_tabs": "Explore Eu · Juntos · Editar",
+    "wiz_explore_tabs": "Explore Pessoal · Juntos · Editar",
     "wiz_share": "Compartilhar",
     "wiz_show_more_tpl": "Mostrar mais {count} {noun} ▼",
     "wiz_show_more_short": "Mostrar mais {count} ▼",
@@ -405,17 +405,61 @@
     "prem_gate_upgrade_btn": "Assinar — €1.49/ano"
   },
   "plurals": {
-    "day": { "one": "dia", "many": "de dias", "other": "dias" },
-    "week": { "one": "semana", "many": "de semanas", "other": "semanas" },
-    "month": { "one": "mês", "many": "de meses", "other": "meses" },
-    "year": { "one": "ano", "many": "de anos", "other": "anos" },
-    "hour": { "one": "hora", "many": "de horas", "other": "horas" },
-    "minute": { "one": "minuto", "many": "de minutos", "other": "minutos" },
-    "second": { "one": "segundo", "many": "de segundos", "other": "segundos" },
-    "milestone": { "one": "marco", "many": "de marcos", "other": "marcos" },
-    "person": { "one": "pessoa", "many": "de pessoas", "other": "pessoas" },
-    "group": { "one": "grupo", "many": "de grupos", "other": "grupos" },
-    "member": { "one": "membro", "many": "de membros", "other": "membros" }
+    "day": {
+      "one": "dia",
+      "many": "de dias",
+      "other": "dias"
+    },
+    "week": {
+      "one": "semana",
+      "many": "de semanas",
+      "other": "semanas"
+    },
+    "month": {
+      "one": "mês",
+      "many": "de meses",
+      "other": "meses"
+    },
+    "year": {
+      "one": "ano",
+      "many": "de anos",
+      "other": "anos"
+    },
+    "hour": {
+      "one": "hora",
+      "many": "de horas",
+      "other": "horas"
+    },
+    "minute": {
+      "one": "minuto",
+      "many": "de minutos",
+      "other": "minutos"
+    },
+    "second": {
+      "one": "segundo",
+      "many": "de segundos",
+      "other": "segundos"
+    },
+    "milestone": {
+      "one": "marco",
+      "many": "de marcos",
+      "other": "marcos"
+    },
+    "person": {
+      "one": "pessoa",
+      "many": "de pessoas",
+      "other": "pessoas"
+    },
+    "group": {
+      "one": "grupo",
+      "many": "de grupos",
+      "other": "grupos"
+    },
+    "member": {
+      "one": "membro",
+      "many": "de membros",
+      "other": "membros"
+    }
   },
   "shareMessages": null,
   "shareLink": null,

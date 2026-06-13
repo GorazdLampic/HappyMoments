@@ -5,7 +5,7 @@
     "tab_team": "Samen",
     "tab_data": "Gegevens",
     "tab_settings": "Instellingen",
-    "tabbar_solo": "Ik",
+    "tabbar_solo": "Persoonlijk",
     "tabbar_together": "Samen",
     "tabbar_edit": "Bewerken",
     "tagline": "De poëzie van getallen in je leven, onthuld.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Vrienden · Collega's · Familie",
     "wiz_one_more_group": "Nog één groep",
     "wiz_go_dashboard": "Naar mijn dashboard",
-    "wiz_explore_tabs": "Ontdek Ik · Samen · Bewerken",
+    "wiz_explore_tabs": "Ontdek Persoonlijk · Samen · Bewerken",
     "wiz_share": "Delen",
     "wiz_show_more_tpl": "Toon nog {count} {noun} ▼",
     "wiz_show_more_short": "Toon nog {count} ▼",
@@ -405,17 +405,50 @@
     "prem_gate_upgrade_btn": "Upgrade — €1.49/jaar"
   },
   "plurals": {
-    "day": { "one": "dag", "other": "dagen" },
-    "week": { "one": "week", "other": "weken" },
-    "month": { "one": "maand", "other": "maanden" },
-    "year": { "one": "jaar", "other": "jaar" },
-    "hour": { "one": "uur", "other": "uur" },
-    "minute": { "one": "minuut", "other": "minuten" },
-    "second": { "one": "seconde", "other": "seconden" },
-    "milestone": { "one": "mijlpaal", "other": "mijlpalen" },
-    "person": { "one": "persoon", "other": "personen" },
-    "group": { "one": "groep", "other": "groepen" },
-    "member": { "one": "lid", "other": "leden" }
+    "day": {
+      "one": "dag",
+      "other": "dagen"
+    },
+    "week": {
+      "one": "week",
+      "other": "weken"
+    },
+    "month": {
+      "one": "maand",
+      "other": "maanden"
+    },
+    "year": {
+      "one": "jaar",
+      "other": "jaar"
+    },
+    "hour": {
+      "one": "uur",
+      "other": "uur"
+    },
+    "minute": {
+      "one": "minuut",
+      "other": "minuten"
+    },
+    "second": {
+      "one": "seconde",
+      "other": "seconden"
+    },
+    "milestone": {
+      "one": "mijlpaal",
+      "other": "mijlpalen"
+    },
+    "person": {
+      "one": "persoon",
+      "other": "personen"
+    },
+    "group": {
+      "one": "groep",
+      "other": "groepen"
+    },
+    "member": {
+      "one": "lid",
+      "other": "leden"
+    }
   },
   "shareMessages": {
     "birthday": [

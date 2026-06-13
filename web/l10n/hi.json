@@ -5,7 +5,7 @@
     "tab_team": "टीम",
     "tab_data": "डेटा",
     "tab_settings": "सेटिंग्स",
-    "tabbar_solo": "मैं",
+    "tabbar_solo": "निजी",
     "tabbar_together": "टीम",
     "tabbar_edit": "एडिट",
     "tagline": "आपकी ज़िंदगी के नंबरों में छिपी कविता, अब सामने।",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "दोस्त · सहकर्मी · परिवार",
     "wiz_one_more_group": "एक और ग्रुप",
     "wiz_go_dashboard": "मेरे डैशबोर्ड पर चलें",
-    "wiz_explore_tabs": "देखें: मैं · टीम · एडिट",
+    "wiz_explore_tabs": "देखें: निजी · टीम · एडिट",
     "wiz_share": "शेयर करें",
     "wiz_show_more_tpl": "और {count} {noun} दिखाएँ ▼",
     "wiz_show_more_short": "{count} और दिखाएँ ▼",
@@ -405,17 +405,50 @@
     "prem_gate_upgrade_btn": "अपग्रेड करें — €1.49/साल"
   },
   "plurals": {
-    "day": { "one": "दिन", "other": "दिन" },
-    "week": { "one": "हफ़्ता", "other": "हफ़्ते" },
-    "month": { "one": "महीना", "other": "महीने" },
-    "year": { "one": "साल", "other": "साल" },
-    "hour": { "one": "घंटा", "other": "घंटे" },
-    "minute": { "one": "मिनट", "other": "मिनट" },
-    "second": { "one": "सेकंड", "other": "सेकंड" },
-    "milestone": { "one": "माइलस्टोन", "other": "माइलस्टोन" },
-    "person": { "one": "व्यक्ति", "other": "लोग" },
-    "group": { "one": "ग्रुप", "other": "ग्रुप" },
-    "member": { "one": "सदस्य", "other": "सदस्य" }
+    "day": {
+      "one": "दिन",
+      "other": "दिन"
+    },
+    "week": {
+      "one": "हफ़्ता",
+      "other": "हफ़्ते"
+    },
+    "month": {
+      "one": "महीना",
+      "other": "महीने"
+    },
+    "year": {
+      "one": "साल",
+      "other": "साल"
+    },
+    "hour": {
+      "one": "घंटा",
+      "other": "घंटे"
+    },
+    "minute": {
+      "one": "मिनट",
+      "other": "मिनट"
+    },
+    "second": {
+      "one": "सेकंड",
+      "other": "सेकंड"
+    },
+    "milestone": {
+      "one": "माइलस्टोन",
+      "other": "माइलस्टोन"
+    },
+    "person": {
+      "one": "व्यक्ति",
+      "other": "लोग"
+    },
+    "group": {
+      "one": "ग्रुप",
+      "other": "ग्रुप"
+    },
+    "member": {
+      "one": "सदस्य",
+      "other": "सदस्य"
+    }
   },
   "shareMessages": null,
   "shareLink": null,

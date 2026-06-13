@@ -5,7 +5,7 @@
     "tab_team": "Cùng nhau",
     "tab_data": "Dữ liệu",
     "tab_settings": "Cài đặt",
-    "tabbar_solo": "Tôi",
+    "tabbar_solo": "Cá nhân",
     "tabbar_together": "Cùng nhau",
     "tabbar_edit": "Sửa",
     "tagline": "Khám phá chất thơ của những con số trong cuộc đời bạn.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Bạn bè · Đồng nghiệp · Gia đình",
     "wiz_one_more_group": "Thêm một nhóm nữa",
     "wiz_go_dashboard": "Đến trang chính của tôi",
-    "wiz_explore_tabs": "Khám phá Tôi · Cùng nhau · Sửa",
+    "wiz_explore_tabs": "Khám phá Cá nhân · Cùng nhau · Sửa",
     "wiz_share": "Chia sẻ",
     "wiz_show_more_tpl": "Xem thêm {count} {noun} ▼",
     "wiz_show_more_short": "Xem thêm {count} ▼",
@@ -405,17 +405,39 @@
     "prem_gate_upgrade_btn": "Nâng cấp — €1.49/năm"
   },
   "plurals": {
-    "day": { "other": "ngày" },
-    "week": { "other": "tuần" },
-    "month": { "other": "tháng" },
-    "year": { "other": "năm" },
-    "hour": { "other": "giờ" },
-    "minute": { "other": "phút" },
-    "second": { "other": "giây" },
-    "milestone": { "other": "cột mốc" },
-    "person": { "other": "người" },
-    "group": { "other": "nhóm" },
-    "member": { "other": "thành viên" }
+    "day": {
+      "other": "ngày"
+    },
+    "week": {
+      "other": "tuần"
+    },
+    "month": {
+      "other": "tháng"
+    },
+    "year": {
+      "other": "năm"
+    },
+    "hour": {
+      "other": "giờ"
+    },
+    "minute": {
+      "other": "phút"
+    },
+    "second": {
+      "other": "giây"
+    },
+    "milestone": {
+      "other": "cột mốc"
+    },
+    "person": {
+      "other": "người"
+    },
+    "group": {
+      "other": "nhóm"
+    },
+    "member": {
+      "other": "thành viên"
+    }
   },
   "shareMessages": {
     "birthday": [

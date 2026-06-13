@@ -5,7 +5,7 @@
     "tab_team": "Bersama",
     "tab_data": "Data",
     "tab_settings": "Pengaturan",
-    "tabbar_solo": "Aku",
+    "tabbar_solo": "Pribadi",
     "tabbar_together": "Bersama",
     "tabbar_edit": "Edit",
     "tagline": "Puisi angka dalam hidupmu, kini terungkap.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Teman · Rekan kerja · Keluarga",
     "wiz_one_more_group": "Satu grup lagi",
     "wiz_go_dashboard": "Buka dasborku",
-    "wiz_explore_tabs": "Jelajahi Aku · Bersama · Edit",
+    "wiz_explore_tabs": "Jelajahi Pribadi · Bersama · Edit",
     "wiz_share": "Bagikan",
     "wiz_show_more_tpl": "Tampilkan {count} {noun} lagi ▼",
     "wiz_show_more_short": "Tampilkan {count} lagi ▼",
@@ -405,17 +405,39 @@
     "prem_gate_upgrade_btn": "Upgrade — €1.49/tahun"
   },
   "plurals": {
-    "day": { "other": "hari" },
-    "week": { "other": "minggu" },
-    "month": { "other": "bulan" },
-    "year": { "other": "tahun" },
-    "hour": { "other": "jam" },
-    "minute": { "other": "menit" },
-    "second": { "other": "detik" },
-    "milestone": { "other": "momen spesial" },
-    "person": { "other": "orang" },
-    "group": { "other": "grup" },
-    "member": { "other": "anggota" }
+    "day": {
+      "other": "hari"
+    },
+    "week": {
+      "other": "minggu"
+    },
+    "month": {
+      "other": "bulan"
+    },
+    "year": {
+      "other": "tahun"
+    },
+    "hour": {
+      "other": "jam"
+    },
+    "minute": {
+      "other": "menit"
+    },
+    "second": {
+      "other": "detik"
+    },
+    "milestone": {
+      "other": "momen spesial"
+    },
+    "person": {
+      "other": "orang"
+    },
+    "group": {
+      "other": "grup"
+    },
+    "member": {
+      "other": "anggota"
+    }
   },
   "shareMessages": {
     "birthday": [

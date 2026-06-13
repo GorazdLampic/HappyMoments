@@ -5,7 +5,7 @@
     "tab_team": "Skupaj",
     "tab_data": "Podatki",
     "tab_settings": "Nastavitve",
-    "tabbar_solo": "Jaz",
+    "tabbar_solo": "Osebno",
     "tabbar_together": "Skupaj",
     "tabbar_edit": "Uredi",
     "tagline": "Odkrij poezijo števil v svojem življenju.",
@@ -87,8 +87,8 @@
     "consent_read": "Preberi celoten pravilnik",
     "update_ready": "Na voljo je nova različica.",
     "update_refresh": "Osveži",
-    "wiz_inspo_1": "Luka je pravkar odkril, da je<br><strong>1.000.000.000 sekund</strong> dopolnil prejšnji mesec.",
-    "wiz_inspo_2": "Sara in Maja sta prijateljici natanko<br><strong>10.000 dni</strong> — to je bilo treba proslaviti.",
+    "wiz_inspo_1": "Luka je prejšnji mesec dopolnil<br><strong>1.000.000.000 sekund</strong>",
+    "wiz_inspo_2": "Sara in Maja sta prijateljici natanko<br><strong>10.000 dni</strong> — razlog za proslavo.",
     "wiz_what_about_you": "Pa ti?",
     "wiz_show_me": "Pokaži mi",
     "wiz_show_more_ms": "Pokaži mi več mejnikov",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Prijatelji · Sodelavci · Družina",
     "wiz_one_more_group": "Še ena skupina",
     "wiz_go_dashboard": "Pojdi na moj pregled",
-    "wiz_explore_tabs": "Razišči Jaz · Skupaj · Uredi",
+    "wiz_explore_tabs": "Razišči Osebno · Skupaj · Uredi",
     "wiz_share": "Deli",
     "wiz_show_more_tpl": "Še {count} {noun} ▼",
     "wiz_show_more_short": "Pokaži še {count} ▼",
@@ -312,7 +312,7 @@
     "dash_your_name_ph": "Tvoje ime ali kakšen drug datum ...",
     "ed_remove": "Odstrani",
     "ed_no_groups": "Ni še skupin.",
-    "ed_active_badge": "AKTIVNA",
+    "ed_active_badge": "AKTIVNO",
     "ed_tap_to_edit": "tapni za urejanje",
     "ed_rename_group": "Preimenuj skupino",
     "ed_new_group_prompt": "Ime nove skupine:",
@@ -405,17 +405,72 @@
     "prem_gate_upgrade_btn": "Nadgradi — €1.49/leto"
   },
   "plurals": {
-    "day": { "one": "dan", "two": "dneva", "few": "dnevi", "other": "dni" },
-    "week": { "one": "teden", "two": "tedna", "few": "tedni", "other": "tednov" },
-    "month": { "one": "mesec", "two": "meseca", "few": "meseci", "other": "mesecev" },
-    "year": { "one": "leto", "two": "leti", "few": "leta", "other": "let" },
-    "hour": { "one": "ura", "two": "uri", "few": "ure", "other": "ur" },
-    "minute": { "one": "minuta", "two": "minuti", "few": "minute", "other": "minut" },
-    "second": { "one": "sekunda", "two": "sekundi", "few": "sekunde", "other": "sekund" },
-    "milestone": { "one": "mejnik", "two": "mejnika", "few": "mejniki", "other": "mejnikov" },
-    "person": { "one": "oseba", "two": "osebi", "few": "osebe", "other": "oseb" },
-    "group": { "one": "skupina", "two": "skupini", "few": "skupine", "other": "skupin" },
-    "member": { "one": "član", "two": "člana", "few": "člani", "other": "članov" }
+    "day": {
+      "one": "dan",
+      "two": "dneva",
+      "few": "dnevi",
+      "other": "dni"
+    },
+    "week": {
+      "one": "teden",
+      "two": "tedna",
+      "few": "tedni",
+      "other": "tednov"
+    },
+    "month": {
+      "one": "mesec",
+      "two": "meseca",
+      "few": "meseci",
+      "other": "mesecev"
+    },
+    "year": {
+      "one": "leto",
+      "two": "leti",
+      "few": "leta",
+      "other": "let"
+    },
+    "hour": {
+      "one": "ura",
+      "two": "uri",
+      "few": "ure",
+      "other": "ur"
+    },
+    "minute": {
+      "one": "minuta",
+      "two": "minuti",
+      "few": "minute",
+      "other": "minut"
+    },
+    "second": {
+      "one": "sekunda",
+      "two": "sekundi",
+      "few": "sekunde",
+      "other": "sekund"
+    },
+    "milestone": {
+      "one": "mejnik",
+      "two": "mejnika",
+      "few": "mejniki",
+      "other": "mejnikov"
+    },
+    "person": {
+      "one": "oseba",
+      "two": "osebi",
+      "few": "osebe",
+      "other": "oseb"
+    },
+    "group": {
+      "one": "skupina",
+      "two": "skupini",
+      "few": "skupine",
+      "other": "skupin"
+    },
+    "member": {
+      "one": "član",
+      "two": "člana",
+      "few": "člani",
+      "other": "članov"
+    }
   },
   "shareMessages": {
     "birthday": [

@@ -5,7 +5,7 @@
     "tab_team": "Zajedno",
     "tab_data": "Podaci",
     "tab_settings": "Postavke",
-    "tabbar_solo": "Ja",
+    "tabbar_solo": "Osobno",
     "tabbar_together": "Zajedno",
     "tabbar_edit": "Uredi",
     "tagline": "Poezija brojeva tvog života — otkrivena.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Prijatelji · Kolege · Obitelj",
     "wiz_one_more_group": "Još jedna grupa",
     "wiz_go_dashboard": "Idi na moju početnu",
-    "wiz_explore_tabs": "Istraži Ja · Zajedno · Uredi",
+    "wiz_explore_tabs": "Istraži Osobno · Zajedno · Uredi",
     "wiz_share": "Podijeli",
     "wiz_show_more_tpl": "Pokaži još {count} {noun} ▼",
     "wiz_show_more_short": "Pokaži još {count} ▼",
@@ -405,17 +405,61 @@
     "prem_gate_upgrade_btn": "Nadogradi — €1.49/god."
   },
   "plurals": {
-    "day": { "one": "dan", "few": "dana", "other": "dana" },
-    "week": { "one": "tjedan", "few": "tjedna", "other": "tjedana" },
-    "month": { "one": "mjesec", "few": "mjeseca", "other": "mjeseci" },
-    "year": { "one": "godina", "few": "godine", "other": "godina" },
-    "hour": { "one": "sat", "few": "sata", "other": "sati" },
-    "minute": { "one": "minuta", "few": "minute", "other": "minuta" },
-    "second": { "one": "sekunda", "few": "sekunde", "other": "sekundi" },
-    "milestone": { "one": "prekretnica", "few": "prekretnice", "other": "prekretnica" },
-    "person": { "one": "osoba", "few": "osobe", "other": "osoba" },
-    "group": { "one": "grupa", "few": "grupe", "other": "grupa" },
-    "member": { "one": "član", "few": "člana", "other": "članova" }
+    "day": {
+      "one": "dan",
+      "few": "dana",
+      "other": "dana"
+    },
+    "week": {
+      "one": "tjedan",
+      "few": "tjedna",
+      "other": "tjedana"
+    },
+    "month": {
+      "one": "mjesec",
+      "few": "mjeseca",
+      "other": "mjeseci"
+    },
+    "year": {
+      "one": "godina",
+      "few": "godine",
+      "other": "godina"
+    },
+    "hour": {
+      "one": "sat",
+      "few": "sata",
+      "other": "sati"
+    },
+    "minute": {
+      "one": "minuta",
+      "few": "minute",
+      "other": "minuta"
+    },
+    "second": {
+      "one": "sekunda",
+      "few": "sekunde",
+      "other": "sekundi"
+    },
+    "milestone": {
+      "one": "prekretnica",
+      "few": "prekretnice",
+      "other": "prekretnica"
+    },
+    "person": {
+      "one": "osoba",
+      "few": "osobe",
+      "other": "osoba"
+    },
+    "group": {
+      "one": "grupa",
+      "few": "grupe",
+      "other": "grupa"
+    },
+    "member": {
+      "one": "član",
+      "few": "člana",
+      "other": "članova"
+    }
   },
   "shareMessages": {
     "birthday": [

@@ -5,7 +5,7 @@
     "tab_team": "ด้วยกัน",
     "tab_data": "ข้อมูล",
     "tab_settings": "ตั้งค่า",
-    "tabbar_solo": "ฉัน",
+    "tabbar_solo": "ส่วนตัว",
     "tabbar_together": "ด้วยกัน",
     "tabbar_edit": "แก้ไข",
     "tagline": "บทกวีแห่งตัวเลขในชีวิตคุณ รอให้คุณค้นพบ",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "เพื่อน · เพื่อนร่วมงาน · ครอบครัว",
     "wiz_one_more_group": "อีกหนึ่งกลุ่ม",
     "wiz_go_dashboard": "ไปที่แดชบอร์ดของฉัน",
-    "wiz_explore_tabs": "ลองดูแท็บ ฉัน · ด้วยกัน · แก้ไข",
+    "wiz_explore_tabs": "ลองดูแท็บ ส่วนตัว · ด้วยกัน · แก้ไข",
     "wiz_share": "แชร์",
     "wiz_show_more_tpl": "ดู{noun}อีก {count} รายการ ▼",
     "wiz_show_more_short": "ดูเพิ่มอีก {count} ▼",
@@ -405,17 +405,39 @@
     "prem_gate_upgrade_btn": "อัปเกรด — €1.49/ปี"
   },
   "plurals": {
-    "day": { "other": "วัน" },
-    "week": { "other": "สัปดาห์" },
-    "month": { "other": "เดือน" },
-    "year": { "other": "ปี" },
-    "hour": { "other": "ชั่วโมง" },
-    "minute": { "other": "นาที" },
-    "second": { "other": "วินาที" },
-    "milestone": { "other": "ช่วงเวลาพิเศษ" },
-    "person": { "other": "คน" },
-    "group": { "other": "กลุ่ม" },
-    "member": { "other": "สมาชิก" }
+    "day": {
+      "other": "วัน"
+    },
+    "week": {
+      "other": "สัปดาห์"
+    },
+    "month": {
+      "other": "เดือน"
+    },
+    "year": {
+      "other": "ปี"
+    },
+    "hour": {
+      "other": "ชั่วโมง"
+    },
+    "minute": {
+      "other": "นาที"
+    },
+    "second": {
+      "other": "วินาที"
+    },
+    "milestone": {
+      "other": "ช่วงเวลาพิเศษ"
+    },
+    "person": {
+      "other": "คน"
+    },
+    "group": {
+      "other": "กลุ่ม"
+    },
+    "member": {
+      "other": "สมาชิก"
+    }
   },
   "shareMessages": {
     "birthday": [

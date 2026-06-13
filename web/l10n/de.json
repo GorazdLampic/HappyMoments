@@ -5,7 +5,7 @@
     "tab_team": "Team",
     "tab_data": "Daten",
     "tab_settings": "Einstellungen",
-    "tabbar_solo": "Ich",
+    "tabbar_solo": "Persönlich",
     "tabbar_together": "Team",
     "tabbar_edit": "Bearbeiten",
     "tagline": "Entdecke die Poesie der Zahlen in deinem Leben.",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "Freunde · Kollegen · Familie",
     "wiz_one_more_group": "Noch eine Gruppe",
     "wiz_go_dashboard": "Zu meiner Übersicht",
-    "wiz_explore_tabs": "Entdecke Ich · Team · Bearbeiten",
+    "wiz_explore_tabs": "Entdecke Persönlich · Team · Bearbeiten",
     "wiz_share": "Teilen",
     "wiz_show_more_tpl": "Noch {count} {noun} zeigen ▼",
     "wiz_show_more_short": "Noch {count} zeigen ▼",
@@ -405,17 +405,50 @@
     "prem_gate_upgrade_btn": "Upgrade – €1.49/Jahr"
   },
   "plurals": {
-    "day": { "one": "Tag", "other": "Tage" },
-    "week": { "one": "Woche", "other": "Wochen" },
-    "month": { "one": "Monat", "other": "Monate" },
-    "year": { "one": "Jahr", "other": "Jahre" },
-    "hour": { "one": "Stunde", "other": "Stunden" },
-    "minute": { "one": "Minute", "other": "Minuten" },
-    "second": { "one": "Sekunde", "other": "Sekunden" },
-    "milestone": { "one": "Meilenstein", "other": "Meilensteine" },
-    "person": { "one": "Person", "other": "Personen" },
-    "group": { "one": "Gruppe", "other": "Gruppen" },
-    "member": { "one": "Mitglied", "other": "Mitglieder" }
+    "day": {
+      "one": "Tag",
+      "other": "Tage"
+    },
+    "week": {
+      "one": "Woche",
+      "other": "Wochen"
+    },
+    "month": {
+      "one": "Monat",
+      "other": "Monate"
+    },
+    "year": {
+      "one": "Jahr",
+      "other": "Jahre"
+    },
+    "hour": {
+      "one": "Stunde",
+      "other": "Stunden"
+    },
+    "minute": {
+      "one": "Minute",
+      "other": "Minuten"
+    },
+    "second": {
+      "one": "Sekunde",
+      "other": "Sekunden"
+    },
+    "milestone": {
+      "one": "Meilenstein",
+      "other": "Meilensteine"
+    },
+    "person": {
+      "one": "Person",
+      "other": "Personen"
+    },
+    "group": {
+      "one": "Gruppe",
+      "other": "Gruppen"
+    },
+    "member": {
+      "one": "Mitglied",
+      "other": "Mitglieder"
+    }
   },
   "shareMessages": {
     "birthday": [

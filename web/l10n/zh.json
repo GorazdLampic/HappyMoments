@@ -5,7 +5,7 @@
     "tab_team": "一起",
     "tab_data": "数据",
     "tab_settings": "设置",
-    "tabbar_solo": "我",
+    "tabbar_solo": "个人",
     "tabbar_together": "一起",
     "tabbar_edit": "编辑",
     "tagline": "发现藏在你生命里的数字诗意。",
@@ -114,7 +114,7 @@
     "wiz_who_else_sub": "朋友 · 同事 · 家人",
     "wiz_one_more_group": "再来一个分组",
     "wiz_go_dashboard": "进入我的主页",
-    "wiz_explore_tabs": "探索 我 · 一起 · 编辑",
+    "wiz_explore_tabs": "探索 个人 · 一起 · 编辑",
     "wiz_share": "分享",
     "wiz_show_more_tpl": "再看{count}{noun} ▼",
     "wiz_show_more_short": "再看{count}个 ▼",
@@ -405,17 +405,39 @@
     "prem_gate_upgrade_btn": "升级 €1.49/年"
   },
   "plurals": {
-    "day": { "other": "天" },
-    "week": { "other": "周" },
-    "month": { "other": "个月" },
-    "year": { "other": "年" },
-    "hour": { "other": "小时" },
-    "minute": { "other": "分钟" },
-    "second": { "other": "秒" },
-    "milestone": { "other": "个里程碑" },
-    "person": { "other": "人" },
-    "group": { "other": "个分组" },
-    "member": { "other": "位成员" }
+    "day": {
+      "other": "天"
+    },
+    "week": {
+      "other": "周"
+    },
+    "month": {
+      "other": "个月"
+    },
+    "year": {
+      "other": "年"
+    },
+    "hour": {
+      "other": "小时"
+    },
+    "minute": {
+      "other": "分钟"
+    },
+    "second": {
+      "other": "秒"
+    },
+    "milestone": {
+      "other": "个里程碑"
+    },
+    "person": {
+      "other": "人"
+    },
+    "group": {
+      "other": "个分组"
+    },
+    "member": {
+      "other": "位成员"
+    }
   },
   "shareMessages": null,
   "shareLink": null,
