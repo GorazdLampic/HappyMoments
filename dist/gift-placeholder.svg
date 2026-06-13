@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2700" height="1100" viewBox="0 0 2700 1100">
-  <rect width="2700" height="1100" fill="#1a1a1a"/>
-  <rect x="30" y="30" width="2640" height="1040" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.3" rx="8"/>
-  <text x="1350" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="40" fill="#888" font-style="italic">HappyMoments</text>
-  <text x="1350" y="550" text-anchor="middle" font-family="Courier New,monospace" font-size="200" fill="#d4b876" font-weight="300">MILESTONE</text>
-  <text x="1350" y="700" text-anchor="middle" font-family="Georgia,serif" font-size="60" fill="#e0e0e0" font-style="italic">Custom design will be applied</text>
-  <text x="1350" y="1050" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#888">happymoments.app</text>
-</svg>

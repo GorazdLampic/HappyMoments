@@ -8565,17 +8565,20 @@ const I18N = (() => {
     }
 
     function detectLocale() {
+        // 'ar' ships but is only partially translated and has no RTL layout yet,
+        // so never auto-select or restore it — it stays hidden until completed.
+        const usable = l => l && TRANSLATIONS[l] && l !== 'ar';
         // 1. Check saved preference
         const saved = localStorage.getItem('happymoments_locale');
-        if (saved && TRANSLATIONS[saved]) return saved;
+        if (usable(saved)) return saved;
 
         // 2. Check full browser language tag (e.g. 'pt-BR')
         const browserFull = (navigator.language || 'en').replace('-', '_');
-        if (TRANSLATIONS[browserFull]) return browserFull;
+        if (usable(browserFull)) return browserFull;
 
         // 3. Check base language
         const browserLang = browserFull.split('_')[0].toLowerCase();
-        if (TRANSLATIONS[browserLang]) return browserLang;
+        if (usable(browserLang)) return browserLang;
 
         // 4. Check variants
         if (['sr', 'bs'].includes(browserLang)) return 'hr';

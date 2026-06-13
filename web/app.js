@@ -362,6 +362,16 @@ function init() {
     moveSettingsIntoProfilePanel();
     upgradeLangFlags();
 
+    // Set the locale BEFORE any dynamic render below, so a returning user never
+    // sees a first-paint English flash on dynamically-built content (milestone
+    // dates, "Show N more", the UPCOMING hint). Static data-i18n chrome was
+    // always fixed by applyTranslations(), but dynamic rows are baked at render
+    // time and need currentLocale set first.
+    if (typeof I18N !== 'undefined') {
+        I18N.init();
+        initLangPicker();
+    }
+
     // Date fields are now DD/MM/YYYY number inputs — no max needed
 
     const isNewUser = appData.events.length === 0 && !localStorage.getItem('hm_onboarded');
@@ -395,12 +405,6 @@ function init() {
     if (typeof NOTIF !== 'undefined') {
         NOTIF.init();
         loadNotifUI();
-    }
-
-    // Initialize i18n
-    if (typeof I18N !== 'undefined') {
-        I18N.init();
-        initLangPicker();
     }
 
     // Check for Stripe checkout return
@@ -1305,7 +1309,15 @@ function editorUpdateMember(eventId, field, value) {
     const ev = appData.events.find(e => e.id === eventId);
     if (!ev) return;
     if (field === 'name' && value.trim()) {
-        ev.name = value.trim();
+        let v = value.trim();
+        // The self-row is stored canonically as 'Me'. Its input is seeded with
+        // the localized label (displayPersonName → "Jaz"/"Ich"); if the user
+        // focuses and blurs without a real change, that label would be written
+        // back and clobber 'Me', breaking === 'Me' logic (self-row delete-guard,
+        // combined skip-self → double-counting). Keep 'Me' when the localized
+        // label comes back unchanged. A genuine rename still goes through.
+        if (ev.name === 'Me' && typeof tt === 'function' && v === tt('me_label')) v = 'Me';
+        ev.name = v;
         saveData();
     }
 }
@@ -2591,7 +2603,7 @@ function wizardShowCombinedAndName() {
 // --- Screen 7: Group builder (Me + Person 2 pre-filled) ---
 function wizardGoToGroupBuilder() {
     _wizardEnsureClean();
-    const groupName = document.getElementById('groupTitleInput')?.value?.trim() || 'Family';
+    const groupName = document.getElementById('groupTitleInput')?.value?.trim() || tt('wiz_group_family');
 
     // Rename the current set
     const currentSet = allSets.find(s => s.id === currentSetId);
@@ -2748,7 +2760,7 @@ function wizardShowGroupReveal() {
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || 'Family';
+    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || tt('wiz_group_family');
 
     // Phase 1: Individual milestones — only for NEW members (not already revealed)
     // 1 member: show 3 milestones + expand. 2+ members: show 1 each + expand per person.
@@ -2854,7 +2866,7 @@ function wizardShowTeamMilestones() {
     if (!el) return;
 
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || 'Family';
+    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || tt('wiz_group_family');
 
     const combinedMs = typeof findSumMilestonesForEvents === 'function'
         ? findSumMilestonesForEvents(appData.events, 20, 1825, appSettings || {}) : [];
@@ -3059,7 +3071,7 @@ function wizardShareForPerson(name, message) {
 }
 
 function wizardShareGroup() {
-    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || 'Family';
+    const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || tt('wiz_group_family');
     const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at happymoments.app';
     showSharePreview(message, groupName);
     _track('onboard_share_group');
@@ -3130,7 +3142,7 @@ function wizardCreateAnotherGroup() {
 }
 
 function wizardCreateGroupAndBuild() {
-    const groupName = document.getElementById('groupTitleInput')?.value?.trim() || 'Friends';
+    const groupName = document.getElementById('groupTitleInput')?.value?.trim() || tt('wiz_group_friends');
     _wizardRevealedIds = new Set(); // Reset for new group context
     saveData();
 
@@ -4414,7 +4426,7 @@ function renderHeroMilestone() {
             </div>
             ${hero.isCosmic && hero.description ? `<div class="hero-cosmic-desc">${hero.description}</div>` : ''}
             <div class="hero-details">
-                <span class="hero-person">${escapeHtml(hero.eventName)}</span>
+                <span class="hero-person">${escapeHtml(displayPersonName(hero.eventName))}</span>
                 <span class="hero-separator">&mdash;</span>
                 <span class="hero-date">${dateStr}</span>
                 <span class="hero-separator">&mdash;</span>
@@ -4569,7 +4581,7 @@ function renderHomeScreen() {
                 <div class="tc-main">
                     <div class="tc-left">
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
-                        <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                        <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
                     <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
@@ -4619,7 +4631,7 @@ function renderHomeScreen() {
                 <div class="tc-main">
                     <div class="tc-left">
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
-                        <span class="tc-person">${escapeHtml(m.eventName)}</span>
+                        <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
                     <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
@@ -4700,7 +4712,7 @@ function selectMilestoneForBar(idx) {
     if (barText && barPerson) {
         const displayText = m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName));
         barText.textContent = displayText;
-        barPerson.textContent = m.eventName + ' \u2014 ' + formatMilestoneDate(m.date);
+        barPerson.textContent = displayPersonName(m.eventName) + ' \u2014 ' + formatMilestoneDate(m.date);
     }
 }
 
@@ -4840,7 +4852,7 @@ function renderMostSpecialMilestones() {
                             <div class="miv-value"><span class="cm-cosmic-icon">\u2731</span> ${cosmicLabel}</div>
                         </div>
                         <div class="miv-right">
-                            <div class="miv-person">${m.eventName}</div>
+                            <div class="miv-person">${escapeHtml(displayPersonName(m.eventName))}</div>
                             <div class="miv-when">${dateStr}</div>
                             <div class="miv-countdown">${timeUntilStr}</div>
                             <div class="miv-cosmic-desc">${m.description}</div>
@@ -4856,7 +4868,7 @@ function renderMostSpecialMilestones() {
                             <div class="miv-unit">${localizedUnit(m.value, m.unitName)}</div>
                         </div>
                         <div class="miv-right">
-                            <div class="miv-person">${m.eventName}</div>
+                            <div class="miv-person">${escapeHtml(displayPersonName(m.eventName))}</div>
                             <div class="miv-when">${dateStr}</div>
                             <div class="miv-countdown">${timeUntilStr}</div>
                         </div>
@@ -5597,7 +5609,7 @@ function pickShareTemplate(category) {
 function fillShareTemplate(template, m) {
     const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
     const countdown = formatTimeDistance(m.timeUntil);
-    const name = m.eventName || 'someone special';
+    const name = displayPersonName(m.eventName) || 'someone special';
     // For cosmic milestones, format value+unit as a single label
     let val, unit, why;
     if (m.isCosmic) {

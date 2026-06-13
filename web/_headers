@@ -1,0 +1,5 @@
+# Cloudflare Pages headers
+# Service worker must always be revalidated so PWA updates land immediately
+# (without this, the browser may serve a cached sw.js for up to its max-age).
+/sw.js
+  Cache-Control: no-cache

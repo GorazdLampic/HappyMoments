@@ -439,7 +439,110 @@
       "other": "名"
     }
   },
-  "shareMessages": null,
+  "shareMessages": {
+    "birthday": [
+      "{name}さんは{date}に{value}{unit}を迎えます。そのひとつひとつがかけがえのないものです。",
+      "{value}{unit}の{name}さんが世界を照らしてきました——{date}に。",
+      "ご存知ですか？{name}さんは{date}にちょうど{value}{unit}になります。それは{why}です！",
+      "{name}さんの{value}{unit}の節目が近づいています——あと{countdown}。",
+      "{name}さん：もうすぐ{value}{unit}。一番素敵な章はまだ書かれていません。",
+      "{date}、{name}さんがこの世界に来てからちょうど{value}{unit}。なんと素晴らしい旅でしょう。",
+      "{value}{unit}の笑い、成長、そして{name}さんの特別な存在——{date}に。",
+      "{name}さんの{value}{unit}をお祝いする準備をしましょう！"
+    ],
+    "round": [
+      "{name}さんが{value}{unit}に到達します！完璧なキリ番です。",
+      "{value}{unit}がやってきます！たくさんのゼロ、お祝いしない理由はゼロです。{name}さん！",
+      "キリ番、拍手嗝采：{name}さんの{value}{unit}——{date}！",
+      "{name}さんが{date}に大きな{value}に到達します。{unit}で数えると、たくさんの人生です！",
+      "美しいゼロの並び！{name}さんが{date}に{value}{unit}に到達します。",
+      "{value}{unit}——{name}さんのお祝いにふさわしいキリのいい数字です。"
+    ],
+    "repdigit": [
+      "{name}さんが{date}に{value}{unit}に到達！全部同じ数字——{why}です！",
+      "すべての桁が同じとき、それは特別なこと。{name}さんの{value}{unit}、{date}に！",
+      "{value}{unit}——エコーのような数字。{name}さんの影響力のように。{date}。",
+      "繰り返す数字、繰り返す喜び：{name}さんの{value}{unit}、{date}。",
+      "すべての桁が同意：{name}さんの{value}{unit}をお祝いする時です！{date}！",
+      "{value}——{name}さんのために躊り上がる数字！"
+    ],
+    "palindrome": [
+      "{name}さんの{value}{unit}、{date}——回文数の節目！前から読んでも後ろから読んでも同じ。",
+      "鏡よ鏡：{name}さんの{value}{unit}が{date}に回文数に！",
+      "{value}を前から、{value}を後ろから。{name}さんの節目は完璧な対称！",
+      "回文数アラート！{name}さんの{value}{unit}、{date}——どの角度から見ても完璧。",
+      "数字の対称、人生の対称：{name}さんの{value}{unit}、{date}。",
+      "どちらから読んでも、{name}さんの{value}{unit}は素晴らしい。"
+    ],
+    "fibonacci": [
+      "{name}さんの{value}{unit}、{date}——フィボナッチの節目！自然が愛する数字。",
+      "黄金のらせんが{name}さんの{value}に到達！{date}のフィボナッチ{unit}のお祝い！",
+      "{name}さん：{value}{unit}、フィボナッチ数列の中。自然のように成長！{date}。",
+      "ひまわりから銀河まで：{name}さんの{value}{unit}は黄金のパターンに従います。{date}。",
+      "フィボナッチ数列が{name}さんに微笑む：{value}{unit}の自然な成長。",
+      "黄金比が承認：{name}さんの{value}{unit}、{date}！"
+    ],
+    "power_of_2": [
+      "{name}さんの{value}{unit}、{date}——2の累乗！デジタルの世界が敬礼します。",
+      "バイナリの完璧：{name}さんが{value}{unit}に到達。2の累乗、素晴らしい！",
+      "{value}{unit}——コンピュータが喜ぶ数字です。準備はいいですか、{name}さん！{date}。",
+      "ビットが揃います：{name}さんの{value}{unit}は完璧な2の累乗！{date}！",
+      "1から2、4から…{value}へ！{name}さんの指数的成長は{date}も続きます。",
+      "デジタルの節目！{name}さんの{value}{unit}——{date}の2の累乗。"
+    ],
+    "scientific": [
+      "{name}さんの{value}{unit}、{date}——{why}に関連する数字！科学もお祝いします！",
+      "科学的に意義深い節目：{name}さんの{value}{unit}、{date}。{why}！",
+      "人生が数学の定数と出会う場所：{name}さんの{value}{unit}、{date}。",
+      "数学好き集合：{name}さんの{value}{unit}が{date}に{why}とつながります！",
+      "数学が節目になるとき：{name}さんの{value}{unit}、{date}。{why}！",
+      "アインシュタインも認めるでしょう：{name}さんの{value}{unit}、{date}。{why}！"
+    ],
+    "sequential": [
+      "{name}さんの{value}{unit}、{date}——連続数！数字が順番に並びます。",
+      "1、2、3…{value}！{name}さんの数字が{date}にきれいに並びます。",
+      "連続の完璧：{name}さんの{value}{unit}、{date}。一歩ずつ！",
+      "音階の音符のように、{name}さんの{value}{unit}の数字が完璧な順序で。",
+      "数字が整列！{name}さんの{value}{unit}は{date}に連続のお祝い。",
+      "数字の階段：{name}さんの{value}{unit}、{date}。"
+    ],
+    "alternating": [
+      "{name}さんの{value}{unit}、{date}——交互パターン！数字が踊っています。",
+      "行ったり来たり、心臓の鼓動のように：{name}さんの{value}{unit}が{date}に完璧に交互。",
+      "{value}は{name}さんに：独自のリズムを持つ数字！{date}。",
+      "振り子のように、{name}さんの{value}{unit}が数字の間を揺れます。",
+      "{value}のリズムが{name}さんのリズムと一致：安定して美しい。",
+      "交互とお祝い：{name}さんの{value}{unit}、{date}！"
+    ],
+    "combined": [
+      "みなさん合わせて、{date}に{value}{unit}に到達！組み合わせの節目は最高です。",
+      "{value}{unit}の共同生活——たくさんの共有の瞬間です！{date}！",
+      "すべての{unit}を足すと{value}に。すべての愛を足すと無限大に。",
+      "合計：{value}{unit}の人生、笑い、そして一緒にいること。{date}。",
+      "みなさんの間で{value}{unit}！それは{why}——一緒にお祝いする価値があります！{date}。",
+      "旅の合計：{value}{unit}、{date}。全体は部分の和より大きい！"
+    ],
+    "ratio": [
+      "お二人の年齢の比率が{date}にちょうど{value}に！数学的な調和の瞬間。",
+      "{date}、お二人の年齢が{value}の比率を形成します。なんと美しい！",
+      "年齢比率の節目：{value}！お二人の数字が{date}に踊っています。",
+      "お二人の年齢が{value}の比率で揃います——{date}の美しくはかない瞬間。",
+      "比率{value}はお二人の絆と同じくらい特別です。",
+      "{date}、お一人がもうお一人のちょうど{value}倍になります。素敵ですね！"
+    ],
+    "generic": [
+      "{name}さんがもうすぐ{value}{unit}に！それは{why}。お祝いの準備をしましょう！",
+      "ご存知ですか？{name}さんは{date}にちょうど{value}{unit}になります。素整な節目です！",
+      "この瞬間を覚えて：{name}さんの{value}{unit}、{date}。特別な数字は注目に値します。",
+      "{name}さんの{value}{unit}の節目が近づいています——その数字は{why}。{date}にお祝い！",
+      "誰もが{value}{unit}に到達できるわけではありません。{name}さん、あなたは幸運です。",
+      "{name}さんの{value}{unit}。分かち合いお祝いする価値のある数字です、{date}。"
+    ],
+    "cosmic": [
+      "{name}さんの{value}が{date}にやってきます。宇宙もお祝いしてくれそう！",
+      "{name}さんに宇宙規模の節目：{value}、{date}。星々が整列しています。"
+    ]
+  },
   "shareLink": null,
   "dateFallback": null
 }

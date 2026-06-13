@@ -240,51 +240,55 @@ function findDurationMilestones(startDate, endDate, maxResults, settings) {
 
 // Format time distance in short human-readable form
 function formatTimeDistance(ms) {
+    // Localized short unit abbreviations (reuse the existing unit_* keys);
+    // falls back to English abbreviations outside the browser/runtime.
+    const EN = { unit_sec: 'sec', unit_min: 'min', unit_hrs: 'hrs', unit_d: 'd', unit_w: 'w', unit_mo: 'mo', unit_y: 'y' };
+    const u = k => (typeof I18N !== 'undefined' && I18N.t) ? I18N.t(k) : EN[k];
     const absMs = Math.abs(ms);
 
     if (absMs < 60 * 1000) {
-        return '<1 min';
+        return '<1 ' + u('unit_min');
     }
 
     if (absMs < 60 * 60 * 1000) {
         const minutes = Math.floor(absMs / (60 * 1000));
-        return `${minutes} min`;
+        return `${minutes} ${u('unit_min')}`;
     }
 
     if (absMs < 24 * 60 * 60 * 1000) {
         const hours = Math.floor(absMs / (60 * 60 * 1000));
-        return `${hours}h`;
+        return `${hours}${u('unit_hrs')}`;
     }
 
     if (absMs < 7 * 24 * 60 * 60 * 1000) {
         const days = Math.floor(absMs / (24 * 60 * 60 * 1000));
-        return `${days}d`;
+        return `${days}${u('unit_d')}`;
     }
 
     if (absMs < 30 * 24 * 60 * 60 * 1000) {
         const weeks = Math.floor(absMs / (7 * 24 * 60 * 60 * 1000));
         const days = Math.floor((absMs % (7 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000));
         if (days > 0) {
-            return `${weeks}w ${days}d`;
+            return `${weeks}${u('unit_w')} ${days}${u('unit_d')}`;
         }
-        return `${weeks}w`;
+        return `${weeks}${u('unit_w')}`;
     }
 
     const months = Math.floor(absMs / (30 * 24 * 60 * 60 * 1000));
     if (months < 12) {
         const weeks = Math.floor((absMs % (30 * 24 * 60 * 60 * 1000)) / (7 * 24 * 60 * 60 * 1000));
         if (weeks > 0 && months < 6) {
-            return `${months}mo ${weeks}w`;
+            return `${months}${u('unit_mo')} ${weeks}${u('unit_w')}`;
         }
-        return `${months}mo`;
+        return `${months}${u('unit_mo')}`;
     }
 
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
     if (remainingMonths === 0) {
-        return `${years}y`;
+        return `${years}${u('unit_y')}`;
     }
-    return `${years}y ${remainingMonths}mo`;
+    return `${years}${u('unit_y')} ${remainingMonths}${u('unit_mo')}`;
 }
 
 // Format date for display

@@ -87,7 +87,7 @@
                 <button class="lang-option" onclick="selectLanguage('ru')"><span class="lang-option-flag">🇷🇺</span><span>Русский</span></button>
                 <button class="lang-option" onclick="selectLanguage('zh')"><span class="lang-option-flag">🇨🇳</span><span>中文</span></button>
                 <button class="lang-option" onclick="selectLanguage('hi')"><span class="lang-option-flag">🇮🇳</span><span>हिन्दी</span></button>
-                <button class="lang-option" onclick="selectLanguage('ar')"><span class="lang-option-flag">🇸🇦</span><span>العربية</span></button>
+                <!-- ar (Arabic) hidden until fully translated + RTL layout is implemented -->
                 <button class="lang-option" onclick="selectLanguage('bn')"><span class="lang-option-flag">🇧🇩</span><span>বাংলা</span></button>
                 <button class="lang-option" onclick="selectLanguage('ja')"><span class="lang-option-flag">🇯🇵</span><span>日本語</span></button>
                 <button class="lang-option" onclick="selectLanguage('vi')"><span class="lang-option-flag">🇻🇳</span><span>Tiếng Việt</span></button>
@@ -289,8 +289,8 @@
 
             <!-- Add someone — always at bottom of Me view -->
             <div class="home-add-person" id="homeAddPrompt" onclick="switchTab('events'); setTimeout(() => { const el = document.getElementById('newEventName'); if(el) el.focus(); }, 200);">
-                <strong>+ Add more people</strong><br>
-                <span style="font-size:0.9rem;color:var(--text-muted);" id="homeAddHint">More people = more milestones to celebrate together</span>
+                <strong data-i18n="dash_add_more_people">+ Add more people</strong><br>
+                <span style="font-size:0.9rem;color:var(--text-muted);" id="homeAddHint" data-i18n="dash_add_more_hint">More people = more milestones to celebrate together</span>
             </div>
             </div><!-- end homeViewMe -->
 

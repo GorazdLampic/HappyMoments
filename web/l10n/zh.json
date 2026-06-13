@@ -439,7 +439,110 @@
       "other": "位成员"
     }
   },
-  "shareMessages": null,
+  "shareMessages": {
+    "birthday": [
+      "{name}将在{date}迎来{value}{unit}！每一刻都值得庆祝。",
+      "{value}{unit}的{name}照亮世界——{date}即将到来！",
+      "你知道吗？{name}将在{date}刚好达到{value}{unit}。这就是{why}！",
+      "{name}的{value}{unit}里程碑即将到来——还有{countdown}！",
+      "{name}：即将拥有{value}{unit}的人生。最精彩的篇章还在前方。",
+      "{date}，{name}来到这个世界将满{value}{unit}。多么美好的旅程！",
+      "{value}{unit}的欢笑、成长和{name}的非凡——即将在{date}到来。",
+      "准备好为{name}的{value}{unit}喝彩吧！"
+    ],
+    "round": [
+      "{name}即将达到{value}{unit}！一个完美的整数，配得上完美的人。",
+      "{value}{unit}来了！那么多零，零个理由不为{name}庆祝！",
+      "整数、掌声：{name}的{value}{unit}——{date}！",
+      "{name}将在{date}迎来大大的{value}。用{unit}计算，那是满满的人生！",
+      "看那些漂亮的零！{name}将在{date}达到{value}{unit}。",
+      "{value}{unit}——这种整数值得为{name}办一场庆祝。"
+    ],
+    "repdigit": [
+      "{name}将在{date}达到{value}{unit}！所有数字都一样——这就是{why}！",
+      "当每个数字都相同，你就知道它很特别。{name}的{value}{unit}在{date}！",
+      "{value}{unit}——一个由回声组成的数字。就像{name}的影响力。{date}。",
+      "重复的数字，重复的喜悦：{name}的{value}{unit}在{date}。",
+      "所有数字都达成一致：是时候为{name}的{value}{unit}庆祝了！{date}！",
+      "{value}——这个数字为{name}欢呼雀跃！"
+    ],
+    "palindrome": [
+      "{name}的{value}{unit}在{date}——回文数里程碑！正读反读都一样。",
+      "镜子镜子：{name}的{value}{unit}将在{date}成为回文数！",
+      "{value}正读，{value}反读。{name}的里程碑完美对称！",
+      "回文数警报！{name}的{value}{unit}在{date}——从任何角度看都完美。",
+      "数字中的对称，生活中的对称：{name}的{value}{unit}在{date}。",
+      "无论怎么读，{name}的{value}{unit}都很精彩。"
+    ],
+    "fibonacci": [
+      "{name}的{value}{unit}在{date}——斐波那契里程碑！大自然的数字。",
+      "黄金螺旋为{name}达到{value}！{date}的斐波那契{unit}庆祝！",
+      "{name}：{value}{unit}在斐波那契序列中。像大自然一样生长！{date}。",
+      "从向日葵到星系：{name}的{value}{unit}遵循黄金模式。{date}。",
+      "斐波那契序列向{name}微笑：{value}{unit}的自然成长。",
+      "黄金比例批准：{name}的{value}{unit}在{date}！"
+    ],
+    "power_of_2": [
+      "{name}的{value}{unit}在{date}——2的幂！数字世界向你致敬。",
+      "二进制完美：{name}将达到{value}{unit}。2的幂方，太棒了！",
+      "{value}{unit}——一个让计算机欢唱的数字。准备好，{name}！{date}。",
+      "比特对齐：{name}的{value}{unit}将是完美的2的幂！{date}！",
+      "从1到2到4到…{value}！{name}的指数增长在{date}继续。",
+      "数字里程碑！{name}的{value}{unit}——{date}的2的幂。"
+    ],
+    "scientific": [
+      "{name}的{value}{unit}在{date}——与{why}相关的数字！科学也在庆祝！",
+      "具有科学意义的里程碑：{name}的{value}{unit}在{date}。{why}！",
+      "生活与数学常数相遇：{name}的{value}{unit}在{date}。",
+      "数学迷团结：{name}的{value}{unit}在{date}与{why}相连！",
+      "当数学遇见里程碑：{name}的{value}{unit}在{date}。{why}！",
+      "爱因斯坦会赞赏：{name}的{value}{unit}在{date}。{why}！"
+    ],
+    "sequential": [
+      "{name}的{value}{unit}在{date}——顺序数！数字排着队前进。",
+      "1、2、3…{value}！{name}的数字在{date}排成完美的队列。",
+      "顺序完美：{name}的{value}{unit}在{date}。一步一步！",
+      "像音阶上的音符，{name}的{value}{unit}数字完美排序。",
+      "数字井然有序！{name}的{value}{unit}将是一场顺序庆祝。{date}。",
+      "数字的阶梯：{name}的{value}{unit}在{date}。"
+    ],
+    "alternating": [
+      "{name}的{value}{unit}在{date}——交替模式！数字在跳舞。",
+      "来回交替，像心跳：{name}的{value}{unit}在{date}完美交替。",
+      "{value}给{name}：一个有自己节奏的数字！{date}。",
+      "像钟摆一样，{name}的{value}{unit}在数字间摆动。",
+      "{value}的节奏与{name}的节奏匹配：稳定而美丽。",
+      "交替与庆祝：{name}的{value}{unit}在{date}！"
+    ],
+    "combined": [
+      "合在一起，你们将在{date}达到{value}{unit}！组合里程碑是最好的里程碑。",
+      "{value}{unit}的共同生活——那是很多共同的时刻！{date}！",
+      "加起所有的{unit}你得到{value}。加起所有的爱你得到无限。",
+      "组合总计：{value}{unit}的生活、欢笑和在一起。{date}。",
+      "你们之间共{value}{unit}！这是{why}——值得一起庆祝！{date}。",
+      "旅程之和：{value}{unit}在{date}。整体大于部分之和！"
+    ],
+    "ratio": [
+      "你们的年龄比将在{date}刚好是{value}！数学和谐的时刻。",
+      "{date}，你们的年龄将形成{value}的比例。多么完美！",
+      "年龄比例里程碑：{value}！你们之间的数字在{date}跳舞。",
+      "你们的年龄将以{value}的比例对齐——{date}的一个美丽瞬间。",
+      "比例{value}和你们的缘分一样特别。",
+      "{date}，你们中的一个刚好是另一个的{value}倍。太妙了！"
+    ],
+    "generic": [
+      "{name}即将达到{value}{unit}！这是{why}。是时候准备庆祝了！",
+      "你知道吗？{name}将在{date}刚好达到{value}{unit}。多么棒的里程碑！",
+      "记住这个时刻：{name}的{value}{unit}在{date}。这么特别的数字值得关注。",
+      "{name}的{value}{unit}里程碑即将到来——这个数字是{why}。{date}庆祝！",
+      "不是每个人都能达到{value}{unit}。{name}，你是幸运的。",
+      "{name}的{value}{unit}。一个值得分享和庆祝的数字，{date}。"
+    ],
+    "cosmic": [
+      "{name}的{value}将在{date}到来。连宇宙都来一起庆祝！",
+      "{name}的宇宙级时刻：{value}，就在{date}。星辰为你排好了队。"
+    ]
+  },
   "shareLink": null,
   "dateFallback": null
 }

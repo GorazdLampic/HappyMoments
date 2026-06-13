@@ -461,7 +461,110 @@
       "other": "miembros"
     }
   },
-  "shareMessages": null,
+  "shareMessages": {
+    "birthday": [
+      "¡{name} cumplirá {value} {unit} el {date}! Cada uno de ellos vale la pena celebrar.",
+      "¡{value} {unit} de {name} iluminando el mundo — llega el {date}!",
+      "¿¡Sabías que {name} alcanzará exactamente {value} {unit} el {date}?! ¡Eso es {why}!",
+      "¡Faltan solo {countdown} para que {name} cumpla {value} {unit}! ¡A celebrar!",
+      "{name}: a punto de cumplir {value} {unit}. Los mejores capítulos aún están por escribirse.",
+      "El {date}, hará exactamente {value} {unit} desde que {name} llegó al mundo. ¡Qué viaje!",
+      "{value} {unit} de risas, crecimiento y {name} siendo extraordinario/a — ¡llega el {date}!",
+      "¡Prepárate para celebrar a {name} por {value} {unit} de pura maravilla!"
+    ],
+    "round": [
+      "¡{name} va a llegar a {value} {unit}! Un número redondo perfecto para una persona perfecta.",
+      "¡{value} {unit} en camino! Muchos ceros y cero razones para no celebrar a {name}.",
+      "Números redondos, aplausos redondos: ¡{name} con {value} {unit} el {date}!",
+      "¡{name} alcanzará el gran {value} el {date}! En {unit}, ¡eso es muchísima vida!",
+      "¡Mira esos ceros preciosos! {name} marcará {value} {unit} el {date}.",
+      "{value} {unit} — el tipo de número redondo que pide fiesta para {name}."
+    ],
+    "repdigit": [
+      "¡{name} alcanzará {value} {unit} el {date}! Todos los dígitos iguales — ¡eso es {why}!",
+      "Cuando cada dígito es el mismo, sabes que es especial. ¡{name} con {value} {unit} el {date}!",
+      "{value} {unit} — un número hecho de ecos. Como el impacto de {name}. El {date}.",
+      "Dígito repetido, alegría repetida: ¡{name} con {value} {unit} el {date}!",
+      "¡Todos los dígitos están de acuerdo: es hora de celebrar a {name} con {value} {unit} el {date}!",
+      "¡{value} — el número que tartamudea de emoción por {name}!"
+    ],
+    "palindrome": [
+      "¡{name} con {value} {unit} el {date} — un palíndromo! Se lee igual al derecho y al revés.",
+      "¡Espejito, espejito: {value} {unit} de {name} será un palíndromo el {date}!",
+      "{value} al derecho, {value} al revés. ¡El hito de {name} tendrá simetría perfecta!",
+      "¡Alerta de palíndromo! {name} con {value} {unit} el {date} — ¡perfecto desde cualquier ángulo!",
+      "Simetría en los números, simetría en la vida: {name} con {value} {unit} el {date}.",
+      "Del derecho o del revés, {name} con {value} {unit} es increíble."
+    ],
+    "fibonacci": [
+      "¡{name} con {value} {unit} el {date} — un hito Fibonacci! El número de la naturaleza.",
+      "¡La espiral dorada alcanza {value} para {name}! Celebración Fibonacci el {date}.",
+      "{name}: {value} {unit} en la secuencia de Fibonacci. ¡Creciendo como la naturaleza quiso! {date}.",
+      "De girasoles a galaxias: {value} {unit} de {name} sigue el patrón dorado. {date}.",
+      "La secuencia de Fibonacci le sonríe a {name}: {value} {unit} de crecimiento natural.",
+      "¡La proporción áurea aprueba: {name} con {value} {unit} el {date}!"
+    ],
+    "power_of_2": [
+      "¡{name} con {value} {unit} el {date} — potencia de 2! El mundo digital te saluda.",
+      "¡Perfección binaria: {name} alcanzará {value} {unit}! ¡2 elevado a la potencia de lo increíble!",
+      "{value} {unit} — un número que hace cantar a las computadoras. ¡Prepárate, {name}! {date}.",
+      "¡Los bits se alinearán: {value} {unit} de {name} será una potencia de 2 perfecta el {date}!",
+      "¡De 1 a 2 a 4 hasta... {value}! El crecimiento exponencial de {name} continúa el {date}.",
+      "¡Hito digital! {name} con {value} {unit} — potencia de 2 el {date}."
+    ],
+    "scientific": [
+      "¡{name} con {value} {unit} el {date} — un número relacionado con {why}! ¡La ciencia celebra!",
+      "¡Hito científicamente significativo: {name} con {value} {unit} el {date}! ¡{why}!",
+      "Donde la vida se encuentra con las constantes matemáticas: {name} con {value} {unit} el {date}.",
+      "¡Nerds de las matemáticas, uníos: {name} con {value} {unit} el {date} está conectado con {why}!",
+      "¡Cuando las matemáticas se encuentran con los hitos: {name} con {value} {unit} el {date}! ¡{why}!",
+      "¡Einstein aprobaría: {name} con {value} {unit} el {date}! ¡{why}!"
+    ],
+    "sequential": [
+      "¡{name} con {value} {unit} el {date} — un número secuencial! Los dígitos marchan en orden.",
+      "¡1, 2, 3... {value}! Los dígitos de {name} caminan en fila perfecta el {date}.",
+      "¡Perfección secuencial: {name} con {value} {unit} el {date}! ¡Paso a paso!",
+      "Como notas en una escala, los dígitos de {name} están en secuencia perfecta: {value} {unit}.",
+      "¡Orden en los dígitos! {value} {unit} de {name} será una celebración secuencial el {date}.",
+      "Una escalera de dígitos: {name} con {value} {unit} el {date}."
+    ],
+    "alternating": [
+      "¡{name} con {value} {unit} el {date} — patrón alternado! ¡Los dígitos están bailando!",
+      "De aquí para allá, como latidos: ¡{value} {unit} de {name} alterna perfectamente el {date}!",
+      "{value} para {name}: ¡un número con ritmo propio! {date}.",
+      "Como un péndulo, {value} {unit} de {name} se balancea entre dígitos.",
+      "El ritmo de {value} combina con el ritmo de {name}: constante y hermoso.",
+      "¡Alternancia y celebración: {name} con {value} {unit} el {date}!"
+    ],
+    "combined": [
+      "¡Juntos alcanzarán {value} {unit} el {date}! Los hitos combinados son los mejores.",
+      "¡{value} {unit} de vida combinada — muchos momentos compartidos el {date}!",
+      "Suma todos los {unit} y obtienes {value}. Suma todo el amor y obtienes infinito.",
+      "Total combinado: {value} {unit} de vida, risas y estar juntos el {date}.",
+      "¡{value} {unit} entre todos ustedes! Eso es {why} — ¡vale la pena celebrar juntos el {date}!",
+      "¡La suma de los viajes: {value} {unit} el {date}! ¡Mayor que las partes!"
+    ],
+    "ratio": [
+      "¡La proporción entre sus edades será exactamente {value} el {date}! Un momento de armonía matemática.",
+      "¡El {date}, sus edades formarán la proporción {value}! ¡Qué satisfacción!",
+      "¡Hito de proporción de edad: {value}! Los números entre ustedes bailan el {date}.",
+      "Sus edades se alinearán en la proporción {value} — una hermosa proporción fugaz el {date}.",
+      "La proporción {value} es tan especial como el vínculo entre ustedes.",
+      "¡El {date}, uno de ustedes será exactamente {value} veces el otro! ¡Qué genial!"
+    ],
+    "generic": [
+      "¡{name} va a alcanzar {value} {unit}! Eso es {why}. ¡Hora de preparar la celebración!",
+      "¿¡Sabías?! ¡{name} alcanzará exactamente {value} {unit} el {date}! ¡Qué hito!",
+      "Marca el momento: {name} con {value} {unit} el {date}. Números así merecen atención.",
+      "¡El hito de {value} {unit} de {name} se acerca — un número que es {why}! ¡Celebra el {date}!",
+      "No todos llegan a {value} {unit}. {name}, tú eres de los afortunados.",
+      "{value} {unit} de {name}. Un número que merece compartirse y celebrarse el {date}."
+    ],
+    "cosmic": [
+      "El {value} de {name} llega el {date}. ¡Hasta el universo se suma a la fiesta!",
+      "Momento cósmico para {name}: {value} el {date}. Los planetas se alinean."
+    ]
+  },
   "shareLink": null,
   "dateFallback": null
 }

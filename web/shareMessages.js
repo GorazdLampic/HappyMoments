@@ -1237,6 +1237,10 @@ const SHARE_MESSAGES_I18N = {
             "Nem todo mundo chega a {value} {unit}. {name}, você é um(a) dos(as) sortudos(as).",
             "{value} {unit} de {name}. Um número que merece ser compartilhado e celebrado em {date}.",
         ],
+        cosmic: [
+            "O {value} de {name} chega em {date}. Até o universo entra na festa!",
+            "Momento cósmico para {name}: {value} em {date}. Os planetas se alinham.",
+        ],
     },
     hi: {
         birthday: [
@@ -1336,6 +1340,10 @@ const SHARE_MESSAGES_I18N = {
             "{name} का {value} {unit} का मील का पत्थर आ रहा है — यह {why}। {date} को मनाओ!",
             "हर कोई {value} {unit} तक नहीं पहुँचता। {name}, आप खुशकिस्मत हो।",
             "{name} के {value} {unit}। एक ऐसा नंबर जो साझा करने और मनाने लायक है {date} को।",
+        ],
+        cosmic: [
+            "{name} का {value} आ रहा है {date} को। पूरा ब्रह्मांड जश्न में शामिल!",
+            "{name} के लिए एक कॉस्मिक पल: {value}, {date} को। ग्रह भी कतार में खड़े हैं।",
         ],
     },
     zh: {
@@ -1437,6 +1445,10 @@ const SHARE_MESSAGES_I18N = {
             "不是每个人都能达到{value}{unit}。{name}，你是幸运的。",
             "{name}的{value}{unit}。一个值得分享和庆祝的数字，{date}。",
         ],
+        cosmic: [
+            "{name}的{value}将在{date}到来。连宇宙都来一起庆祝！",
+            "{name}的宇宙级时刻：{value}，就在{date}。星辰为你排好了队。",
+        ],
     },
     ja: {
         birthday: [
@@ -1536,6 +1548,10 @@ const SHARE_MESSAGES_I18N = {
             "{name}さんの{value}{unit}の節目が近づいています——その数字は{why}。{date}にお祝い！",
             "誰もが{value}{unit}に到達できるわけではありません。{name}さん、あなたは幸運です。",
             "{name}さんの{value}{unit}。分かち合いお祝いする価値のある数字です、{date}。",
+        ],
+        cosmic: [
+            "{name}さんの{value}が{date}にやってきます。宇宙もお祝いしてくれそう！",
+            "{name}さんに宇宙規模の節目：{value}、{date}。星々が整列しています。",
         ],
     },
     es: {
@@ -1637,6 +1653,10 @@ const SHARE_MESSAGES_I18N = {
             "No todos llegan a {value} {unit}. {name}, tú eres de los afortunados.",
             "{value} {unit} de {name}. Un número que merece compartirse y celebrarse el {date}.",
         ],
+        cosmic: [
+            "El {value} de {name} llega el {date}. ¡Hasta el universo se suma a la fiesta!",
+            "Momento cósmico para {name}: {value} el {date}. Los planetas se alinean.",
+        ],
     },
     bn: {
         birthday: [
@@ -1694,6 +1714,10 @@ const SHARE_MESSAGES_I18N = {
             "জানো? {date} তারিখে {name} ঠিক {value} {unit}-এ পৌঁছাবে। কী দারুণ মাইলফলক!",
             "দিনটা টুকে রাখো: {name}, {value} {unit}, {date}। এমন বিশেষ সংখ্যা নজর কাড়েই।",
             "সংখ্যারাও মাঝে মাঝে উৎসব ডাকে — {name}-এর {value} {unit} আসছে {date} তারিখে। তৈরি থেকো!",
+        ],
+        cosmic: [
+            "{name}-এর {value} আসছে {date} তারিখে। গোটা মহাবিশ্বই যেন উৎসবে শামিল!",
+            "{name}-এর জন্য মহাজাগতিক এক মুহূর্ত: {value}, {date} তারিখে। গ্রহ-নক্ষত্ররাও সারিবদ্ধ।",
         ],
     },
     de: {
