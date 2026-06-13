@@ -880,6 +880,26 @@ function saveSettings() {
 function setupEventListeners() {
     // startBtn now handled by wizard onclick="wizardDiscover()" — don't add duplicate listener
 
+    // Enter (and the mobile keyboard's Go/Done/Next) acts like tapping the screen's
+    // primary gold button. Inputs are standalone (no <form>), so Enter did nothing
+    // before. Scoped to wizard steps, open modals, and the group editor — the places
+    // with text entry — and only ever clicks the one visible primary button there.
+    // Inputs that already have their own Enter handlers are excluded.
+    const ENTER_SKIP_IDS = ['newEventName', 'newEventDate', 'calcNumber', 'customNumberInput', 'newSetName', 'newGroupField'];
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return; // ignore IME composition
+        const t = e.target;
+        if (!t || t.tagName !== 'INPUT' || t.type === 'checkbox' || t.type === 'radio') return;
+        if (ENTER_SKIP_IDS.includes(t.id) || t.hasAttribute('data-no-enter-submit')) return;
+        const scope = t.closest('.modal:not(.hidden)')
+            || t.closest('#groupEditorOverlay:not(.hidden)')
+            || t.closest('.wizard-step-active');
+        if (!scope) return;
+        const btn = [...scope.querySelectorAll('button.wizard-btn, button.btn-primary')]
+            .find(b => b.offsetParent !== null && !b.disabled && !b.classList.contains('wizard-btn-secondary'));
+        if (btn) { e.preventDefault(); btn.click(); }
+    });
+
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
@@ -982,6 +1002,13 @@ function setupEventListeners() {
     if (addSetBtn) addSetBtn.addEventListener('click', handleAddSet);
     if (newSetNameInput) newSetNameInput.addEventListener('keypress', e => {
         if (e.key === 'Enter') handleAddSet();
+    });
+
+    // Edit-tab "new group" field uses a plain (unclassed) button, so the global
+    // Enter handler above can't find it — wire it directly.
+    const newGroupFieldInput = document.getElementById('newGroupField');
+    if (newGroupFieldInput) newGroupFieldInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') handleAddSetFromPeopleTab();
     });
 
     // Rename current set button
