@@ -1,5 +1,5 @@
 /**
- * HappyMoments — Shareable Image Card Generator
+ * Nice Numbers — Shareable Image Card Generator
  * Generates beautiful milestone cards as PNG images using Canvas API.
  */
 
@@ -46,6 +46,108 @@ const CARD_CONFIG = {
     }
 };
 
+// #5 Per-number cards: the card's accent colour and background motif vary by
+// the milestone's category, and the motif is drawn from the ACTUAL number, so
+// a palindrome, a repdigit and a round number each get a distinct look instead
+// of one generic template. Category comes from giftStore's getGiftCategory()
+// (reused), with cosmic handled here.
+function getCardCategory(milestone) {
+    if (!milestone) return 'generic';
+    if (milestone.isCosmic) return 'cosmic';
+    if (typeof getGiftCategory === 'function') return getGiftCategory(milestone);
+    if (milestone.isBirthday) return 'birthday';
+    return milestone.type || 'generic';
+}
+
+// Accent colour per category (falls back to the theme accent for 'generic').
+const CARD_ACCENTS = {
+    round:      '#d4b876', // classic gold
+    repdigit:   '#86c08f', // green
+    palindrome: '#b89ad4', // violet
+    birthday:   '#e8975a', // warm orange
+    cosmic:     '#7fb0e0', // starlight blue
+    fibonacci:  '#6fb6c0', // teal
+    power_of_2: '#6fb6c0',
+    scientific: '#6fb6c0',
+    sequential: '#6fb6c0'
+};
+
+function getCardAccent(category, theme) {
+    return CARD_ACCENTS[category] || theme.accent;
+}
+
+// Draw a faint background motif derived from the category + the real number.
+function drawCategoryMotif(ctx, W, H, accent, category, valueStr) {
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = accent;
+    ctx.strokeStyle = accent;
+
+    if (category === 'round') {
+        // Concentric rings — the roundness of the number, made visual.
+        ctx.globalAlpha = 0.05;
+        ctx.lineWidth = 3;
+        for (let i = 1; i <= 5; i++) {
+            ctx.beginPath();
+            ctx.arc(W / 2, H * 0.42, i * Math.min(W, H) * 0.07, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+    } else if (category === 'repdigit') {
+        // The single repeated digit, oversized behind the content.
+        ctx.globalAlpha = 0.045;
+        ctx.font = `800 ${Math.round(Math.min(W, H) * 0.6)}px "Source Code Pro", monospace`;
+        ctx.fillText((valueStr.replace(/\D/g, '')[0] || '8'), W / 2, H * 0.62);
+    } else if (category === 'palindrome') {
+        // Mirror axis — palindromes read the same both ways.
+        ctx.globalAlpha = 0.05;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(W / 2, H * 0.12);
+        ctx.lineTo(W / 2, H * 0.88);
+        ctx.stroke();
+        ctx.globalAlpha = 0.035;
+        ctx.font = `300 ${Math.round(Math.min(W, H) * 0.16)}px "Source Code Pro", monospace`;
+        ctx.fillText(valueStr, W / 2, H * 0.30);
+    } else if (category === 'birthday') {
+        // Confetti dots.
+        const dots = [[0.18,0.16],[0.82,0.2],[0.28,0.78],[0.74,0.82],[0.5,0.1],[0.12,0.5],[0.88,0.55],[0.62,0.7]];
+        ctx.globalAlpha = 0.10;
+        dots.forEach((d, i) => {
+            ctx.beginPath();
+            ctx.arc(W * d[0], H * d[1], (i % 3 + 2) * (W / 180), 0, Math.PI * 2);
+            ctx.fill();
+        });
+    } else if (category === 'cosmic') {
+        // Scattered stars + a faint orbit.
+        ctx.globalAlpha = 0.12;
+        const stars = [[0.15,0.18],[0.85,0.16],[0.22,0.82],[0.8,0.8],[0.5,0.12],[0.68,0.3],[0.3,0.42],[0.9,0.5]];
+        ctx.font = `${Math.round(W * 0.03)}px "EB Garamond", serif`;
+        stars.forEach(s => ctx.fillText('✱', W * s[0], H * s[1]));
+        ctx.globalAlpha = 0.05;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(W / 2, H * 0.42, W * 0.4, H * 0.18, -0.25, 0, Math.PI * 2);
+        ctx.stroke();
+    } else if (category === 'fibonacci' || category === 'power_of_2' || category === 'scientific' || category === 'sequential') {
+        // Faint dotted spiral — the sense of a sequence.
+        ctx.globalAlpha = 0.06;
+        for (let i = 0; i < 60; i++) {
+            const a = i * 0.5;
+            const r = a * Math.min(W, H) * 0.012;
+            ctx.beginPath();
+            ctx.arc(W / 2 + Math.cos(a) * r, H * 0.42 + Math.sin(a) * r, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    } else {
+        // Generic: the original single star flourish.
+        ctx.globalAlpha = 0.03;
+        ctx.font = '800 400px "Source Code Pro", monospace';
+        ctx.fillText('*', W * 0.8, H * 0.35);
+    }
+    ctx.restore();
+}
+
 function generateMilestoneCard(milestone, options) {
     options = options || {};
     const theme = CARD_CONFIG.themes[options.theme || 'dark'];
@@ -65,7 +167,10 @@ function generateMilestoneCard(milestone, options) {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // Subtle decorative elements
+    // #5 Category-driven look: motif from the actual number + per-category accent
+    const category = getCardCategory(milestone);
+    const catAccent = getCardAccent(category, theme);
+    drawCategoryMotif(ctx, W, H, catAccent, category, milestone.value.toLocaleString());
     drawDecorations(ctx, W, H, theme);
 
     // Content
@@ -83,14 +188,19 @@ function generateMilestoneCard(milestone, options) {
     ctx.textAlign = 'center';
     ctx.fillStyle = theme.muted;
     ctx.font = 'italic 28px "EB Garamond", Georgia, serif';
-    ctx.fillText('HappyMoments', W / 2, P + 20);
+    ctx.fillText('Nice Numbers', W / 2, P + 20);
+
+    // Tagline
+    ctx.fillStyle = catAccent;
+    ctx.font = 'italic 22px "EB Garamond", Georgia, serif';
+    ctx.fillText('Share & Celebrate', W / 2, P + 50);
 
     // Thin line
     ctx.strokeStyle = theme.muted + '40';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(P + 100, P + 50);
-    ctx.lineTo(W - P - 100, P + 50);
+    ctx.moveTo(P + 100, P + 72);
+    ctx.lineTo(W - P - 100, P + 72);
     ctx.stroke();
 
     // Person name
@@ -99,7 +209,7 @@ function generateMilestoneCard(milestone, options) {
     ctx.fillText(name, W / 2, P + 120);
 
     // Big number — the star of the card
-    ctx.fillStyle = theme.accent;
+    ctx.fillStyle = catAccent;
     ctx.font = '300 140px "Source Code Pro", "Courier New", monospace';
 
     // Auto-size if number is too wide
@@ -183,6 +293,10 @@ function generateStoryCard(milestone, options) {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
+    // #5 Category-driven look (same as square)
+    const category = getCardCategory(milestone);
+    const catAccent = getCardAccent(category, theme);
+    drawCategoryMotif(ctx, W, H, catAccent, category, milestone.value.toLocaleString());
     drawDecorations(ctx, W, H, theme);
 
     const val = milestone.value.toLocaleString();
@@ -199,14 +313,19 @@ function generateStoryCard(milestone, options) {
     // Top section — app name
     ctx.fillStyle = theme.muted;
     ctx.font = 'italic 32px "EB Garamond", Georgia, serif';
-    ctx.fillText('HappyMoments', W / 2, P + 40);
+    ctx.fillText('Nice Numbers', W / 2, P + 40);
+
+    // Tagline
+    ctx.fillStyle = catAccent;
+    ctx.font = 'italic 26px "EB Garamond", Georgia, serif';
+    ctx.fillText('Share & Celebrate', W / 2, P + 75);
 
     // Thin line
     ctx.strokeStyle = theme.muted + '40';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(P + 100, P + 70);
-    ctx.lineTo(W - P - 100, P + 70);
+    ctx.moveTo(P + 100, P + 100);
+    ctx.lineTo(W - P - 100, P + 100);
     ctx.stroke();
 
     // Person name — upper third
@@ -220,7 +339,7 @@ function generateStoryCard(milestone, options) {
     ctx.fillText('will be', W / 2, H * 0.32);
 
     // BIG NUMBER — center of story
-    ctx.fillStyle = theme.accent;
+    ctx.fillStyle = catAccent;
     let fontSize = 180;
     ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
     while (ctx.measureText(val).width > W - P * 2 - 40 && fontSize > 80) {
@@ -292,7 +411,7 @@ function downloadStoryCard(milestone, theme) {
     link.download = `happymoment-story-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'story', theme: theme || 'dark' });
+    if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'story', theme: theme || 'dark', category: getCardCategory(milestone) });
     showToast('Story card downloaded!', 'success');
 }
 
@@ -304,11 +423,11 @@ async function shareStoryCard(milestone, theme) {
             const file = new File([blob], 'happymoment-story.png', { type: 'image/png' });
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({
-                    title: 'HappyMoment',
+                    title: 'Nice Numbers',
                     text: typeof generateShareMessage === 'function' ? generateShareMessage(milestone) : '',
                     files: [file]
                 });
-                if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_shared', { value: milestone.value, unit: milestone.unitName, format: 'story' });
+                if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_shared', { value: milestone.value, unit: milestone.unitName, format: 'story', category: getCardCategory(milestone) });
                 return;
             }
         } catch (e) {
@@ -320,15 +439,9 @@ async function shareStoryCard(milestone, theme) {
 
 function drawDecorations(ctx, W, H, theme) {
     ctx.save();
-    ctx.globalAlpha = 0.03;
-    ctx.fillStyle = theme.accent;
-
-    // Large decorative number in background
-    ctx.font = '800 400px "Source Code Pro", monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('*', W * 0.8, H * 0.35);
 
-    // Corner accents
+    // Corner accents (the background motif is drawn separately by category)
     ctx.globalAlpha = 0.06;
     ctx.strokeStyle = theme.accent;
     ctx.lineWidth = 2;
@@ -371,7 +484,7 @@ function downloadMilestoneCard(milestone, theme) {
     link.download = `happymoment-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'square', theme: theme || 'dark' });
+    if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'square', theme: theme || 'dark', category: getCardCategory(milestone) });
     showToast('Card downloaded!', 'success');
 }
 
@@ -387,11 +500,11 @@ async function shareMilestoneCard(milestone, theme) {
 
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({
-                    title: 'HappyMoment',
+                    title: 'Nice Numbers',
                     text: generateShareMessage(milestone),
                     files: [file]
                 });
-                if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_shared', { value: milestone.value, unit: milestone.unitName, format: 'square' });
+                if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_shared', { value: milestone.value, unit: milestone.unitName, format: 'square', category: getCardCategory(milestone) });
                 return;
             }
         } catch (e) {
@@ -641,10 +754,10 @@ function generateGiftDesign(milestone, productType, options) {
         const P = 100 * S;
         const centerX = W / 2;
 
-        // Top: HappyMoments branding
+        // Top: Nice Numbers branding
         ctx.fillStyle = theme.muted;
         ctx.font = `italic ${Math.round(36 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('HappyMoments', centerX, P + 40 * S);
+        ctx.fillText('Nice Numbers', centerX, P + 40 * S);
 
         // Thin line
         ctx.strokeStyle = theme.muted + '40';

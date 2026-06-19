@@ -1,5 +1,5 @@
 /**
- * HappyMoments --- This Day in History
+ * Nice Numbers --- This Day in History
  * Number-connected fun facts for daily engagement.
  * Combined with personal milestones for the "Today" section.
  */

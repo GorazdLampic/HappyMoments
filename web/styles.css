@@ -218,11 +218,20 @@ body {
     font-style: italic;
     color: var(--text-primary);
     letter-spacing: 0.02em;
-    margin-bottom: 8px;
+    margin-bottom: 2px;
     background: none;
     -webkit-background-clip: unset;
     -webkit-text-fill-color: unset;
     background-clip: unset;
+}
+
+.header-tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--font-size-sm);
+    color: var(--accent, #d4b876);
+    letter-spacing: 0.04em;
+    margin: 0 0 4px;
 }
 
 .tagline {
@@ -3430,14 +3439,11 @@ body {
 .reveal-done .wizard-reveal-countdown { animation: staggerIn 0.5s ease forwards 1.0s; }
 .reveal-done .wizard-actions          { animation: staggerIn 0.5s ease forwards 1.5s; }
 
-/* #6 Intro age-stats strip — raw "you've been alive" context on the Me reveal */
-.age-stats-strip { margin-top: 20px; text-align: center; }
-.age-stats-intro { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 0.02em; }
-.age-stats-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 16px; }
-.age-stat { display: flex; flex-direction: column; align-items: center; min-width: 56px; }
-.age-stat-num { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.2; }
-.age-stat-unit { font-size: 0.62rem; color: var(--text-muted); text-transform: lowercase; margin-top: 2px; }
-.age-stats-more { margin-top: 14px; font-size: 0.85rem; color: var(--warning); font-weight: 600; }
+/* #6 Intro age-stats — a light "so far you've lived ..." line on the Me reveal */
+.age-stats-strip { margin-top: 18px; text-align: center; }
+.age-stats-line { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+.age-stats-line strong { color: var(--text-primary); font-weight: 700; font-variant-numeric: tabular-nums; }
+.age-stats-more { margin-top: 12px; font-size: 0.85rem; color: var(--warning); font-weight: 600; line-height: 1.4; padding: 0 10px; }
 .reveal-stagger .age-stats-strip { opacity: 0; transform: translateY(10px); }
 .reveal-done .age-stats-strip { animation: staggerIn 0.5s ease forwards 1.3s; }
 

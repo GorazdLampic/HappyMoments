@@ -1,5 +1,5 @@
 /**
- * HappyMoments — Authentication Module
+ * Nice Numbers — Authentication Module
  * Firebase Auth: Google, Apple, Email/Password
  *
  * SETUP: Replace firebaseConfig below with your Firebase project config.
@@ -29,7 +29,7 @@ const HM_AUTH = (() => {
 
     function init() {
         if (typeof firebase === 'undefined') {
-            console.warn('HappyMoments Auth: Firebase SDK not loaded');
+            console.warn('Nice Numbers Auth: Firebase SDK not loaded');
             authReady = true;
             _notifyCallbacks(null);
             return;

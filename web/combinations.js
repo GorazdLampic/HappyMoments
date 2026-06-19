@@ -1,5 +1,5 @@
 /**
- * HappyMoments - Combinations Calculator
+ * Nice Numbers - Combinations Calculator
  * Handles multi-event combinations: sums, differences, ratios, balance points
  */
 

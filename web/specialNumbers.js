@@ -1,5 +1,5 @@
 /**
- * HappyMoments - Special Numbers Definition (Web Version)
+ * Nice Numbers - Special Numbers Definition (Web Version)
  * Extended with customizable patterns, scientific constants, and more
  */
 

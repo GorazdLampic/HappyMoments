@@ -1,5 +1,5 @@
 /**
- * HappyMoments — Data Protection Layer
+ * Nice Numbers — Data Protection Layer
  * Encrypts personal data in localStorage using AES-GCM via Web Crypto API.
  * Falls back to base64 obfuscation if crypto not available.
  */

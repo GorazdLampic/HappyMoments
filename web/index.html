@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>HappyMoments - Celebrate Life's Special Numbers</title>
+    <title>Nice Numbers - Celebrate Life's Special Numbers</title>
 
     <!-- PWA Meta Tags -->
     <meta name="description" content="Celebrate life's special numbers - track birthdays, anniversaries, and find amazing numerical milestones!">
     <meta name="theme-color" content="#1a1a1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="HappyMoments">
+    <meta name="apple-mobile-web-app-title" content="Nice Numbers">
     <meta name="mobile-web-app-capable" content="yes">
 
     <!-- Open Graph / Social Sharing -->
-    <meta property="og:title" content="HappyMoments - Celebrate Life's Special Numbers">
+    <meta property="og:title" content="Nice Numbers - Celebrate Life's Special Numbers">
     <meta property="og:description" content="Discover when you turn 1 billion seconds old, 10,000 days, or hit a Fibonacci birthday. Track milestones for everyone you love.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://happymoments.app/">
-    <meta property="og:site_name" content="HappyMoments">
+    <meta property="og:site_name" content="Nice Numbers">
     <meta property="og:locale" content="en_US">
     <meta property="og:image" content="https://happymoments.app/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="HappyMoments — discover life's special number milestones">
+    <meta property="og:image:alt" content="Nice Numbers — discover life's special number milestones">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="HappyMoments — When's Your Billion?">
+    <meta name="twitter:title" content="Nice Numbers — When's Your Billion?">
     <meta name="twitter:description" content="When's your billion? Discover life's special number milestones.">
     <meta name="twitter:image" content="https://happymoments.app/og-image.png">
-    <meta name="twitter:image:alt" content="HappyMoments — discover life's special number milestones">
+    <meta name="twitter:image:alt" content="Nice Numbers — discover life's special number milestones">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -58,7 +58,8 @@
     <div id="app">
         <!-- Header -->
         <header class="header" id="appHeader">
-            <h1>HappyMoments</h1>
+            <h1>Nice Numbers</h1>
+            <p class="header-tagline">Share &amp; Celebrate</p>
             <button class="profile-icon" id="profileBtn" onclick="toggleProfilePanel()" title="Profile &amp; Settings">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </button>
@@ -543,7 +544,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <span class="footer-copy">HappyMoments &copy; 2026</span>
+            <span class="footer-copy">Nice Numbers &copy; 2026</span>
             <div class="app-version" id="appVersion"></div>
         </footer>
 
@@ -646,7 +647,7 @@
 
         <!-- Consent Banner (first run) -->
         <div id="consentBanner" class="consent-banner hidden">
-            <p data-i18n="consent_text">HappyMoments keeps your milestone data — names, dates, settings — on your device, encrypted in your browser. Nothing is sent to a server unless you choose to: signing in, sharing a milestone, or exporting your data. We also collect anonymous, cookie-free usage statistics (disabled if your browser sends "Do Not Track"). Full details in the policy.</p>
+            <p data-i18n="consent_text">Nice Numbers keeps your milestone data — names, dates, settings — on your device, encrypted in your browser. Nothing is sent to a server unless you choose to: signing in, sharing a milestone, or exporting your data. We also collect anonymous, cookie-free usage statistics (disabled if your browser sends "Do Not Track"). Full details in the policy.</p>
             <div class="consent-actions">
                 <button onclick="acceptConsent()" class="btn-primary btn-consent" data-i18n="consent_ok">OK, got it</button>
                 <a href="legal.html" target="_blank" class="consent-link" data-i18n="consent_read">Read full policy</a>
@@ -702,7 +703,7 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(reg => {
-                        console.log('HappyMoments: Service Worker registered');
+                        console.log('Nice Numbers: Service Worker registered');
 
                         function notifyUpdate() {
                             if (document.getElementById('updateToast')) return;
@@ -742,7 +743,7 @@
                         });
                         setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
                     })
-                    .catch(err => console.log('HappyMoments: Service Worker registration failed', err));
+                    .catch(err => console.log('Nice Numbers: Service Worker registration failed', err));
             });
         }
     </script>

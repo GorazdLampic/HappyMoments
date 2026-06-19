@@ -1,5 +1,5 @@
 /**
- * HappyMoments — Lightweight Analytics
+ * Nice Numbers — Lightweight Analytics
  * Anonymous user journey tracking via navigator.sendBeacon.
  * No cookies, no PII, respects Do Not Track.
  */

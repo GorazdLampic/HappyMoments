@@ -1,6 +1,6 @@
 {
-  "name": "HappyMoments",
-  "short_name": "HappyMoments",
+  "name": "Nice Numbers",
+  "short_name": "Nice Numbers",
   "description": "Celebrate life's special numbers - track birthdays, anniversaries, and find amazing numerical milestones!",
   "start_url": "./index.html",
   "display": "standalone",

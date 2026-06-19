@@ -1,5 +1,5 @@
 /**
- * HappyMoments — Gift Store
+ * Nice Numbers — Gift Store
  * Personalized gifts via Printful print-on-demand.
  * Each product features the customer's milestone number as the design.
  */

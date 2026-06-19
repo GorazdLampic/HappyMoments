@@ -1,5 +1,5 @@
 /**
- * HappyMoments — Checkout & Payment Integration
+ * Nice Numbers — Checkout & Payment Integration
  * Uses Stripe Checkout for premium subscriptions and gift store payments.
  *
  * SETUP REQUIRED:

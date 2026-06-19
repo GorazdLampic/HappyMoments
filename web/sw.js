@@ -1,5 +1,5 @@
 /**
- * HappyMoments Service Worker
+ * Nice Numbers Service Worker
  * Enables offline functionality and app-like experience
  */
 
@@ -35,7 +35,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('HappyMoments: Caching app files');
+        console.log('Nice Numbers: Caching app files');
         return cache.addAll(urlsToCache);
       })
       .then(() => self.skipWaiting())
@@ -49,7 +49,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('HappyMoments: Removing old cache', cacheName);
+            console.log('Nice Numbers: Removing old cache', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -84,7 +84,7 @@ self.addEventListener('fetch', event => {
       .catch(() => {
         if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
           return new Response(
-            '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HappyMoments - Offline</title><style>body{font-family:-apple-system,sans-serif;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center}h1{font-size:2rem;margin-bottom:1rem;background:linear-gradient(135deg,#c084fc,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}p{color:#8e8e93;font-size:1.1rem}</style></head><body><div><h1>HappyMoments</h1><p>You appear to be offline.<br>Please check your connection and try again.</p></div></body></html>',
+            '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nice Numbers - Offline</title><style>body{font-family:-apple-system,sans-serif;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;text-align:center}h1{font-size:2rem;margin-bottom:1rem;background:linear-gradient(135deg,#c084fc,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}p{color:#8e8e93;font-size:1.1rem}</style></head><body><div><h1>Nice Numbers</h1><p>You appear to be offline.<br>Please check your connection and try again.</p></div></body></html>',
             { headers: { 'Content-Type': 'text/html' } }
           );
         }

@@ -1,5 +1,5 @@
 /**
- * HappyMoments — Push Notification System
+ * Nice Numbers — Push Notification System
  * Schedules local notifications for upcoming milestones.
  *
  * Two strategies:
@@ -186,7 +186,7 @@ const NOTIF = (() => {
                         candidates.push({
                             id: stableId(`${event.id}_annual_${dateStr}_1d`),
                             title: title,
-                            body: 'Plan something special for this HappyMoment!',
+                            body: 'Plan something special for this Nice Numbers!',
                             at: fireAt,
                             sortKey: fireAt.getTime(),
                         });
@@ -521,7 +521,7 @@ const NOTIF = (() => {
                 const title = type === 'birthday'
                     ? `${name} turns ${age} tomorrow!`
                     : `${age} years since ${name} tomorrow!`;
-                sendWebNotification(title, 'Get ready to celebrate this HappyMoment!');
+                sendWebNotification(title, 'Get ready to celebrate this Nice Numbers!');
                 markNotified(notifId + '_1d');
             }
 

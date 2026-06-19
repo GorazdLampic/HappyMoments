@@ -1,5 +1,5 @@
 /**
- * HappyMoments - Milestone Calculator (Web Version)
+ * Nice Numbers - Milestone Calculator (Web Version)
  * Extended with duration support and settings-aware calculations
  */
 
@@ -83,6 +83,50 @@ function getCurrentAgeStats(startDate, endDate) {
     }
 
     return stats;
+}
+
+// #3 Find nice milestones reached in the LAST `withinDays` days — so a number
+// that just passed (yesterday, this week) can be surfaced as a reason to reach
+// out. Mirror of findAllUpcomingMilestones but for numbers already reached,
+// filtered to a recent window. timeUntil is negative (in the past).
+function findRecentMilestones(startDate, withinDays, settings) {
+    withinDays = withinDays || 7;
+    settings = settings || DEFAULT_SETTINGS;
+
+    const now = new Date();
+    const start = startDate instanceof Date ? startDate : new Date(startDate);
+    const minDateMs = now.getTime() - withinDays * 24 * 60 * 60 * 1000;
+    const ageMonths = calendarMonthsBetween(start, now);
+    const milestones = [];
+
+    for (const unit of Object.keys(TIME_UNITS)) {
+        const unitConfig = TIME_UNITS[unit];
+        const currentAge = calculateAge(startDate, now, unit);
+        const relevantNumbers = getSpecialNumbersUpTo(unitConfig.maxReasonable, settings);
+
+        for (const num of relevantNumbers) {
+            if (num > currentAge) continue; // not reached yet
+            if (typeof passesAdaptiveFilter === 'function' && !passesAdaptiveFilter(num, ageMonths)) continue;
+
+            const milestoneDate = calculateMilestoneDate(startDate, num, unit);
+            const t = milestoneDate.getTime();
+            if (t >= minDateMs && t <= now.getTime()) {
+                const specialInfo = isSpecialNumber(num, settings);
+                milestones.push({
+                    value: num,
+                    unit: unit,
+                    unitName: unitConfig.name,
+                    date: milestoneDate,
+                    type: specialInfo.type,
+                    description: specialInfo.description,
+                    timeUntil: t - now.getTime() // negative
+                });
+            }
+        }
+    }
+
+    milestones.sort((a, b) => b.date.getTime() - a.date.getTime()); // most recent first
+    return milestones;
 }
 
 // Find all upcoming milestones (settings-aware, adaptive filter)

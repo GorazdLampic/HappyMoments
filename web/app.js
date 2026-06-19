@@ -1,5 +1,5 @@
 /**
- * HappyMoments - Main Application
+ * Nice Numbers - Main Application
  * Simplified with matrix connections, column-based milestones
  */
 
@@ -1803,25 +1803,21 @@ function animateCounter(element, targetValue, duration, onComplete) {
     requestAnimationFrame(tick);
 }
 
-// #6 Intro age-stats: raw "you've been alive" context for the Me reveal.
-// Always shown — even when there's no near nice number — as the activation
-// hook, ending with the reassurance that nicer numbers are still coming.
+// #6 Intro age-stats: a light "so far you've lived ..." line on the Me reveal —
+// seconds + hours only (people get the idea), in the same understated style as
+// the rest of the reveal, ending with a reassurance that the best numbers come
+// not just from your own life but from the ones you share with others.
 // Unit labels reuse the localized plural tables; only the two wrapper lines
 // fall back to English until translated.
 function renderAgeStatsStrip(date) {
     if (typeof getCurrentAgeStats !== 'function') return '';
     const stats = getCurrentAgeStats(date);
+    if (!stats.seconds || !stats.hours) return '';
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    let cells = '';
-    ['seconds', 'minutes', 'hours', 'days', 'weeks'].forEach(u => {
-        const s = stats[u];
-        if (!s) return;
-        cells += `<div class="age-stat"><span class="age-stat-num">${s.value.toLocaleString(locale)}</span><span class="age-stat-unit">${localizedUnit(s.value, u)}</span></div>`;
-    });
-    if (!cells) return '';
+    const sec = `<strong>${stats.seconds.value.toLocaleString(locale)}</strong> ${localizedUnit(stats.seconds.value, 'seconds')}`;
+    const hrs = `<strong>${stats.hours.value.toLocaleString(locale)}</strong> ${localizedUnit(stats.hours.value, 'hours')}`;
     return `<div class="age-stats-strip">
-            <div class="age-stats-intro">${tt('age_intro_lived')}</div>
-            <div class="age-stats-grid">${cells}</div>
+            <div class="age-stats-line">${tt('age_intro_lived')} ${sec} &middot; ${hrs}</div>
             <div class="age-stats-more">${tt('age_more_coming')}</div>
         </div>`;
 }
@@ -2294,7 +2290,7 @@ function wizardShare() {
     if (m) {
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
         if (navigator.share) {
-            navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+            navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
         } else {
             navigator.clipboard.writeText(message).then(() => {
                 showToast(_t('wizard_copied_share'), 'success');
@@ -2375,7 +2371,7 @@ function wizardSharePerson3() {
         const name = window._wizardPerson3Name || 'your friend';
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
         if (navigator.share) {
-            navigator.share({ title: 'HappyMoment for ' + name, text: message })
+            navigator.share({ title: 'Nice Numbers for ' + name, text: message })
                 .then(() => wizardNext(9))
                 .catch(() => wizardNext(9));
         } else {
@@ -4504,7 +4500,7 @@ function heroShare() {
     const m = heroEl._heroMilestone;
     const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
             showToast(tt('toast_copied'), 'success');
@@ -4572,6 +4568,16 @@ function renderHomeScreen() {
                 all.push(m);
             }
         });
+        // #3 Also surface general nice numbers reached in the last 7 days
+        // (repdigits, palindromes, rounds the upcoming-only finder misses) —
+        // a great reason to ping the person.
+        if (typeof findRecentMilestones === 'function') {
+            findRecentMilestones(e.date, 7, appSettings).forEach(r => {
+                if (all.some(m => m.eventId === e.id && m.value === r.value && m.unit === r.unit)) return;
+                r.eventName = e.name; r.eventId = e.id; r.recentlyPassed = true;
+                all.push(r);
+            });
+        }
     });
 
     // Sort: recently passed first (by recency), then future (by proximity)
@@ -4626,6 +4632,7 @@ function renderHomeScreen() {
             if (m.recentlyPassed) {
                 const daysAgo = Math.round(Math.abs(m.timeUntil) / (24*60*60*1000));
                 dateStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo}d ago`;
+                dateStr += ' · ' + tt('dash_recent_ping');
             } else {
                 dateStr = m.date.toLocaleDateString(locale, dateOpts);
             }
@@ -4676,6 +4683,7 @@ function renderHomeScreen() {
             if (m.recentlyPassed) {
                 const daysAgo = Math.round(Math.abs(m.timeUntil) / (24*60*60*1000));
                 dateStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo}d ago`;
+                dateStr += ' · ' + tt('dash_recent_ping');
             } else {
                 dateStr = m.date.toLocaleDateString(locale, dateOpts);
             }
@@ -4801,7 +4809,7 @@ function showSharePreview(message, recipientName) {
     // Direct native share — show app picker immediately
     navigator.clipboard.writeText(message).catch(() => {});
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
     } else {
         showToast(tt('toast_copied'), 'success');
     }
@@ -5788,7 +5796,7 @@ function handleChallengeFriends() {
 
     const message = generateChallengeMessage(m);
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoments', text: message }).catch(() => {});
+        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
             showToast(tt('wizard_copied_share'), 'success');
@@ -5819,7 +5827,7 @@ function handleChallengeGroup() {
     }
 
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoments', text: message }).catch(() => {});
+        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
             showToast(tt('toast_copied_group'), 'success');
@@ -5833,7 +5841,7 @@ function quickShare(idx) {
     if (!m) return;
     const message = generateShareMessage(m);
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
     } else {
         navigator.clipboard.writeText(message).then(() => {
             showToast(tt('toast_copied'), 'success');
@@ -5846,7 +5854,7 @@ function quickShare(idx) {
 function shareAppLink() {
     const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\nhttps://happymoments.app';
     if (navigator.share) {
-        navigator.share({ title: 'HappyMoments', text }).catch(() => {});
+        navigator.share({ title: 'Nice Numbers', text }).catch(() => {});
     } else {
         navigator.clipboard.writeText(text).then(() => {
             showToast(tt('toast_link_copied'), 'success');
@@ -5931,7 +5939,7 @@ function handleNativeShare() {
     const m = allMilestonesFlat[idx];
     if (!m) return;
     const message = generateShareMessage(m);
-    navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+    navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
 }
 
 function handleNativeCombinedShare() {
@@ -5939,7 +5947,7 @@ function handleNativeCombinedShare() {
     const m = allCombinedMilestonesFlat[idx];
     if (!m) return;
     const message = generateCombinedShareMessage(m);
-    navigator.share({ title: 'HappyMoment', text: message }).catch(() => {});
+    navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
 }
 
 function handleWhatsAppShare() {
@@ -6086,7 +6094,7 @@ function getCalendarEventDetails(milestone) {
     const d = milestone.date;
     const title = milestone.isBirthday
         ? milestone.fullDescription.replace(/[🎂🎉]\s*/g, '')
-        : `HappyMoment: ${milestone.value.toLocaleString()} ${localizedUnit(milestone.value, milestone.unitName)}` +
+        : `Nice Numbers: ${milestone.value.toLocaleString()} ${localizedUnit(milestone.value, milestone.unitName)}` +
           (milestone.eventName ? ` — ${milestone.eventName}` : '');
 
     const description = milestone.fullDescription || generateShareMessage(milestone);
@@ -6147,7 +6155,7 @@ function downloadIcsFile(milestone) {
     const ics = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//HappyMoments//EN',
+        'PRODID:-//Nice Numbers//EN',
         'BEGIN:VEVENT',
         `DTSTART;VALUE=DATE:${ev.startDate}`,
         `DTEND;VALUE=DATE:${ev.endDate}`,
