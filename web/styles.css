@@ -3440,10 +3440,12 @@ body {
 .reveal-done .wizard-actions          { animation: staggerIn 0.5s ease forwards 1.5s; }
 
 /* #6 Intro age-stats — a light "so far you've lived ..." line on the Me reveal */
-.age-stats-strip { margin-top: 18px; text-align: center; }
-.age-stats-line { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
-.age-stats-line strong { color: var(--text-primary); font-weight: 700; font-variant-numeric: tabular-nums; }
-.age-stats-more { margin-top: 12px; font-size: 0.85rem; color: var(--warning); font-weight: 600; line-height: 1.4; padding: 0 10px; }
+.age-stats-strip { margin-top: 24px; text-align: center; }
+.age-stats-intro { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 10px; }
+.age-stats-line { font-family: var(--font-serif); line-height: 1.4; margin: 2px 0; }
+.age-stats-num { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.age-stats-unit { font-size: 1.2rem; font-style: italic; color: var(--text-secondary); }
+.age-stats-more { margin-top: 18px; font-size: 1.05rem; color: var(--warning); font-weight: 600; line-height: 1.45; padding: 0 14px; }
 .reveal-stagger .age-stats-strip { opacity: 0; transform: translateY(10px); }
 .reveal-done .age-stats-strip { animation: staggerIn 0.5s ease forwards 1.3s; }
 

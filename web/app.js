@@ -1834,10 +1834,11 @@ function renderAgeStatsStrip(date) {
     const stats = getCurrentAgeStats(date);
     if (!stats.seconds || !stats.hours) return '';
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    const sec = `<strong>${stats.seconds.value.toLocaleString(locale)}</strong> ${localizedUnit(stats.seconds.value, 'seconds')}`;
-    const hrs = `<strong>${stats.hours.value.toLocaleString(locale)}</strong> ${localizedUnit(stats.hours.value, 'hours')}`;
+    const row = (val, unit) => `<div class="age-stats-line"><span class="age-stats-num">${val.toLocaleString(locale)}</span> <span class="age-stats-unit">${unit}</span></div>`;
     return `<div class="age-stats-strip">
-            <div class="age-stats-line">${tt('age_intro_lived')} ${sec} &middot; ${hrs}</div>
+            <div class="age-stats-intro">${tt('age_intro_lived')}</div>
+            ${row(stats.seconds.value, localizedUnit(stats.seconds.value, 'seconds'))}
+            ${row(stats.hours.value, localizedUnit(stats.hours.value, 'hours'))}
             <div class="age-stats-more">${tt('age_more_coming')}</div>
         </div>`;
 }
