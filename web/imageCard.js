@@ -254,7 +254,7 @@ function generateMilestoneCard(milestone, options) {
     // Footer — always show app name
     ctx.fillStyle = theme.muted;
     ctx.font = '22px "EB Garamond", Georgia, serif';
-    ctx.fillText('happymoments.app', W / 2, H - P + 5);
+    ctx.fillText('nicenumbers.app', W / 2, H - P + 5);
 
     // Watermark for free users — premium gets clean cards
     const _isPremium = typeof isPremium === 'function' && isPremium();
@@ -265,7 +265,7 @@ function generateMilestoneCard(milestone, options) {
         ctx.font = 'italic 60px "EB Garamond", Georgia, serif';
         ctx.translate(W / 2, H / 2);
         ctx.rotate(-Math.PI / 6);
-        ctx.fillText('happymoments.app', 0, 0);
+        ctx.fillText('nicenumbers.app', 0, 0);
         ctx.restore();
     }
 
@@ -387,7 +387,7 @@ function generateStoryCard(milestone, options) {
     // Footer
     ctx.fillStyle = theme.accent;
     ctx.font = '28px "EB Garamond", Georgia, serif';
-    ctx.fillText('happymoments.app', W / 2, H - P);
+    ctx.fillText('nicenumbers.app', W / 2, H - P);
 
     // Watermark for free users
     const _isPremium = typeof isPremium === 'function' && isPremium();
@@ -398,7 +398,7 @@ function generateStoryCard(milestone, options) {
         ctx.font = 'italic 70px "EB Garamond", Georgia, serif';
         ctx.translate(W / 2, H * 0.45);
         ctx.rotate(-Math.PI / 6);
-        ctx.fillText('happymoments.app', 0, 0);
+        ctx.fillText('nicenumbers.app', 0, 0);
         ctx.restore();
     }
 
@@ -747,7 +747,7 @@ function generateGiftDesign(milestone, productType, options) {
         // Bottom branding
         ctx.fillStyle = theme.muted + '80';
         ctx.font = `${Math.round(22 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('happymoments.app', centerX, H - P);
+        ctx.fillText('nicenumbers.app', centerX, H - P);
 
     } else {
         // === PORTRAIT / SQUARE layout: poster, tshirt, tote, canvas ===
@@ -826,7 +826,7 @@ function generateGiftDesign(milestone, productType, options) {
         // Bottom branding
         ctx.fillStyle = theme.muted + '80';
         ctx.font = `${Math.round(28 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('happymoments.app', centerX, H - P - 10 * S);
+        ctx.fillText('nicenumbers.app', centerX, H - P - 10 * S);
     }
 
     return canvas;

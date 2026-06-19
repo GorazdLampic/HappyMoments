@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "Najprije odaberi prekretnicu",
     "toast_copied_group": "Kopirano! Podijeli sa svojom grupom.",
     "toast_link_copied": "Poveznica je kopirana! Podijeli s prijateljima.",
-    "toast_share_link": "Podijeli ovu poveznicu: https://happymoments.app",
+    "toast_share_link": "Podijeli ovu poveznicu: https://nicenumbers.app",
     "toast_write_first": "Najprije nešto napiši.",
     "toast_feedback_thanks": "Hvala! Tvoje nam povratne informacije pomažu da budemo bolji.",
     "toast_invite_hint": "Znaš nekoga kome bi se ovo svidjelo? Poveznica na aplikaciju već je u tvojoj poruci!",
@@ -525,6 +525,6 @@
       "Rezerviraj {date}: {name} tada puni {value} {unit}!"
     ]
   },
-  "shareLink": "\n\nOtkrij svoje posebne brojeve → https://happymoments.app",
+  "shareLink": "\n\nOtkrij svoje posebne brojeve → https://nicenumbers.app",
   "dateFallback": " Na dan {date} — još samo {countdown}!"
 }

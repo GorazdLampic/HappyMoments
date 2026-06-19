@@ -1637,7 +1637,7 @@ function wizardHeroShareChip(shareText) {
 }
 
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
-    const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 happymoments.app';
+    const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 nicenumbers.app';
     const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     // Tapping a row shares it directly. During onboarding the affordance is
     // labelled ("Share" + arrow) to teach the gesture; the dashboard uses the
@@ -1915,7 +1915,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         }
 
         // Build reveal HTML — clean, spacious, large type
-        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
+        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — nicenumbers.app';
         // Age-stats hook only on the "Me" reveal (Step 2), not friend reveals.
         const ageStripHtml = revealElId === 'wizardReveal' ? renderAgeStatsStrip(date) : '';
         if (m.isCosmic) {
@@ -2155,7 +2155,7 @@ function wizardShowCombined(isRefresh) {
                 <div class="hero-meta-text">
                     <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
                 </div>
-                ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — happymoments.app')}
+                ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — nicenumbers.app')}
             </div>
         `;
     } else {
@@ -2255,7 +2255,7 @@ function wizardDiscoverFriend() {
             const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
             const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
             const dateStr2 = friendM.date.toLocaleDateString(locale, dateOpts);
-            shareMsg = `Did you know you reach ${displayText} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 happymoments.app`;
+            shareMsg = `Did you know you reach ${displayText} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 nicenumbers.app`;
         } else {
             shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
         }
@@ -2625,7 +2625,7 @@ function wizardShowCombinedAndName() {
             <div class="hero-meta-text">
                 <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
             </div>
-            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — happymoments.app')}
+            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — nicenumbers.app')}
         </div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_together')}</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('wizCombExtra6','wizCombToggle6',${combinedList.length - TOP6})">${_moreListLabel(combinedList.length - TOP6)}</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
@@ -2968,7 +2968,7 @@ function wizardShowTeamMilestones() {
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">${tt('wiz_belong_all')}</h2>
         ${hero ? `
-            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 happymoments.app').replace(/'/g, "\\'")    }')">
+            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 nicenumbers.app').replace(/'/g, "\\'")    }')">
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number-line">
                     <span class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</span>
@@ -3069,7 +3069,7 @@ function wizardBuildShareScreen() {
             const val = formatMilestoneValue(best.value, locale);
             const unit = localizedUnit(best.value, best.unitName || best.unit || '');
             const ds = formatMilestoneDate(best.date);
-            const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? happymoments.app';
+            const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? nicenumbers.app';
             const uid = 'share9more_' + e.id.replace(/[^a-z0-9]/gi, '');
             // More milestones for this person — each row shareable
             let moreRows = '';
@@ -3077,7 +3077,7 @@ function wizardBuildShareScreen() {
                 const v2 = formatMilestoneValue(m.value, locale);
                 const u2 = localizedUnit(m.value, m.unitName || m.unit || '');
                 const ds2 = formatMilestoneDate(m.date);
-                const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? happymoments.app';
+                const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? nicenumbers.app';
                 moreRows += `<div onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${st2.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer;">
                     <span style="color:var(--text);font-size:0.85rem;">${v2} ${u2}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${ds2}</span>
@@ -3122,7 +3122,7 @@ function wizardShareForPerson(name, message) {
 
 function wizardShareGroup() {
     const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || tt('wiz_group_family');
-    const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at happymoments.app';
+    const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at nicenumbers.app';
     showSharePreview(message, groupName);
     _track('onboard_share_group');
 }
@@ -3782,7 +3782,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
         const timeUntilStr = formatTimeDistance(m.timeUntil);
         const dateStr = formatDateWithTime(m.date);
         const displayVal = formatMilestoneValue(m.value, locale);
-        const shareText = gName + ': ' + displayVal + ' ' + localizedUnit(m.value, m.unitName) + ' combined on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
+        const shareText = gName + ': ' + displayVal + ' ' + localizedUnit(m.value, m.unitName) + ' combined on ' + formatMilestoneDate(m.date) + ' — nicenumbers.app';
         const safeMsg = shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
         // Show contributing events if available
@@ -5626,7 +5626,7 @@ function updateSharePreview() {
     }
 
     const message = generateShareMessage(m);
-    // Make happymoments.app URLs clickable in the preview
+    // Make nicenumbers.app URLs clickable in the preview
     const messageHtml = message.replace(
         /(happymoments\.app\/?[^\s]*)/g,
         '<a href="https://$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">$1</a>'
@@ -5732,7 +5732,7 @@ function getShareCategory(m) {
     return typeMap[m.type] || 'generic';
 }
 
-const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 https://happymoments.app';
+const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 https://nicenumbers.app';
 
 function getAppShareLink(milestone) {
     const locale = getAppLocale().split('-')[0];
@@ -5756,7 +5756,7 @@ function getAppShareLink(milestone) {
                 d: dateStr,
                 hl: locale
             });
-            return linkText.replace('https://happymoments.app', `https://happymoments.app/?${params.toString()}`);
+            return linkText.replace('https://nicenumbers.app', `https://nicenumbers.app/?${params.toString()}`);
         }
     }
     return linkText;
@@ -5764,13 +5764,13 @@ function getAppShareLink(milestone) {
 
 // Generate deep link URL for a specific event
 function getDeepLinkUrl(event) {
-    if (!event) return 'https://happymoments.app';
+    if (!event) return 'https://nicenumbers.app';
     const dateStr = event.date instanceof Date
         ? event.date.toISOString().split('T')[0]
         : String(event.date).split('T')[0];
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
     const params = new URLSearchParams({ n: event.name, d: dateStr, hl: locale });
-    return `https://happymoments.app/?${params.toString()}`;
+    return `https://nicenumbers.app/?${params.toString()}`;
 }
 
 function generateChallengeMessage(m) {
@@ -5780,7 +5780,7 @@ function generateChallengeMessage(m) {
     const dateStr = m.date.toLocaleDateString(getAppLocale(), { month: 'long', day: 'numeric', year: 'numeric' });
     const name = m.eventName || '';
 
-    const link = 'https://happymoments.app';
+    const link = 'https://nicenumbers.app';
     const templates = [
         `I just discovered something fun — ${name} will be ${val} ${unit} on${dateStr}! Have you checked YOUR special numbers? ${link}`,
         `Fun fact: ${name} hits ${val} ${unit} on ${dateStr}! Want to find your own special number milestones? ${link}`,
@@ -5813,7 +5813,7 @@ function handleChallengeGroup() {
     const m = allMilestonesFlat[idx];
 
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
-    const link = m ? getDeepLinkUrl(appData.events.find(e => e.id === m.eventId) || appData.events[0]) : 'https://happymoments.app';
+    const link = m ? getDeepLinkUrl(appData.events.find(e => e.id === m.eventId) || appData.events[0]) : 'https://nicenumbers.app';
 
     let message;
     if (m) {
@@ -5852,7 +5852,7 @@ function quickShare(idx) {
 }
 
 function shareAppLink() {
-    const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\nhttps://happymoments.app';
+    const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\nhttps://nicenumbers.app';
     if (navigator.share) {
         navigator.share({ title: 'Nice Numbers', text }).catch(() => {});
     } else {
@@ -6007,7 +6007,7 @@ function updateCombinedSharePreview() {
     }
 
     const message = generateCombinedShareMessage(m);
-    // Make happymoments.app URLs clickable in the preview
+    // Make nicenumbers.app URLs clickable in the preview
     const messageHtml = message.replace(
         /(happymoments\.app\/?[^\s]*)/g,
         '<a href="https://$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">$1</a>'

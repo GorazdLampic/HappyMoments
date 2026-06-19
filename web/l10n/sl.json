@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "Najprej izberi mejnik",
     "toast_copied_group": "Kopirano! Deli s svojo skupino.",
     "toast_link_copied": "Povezava je kopirana! Deli jo s prijatelji.",
-    "toast_share_link": "Deli to povezavo: https://happymoments.app",
+    "toast_share_link": "Deli to povezavo: https://nicenumbers.app",
     "toast_write_first": "Najprej nekaj napiši.",
     "toast_feedback_thanks": "Hvala! Tvoje mnenje nam pomaga, da smo boljši.",
     "toast_invite_hint": "Poznaš koga, ki bi mu bilo to všeč? Povezava do aplikacije je že v sporočilu!",
@@ -534,6 +534,6 @@
       "Števila ne lažejo: {name} {date} doseže {value} {unit}. Jaz že pripravljam konfete."
     ]
   },
-  "shareLink": "\n\nOdkrij svoja posebna števila → https://happymoments.app",
+  "shareLink": "\n\nOdkrij svoja posebna števila → https://nicenumbers.app",
   "dateFallback": " To se zgodi {date} — že čez {countdown}!"
 }

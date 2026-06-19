@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "Pilih momen dulu",
     "toast_copied_group": "Tersalin! Bagikan ke grupmu.",
     "toast_link_copied": "Link tersalin! Bagikan ke teman-temanmu.",
-    "toast_share_link": "Bagikan link ini: https://happymoments.app",
+    "toast_share_link": "Bagikan link ini: https://nicenumbers.app",
     "toast_write_first": "Tulis sesuatu dulu, ya.",
     "toast_feedback_thanks": "Terima kasih! Masukanmu membantu kami jadi lebih baik.",
     "toast_invite_hint": "Kenal orang yang pasti suka ini? Link aplikasinya sudah ada di pesanmu!",
@@ -501,6 +501,6 @@
       "Angka nggak pernah bohong: {value} {unit} untuk {name} pada {date}. Yuk rayakan bareng!"
     ]
   },
-  "shareLink": "\n\nTemukan angka spesialmu → https://happymoments.app",
+  "shareLink": "\n\nTemukan angka spesialmu → https://nicenumbers.app",
   "dateFallback": " Pada {date} — {countdown} lagi!"
 }

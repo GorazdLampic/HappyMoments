@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "Wähle zuerst einen Meilenstein",
     "toast_copied_group": "Kopiert! Teile es mit deiner Gruppe.",
     "toast_link_copied": "Link kopiert! Teile ihn mit deinen Freunden.",
-    "toast_share_link": "Teile diesen Link: https://happymoments.app",
+    "toast_share_link": "Teile diesen Link: https://nicenumbers.app",
     "toast_write_first": "Bitte schreib zuerst etwas.",
     "toast_feedback_thanks": "Danke! Dein Feedback hilft uns, besser zu werden.",
     "toast_invite_hint": "Kennst du jemanden, dem das gefallen würde? Der App-Link ist in deiner Nachricht enthalten!",
@@ -511,6 +511,6 @@
       "Am {date} erreicht {name} {value} {unit} – solche Zahlen kommen nur einmal vorbei!"
     ]
   },
-  "shareLink": "\n\nEntdecke deine besonderen Zahlen → https://happymoments.app",
+  "shareLink": "\n\nEntdecke deine besonderen Zahlen → https://nicenumbers.app",
   "dateFallback": " Am {date} – nur noch {countdown}!"
 }

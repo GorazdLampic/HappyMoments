@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "Selecteer eerst een mijlpaal",
     "toast_copied_group": "Gekopieerd! Deel het met je groep.",
     "toast_link_copied": "Link gekopieerd! Deel hem met je vrienden.",
-    "toast_share_link": "Deel deze link: https://happymoments.app",
+    "toast_share_link": "Deel deze link: https://nicenumbers.app",
     "toast_write_first": "Schrijf eerst iets.",
     "toast_feedback_thanks": "Dank je wel! Met jouw feedback maken we de app beter.",
     "toast_invite_hint": "Ken je iemand die dit leuk zou vinden? De app-link zit al in je bericht!",
@@ -515,6 +515,6 @@
       "Niet vergeten: op {date} staat de teller van {name} op {value} {unit}. Dit zie je maar één keer voorbijkomen!"
     ]
   },
-  "shareLink": "\n\nOntdek jouw bijzondere getallen → https://happymoments.app",
+  "shareLink": "\n\nOntdek jouw bijzondere getallen → https://nicenumbers.app",
   "dateFallback": " Op {date} — over {countdown}!"
 }

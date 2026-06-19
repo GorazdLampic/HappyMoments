@@ -266,7 +266,7 @@
     "toast_select_milestone_first": "Select a milestone first",
     "toast_copied_group": "Copied! Share it with your group.",
     "toast_link_copied": "Link copied! Share it with your friends.",
-    "toast_share_link": "Share this link: https://happymoments.app",
+    "toast_share_link": "Share this link: https://nicenumbers.app",
     "toast_write_first": "Please write something first.",
     "toast_feedback_thanks": "Thank you! Your feedback helps us improve.",
     "toast_invite_hint": "Know someone who’d love this? The app link is included in your message!",
@@ -531,6 +531,6 @@
       "Mark the moment: {name} at {value} {unit} on {date}. Numbers this special deserve attention."
     ]
   },
-  "shareLink": "\n\nDiscover your special numbers → https://happymoments.app",
+  "shareLink": "\n\nDiscover your special numbers → https://nicenumbers.app",
   "dateFallback": " On {date} — {countdown} from now!"
 }

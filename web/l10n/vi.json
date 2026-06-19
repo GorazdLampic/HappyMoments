@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "Hãy chọn một cột mốc trước",
     "toast_copied_group": "Đã sao chép! Hãy chia sẻ với nhóm của bạn.",
     "toast_link_copied": "Đã sao chép liên kết! Hãy chia sẻ với bạn bè.",
-    "toast_share_link": "Chia sẻ liên kết này: https://happymoments.app",
+    "toast_share_link": "Chia sẻ liên kết này: https://nicenumbers.app",
     "toast_write_first": "Hãy viết gì đó trước đã.",
     "toast_feedback_thanks": "Cảm ơn bạn! Góp ý của bạn giúp chúng tôi cải thiện.",
     "toast_invite_hint": "Bạn biết ai sẽ thích điều này? Liên kết ứng dụng đã có sẵn trong tin nhắn của bạn!",
@@ -502,6 +502,6 @@
       "Có một con số đang đợi {name}: {value} {unit} vào {date}. Không phải ngày nào cũng có dịp như vậy đâu!"
     ]
   },
-  "shareLink": "\n\nKhám phá những con số đặc biệt của bạn → https://happymoments.app",
+  "shareLink": "\n\nKhám phá những con số đặc biệt của bạn → https://nicenumbers.app",
   "dateFallback": " Vào {date} — còn {countdown} nữa!"
 }

@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "먼저 특별한 순간을 선택해 주세요",
     "toast_copied_group": "복사했어요! 그룹과 공유해 보세요.",
     "toast_link_copied": "링크를 복사했어요! 친구들에게 공유해 보세요.",
-    "toast_share_link": "이 링크를 공유해 보세요: https://happymoments.app",
+    "toast_share_link": "이 링크를 공유해 보세요: https://nicenumbers.app",
     "toast_write_first": "먼저 내용을 적어 주세요.",
     "toast_feedback_thanks": "고마워요! 보내 주신 의견이 큰 도움이 돼요.",
     "toast_invite_hint": "이걸 좋아할 사람이 떠오르나요? 메시지에 앱 링크가 함께 들어가요!",
@@ -503,6 +503,6 @@
       "{name}님에게 다가오는 숫자: {value}{unit}. 이유는? {why}. 함께 축하해 줄 사람이 필요해요!"
     ]
   },
-  "shareLink": "\n\n나만의 특별한 숫자를 찾아보세요 → https://happymoments.app",
+  "shareLink": "\n\n나만의 특별한 숫자를 찾아보세요 → https://nicenumbers.app",
   "dateFallback": " {date}, 지금부터 {countdown} 후예요!"
 }

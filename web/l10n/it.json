@@ -267,7 +267,7 @@
     "toast_select_milestone_first": "Seleziona prima un traguardo",
     "toast_copied_group": "Copiato! Condividilo con il tuo gruppo.",
     "toast_link_copied": "Link copiato! Condividilo con i tuoi amici.",
-    "toast_share_link": "Condividi questo link: https://happymoments.app",
+    "toast_share_link": "Condividi questo link: https://nicenumbers.app",
     "toast_write_first": "Scrivi prima qualcosa.",
     "toast_feedback_thanks": "Grazie! Il tuo feedback ci aiuta a migliorare.",
     "toast_invite_hint": "Conosci qualcuno a cui piacerebbe? Il link dell'app è già nel messaggio!",
@@ -525,6 +525,6 @@
       "Allerta traguardo: il {date} {name} tocca quota {value} {unit}. Un buon motivo per farsi sentire!"
     ]
   },
-  "shareLink": "\n\nScopri i tuoi numeri speciali → https://happymoments.app",
+  "shareLink": "\n\nScopri i tuoi numeri speciali → https://nicenumbers.app",
   "dateFallback": " Il {date} — tra {countdown}!"
 }

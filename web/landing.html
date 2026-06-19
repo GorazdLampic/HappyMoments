@@ -11,10 +11,10 @@
     <meta property="og:title" content="When's Your Billion? | Nice Numbers">
     <meta property="og:description" content="Find out when you turn 1 billion seconds old — and discover hundreds of special number milestones in your life.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://happymoments.app/landing.html">
+    <meta property="og:url" content="https://nicenumbers.app/landing.html">
     <meta property="og:site_name" content="Nice Numbers">
     <meta property="og:locale" content="en_US">
-    <meta property="og:image" content="https://happymoments.app/og-image.png">
+    <meta property="og:image" content="https://nicenumbers.app/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Nice Numbers — discover life's special number milestones">
@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="When's Your Billion? | Nice Numbers">
     <meta name="twitter:description" content="Calculate when you turn 1 billion seconds old.">
-    <meta name="twitter:image" content="https://happymoments.app/og-image.png">
+    <meta name="twitter:image" content="https://nicenumbers.app/og-image.png">
     <meta name="twitter:image:alt" content="Nice Numbers — discover life's special number milestones">
 
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
@@ -478,7 +478,7 @@ function calculateBillion() {
 
 function shareBillion() {
     const date = document.getElementById('resultDate').textContent;
-    const text = `I'll turn 1 BILLION seconds old on ${date}! Find yours at happymoments.app`;
+    const text = `I'll turn 1 BILLION seconds old on ${date}! Find yours at nicenumbers.app`;
 
     if (navigator.share) {
         navigator.share({ title: "When's Your Billion?", text: text }).catch(() => {});
@@ -489,7 +489,7 @@ function shareBillion() {
 
 function copyBillion() {
     const date = document.getElementById('resultDate').textContent;
-    const text = `I'll turn 1 BILLION seconds old on ${date}! Find yours at happymoments.app`;
+    const text = `I'll turn 1 BILLION seconds old on ${date}! Find yours at nicenumbers.app`;
     navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => {});
 }
 </script>
