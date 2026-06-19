@@ -401,6 +401,26 @@ function init() {
         }
     }
 
+    // #7 One-time gentle tip on a later visit: anniversaries are addable too.
+    // Outside the branches + on a delay, because loadData() decrypts async — so
+    // appData.events isn't populated yet at the synchronous returning-user check.
+    // Non-annoying: shown once, only for a populated returning user (on the
+    // dashboard, not onboarding) who has no special date yet.
+    try {
+        const launches = (parseInt(localStorage.getItem('hm_launches') || '0', 10) || 0) + 1;
+        localStorage.setItem('hm_launches', String(launches));
+        if (launches >= 2 && !localStorage.getItem('hm_anniv_tip')) {
+            setTimeout(() => {
+                if (!appData.events || !appData.events.length) return;
+                if (onboardingSection && !onboardingSection.classList.contains('hidden')) return;
+                const hasDateEvent = appData.events.some(e => /wedding|anniversar|poroka|obletnic|graduat|first day|we met|moved/i.test(e.name));
+                if (hasDateEvent) return;
+                localStorage.setItem('hm_anniv_tip', '1');
+                showToast(tt('tip_anniversary'), 'info', 7000);
+            }, 2500);
+        }
+    } catch (e) {}
+
     // Init notifications
     if (typeof NOTIF !== 'undefined') {
         NOTIF.init();
@@ -1163,7 +1183,7 @@ function switchHomeView(view) {
             // Invite anniversaries / special dates — the engine treats any date as a member,
             // so "Our wedding · 14 Jul 2007" produces combined milestones immediately
             const hasDateEvent = appData.events.some(e => /wedding|anniversar|poroka|obletnic|graduat|first day|we met|moved/i.test(e.name));
-            if (appData.events.length >= 2 && !hasDateEvent) {
+            if (appData.events.length >= 1 && !hasDateEvent) {
                 headerHtml += `<div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(212,184,118,0.06);border:1px dashed rgba(212,184,118,0.3);text-align:center;">
                     <p style="color:var(--text);font-size:0.92rem;margin-bottom:4px;">${tt('tog_anniv_title')}</p>
                     <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:10px;">${tt('tog_anniv_body')}</p>

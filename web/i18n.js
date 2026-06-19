@@ -159,6 +159,7 @@ const I18N = (() => {
             age_intro_lived: "So far you've lived",
             age_more_coming: 'And the best numbers are still ahead — not just your own, but the ones you share with the people you love. ✨',
             dash_recent_ping: 'reach out 🎉',
+            tip_anniversary: '💛 You can add anniversaries too — your wedding or the day you met. Look under the Together tab.',
             wiz_show_less: 'Show less ▲',
             wiz_more_arrow: 'More ▼',
             wiz_less_arrow: 'Less ▲',
