@@ -402,7 +402,12 @@
     "prem_feat_support": "독립 개발자를 응원하기",
     "prem_gate_used_views": "무료 '함께' 탭 보기 {count}회를 모두 사용했어요.",
     "prem_gate_upgrade_for": "Premium으로 업그레이드하면 제한 없이 사용할 수 있어요.",
-    "prem_gate_upgrade_btn": "업그레이드 — €1.49/년"
+    "prem_gate_upgrade_btn": "업그레이드 — €1.49/년",
+    "age_intro_lived": "지금까지 당신이 살아온 시간은",
+    "age_more_coming": "그리고 가장 멋진 숫자들은 아직 남아 있어요——나만의 숫자뿐 아니라, 사랑하는 사람들과 함께 나누는 숫자까지. ✨",
+    "dash_recent_ping": "안부 전하기 🎉",
+    "tip_anniversary": "💛 기념일도 추가할 수 있어요——결혼한 날이나 처음 만난 날처럼요. '기념일' 탭에서 확인하세요.",
+    "tabbar_events": "기념일"
   },
   "plurals": {
     "day": {

@@ -402,7 +402,12 @@
     "prem_feat_support": "Unterstütze einen unabhängigen Entwickler",
     "prem_gate_used_views": "Du hast deine {count} kostenlosen Team-Ansichten aufgebraucht.",
     "prem_gate_upgrade_for": "Hol dir Premium für unbegrenzten Zugriff.",
-    "prem_gate_upgrade_btn": "Upgrade – €1.49/Jahr"
+    "prem_gate_upgrade_btn": "Upgrade – €1.49/Jahr",
+    "age_intro_lived": "Bisher hast du gelebt",
+    "age_more_coming": "Und die schönsten Zahlen kommen erst noch — nicht nur deine eigenen, sondern die, die du mit den Menschen teilst, die du liebst. ✨",
+    "dash_recent_ping": "melde dich 🎉",
+    "tip_anniversary": "💛 Du kannst auch Jahrestage hinzufügen — eure Hochzeit oder den Tag, an dem ihr euch kennengelernt habt. Schau im Tab „Anlässe“ nach.",
+    "tabbar_events": "Anlässe"
   },
   "plurals": {
     "day": {

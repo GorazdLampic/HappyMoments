@@ -402,7 +402,12 @@
     "prem_feat_support": "Wspierasz niezależnego twórcę",
     "prem_gate_used_views": "Darmowe wyświetlenia karty Razem ({count}) już się skończyły.",
     "prem_gate_upgrade_for": "Przejdź na Premium i korzystaj bez ograniczeń.",
-    "prem_gate_upgrade_btn": "Premium — €1.49/rok"
+    "prem_gate_upgrade_btn": "Premium — €1.49/rok",
+    "age_intro_lived": "Do tej pory przeżyłeś",
+    "age_more_coming": "A najpiękniejsze liczby dopiero przed tobą — nie tylko twoje własne, ale i te, które dzielisz z bliskimi. ✨",
+    "dash_recent_ping": "odezwij się 🎉",
+    "tip_anniversary": "💛 Możesz też dodać rocznice — wasz ślub albo dzień, w którym się poznaliście. Zajrzyj do zakładki Wydarzenia.",
+    "tabbar_events": "Wydarzenia"
   },
   "plurals": {
     "day": {

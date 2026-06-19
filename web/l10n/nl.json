@@ -402,7 +402,12 @@
     "prem_feat_support": "Steun een onafhankelijke ontwikkelaar",
     "prem_gate_used_views": "Je {count} gratis weergaven van tabblad Samen zijn op.",
     "prem_gate_upgrade_for": "Upgrade naar Premium voor onbeperkte toegang.",
-    "prem_gate_upgrade_btn": "Upgrade — €1.49/jaar"
+    "prem_gate_upgrade_btn": "Upgrade — €1.49/jaar",
+    "age_intro_lived": "Tot nu toe heb je geleefd",
+    "age_more_coming": "En de mooiste getallen moeten nog komen — niet alleen die van jou, maar ook die je deelt met de mensen van wie je houdt. ✨",
+    "dash_recent_ping": "stuur een berichtje 🎉",
+    "tip_anniversary": "💛 Je kunt ook jubilea toevoegen — jullie trouwdag of de dag dat jullie elkaar leerden kennen. Kijk onder het tabblad Momenten.",
+    "tabbar_events": "Momenten"
   },
   "plurals": {
     "day": {

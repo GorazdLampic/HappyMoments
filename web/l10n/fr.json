@@ -402,7 +402,12 @@
     "prem_feat_support": "Soutiens un développeur indépendant",
     "prem_gate_used_views": "Tu as utilisé tes {count} vues gratuites de l’onglet Ensemble.",
     "prem_gate_upgrade_for": "Passe à Premium pour un accès illimité.",
-    "prem_gate_upgrade_btn": "Passer à Premium — €1.49/an"
+    "prem_gate_upgrade_btn": "Passer à Premium — €1.49/an",
+    "age_intro_lived": "Jusqu'ici, tu as vécu",
+    "age_more_coming": "Et les plus beaux chiffres sont encore à venir — pas seulement les tiens, mais ceux que tu partages avec les gens que tu aimes. ✨",
+    "dash_recent_ping": "écris-lui ! 🎉",
+    "tip_anniversary": "💛 Tu peux aussi ajouter des dates spéciales — ton mariage ou le jour de votre rencontre. C'est dans l'onglet Dates.",
+    "tabbar_events": "Dates"
   },
   "plurals": {
     "day": {

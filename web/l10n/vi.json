@@ -402,7 +402,12 @@
     "prem_feat_support": "Ủng hộ một nhà phát triển độc lập",
     "prem_gate_used_views": "Bạn đã dùng hết {count} lượt xem miễn phí của thẻ Cùng nhau.",
     "prem_gate_upgrade_for": "Nâng cấp lên Premium để truy cập không giới hạn.",
-    "prem_gate_upgrade_btn": "Nâng cấp — €1.49/năm"
+    "prem_gate_upgrade_btn": "Nâng cấp — €1.49/năm",
+    "age_intro_lived": "Đến nay bạn đã sống được",
+    "age_more_coming": "Và những con số tuyệt vời nhất vẫn còn ở phía trước — không chỉ của riêng bạn, mà cả những khoảnh khắc bạn chia sẻ với người mình yêu thương. ✨",
+    "dash_recent_ping": "gửi lời chào 🎉",
+    "tip_anniversary": "💛 Bạn cũng có thể thêm các ngày kỷ niệm — ngày cưới hay ngày hai bạn gặp nhau. Xem ở tab Kỷ niệm.",
+    "tabbar_events": "Kỷ niệm"
   },
   "plurals": {
     "day": {

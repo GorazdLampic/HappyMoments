@@ -402,7 +402,12 @@
     "prem_feat_support": "Apoie um desenvolvedor independente",
     "prem_gate_used_views": "Você usou suas {count} visualizações gratuitas da aba Juntos.",
     "prem_gate_upgrade_for": "Assine o Premium para ter acesso ilimitado.",
-    "prem_gate_upgrade_btn": "Assinar — €1.49/ano"
+    "prem_gate_upgrade_btn": "Assinar — €1.49/ano",
+    "age_intro_lived": "Até agora você já viveu",
+    "age_more_coming": "E os melhores números ainda estão por vir — não só os seus, mas também os que você compartilha com quem ama. ✨",
+    "dash_recent_ping": "manda um oi! 🎉",
+    "tip_anniversary": "💛 Você também pode adicionar datas especiais — seu casamento ou o dia em que vocês se conheceram. Veja na aba Eventos.",
+    "tabbar_events": "Eventos"
   },
   "plurals": {
     "day": {

@@ -402,7 +402,12 @@
     "prem_feat_support": "個人開発者を応援できます",
     "prem_gate_used_views": "チームタブの無料表示{count}回を使い切りました。",
     "prem_gate_upgrade_for": "Premiumにアップグレードすると無制限で使えます。",
-    "prem_gate_upgrade_btn": "アップグレード — €1.49／年"
+    "prem_gate_upgrade_btn": "アップグレード — €1.49／年",
+    "age_intro_lived": "これまでに、あなたが生きてきたのは",
+    "age_more_coming": "そして、最高の数字はまだこれから——自分だけじゃなく、大切な人と分かち合う数字も。✨",
+    "dash_recent_ping": "連絡しよう 🎉",
+    "tip_anniversary": "💛 記念日も追加できます——結婚式や、出会った日など。「記念日」タブをご覧ください。",
+    "tabbar_events": "記念日"
   },
   "plurals": {
     "day": {
