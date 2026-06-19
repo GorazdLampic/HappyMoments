@@ -9,12 +9,19 @@
  * Auth: Bearer hm-admin-2026
  */
 
-const DEFAULT_ADMIN_TOKEN = 'hm-admin-2026';
-
+// No public default: the admin API stays disabled until the ADMIN_TOKEN secret
+// is set in Cloudflare. This prevents anyone from reading user data (incl.
+// emails via ?action=users) with a guessable token.
 function checkAuth(request, env) {
-    const token = env?.ADMIN_TOKEN || DEFAULT_ADMIN_TOKEN;
-    const auth = request.headers.get('Authorization');
-    return auth === `Bearer ${token}`;
+    const token = env?.ADMIN_TOKEN;
+    if (!token) return false;
+    const auth = request.headers.get('Authorization') || '';
+    const expected = `Bearer ${token}`;
+    // constant-time comparison to avoid timing leaks
+    if (auth.length !== expected.length) return false;
+    let diff = 0;
+    for (let i = 0; i < expected.length; i++) diff |= auth.charCodeAt(i) ^ expected.charCodeAt(i);
+    return diff === 0;
 }
 
 function jsonResponse(data, status = 200) {
