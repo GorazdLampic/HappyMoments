@@ -156,6 +156,8 @@ const I18N = (() => {
             wiz_share: 'Share',
             wiz_show_more_tpl: 'Show {count} more {noun} ▼',
             wiz_show_more_short: 'Show {count} more ▼',
+            age_intro_lived: "So far, you've been alive:",
+            age_more_coming: 'And the nicest numbers are still ahead ✨',
             wiz_show_less: 'Show less ▲',
             wiz_more_arrow: 'More ▼',
             wiz_less_arrow: 'Less ▲',

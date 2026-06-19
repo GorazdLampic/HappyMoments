@@ -3430,6 +3430,17 @@ body {
 .reveal-done .wizard-reveal-countdown { animation: staggerIn 0.5s ease forwards 1.0s; }
 .reveal-done .wizard-actions          { animation: staggerIn 0.5s ease forwards 1.5s; }
 
+/* #6 Intro age-stats strip — raw "you've been alive" context on the Me reveal */
+.age-stats-strip { margin-top: 20px; text-align: center; }
+.age-stats-intro { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 0.02em; }
+.age-stats-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 16px; }
+.age-stat { display: flex; flex-direction: column; align-items: center; min-width: 56px; }
+.age-stat-num { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.age-stat-unit { font-size: 0.62rem; color: var(--text-muted); text-transform: lowercase; margin-top: 2px; }
+.age-stats-more { margin-top: 14px; font-size: 0.85rem; color: var(--warning); font-weight: 600; }
+.reveal-stagger .age-stats-strip { opacity: 0; transform: translateY(10px); }
+.reveal-done .age-stats-strip { animation: staggerIn 0.5s ease forwards 1.3s; }
+
 @keyframes staggerIn {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }

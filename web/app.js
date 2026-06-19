@@ -1803,6 +1803,29 @@ function animateCounter(element, targetValue, duration, onComplete) {
     requestAnimationFrame(tick);
 }
 
+// #6 Intro age-stats: raw "you've been alive" context for the Me reveal.
+// Always shown — even when there's no near nice number — as the activation
+// hook, ending with the reassurance that nicer numbers are still coming.
+// Unit labels reuse the localized plural tables; only the two wrapper lines
+// fall back to English until translated.
+function renderAgeStatsStrip(date) {
+    if (typeof getCurrentAgeStats !== 'function') return '';
+    const stats = getCurrentAgeStats(date);
+    const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
+    let cells = '';
+    ['seconds', 'minutes', 'hours', 'days', 'weeks'].forEach(u => {
+        const s = stats[u];
+        if (!s) return;
+        cells += `<div class="age-stat"><span class="age-stat-num">${s.value.toLocaleString(locale)}</span><span class="age-stat-unit">${localizedUnit(s.value, u)}</span></div>`;
+    });
+    if (!cells) return '';
+    return `<div class="age-stats-strip">
+            <div class="age-stats-intro">${tt('age_intro_lived')}</div>
+            <div class="age-stats-grid">${cells}</div>
+            <div class="age-stats-more">${tt('age_more_coming')}</div>
+        </div>`;
+}
+
 // --- Shared helper: create event, calculate milestones, render reveal ---
 function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
     if (!validateDateFields(dateStr)) return false;
@@ -1897,6 +1920,8 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
 
         // Build reveal HTML — clean, spacious, large type
         const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — happymoments.app';
+        // Age-stats hook only on the "Me" reveal (Step 2), not friend reveals.
+        const ageStripHtml = revealElId === 'wizardReveal' ? renderAgeStatsStrip(date) : '';
         if (m.isCosmic) {
             // Cosmic: show description as text (no animated number)
             revealEl.innerHTML = `
@@ -1909,6 +1934,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     </div>
                     ${wizardHeroShareChip(heroShareMsg)}
                 </div>
+                ${ageStripHtml}
             `;
         } else {
             revealEl.innerHTML = `
@@ -1925,6 +1951,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                     </div>
                     ${wizardHeroShareChip(heroShareMsg)}
                 </div>
+                ${ageStripHtml}
             `;
         }
 
