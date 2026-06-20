@@ -70,7 +70,7 @@ export async function onRequestPost(context) {
 
     try {
         // Build a PUBLIC URL for the design image — Printful will fetch it
-        const appUrl = context.env.APP_URL || 'https://happymoments.app';
+        const appUrl = context.env.APP_URL || 'https://nicenumbers.app';
         const designParams = new URLSearchParams({
             value: String(milestoneValue),
             unit: milestoneUnit,
@@ -101,7 +101,7 @@ export async function onRequestPost(context) {
                     items: [{
                         variant_id: variantId,
                         quantity: 1,
-                        name: `HappyMoments ${variant.name} — ${milestoneValue} ${milestoneUnit}` +
+                        name: `Nice Numbers ${variant.name} — ${milestoneValue} ${milestoneUnit}` +
                               (milestoneName ? ` for ${milestoneName}` : '') +
                               (personalMessage ? ` "${personalMessage}"` : ''),
                         retail_price: (priceInCents / 100).toFixed(2),
@@ -140,7 +140,7 @@ export async function onRequestPost(context) {
             'mode': 'payment',
             'line_items[0][price_data][currency]': 'eur',
             'line_items[0][price_data][unit_amount]': String(priceInCents),
-            'line_items[0][price_data][product_data][name]': `HappyMoments ${variant.name}`,
+            'line_items[0][price_data][product_data][name]': `Nice Numbers ${variant.name}`,
             'line_items[0][price_data][product_data][description]': description,
             'line_items[0][quantity]': '1',
             'success_url': `${appUrl}/index.html?checkout=gift_success&order=${orderId}`,
@@ -208,12 +208,12 @@ export async function onRequestGet(context) {
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <rect width="${W}" height="${H}" fill="#1a1a1a"/>
 <rect x="30" y="30" width="${W-60}" height="${H-60}" fill="none" stroke="#d4b876" stroke-width="2" opacity="0.2" rx="8"/>
-<text x="${W/2}" y="${Math.floor(H*0.12)}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.035)}" fill="#888" font-style="italic">HappyMoments</text>
+<text x="${W/2}" y="${Math.floor(H*0.12)}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.035)}" fill="#888" font-style="italic">Nice Numbers</text>
 ${name ? `<text x="${W/2}" y="${type==='mug'?'30%':'28%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.05)}" fill="#a0b8a0" font-style="italic">${esc(name)}</text>` : ''}
 <text x="${W/2}" y="${type==='mug'?'55%':'50%'}" text-anchor="middle" font-family="Courier New,monospace" font-size="${fontSize}" fill="#d4b876" font-weight="300">${esc(val)}</text>
 <text x="${W/2}" y="${type==='mug'?'70%':'60%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.06)}" fill="#e0e0e0" font-style="italic">${esc(unit)}</text>
 ${message ? `<text x="${W/2}" y="${type==='mug'?'82%':'72%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.04)}" fill="#888" font-style="italic">${esc(message)}</text>` : ''}
-<text x="${W/2}" y="${type==='mug'?'95%':'92%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.025)}" fill="#888">happymoments.app</text>
+<text x="${W/2}" y="${type==='mug'?'95%':'92%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.025)}" fill="#888">nicenumbers.app</text>
 </svg>`;
 
     return new Response(svg, {

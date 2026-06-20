@@ -4,6 +4,8 @@
  */
 
 const ALLOWED_ORIGINS = [
+    'https://nicenumbers.app',
+    'https://www.nicenumbers.app',
     'https://happymoments.app',
     'https://www.happymoments.app',
     'http://localhost:3000',

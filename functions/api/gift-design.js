@@ -69,10 +69,10 @@ export async function onRequestGet(context) {
     <path d="M${W-100},${H-60} L${W-60},${H-60} L${W-60},${H-100}"/>
   </g>
 
-  <!-- Top: HappyMoments brand -->
+  <!-- Top: Nice Numbers brand -->
   <text x="${W/2}" y="${Math.floor(H*0.12)}" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif" font-size="${Math.floor(H*0.035)}"
-        fill="#888888" font-style="italic">HappyMoments</text>
+        fill="#888888" font-style="italic">Nice Numbers</text>
 
   <!-- Decorative line -->
   <line x1="${W*0.2}" y1="${Math.floor(H*0.15)}" x2="${W*0.8}" y2="${Math.floor(H*0.15)}"
@@ -105,7 +105,7 @@ export async function onRequestGet(context) {
   <!-- Footer -->
   <text x="${W/2}" y="${brandY}" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif" font-size="${brandSize}"
-        fill="#888888">happymoments.app</text>
+        fill="#888888">nicenumbers.app</text>
 </svg>`;
 
     return new Response(svg, {

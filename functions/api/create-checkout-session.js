@@ -23,7 +23,7 @@ export async function onRequestPost(context) {
         return Response.json({ error: 'Invalid product type' }, { status: 400 });
     }
 
-    const appUrl = context.env.APP_URL || 'https://happymoments.app';
+    const appUrl = context.env.APP_URL || 'https://nicenumbers.app';
 
     try {
         // Create Stripe Checkout Session via REST API (no SDK needed in Workers)
@@ -32,7 +32,7 @@ export async function onRequestPost(context) {
             'line_items[0][price_data][currency]': 'eur',
             'line_items[0][price_data][unit_amount]': '149',
             'line_items[0][price_data][recurring][interval]': 'year',
-            'line_items[0][price_data][product_data][name]': 'HappyMoments Premium',
+            'line_items[0][price_data][product_data][name]': 'Nice Numbers Premium',
             'line_items[0][price_data][product_data][description]': 'Unlimited events, all milestone types, cloud sync. Billed annually.',
             'line_items[0][quantity]': '1',
             'success_url': `${appUrl}/index.html?checkout=premium_success`,
