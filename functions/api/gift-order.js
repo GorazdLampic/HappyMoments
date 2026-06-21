@@ -42,7 +42,7 @@ export async function onRequestPost(context) {
     }
 
     const { productType, milestoneValue, milestoneUnit, milestoneName,
-            personalMessage, customerEmail, shippingAddress, size } = body;
+            personalMessage, customerEmail, shippingAddress, size, designImage } = body;
 
     if (!productType || !GIFT_PRICES[productType]) {
         return Response.json({ error: 'Invalid product type' }, { status: 400 });
@@ -78,9 +78,29 @@ export async function onRequestPost(context) {
             message: personalMessage || '',
             type: productType
         });
-        // Per-number design SVG, served publicly by /api/gift-design for Printful to fetch.
-        // Printful accepts SVG (≤20 MB); fonts are substituted server-side at rasterization.
-        const designUrl = `${appUrl}/api/gift-design?${designParams.toString()}`;
+        // Print file URL that Printful will fetch.
+        // Preferred: a client-rendered PNG (pixel-perfect, correct fonts) stored in D1
+        // and served as a raster — Printful renders rasters reliably. The server SVG
+        // endpoint is only a fallback (live-text SVG can rasterize blank on Printful).
+        let designUrl = `${appUrl}/api/gift-design?${designParams.toString()}`;
+
+        if (designImage && context.env.DB) {
+            try {
+                const b64 = String(designImage).replace(/^data:image\/png;base64,/, '');
+                // sanity bounds: a real design is >40 chars; cap ~3 MB to stay D1-safe
+                if (b64.length > 40 && b64.length < 3_000_000) {
+                    await context.env.DB.prepare(
+                        'CREATE TABLE IF NOT EXISTS gift_files (id TEXT PRIMARY KEY, data TEXT NOT NULL, created INTEGER)'
+                    ).run();
+                    await context.env.DB.prepare(
+                        'INSERT OR REPLACE INTO gift_files (id, data, created) VALUES (?, ?, ?)'
+                    ).bind(orderId, b64, Date.now()).run();
+                    designUrl = `${appUrl}/api/gift-file?id=${encodeURIComponent(orderId)}`;
+                }
+            } catch {
+                // keep SVG fallback designUrl
+            }
+        }
 
         // Create Printful order if token available
         let printfulOrderId = null;

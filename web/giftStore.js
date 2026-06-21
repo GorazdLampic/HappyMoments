@@ -535,6 +535,22 @@ async function submitGiftOrder(productId, value, unit) {
     }
     if (errorEl) errorEl.classList.add('hidden');
 
+    // Render the print-resolution design as a PNG so Printful gets a reliable raster
+    // (the same canvas the user previews). Falls back to server SVG if unavailable.
+    let designImage = null;
+    try {
+        if (typeof generateGiftDesignBase64 === 'function') {
+            const milestone = {
+                value: value,
+                unitName: unit,
+                eventName: recipientName || (_currentGiftMilestone ? _currentGiftMilestone.eventName : '')
+            };
+            designImage = generateGiftDesignBase64(milestone, product.id, { theme: 'dark', message: personalMessage });
+        }
+    } catch (err) {
+        console.error('Gift design render failed, falling back to server design:', err);
+    }
+
     try {
         // Submit to backend (Stripe checkout, Printful fulfilled separately)
         const response = await fetch('/api/gift-order', {
@@ -554,7 +570,8 @@ async function submitGiftOrder(productId, value, unit) {
                     country_code: shipCountry,
                     zip: shipZip
                 },
-                size: size
+                size: size,
+                designImage: designImage
             })
         });
 
