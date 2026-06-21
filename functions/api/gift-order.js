@@ -78,16 +78,16 @@ export async function onRequestPost(context) {
             message: personalMessage || '',
             type: productType
         });
-        const designUrl = `${appUrl}/api/gift-order?${designParams.toString()}`;
+        // Per-number design SVG, served publicly by /api/gift-design for Printful to fetch.
+        // Printful accepts SVG (≤20 MB); fonts are substituted server-side at rasterization.
+        const designUrl = `${appUrl}/api/gift-design?${designParams.toString()}`;
 
         // Create Printful order if token available
         let printfulOrderId = null;
         if (PRINTFUL_TOKEN) {
             try {
 
-                // Create draft order with placeholder design
-                // The placeholder SVG is a static file served by Cloudflare Pages
-                const placeholderUrl = `${appUrl}/gift-placeholder.png`;
+                // Create draft order with the personalized per-number design
                 const orderBody = {
                     external_id: orderId,
                     recipient: {
@@ -105,7 +105,7 @@ export async function onRequestPost(context) {
                               (milestoneName ? ` for ${milestoneName}` : '') +
                               (personalMessage ? ` "${personalMessage}"` : ''),
                         retail_price: (priceInCents / 100).toFixed(2),
-                        files: [{ type: 'default', url: placeholderUrl }]
+                        files: [{ type: 'default', url: designUrl }]
                     }]
                 };
 
