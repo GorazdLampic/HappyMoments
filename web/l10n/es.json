@@ -407,7 +407,8 @@
     "age_more_coming": "Y los mejores números aún están por llegar — no solo los tuyos, sino los que compartes con las personas que quieres. ✨",
     "dash_recent_ping": "¡escríbele! 🎉",
     "tip_anniversary": "💛 También puedes añadir aniversarios — tu boda o el día en que os conocisteis. Míralo en la pestaña Eventos.",
-    "tabbar_events": "Eventos"
+    "tabbar_events": "Eventos",
+    "tabbar_manage": "Gestionar"
   },
   "plurals": {
     "day": {

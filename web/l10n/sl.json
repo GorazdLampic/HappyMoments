@@ -407,7 +407,8 @@
     "age_more_coming": "Najlepše številke pa so šele pred tabo — ne le tvoje, ampak tudi tiste, ki jih deliš z ljudmi, ki jih imaš rad. ✨",
     "dash_recent_ping": "javi se 🎉",
     "tip_anniversary": "💛 Dodaš lahko tudi obletnice — vajino poroko ali dan, ko sta se spoznala. Poglej pod zavihek Dogodki.",
-    "tabbar_events": "Dogodki"
+    "tabbar_events": "Dogodki",
+    "tabbar_manage": "Upravljaj"
   },
   "plurals": {
     "day": {
