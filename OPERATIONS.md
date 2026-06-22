@@ -161,7 +161,9 @@ npm run android      # build + cap sync + open Android Studio
 1. Edit under `web/`. 2. `git commit` → `git push` to `main`. 3. Cloudflare auto-deploys. 4. Hard-refresh; the versioned `sw.js` busts the PWA cache.
 
 ### Ship an Android build
-1. Fix any display strings (`strings.xml`). 2. Bump `versionCode` + `versionName` in `android/app/build.gradle`. 3. `git tag vNN && git push origin vNN`. 4. Wait for GitHub Actions → download `app-release.aab` from the `latest` GitHub Release. 5. Upload to Play Console → Internal testing.
+1. Fix any display strings (`strings.xml`). 2. Bump `versionCode` + `versionName` in `android/app/build.gradle` (+ bump `web/sw.js` CACHE_NAME to busy the PWA cache for web). 3. `git tag vNN && git push origin vNN`. 4. Wait for GitHub Actions → download `app-release.aab` from the `latest` GitHub Release. 5. Upload to Play Console → Internal testing.
+
+**Signing:** the AAB is signed with the upload keystore stored in the `UPLOAD_KEYSTORE_BASE64` GitHub secret (passwords default to `happymoments2026` if `KEYSTORE_PASSWORD`/`KEY_PASSWORD` secrets are unset). Every build MUST use this same keystore or Play rejects the upload ("wrong signing key"). Health check: a successful run should have **no `keystore-backup` artifact** — if one appears, the secret was lost and a throwaway key was generated (do NOT upload that AAB). Last good build: **v95 / 2.9.5**, 22 Jun 2026.
 
 ### Rotate a secret
 1. Generate new value in the service dashboard (Stripe/Printful/etc.). 2. Update it in Cloudflare Pages → Environment variables (Production). 3. Trigger a redeploy (push or "Retry deployment"). 4. Verify via `/api/health` or a live test.
