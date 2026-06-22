@@ -1167,10 +1167,16 @@ function switchHomeView(view) {
         const currentSet = allSets.find(s => s.id === currentSetId);
         const gName = currentSet ? currentSet.name : tt('wiz_my_group_ph');
         if (content) {
-            let headerHtml = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;">
+            // Group name + edit pencil. With 2+ groups the sub-tabs row above already
+            // shows the active group name (with its own pencil), so render this line
+            // only for a single group — otherwise the name appears twice.
+            let headerHtml = '';
+            if (allSets.length < 2) {
+                headerHtml = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;">
                 <span style="font-size:1.1rem;font-weight:600;color:var(--text);">${escapeHtml(gName)}</span>
                 <button onclick="openGroupEditor('${currentSetId}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;" title="Edit group">&#9998;</button>
             </div>`;
+            }
             if (typeof renderCombinedTab === 'function') {
                 renderCombinedTab();
                 const combinedContent = document.getElementById('combinedMilestonesContent');
@@ -1217,7 +1223,12 @@ function renderGroupSubTabs() {
     container.style.display = 'flex';
     container.innerHTML = allSets.map(set => {
         const isActive = set.id === currentSetId;
-        return `<button onclick="switchToGroupTab('${set.id}')" style="flex:1;padding:8px 12px;border:none;cursor:pointer;font-size:0.85rem;font-weight:${isActive ? '700' : '400'};color:${isActive ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};background:${isActive ? 'rgba(212,184,118,0.12)' : 'transparent'};transition:all 0.2s;">${escapeHtml(set.name)}</button>`;
+        // The active group carries the edit pencil right on its chip; tapping the
+        // pencil opens the editor without re-triggering the (already-active) tab.
+        const editPencil = isActive
+            ? ` <span onclick="event.stopPropagation(); openGroupEditor('${set.id}')" title="Edit group" style="margin-left:5px;opacity:0.7;font-size:0.95em;">&#9998;</span>`
+            : '';
+        return `<button onclick="switchToGroupTab('${set.id}')" style="flex:1;padding:8px 12px;border:none;cursor:pointer;font-size:0.85rem;font-weight:${isActive ? '700' : '400'};color:${isActive ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};background:${isActive ? 'rgba(212,184,118,0.12)' : 'transparent'};transition:all 0.2s;">${escapeHtml(set.name)}${editPencil}</button>`;
     }).join('');
 }
 

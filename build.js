@@ -133,8 +133,18 @@ html = html.replace(/(styles\.css)(")/g, `$1?v=${VERSION}$2`);
 
 // Inject build version and timestamp into footer
 const buildTime = new Date().toISOString().replace('T', ' ').substring(0, 16);
-const versionCode = '90'; // Keep in sync with android/app/build.gradle versionCode
-const versionInfo = `v${versionCode} &middot; ${buildTime} UTC`;
+// Single source of truth: read the version straight from android/app/build.gradle
+// so the web footer can never drift out of sync with the app version again.
+let versionCode = '?';
+let versionName = '';
+try {
+    const gradle = fs.readFileSync(path.join(__dirname, 'android', 'app', 'build.gradle'), 'utf8');
+    versionCode = (gradle.match(/versionCode\s+(\d+)/) || [])[1] || versionCode;
+    versionName = (gradle.match(/versionName\s+"([^"]+)"/) || [])[1] || '';
+} catch (e) {
+    console.warn('  (build.gradle not readable; footer version may be incomplete)');
+}
+const versionInfo = `v${versionCode}${versionName ? ' / ' + versionName : ''} &middot; ${buildTime} UTC`;
 html = html.replace('id="appVersion">', `id="appVersion">Build: ${versionInfo}`);
 
 fs.writeFileSync(path.join(DIST, 'index.html'), html);
