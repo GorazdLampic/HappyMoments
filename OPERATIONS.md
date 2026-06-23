@@ -118,7 +118,7 @@ All backend secrets are set in **Cloudflare Pages → Settings → Environment v
 |---|---|---|---|
 | `/api/health` | GET | Liveness + reports whether `DB`/Stripe are bound | — |
 | `/api/event` | POST | Store anonymous analytics event in D1 | `DB` |
-| `/api/user` | GET/POST | Create/update user after Firebase sign-in; check premium | `DB`, Firebase token ⚠️ decode-only, harden before payments |
+| `/api/user` | GET/POST/DELETE | Create/update user after Firebase sign-in; check premium; delete account | `DB`, Firebase ID token (✅ full RS256 signature + claims verification via Web Crypto) |
 | `/api/create-checkout-session` | POST | Stripe Checkout for premium | `STRIPE_SECRET_KEY`, `APP_URL` |
 | `/api/webhook` | POST | Stripe webhook → activate premium | `STRIPE_WEBHOOK_SECRET`, `STRIPE_SECRET_KEY`, `DB` |
 | `/api/gift-order` | POST | Create Printful draft order + Stripe checkout | `PRINTFUL_API_TOKEN`, `STRIPE_SECRET_KEY`, `APP_URL`, `DB` |
