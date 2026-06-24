@@ -238,9 +238,11 @@ function findDurationMilestones(startDate, endDate, maxResults, settings) {
         const relevantNumbers = getSpecialNumbersUpTo(unitConfig.maxReasonable, settings);
 
         for (const num of relevantNumbers) {
-            // Skip bland numbers (e.g. 32,250 or "2.66 billion") — keep only nicely
-            // readable values; matches the combined-milestone niceness filter.
-            if (num >= 10000 && typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
+            // Fixed-duration milestones (anniversaries / "time since") have no single
+            // "age" to filter by, so apply a fixed niceness bar at every magnitude —
+            // matches the combined-milestone filter. Drops 465 (grade 5), 1,050 (32),
+            // 32,250 (40); keeps 1,024 (62), 1,500 (65), repdigits/palindromes.
+            if (typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
             const milestoneDate = calculateMilestoneDate(startDate, num, unit);
             const specialInfo = isSpecialNumber(num, settings);
 

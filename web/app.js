@@ -5498,11 +5498,12 @@ function findSumMilestonesForEvents(events, maxResults, maxDaysAhead, settings) 
         const relevantNumbers = getSpecialNumbersUpTo(maxForUnit, settings);
 
         for (const num of relevantNumbers) {
-            // Skip bland numbers (e.g. 32,250 or "2.66 billion") — only genuinely
-            // nice values are worth showing. nicenessGrade rejects 3+ significant-digit
-            // mantissas (32,250→40) while keeping clean rounds (32,000→65), 2.5B,
-            // repdigits, palindromes, powers, and constants (π·10⁴ = 31,415→58).
-            if (num >= 10000 && typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
+            // Combined milestones have no single "age" to filter by, so apply a
+            // fixed niceness bar at every magnitude (single-person paths use the
+            // age-adaptive filter instead). Drops bland numbers like 465 (grade 5),
+            // 1,050 (32), 32,250 (40); keeps clean rounds (32,000=65), 1,024 (62),
+            // repdigits/palindromes (1,111=92), powers, and constants (31,415=58).
+            if (typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
             if (num > currentSum) {
                 const unitsNeeded = (num - currentSum) / numEvents;
                 const msNeeded = unitsNeeded * unitConfig.msMultiplier;
