@@ -5498,10 +5498,11 @@ function findSumMilestonesForEvents(events, maxResults, maxDaysAhead, settings) 
         const relevantNumbers = getSpecialNumbersUpTo(maxForUnit, settings);
 
         for (const num of relevantNumbers) {
-            // Skip bland large numbers (e.g. "2.66 billion") — only genuinely nice
-            // values are worth showing. nicenessGrade rejects 3-significant-digit
-            // mantissas while keeping 2B / 2.5B / repdigits / palindromes / powers.
-            if (num >= 1000000 && typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
+            // Skip bland numbers (e.g. 32,250 or "2.66 billion") — only genuinely
+            // nice values are worth showing. nicenessGrade rejects 3+ significant-digit
+            // mantissas (32,250→40) while keeping clean rounds (32,000→65), 2.5B,
+            // repdigits, palindromes, powers, and constants (π·10⁴ = 31,415→58).
+            if (num >= 10000 && typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
             if (num > currentSum) {
                 const unitsNeeded = (num - currentSum) / numEvents;
                 const msNeeded = unitsNeeded * unitConfig.msMultiplier;
@@ -7085,22 +7086,28 @@ function updateAccountUI(user) {
         // Email verification disabled for now
         if (verifyEl) verifyEl.classList.add('hidden');
 
-        // Show user badge in header
+        // Show the avatar (initials only) in the header — the full name + email
+        // live in the profile panel. Hide the generic profile icon so the two
+        // don't overlap each other or the centered tagline.
         if (userBadge) {
             const initials = (displayName || '?').split(' ').map(w => w[0]).join('').slice(0, 2);
-            userBadge.innerHTML = `<span class="user-avatar">${escapeHtml(initials)}</span><span>${escapeHtml(displayName)}</span>`;
+            userBadge.innerHTML = `<span class="user-avatar" title="${escapeHtml(displayName)}">${escapeHtml(initials)}</span>`;
             userBadge.classList.remove('hidden');
             userBadge.onclick = () => switchTab('settings');
         }
+        const profileBtnIn = document.getElementById('profileBtn');
+        if (profileBtnIn) profileBtnIn.classList.add('hidden');
     } else {
         if (loggedOut) loggedOut.classList.remove('hidden');
         if (loggedIn) loggedIn.classList.add('hidden');
 
-        // Hide user badge
+        // Signed out: show the generic profile icon, hide the avatar badge
         if (userBadge) {
             userBadge.classList.add('hidden');
             userBadge.innerHTML = '';
         }
+        const profileBtnOut = document.getElementById('profileBtn');
+        if (profileBtnOut) profileBtnOut.classList.remove('hidden');
     }
 }
 

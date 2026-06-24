@@ -238,9 +238,9 @@ function findDurationMilestones(startDate, endDate, maxResults, settings) {
         const relevantNumbers = getSpecialNumbersUpTo(unitConfig.maxReasonable, settings);
 
         for (const num of relevantNumbers) {
-            // Skip bland large numbers (e.g. "2.66 billion") — keep only nicely
+            // Skip bland numbers (e.g. 32,250 or "2.66 billion") — keep only nicely
             // readable values; matches the combined-milestone niceness filter.
-            if (num >= 1000000 && typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
+            if (num >= 10000 && typeof nicenessGrade === 'function' && nicenessGrade(num) < 50) continue;
             const milestoneDate = calculateMilestoneDate(startDate, num, unit);
             const specialInfo = isSpecialNumber(num, settings);
 
