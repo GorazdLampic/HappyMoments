@@ -44,6 +44,23 @@ export async function onRequestPost(context) {
                 uid
             ).run();
         }
+
+        // Gift order paid → confirm the Printful draft so it enters fulfilment
+        // and actually ships. Without this a paid gift would sit as an unshipped draft.
+        if (session.metadata?.type === 'gift') {
+            const pfId = session.metadata?.printful_order_id;
+            const token = context.env.PRINTFUL_API_TOKEN;
+            if (token && pfId && /^\d+$/.test(String(pfId))) {
+                try {
+                    await fetch(`https://api.printful.com/orders/${pfId}/confirm`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                } catch (e) {
+                    // Leave the draft unconfirmed; it can be confirmed manually in Printful.
+                }
+            }
+        }
     }
 
     if (event.type === 'customer.subscription.deleted') {

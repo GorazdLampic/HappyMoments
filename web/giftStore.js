@@ -11,7 +11,7 @@
 const GIFT_COLLECTIONS = {
     'Number Nerd': {
         tagline: 'For minds that love the math behind the moment',
-        products: ['poster', 'canvas'],
+        products: ['mug', 'tumbler'],
         icon: '&#129504;'  // brain emoji
     },
     'Celebrator': {
@@ -21,32 +21,32 @@ const GIFT_COLLECTIONS = {
     },
     'Romantic': {
         tagline: 'Love written in numbers',
-        products: ['canvas', 'poster'],
+        products: ['mug', 'tumbler'],
         icon: '&#10084;'   // heart
     },
     'Family': {
         tagline: 'Numbers that bring everyone together',
-        products: ['tote', 'mug'],
+        products: ['tshirt', 'mug'],
         icon: '&#128106;'  // family
     },
     'Achiever': {
         tagline: 'Epic milestones deserve epic keepsakes',
-        products: ['tshirt', 'poster'],
+        products: ['tshirt', 'tumbler'],
         icon: '&#127942;'  // trophy
     },
     'Lucky': {
         tagline: 'Prosperity, fortune, and auspicious vibes',
-        products: ['mug', 'canvas'],
+        products: ['mug', 'tumbler'],
         icon: '&#127882;'  // red gift
     },
     'Minimalist': {
         tagline: 'Elegant numbers, clean design',
-        products: ['poster'],
+        products: ['tumbler'],
         icon: '&#9674;'    // diamond
     },
     'Adventurer': {
         tagline: 'For those who see patterns everywhere',
-        products: ['tote', 'tshirt'],
+        products: ['tumbler', 'tshirt'],
         icon: '&#127757;'  // globe
     }
 };
@@ -66,19 +66,6 @@ const GIFT_CATALOG = [
         categories: ['birthday', 'round', 'repdigit', 'palindrome', 'generic']
     },
     {
-        id: 'poster',
-        name: 'Milestone Poster',
-        description: 'Museum-quality 12x18" poster with your number',
-        price: 28.00,
-        currency: 'EUR',
-        icon: '&#128444;',
-        printful_variant: 2103,
-        printful_product: 1,
-        tagline: 'The art of {value}',
-        designType: 'poster',
-        categories: ['scientific', 'fibonacci', 'palindrome', 'power_of_2', 'generic']
-    },
-    {
         id: 'tshirt',
         name: 'Milestone Tee',
         description: 'Soft cotton t-shirt with your milestone number',
@@ -93,30 +80,17 @@ const GIFT_CATALOG = [
         categories: ['fibonacci', 'power_of_2', 'scientific', 'repdigit', 'generic']
     },
     {
-        id: 'tote',
-        name: 'Milestone Tote',
-        description: 'Sturdy tote bag with your special number',
-        price: 20.00,
+        id: 'tumbler',
+        name: 'Milestone Tumbler',
+        description: 'Insulated 20oz stainless tumbler with straw — your milestone number',
+        price: 44.00,
         currency: 'EUR',
-        icon: '&#128092;',
-        printful_variant: 5765,
-        printful_product: 83,
-        tagline: 'Carry {value} everywhere',
-        designType: 'tote',
-        categories: ['birthday', 'round', 'generic']
-    },
-    {
-        id: 'canvas',
-        name: 'Milestone Canvas',
-        description: 'Gallery-wrapped canvas print with your number',
-        price: 35.00,
-        currency: 'EUR',
-        icon: '&#127912;',
-        printful_variant: 3845,
-        printful_product: 56,
-        tagline: 'The masterpiece of {value}',
-        designType: 'canvas',
-        categories: ['sequential', 'round', 'scientific', 'generic']
+        icon: '&#129380;',
+        printful_variant: 19111,
+        printful_product: 742,
+        tagline: 'Sip to {value}',
+        designType: 'tumbler',
+        categories: ['round', 'repdigit', 'birthday', 'scientific', 'generic']
     }
 ];
 
@@ -443,7 +417,7 @@ function openGiftOrder(productId, value, unit, eventName) {
             </div>
 
             <div class="checkout-price">EUR ${product.price.toFixed(2)}</div>
-            <p class="gift-shipping-note">Shipping costs will be calculated at checkout.</p>
+            <p class="gift-shipping-note">Shipping included &middot; ships worldwide</p>
 
             <div id="giftOrderError" class="auth-error hidden"></div>
 

@@ -33,8 +33,8 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- Icons (SVG works immediately, PNGs for compatibility) -->
-    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="96x96" href="icons/icon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
@@ -269,6 +269,10 @@
 
             <!-- Me view (default) -->
             <div id="homeViewMe">
+                <!-- Group selector — switch which circle's people you're viewing -->
+                <div id="groupSubTabsMe" style="display:flex;justify-content:center;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:20px;overflow:hidden;">
+                    <!-- Populated by renderGroupSubTabs('groupSubTabsMe','me') -->
+                </div>
                 <!-- Person Filter — tap to see one person's milestones -->
                 <div id="personFilter" class="person-filter">
                     <!-- Dynamically populated with person buttons -->

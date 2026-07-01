@@ -18,7 +18,10 @@ const CANONICAL_HOST = 'nicenumbers.app';
 export async function onRequest(context) {
     const url = new URL(context.request.url);
 
-    if (LEGACY_HOSTS.includes(url.hostname)) {
+    // Redirect only user-facing pages. NEVER redirect /api/* — server-to-server
+    // callers (Stripe webhooks, Printful) don't follow 301s, so redirecting an
+    // API/webhook call would silently break payments and fulfilment.
+    if (LEGACY_HOSTS.includes(url.hostname) && !url.pathname.startsWith('/api/')) {
         url.hostname = CANONICAL_HOST;
         return Response.redirect(url.toString(), 301);
     }

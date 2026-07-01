@@ -622,17 +622,15 @@ function renderStoryPreview(milestone, containerId, theme) {
 // ============================================================
 
 const GIFT_DESIGN_SIZES = {
-    mug:    { width: 2700, height: 1100 },  // Printful mug print area
-    poster: { width: 3600, height: 5400 },  // 12x18" at 300dpi
-    tshirt: { width: 4500, height: 5400 },  // Front print area
-    tote:   { width: 3600, height: 3600 },
-    canvas: { width: 4500, height: 4500 }
+    mug:     { width: 2700, height: 1100 },  // Printful mug print area
+    tshirt:  { width: 4500, height: 5400 },  // Front print area
+    tumbler: { width: 3017, height: 1200 }   // Printful tumbler 742 wrap (300dpi)
 };
 
 /**
  * Generate a print-ready design image for a Printful product.
  * @param {Object} milestone - { value, unitName, eventName }
- * @param {string} productType - 'mug' | 'poster' | 'tshirt' | 'tote' | 'canvas'
+ * @param {string} productType - 'mug' | 'tshirt' | 'tumbler'
  * @param {Object} [options] - { theme, message }
  * @returns {HTMLCanvasElement} - Canvas with the design rendered
  */
@@ -835,7 +833,7 @@ function generateGiftDesign(milestone, productType, options) {
 /**
  * Generate a gift design and return as base64 PNG data URL.
  * @param {Object} milestone - { value, unitName, eventName }
- * @param {string} productType - 'mug' | 'poster' | 'tshirt' | 'tote' | 'canvas'
+ * @param {string} productType - 'mug' | 'tshirt' | 'tumbler'
  * @param {Object} [options] - { theme, message }
  * @returns {string} - Base64 data URL (image/png)
  */

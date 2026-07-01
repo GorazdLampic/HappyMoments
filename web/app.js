@@ -1153,6 +1153,9 @@ function switchHomeView(view) {
         if (groupView) groupView.style.display = 'none';
         if (toggleMe) toggleMe.classList.add('active');
         if (toggleGroup) toggleGroup.classList.remove('active');
+        // Show the group selector on Solo too, so the current circle is visible
+        // and switchable without leaving this tab.
+        renderGroupSubTabs('groupSubTabsMe', 'me');
     } else {
         if (meView) meView.style.display = 'none';
         if (groupView) groupView.style.display = '';
@@ -1167,16 +1170,9 @@ function switchHomeView(view) {
         const currentSet = allSets.find(s => s.id === currentSetId);
         const gName = currentSet ? currentSet.name : tt('wiz_my_group_ph');
         if (content) {
-            // Group name + edit pencil. With 2+ groups the sub-tabs row above already
-            // shows the active group name (with its own pencil), so render this line
-            // only for a single group — otherwise the name appears twice.
+            // The sub-tabs row above always shows the active group name (with its own
+            // edit pencil) now, so no separate name header is needed here.
             let headerHtml = '';
-            if (allSets.length < 2) {
-                headerHtml = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;">
-                <span style="font-size:1.1rem;font-weight:600;color:var(--text);">${escapeHtml(gName)}</span>
-                <button onclick="openGroupEditor('${currentSetId}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;" title="Edit group">&#9998;</button>
-            </div>`;
-            }
             if (typeof renderCombinedTab === 'function') {
                 renderCombinedTab();
                 const combinedContent = document.getElementById('combinedMilestonesContent');
@@ -1197,15 +1193,6 @@ function switchHomeView(view) {
                 </div>`;
             }
 
-            // Nudge to create a second group if only 1 exists
-            if (allSets.length === 1) {
-                headerHtml += `<div id="secondGroupNudge" style="margin-top:24px;padding:16px;border-radius:10px;background:rgba(212,184,118,0.06);border:1px dashed rgba(212,184,118,0.3);text-align:center;">
-                    <p style="color:var(--text);font-size:0.95rem;margin-bottom:4px;">${tt('tog_another_circle')}</p>
-                    <p style="color:var(--text-muted);font-size:0.88rem;margin-bottom:12px;">${tt('tog_another_body')}</p>
-                    <button onclick="promptNewGroupFromTogether()" style="padding:8px 20px;border-radius:8px;background:rgba(212,184,118,0.15);border:1px solid rgba(212,184,118,0.4);color:var(--warning,#d4b876);cursor:pointer;font-size:0.85rem;font-weight:600;">${tt('tog_new_group')}</button>
-                </div>`;
-            }
-
             content.innerHTML = headerHtml;
         }
     }
@@ -1216,29 +1203,50 @@ function switchHomeView(view) {
 // GROUP SUB-TABS (Together tab) + GROUP EDITOR
 // ============================================================
 
-function renderGroupSubTabs() {
-    const container = document.getElementById('groupSubTabs');
+function renderGroupSubTabs(containerId, context) {
+    // The same selector is rendered in both the Solo (context 'me') and Together
+    // (context 'group') views so groups can be seen and switched from either tab.
+    containerId = containerId || 'groupSubTabs';
+    context = context || 'group';
+    const container = document.getElementById(containerId);
     if (!container) return;
-    if (allSets.length < 2) { container.style.display = 'none'; return; }
+    // Always show the selector once at least one group exists — even with a
+    // single group — so people discover that more circles are possible.
+    if (allSets.length < 1) { container.style.display = 'none'; return; }
     container.style.display = 'flex';
-    container.innerHTML = allSets.map(set => {
+    let html = allSets.map(set => {
         const isActive = set.id === currentSetId;
         // The active group carries the edit pencil right on its chip; tapping the
         // pencil opens the editor without re-triggering the (already-active) tab.
         const editPencil = isActive
             ? ` <span onclick="event.stopPropagation(); openGroupEditor('${set.id}')" title="Edit group" style="margin-left:5px;opacity:0.7;font-size:0.95em;">&#9998;</span>`
             : '';
-        return `<button onclick="switchToGroupTab('${set.id}')" style="flex:1;padding:8px 12px;border:none;cursor:pointer;font-size:0.85rem;font-weight:${isActive ? '700' : '400'};color:${isActive ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};background:${isActive ? 'rgba(212,184,118,0.12)' : 'transparent'};transition:all 0.2s;">${escapeHtml(set.name)}${editPencil}</button>`;
+        return `<button onclick="switchToGroupTab('${set.id}','${context}')" style="flex:1;padding:8px 12px;border:none;cursor:pointer;font-size:0.85rem;font-weight:${isActive ? '700' : '400'};color:${isActive ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};background:${isActive ? 'rgba(212,184,118,0.12)' : 'transparent'};transition:all 0.2s;">${escapeHtml(set.name)}${editPencil}</button>`;
     }).join('');
+    // With only one group, append a ghost "next group" slot — an empty, dashed
+    // tab that invites the user to create a second circle. Tapping it builds it.
+    if (allSets.length === 1) {
+        html += `<button onclick="promptNewGroupFromTogether()" title="${escapeHtml(tt('tog_new_group'))}" style="flex:1;padding:8px 12px;border:none;border-left:1px dashed var(--border);cursor:pointer;font-size:0.85rem;font-weight:400;color:var(--text-muted);background:transparent;opacity:0.7;transition:all 0.2s;">${escapeHtml(tt('tog_new_group'))}</button>`;
+    }
+    container.innerHTML = html;
 }
 
-function switchToGroupTab(setId) {
-    if (setId === currentSetId) return;
-    saveData();
-    currentSetId = setId;
-    loadCurrentSet();
-    selectedPersonIds = appData.events.map(e => e.id);
-    switchHomeView('group');
+function switchToGroupTab(setId, context) {
+    context = context || 'group';
+    if (setId !== currentSetId) {
+        saveData();
+        currentSetId = setId;
+        loadCurrentSet();
+        selectedPersonIds = appData.events.map(e => e.id);
+    }
+    // Stay in whichever view the tap came from (Solo or Together).
+    if (context === 'me') {
+        switchHomeView('me');
+        renderPersonFilter();
+        renderMilestonesTab();
+    } else {
+        switchHomeView('group');
+    }
 }
 
 function openGroupEditor(setId) {
