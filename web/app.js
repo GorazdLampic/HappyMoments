@@ -7504,6 +7504,9 @@ document.addEventListener('DOMContentLoaded', () => {
         HM_AUTH.onAuthChange(user => {
             updateAccountUI(user);
             if (user) {
+                // Sign-in complete — fully close the auth modal + profile panel +
+                // overlay it was launched from, so no leftover overlay blocks clicks.
+                if (typeof closeAuthModal === 'function') closeAuthModal();
                 checkPremiumStatus();
                 _track('auth_signed_in', { method: user.providerData?.[0]?.providerId || 'unknown' });
                 // If user has no display name (phone sign-in), ask for it
