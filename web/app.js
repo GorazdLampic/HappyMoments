@@ -7092,9 +7092,9 @@ function updateAccountUI(user) {
                 statusEl.textContent = tt('prem_status_free');
                 statusEl.className = 'account-status free';
             }
-            // Show the upgrade button only for signed-in, non-premium users.
-            const upgradeBtn = document.getElementById('accountUpgradeBtn');
-            if (upgradeBtn) upgradeBtn.style.display = premActive ? 'none' : '';
+            // Show the upgrade box only for signed-in, non-premium users.
+            const upgradeBox = document.getElementById('accountUpgradeBox');
+            if (upgradeBox) upgradeBox.style.display = premActive ? 'none' : '';
         }
         // Email verification disabled for now
         if (verifyEl) verifyEl.classList.add('hidden');

@@ -2461,7 +2461,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    /* Above the profile panel (2000) + its overlay (1999) — sign-in and other
+       modals are opened from inside that panel and must stack on top of it. */
+    z-index: 2100;
     padding: var(--space-md);
 }
 
