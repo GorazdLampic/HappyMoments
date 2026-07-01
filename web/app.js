@@ -7084,13 +7084,17 @@ function updateAccountUI(user) {
         if (emailEl) emailEl.textContent = HM_AUTH.getUserEmail() || '';
         if (statusEl) {
             const isPrem = localStorage.getItem('happymoments_premium_until');
-            if (isPrem && parseInt(isPrem) * 1000 > Date.now()) {
+            const premActive = isPrem && parseInt(isPrem) * 1000 > Date.now();
+            if (premActive) {
                 statusEl.textContent = tt('prem_status_premium');
                 statusEl.className = 'account-status premium';
             } else {
                 statusEl.textContent = tt('prem_status_free');
                 statusEl.className = 'account-status free';
             }
+            // Show the upgrade button only for signed-in, non-premium users.
+            const upgradeBtn = document.getElementById('accountUpgradeBtn');
+            if (upgradeBtn) upgradeBtn.style.display = premActive ? 'none' : '';
         }
         // Email verification disabled for now
         if (verifyEl) verifyEl.classList.add('hidden');

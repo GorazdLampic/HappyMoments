@@ -438,6 +438,7 @@
                         </div>
                         <div class="account-status" id="accountPremiumStatus"></div>
                     </div>
+                    <button class="btn-primary" id="accountUpgradeBtn" onclick="handleUpgrade()" style="margin-top:12px;display:none;"><span style="margin-right:4px;">&#9733;</span><span data-i18n="go_premium">Go Premium</span> &middot; &euro;1.49/year</button>
                     <div style="margin-top: 12px; display: flex; gap: 10px; align-items: center;">
                         <button class="btn-secondary" onclick="handleSignOut()" data-i18n="sign_out">Sign Out</button>
                         <button class="btn-danger-text" onclick="handleDeleteAccount()" data-i18n="delete_account">Delete Account</button>
@@ -549,7 +550,6 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">Nice Numbers &copy; 2026</span>
-            <div class="app-version" id="appVersion"></div>
         </footer>
 
         <!-- Auth Modal -->
