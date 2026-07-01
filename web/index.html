@@ -423,28 +423,13 @@
         <section id="settingsTab" class="tab-content hidden">
             <!-- Account Card -->
             <div class="card" id="accountCard">
-                <div id="accountLoggedOut">
-                    <h2 data-i18n="account">Account</h2>
-                    <p class="card-description" data-i18n="account_desc">Sign in to save your data, sync across devices, and unlock premium features.</p>
-                    <button class="btn-primary" onclick="openAuthModal()" style="margin-top: 8px;" data-i18n="sign_in_btn">Sign In / Create Account</button>
-                </div>
-                <div id="accountLoggedIn" class="hidden">
-                    <h2 data-i18n="account">Account</h2>
-                    <div class="account-info">
-                        <div class="account-name" id="accountDisplayName"></div>
-                        <div class="account-email" id="accountEmailDisplay"></div>
-                        <div id="accountVerifyBanner" class="auth-verify-banner hidden">
-                            Please verify your email. <a href="#" onclick="resendVerification(); return false;">Resend link</a>
-                        </div>
-                        <div class="account-status" id="accountPremiumStatus"></div>
-                    </div>
-                    <div id="accountUpgradeBox" style="margin-top:12px;display:none;">
-                        <button class="btn-primary" id="accountUpgradeBtn" onclick="handleUpgrade()" style="width:100%;"><span style="margin-right:4px;">&#9733;</span><span data-i18n="go_premium">Go Premium</span> &middot; &euro;1.49/year</button>
-                        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;text-align:center;">Support development &mdash; keep the app clean, no nudges</div>
-                    </div>
-                    <div style="margin-top: 12px; display: flex; gap: 10px; align-items: center;">
-                        <button class="btn-secondary" onclick="handleSignOut()" data-i18n="sign_out">Sign Out</button>
-                        <button class="btn-danger-text" onclick="handleDeleteAccount()" data-i18n="delete_account">Delete Account</button>
+                <h2>Premium</h2>
+                <div class="account-status" id="accountPremiumStatus"></div>
+                <div id="accountUpgradeBox" style="margin-top:12px;display:none;">
+                    <button class="btn-primary" id="accountUpgradeBtn" onclick="handleUpgrade()" style="width:100%;"><span style="margin-right:4px;">&#9733;</span><span data-i18n="go_premium">Go Premium</span> &middot; &euro;1.49/year</button>
+                    <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;text-align:center;">Support development &mdash; keep the app clean, no nudges</div>
+                    <div style="text-align:center;margin-top:10px;">
+                        <a href="#" onclick="restorePurchase(); return false;" style="font-size:0.8rem;color:var(--text-muted);">Already bought? Restore purchase</a>
                     </div>
                 </div>
             </div>

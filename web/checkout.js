@@ -157,18 +157,16 @@ function checkCheckoutResult() {
     const params = new URLSearchParams(window.location.search);
     const checkoutResult = params.get('checkout');
 
-    if (checkoutResult === 'success' || checkoutResult === 'premium_success') {
-        showToast('Order placed successfully! You\'ll receive a confirmation email.', 'success', 5000);
-        window.history.replaceState({}, '', window.location.pathname);
-    } else if (checkoutResult === 'gift_success') {
+    // NOTE: premium_success / premium_cancelled are intentionally NOT handled here.
+    // checkPremiumReturn() in app.js owns them — it needs the session_id in the URL
+    // to verify the paid Stripe session and activate premium. Cleaning the URL here
+    // would strip that before it runs.
+    if (checkoutResult === 'gift_success') {
         const orderId = params.get('order');
         showToast('Gift order confirmed! You\'ll receive tracking information via email.', 'success', 6000);
         if (typeof HM_ANALYTICS !== 'undefined') {
             HM_ANALYTICS.track('gift_payment_success', { orderId: orderId || 'unknown' });
         }
-        window.history.replaceState({}, '', window.location.pathname);
-    } else if (checkoutResult === 'cancelled' || checkoutResult === 'premium_cancelled') {
-        showToast('Checkout cancelled.', 'info');
         window.history.replaceState({}, '', window.location.pathname);
     } else if (checkoutResult === 'gift_cancelled') {
         showToast('Gift order cancelled. Your design is saved if you want to try again.', 'info');

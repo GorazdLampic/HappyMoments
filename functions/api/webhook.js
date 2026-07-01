@@ -45,6 +45,27 @@ export async function onRequestPost(context) {
             ).run();
         }
 
+        // Account-less premium paid → record it by email so the buyer can
+        // restore premium on another device / after reinstall (no account needed).
+        if (session.metadata?.type === 'premium' && !uid && context.env.DB) {
+            const email = ((session.customer_details && session.customer_details.email) || session.customer_email || '').trim().toLowerCase();
+            if (email) {
+                const until = Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60);
+                const now = Math.floor(Date.now() / 1000);
+                await context.env.DB.prepare(
+                    'CREATE TABLE IF NOT EXISTS premium (email TEXT PRIMARY KEY, premium_until INTEGER, stripe_customer_id TEXT, updated_at INTEGER)'
+                ).run();
+                await context.env.DB.prepare(
+                    `INSERT INTO premium (email, premium_until, stripe_customer_id, updated_at)
+                     VALUES (?, ?, ?, ?)
+                     ON CONFLICT(email) DO UPDATE SET
+                        premium_until = excluded.premium_until,
+                        stripe_customer_id = excluded.stripe_customer_id,
+                        updated_at = excluded.updated_at`
+                ).bind(email, until, session.customer || null, now).run();
+            }
+        }
+
         // Gift order paid → confirm the Printful draft so it enters fulfilment
         // and actually ships. Without this a paid gift would sit as an unshipped draft.
         if (session.metadata?.type === 'gift') {

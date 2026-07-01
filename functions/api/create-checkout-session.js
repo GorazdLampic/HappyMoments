@@ -35,7 +35,7 @@ export async function onRequestPost(context) {
             'line_items[0][price_data][product_data][name]': 'Nice Numbers Premium',
             'line_items[0][price_data][product_data][description]': 'Unlimited events, all milestone types, cloud sync. Billed annually.',
             'line_items[0][quantity]': '1',
-            'success_url': `${appUrl}/index.html?checkout=premium_success`,
+            'success_url': `${appUrl}/index.html?checkout=premium_success&session_id={CHECKOUT_SESSION_ID}`,
             'cancel_url': `${appUrl}/index.html?checkout=premium_cancelled`,
             'metadata[uid]': uid || '',
             'metadata[type]': 'premium',

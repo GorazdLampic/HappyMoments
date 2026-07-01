@@ -7235,13 +7235,7 @@ function showPremiumBanner() {
         <span class="premium-banner-price">&euro;1.49/year</span>
         <span class="premium-banner-text">&mdash; ${_ut('clean_experience')}</span>
     `;
-    banner.onclick = () => {
-        if (typeof HM_AUTH !== 'undefined' && !HM_AUTH.isLoggedIn()) {
-            openAuthModal();
-        } else {
-            handleUpgrade();
-        }
-    };
+    banner.onclick = () => { handleUpgrade(); };
     document.body.appendChild(banner);
 }
 
@@ -7298,10 +7292,6 @@ function dismissPremiumBanner() {
 
 function showUpgradePrompt(reason) {
     _track('premium_gate_hit', { reason: reason });
-    if (typeof HM_AUTH !== 'undefined' && !HM_AUTH.isLoggedIn()) {
-        openAuthModal();
-        return;
-    }
 
     const reasons = {
         people: tt('prem_reason_people', { count: FREE_PEOPLE_LIMIT }),
@@ -7340,26 +7330,15 @@ async function handleUpgrade() {
     const modal = document.getElementById('upgradeModal');
     if (modal) modal.remove();
 
-    if (!HM_AUTH.isLoggedIn()) {
-        openAuthModal();
-        return;
-    }
-
     _track('checkout_started', { product: 'premium' });
 
     try {
-        const token = await HM_AUTH.getIdToken();
+        // Account-less: go straight to Stripe. Stripe collects the email itself
+        // (for the receipt + restore) — no sign-in required.
         const res = await fetch('/api/create-checkout-session', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                type: 'premium',
-                uid: HM_AUTH.getUser().uid,
-                email: HM_AUTH.getUserEmail()
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'premium' })
         });
         const data = await res.json();
         if (data.url) {
@@ -7372,46 +7351,64 @@ async function handleUpgrade() {
     }
 }
 
-async function checkPremiumStatus() {
-    if (!HM_AUTH.isLoggedIn()) return;
+// Render the premium section of the profile from local state (no account).
+function renderPremiumUI() {
+    const until = parseInt(localStorage.getItem('happymoments_premium_until') || '0', 10);
+    const active = until && until * 1000 > Date.now();
+    const statusEl = document.getElementById('accountPremiumStatus');
+    if (statusEl) {
+        statusEl.textContent = active ? tt('prem_status_premium') : tt('prem_status_free');
+        statusEl.className = 'account-status ' + (active ? 'premium' : 'free');
+    }
+    const box = document.getElementById('accountUpgradeBox');
+    if (box) box.style.display = active ? 'none' : '';
+    if (active) { const b = document.getElementById('premiumBanner'); if (b) b.remove(); }
+}
+// Back-compat alias — older call sites used this name.
+function checkPremiumStatus() { renderPremiumUI(); }
+
+// Restore a previous purchase on a new device / after reinstall, by email.
+async function restorePurchase() {
+    const email = (prompt('Enter the email address you paid with:') || '').trim().toLowerCase();
+    if (!email || !email.includes('@')) return;
     try {
-        const token = await HM_AUTH.getIdToken();
-        const body = {};
-        // Include UTM attribution on registration
-        if (typeof HM_ANALYTICS !== 'undefined') {
-            const utm = HM_ANALYTICS.getUtm();
-            if (utm) body.utm = utm;
-        }
-        const res = await fetch('/api/user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(body)
-        });
+        const res = await fetch('/api/premium-status?email=' + encodeURIComponent(email));
         const data = await res.json();
-        if (data.premium_until) {
-            localStorage.setItem('happymoments_premium_until', data.premium_until);
+        if (data.premium && data.premium_until) {
+            localStorage.setItem('happymoments_premium_until', String(data.premium_until));
+            localStorage.setItem('happymoments_premium_email', email);
+            renderPremiumUI();
+            showToast('Premium restored — thank you!', 'success');
         } else {
-            localStorage.removeItem('happymoments_premium_until');
+            showToast('No premium found for that email.', 'info');
         }
-        updateAccountUI(HM_AUTH.getUser());
     } catch {
-        // Backend not available — use cached status
+        showToast(tt('prem_payment_not_configured'), 'info');
     }
 }
 
-function checkPremiumReturn() {
+async function checkPremiumReturn() {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('checkout') === 'premium_success') {
+    const co = params.get('checkout');
+    if (co === 'premium_success') {
         _track('payment_complete', { product: 'premium' });
-        showToast(tt('prem_welcome'), 'success');
-        // Re-check status from backend
-        setTimeout(checkPremiumStatus, 2000);
-        // Clean URL
+        const sessionId = params.get('session_id');
         window.history.replaceState({}, '', window.location.pathname);
-    } else if (params.get('checkout') === 'premium_cancelled') {
+        if (sessionId) {
+            try {
+                // Verify with the backend that the session was actually paid
+                // (server checks Stripe directly — can't be faked), then activate.
+                const res = await fetch('/api/premium-status?session_id=' + encodeURIComponent(sessionId));
+                const data = await res.json();
+                if (data.premium && data.premium_until) {
+                    localStorage.setItem('happymoments_premium_until', String(data.premium_until));
+                    if (data.email) localStorage.setItem('happymoments_premium_email', data.email);
+                    renderPremiumUI();
+                }
+            } catch {}
+        }
+        showToast(tt('prem_welcome'), 'success');
+    } else if (co === 'premium_cancelled') {
         _track('payment_cancelled', { product: 'premium' });
         showToast(tt('prem_cancelled'), 'info');
         window.history.replaceState({}, '', window.location.pathname);
@@ -7498,26 +7495,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, '', url.pathname + (url.search || ''));
     }
 
-    // Initialize auth (non-blocking — app works without it)
-    if (typeof HM_AUTH !== 'undefined') {
-        HM_AUTH.init();
-        HM_AUTH.onAuthChange(user => {
-            updateAccountUI(user);
-            if (user) {
-                // Sign-in complete — fully close the auth modal + profile panel +
-                // overlay it was launched from, so no leftover overlay blocks clicks.
-                if (typeof closeAuthModal === 'function') closeAuthModal();
-                checkPremiumStatus();
-                _track('auth_signed_in', { method: user.providerData?.[0]?.providerId || 'unknown' });
-                // If user has no display name (phone sign-in), ask for it
-                if (!user.displayName) {
-                    promptForDisplayName(user);
-                }
-            }
-        });
-    }
-
-    // Check for premium checkout return
+    // Account-less: no sign-in. Render premium state from local storage and
+    // verify any just-completed purchase (via ?checkout=premium_success&session_id).
+    renderPremiumUI();
     checkPremiumReturn();
 
     // Close auth modal on backdrop click
