@@ -189,14 +189,29 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-    // Network-first for HTML (get latest), cache-first for assets
-    if (e.request.mode === 'navigate') {
+    const req = e.request;
+    if (req.method !== 'GET') return;
+    const url = new URL(req.url);
+    // Never touch API / auth / payment requests.
+    if (url.pathname.indexOf('/api/') === 0 || /googleapis|firebaseapp|(^|\\.)stripe\\.com/.test(url.host)) return;
+    // App CODE (pages + JS/CSS/JSON) is NETWORK-FIRST: users always get the
+    // latest deploy; fall back to cache only when offline. This prevents the
+    // stale-version problem where new features didn't show up.
+    const isCode = req.mode === 'navigate' || /\\.(html|js|css|json)$/.test(url.pathname);
+    if (isCode) {
         e.respondWith(
-            fetch(e.request).catch(() => caches.match(e.request))
+            fetch(req).then(res => {
+                if (res && res.status === 200) { const c = res.clone(); caches.open(CACHE_NAME).then(ch => ch.put(req, c)); }
+                return res;
+            }).catch(() => caches.match(req).then(r => r || caches.match('./index.html')))
         );
     } else {
+        // Images / fonts / icons: cache-first for speed + offline.
         e.respondWith(
-            caches.match(e.request).then(r => r || fetch(e.request))
+            caches.match(req).then(r => r || fetch(req).then(res => {
+                if (res && res.status === 200) { const c = res.clone(); caches.open(CACHE_NAME).then(ch => ch.put(req, c)); }
+                return res;
+            }))
         );
     }
 });
