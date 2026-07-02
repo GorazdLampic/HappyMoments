@@ -68,7 +68,10 @@ export async function onRequestPost(context) {
 
         // Gift order paid → confirm the Printful draft so it enters fulfilment
         // and actually ships. Without this a paid gift would sit as an unshipped draft.
-        if (session.metadata?.type === 'gift') {
+        // SAFETY: only confirm on LIVE payments. Printful has no test mode, so a
+        // test-mode Stripe payment must NEVER trigger real production/shipping — it
+        // leaves the draft unconfirmed (visible in Printful, billed to no one).
+        if (session.metadata?.type === 'gift' && event.livemode === true) {
             const pfId = session.metadata?.printful_order_id;
             const token = context.env.PRINTFUL_API_TOKEN;
             if (token && pfId && /^\d+$/.test(String(pfId))) {
