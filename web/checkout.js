@@ -11,7 +11,7 @@
 
 const CHECKOUT_CONFIG = {
     // Stripe publishable key (safe to expose — public by design). Test mode.
-    STRIPE_PUBLIC_KEY: 'pk_test_51TbbOPILb32Vl4arafYeCIybPl09IL95fCLnsZ6ZaG9mqNoOxlkQ14xXj0WlnpuFpRfBQKA5bQ1aAUiaR5sp1yU2004x2vHcba',
+    STRIPE_PUBLIC_KEY: 'pk_live_51TbbOFEalepGaTT0MQwdLB4dgP7I5LE05EtCs3iH7qRGfip5ExlX5SQPBC9tJ0rrYz599BjMDzU3pNXCTLzSanXr00KkJYJZzO',
 
     // Server endpoint for premium subscription checkout
     CHECKOUT_API_URL: '/api/create-checkout-session',
