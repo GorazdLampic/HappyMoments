@@ -163,16 +163,66 @@ function checkCheckoutResult() {
     // would strip that before it runs.
     if (checkoutResult === 'gift_success') {
         const orderId = params.get('order');
-        showToast('Gift order confirmed! You\'ll receive tracking information via email.', 'success', 6000);
+        // Clean the URL first so a refresh doesn't re-trigger this.
+        window.history.replaceState({}, '', window.location.pathname);
         if (typeof HM_ANALYTICS !== 'undefined') {
             HM_ANALYTICS.track('gift_payment_success', { orderId: orderId || 'unknown' });
         }
-        window.history.replaceState({}, '', window.location.pathname);
+        recordGiftOrder(orderId);
+        showGiftConfirmation(orderId);
     } else if (checkoutResult === 'gift_cancelled') {
         showToast('Gift order cancelled. Your design is saved if you want to try again.', 'info');
         window.history.replaceState({}, '', window.location.pathname);
     }
 }
+
+// Keep a local record of placed gift orders so the user has an in-app trace of
+// what they ordered (Printful emails the actual shipment tracking).
+function recordGiftOrder(orderId) {
+    if (!orderId) return;
+    try {
+        const key = 'nn_gift_orders';
+        const list = JSON.parse(localStorage.getItem(key) || '[]');
+        if (!list.some(o => o.id === orderId)) {
+            list.unshift({ id: orderId, at: new Date().toISOString() });
+            localStorage.setItem(key, JSON.stringify(list.slice(0, 50)));
+        }
+    } catch (e) { /* storage unavailable — non-fatal */ }
+}
+
+function getGiftOrders() {
+    try { return JSON.parse(localStorage.getItem('nn_gift_orders') || '[]'); }
+    catch (e) { return []; }
+}
+if (typeof window !== 'undefined') window.getGiftOrders = getGiftOrders;
+
+// Clear, persistent confirmation (replaces a fleeting toast) so the buyer knows
+// the order went through and how tracking will reach them.
+function showGiftConfirmation(orderId) {
+    const T = (typeof tt === 'function') ? tt : (k => null);
+    const existing = document.getElementById('giftConfirmModal');
+    if (existing) existing.remove();
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'giftConfirmModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    const ref = orderId ? orderId.replace(/^hm-/, '').toUpperCase() : '';
+    modal.innerHTML = `<div class="modal-content" style="text-align:center;">
+        <div style="font-size:3rem;line-height:1;margin-bottom:8px;">&#127881;</div>
+        <h3>${T('gc_title') || 'Order confirmed!'}</h3>
+        <p class="auth-subtitle" style="margin-bottom:16px;">
+            ${T('gc_body') || 'Thank you! Your personalized gift is being made to order.'}
+        </p>
+        <div style="text-align:left;background:var(--bg-elevated,#f5f5f5);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:0.92em;line-height:1.6;">
+            ${ref ? `<div><strong>${T('gc_order_no') || 'Order'}:</strong> ${ref}</div>` : ''}
+            <div>&#9993;&#65039; ${T('gc_receipt') || 'A receipt has been emailed to you.'}</div>
+            <div>&#128230; ${T('gc_tracking') || 'Tracking will be emailed as soon as it ships (printing takes ~2–5 business days, then delivery).'}</div>
+        </div>
+        <button class="btn-primary" style="width:100%;" onclick="document.getElementById('giftConfirmModal').remove()">${T('gc_done') || 'Done'}</button>
+    </div>`;
+    document.body.appendChild(modal);
+}
+if (typeof window !== 'undefined') window.showGiftConfirmation = showGiftConfirmation;
 
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { CHECKOUT_CONFIG, startCheckout, checkCheckoutResult };

@@ -2196,13 +2196,12 @@ body {
 }
 
 .gift-products {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* Single column so each product card is full-width — taglines/prices never
+       get clipped, and the modal fits on any screen (was a 2-col grid that
+       overflowed on narrow screens). */
+    display: flex;
+    flex-direction: column;
     gap: var(--space-sm);
-}
-
-@media (max-width: 480px) {
-    .gift-products { grid-template-columns: 1fr; }
 }
 
 .gift-product-card {
@@ -2474,6 +2473,10 @@ body {
     width: 100%;
     max-width: 400px;
     border: 1px solid var(--border);
+    /* Never let a modal run off the top/bottom of the screen — scroll instead.
+       Short modals are unaffected (content < 90vh = no scrollbar). */
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .modal-content h3 { margin-bottom: var(--space-lg); font-size: var(--font-size-lg); font-weight: 400; }

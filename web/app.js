@@ -2737,10 +2737,11 @@ function wizardRenderGroupMembers() {
     });
     el.innerHTML = html;
 
-    // Show continue button when 3+ members (Me + 2 others)
+    // Always let the user move on — never force them to add more people. The
+    // group is pre-filled with Me + their first person, but adding a third
+    // (or even keeping just one) is entirely optional.
     const btn = document.getElementById('groupContinueBtn');
-    // Show continue once there are 2+ members (Me + at least 1 other)
-    if (btn) btn.style.display = _wizardGroupMembers.length >= 2 ? '' : 'none';
+    if (btn) btn.style.display = _wizardGroupMembers.length >= 1 ? '' : 'none';
 }
 
 // Group title edited in place \u2014 rename the current set
