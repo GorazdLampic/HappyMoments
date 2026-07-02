@@ -4540,14 +4540,7 @@ function heroShare() {
     const heroEl = document.getElementById('heroMilestone');
     if (!heroEl || !heroEl._heroMilestone) return;
     const m = heroEl._heroMilestone;
-    const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
-    if (navigator.share) {
-        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast(tt('toast_copied'), 'success');
-        }).catch(() => {});
-    }
+    shareMilestone(m);
     _track('hero_share', { value: m.value, unit: m.unit });
 }
 
@@ -4835,15 +4828,41 @@ function shareSelectedMilestone() {
 }
 
 // Share from time-chunked list
+// Unified share: sends the milestone's image CARD (in the user's selected
+// design) + the text message via the Web Share API — so the card designs
+// actually reach people. Falls back to a text-only share, then copy+download.
+async function shareMilestone(m, textOverride) {
+    if (!m) return;
+    const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
+    // 1) Image card + text
+    if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
+        try {
+            const canvas = generateMilestoneCard(m, {}); // getCardTheme() applies the chosen design
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const file = new File([blob], 'nicenumbers.png', { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+                await navigator.share({ title: 'Nice Numbers', text, files: [file] });
+                _track('share_card', { value: m.value, unit: m.unitName });
+                return;
+            }
+        } catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    // 2) Text-only share (link stays clickable)
+    if (navigator.share) {
+        try { await navigator.share({ title: 'Nice Numbers', text }); return; }
+        catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    // 3) Last resort: copy the text and download the card so nothing is lost
+    try { await navigator.clipboard.writeText(text); } catch (e) {}
+    if (typeof downloadMilestoneCard === 'function') { try { downloadMilestoneCard(m); } catch (e) {} }
+    showToast(tt('toast_copied'), 'success');
+}
+window.shareMilestone = shareMilestone;
+
 function homeShareMilestone(idx) {
     const m = allMilestonesFlat[idx];
     if (!m) return;
-    const fallbackText = m.isCosmic
-        ? `${m.eventName}: ${m.description || m.unitName}`
-        : `${m.eventName}: ${m.value.toLocaleString()} ${localizedUnit(m.value, m.unitName)}`;
-    const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : fallbackText;
-    // Show preview before sharing
-    showSharePreview(message, m.eventName);
+    shareMilestone(m);
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
 }
 
@@ -6030,16 +6049,14 @@ function handleNativeShare() {
     const idx = selectedMilestone !== null ? selectedMilestone : 0;
     const m = allMilestonesFlat[idx];
     if (!m) return;
-    const message = generateShareMessage(m);
-    navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+    shareMilestone(m);
 }
 
 function handleNativeCombinedShare() {
     const idx = selectedCombinedMilestone !== null ? selectedCombinedMilestone : 0;
     const m = allCombinedMilestonesFlat[idx];
     if (!m) return;
-    const message = generateCombinedShareMessage(m);
-    navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+    shareMilestone(m, generateCombinedShareMessage(m));
 }
 
 function handleWhatsAppShare() {
