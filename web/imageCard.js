@@ -139,7 +139,7 @@ function drawCategoryMotif(ctx, W, H, accent, category, valueStr) {
     } else if (category === 'repdigit') {
         // The single repeated digit, oversized behind the content.
         ctx.globalAlpha = 0.045;
-        ctx.font = `800 ${Math.round(Math.min(W, H) * 0.6)}px "Source Code Pro", monospace`;
+        ctx.font = `800 ${Math.round(Math.min(W, H) * 0.6)}px "Helvetica Neue", "Arial", sans-serif`;
         ctx.fillText((valueStr.replace(/\D/g, '')[0] || '8'), W / 2, H * 0.62);
     } else if (category === 'palindrome') {
         // Mirror axis — palindromes read the same both ways.
@@ -150,7 +150,7 @@ function drawCategoryMotif(ctx, W, H, accent, category, valueStr) {
         ctx.lineTo(W / 2, H * 0.88);
         ctx.stroke();
         ctx.globalAlpha = 0.035;
-        ctx.font = `300 ${Math.round(Math.min(W, H) * 0.16)}px "Source Code Pro", monospace`;
+        ctx.font = `300 ${Math.round(Math.min(W, H) * 0.16)}px "Helvetica Neue", "Arial", sans-serif`;
         ctx.fillText(valueStr, W / 2, H * 0.30);
     } else if (category === 'birthday') {
         // Confetti dots.
@@ -185,7 +185,7 @@ function drawCategoryMotif(ctx, W, H, accent, category, valueStr) {
     } else {
         // Generic: the original single star flourish.
         ctx.globalAlpha = 0.03;
-        ctx.font = '800 400px "Source Code Pro", monospace';
+        ctx.font = '800 400px "Helvetica Neue", "Arial", sans-serif';
         ctx.fillText('*', W * 0.8, H * 0.35);
     }
     ctx.restore();

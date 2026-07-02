@@ -3818,15 +3818,12 @@ function renderCombinedTab() {
 
 function renderCombinedMilestonesList(milestones, type, eventNames = '') {
     const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
-    const gName = (allSets.find(s => s.id === currentSetId) || {}).name || 'Together';
     // Rows share directly on tap — same model as everywhere else in the app
     return milestones.slice(0, 20).map((m, idx) => {
         const isVerySpecial = isVerySpecialNumber(m.value);
         const timeUntilStr = formatTimeDistance(m.timeUntil);
         const dateStr = formatDateWithTime(m.date);
         const displayVal = formatMilestoneValue(m.value, locale);
-        const shareText = gName + ': ' + displayVal + ' ' + localizedUnit(m.value, m.unitName) + ' combined on ' + formatMilestoneDate(m.date) + ' — nicenumbers.app';
-        const safeMsg = shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
         // Show contributing events if available
         const contributingEvents = m.contributingEvents || [];
