@@ -68,7 +68,7 @@ const GIFT_CATALOG = [
     },
     {
         id: 'tshirt',
-        name: 'Milestone Tee',
+        name: 'Milestone T-Shirt',
         description: 'Soft cotton t-shirt with your milestone number',
         price: 28.00,
         currency: 'EUR',

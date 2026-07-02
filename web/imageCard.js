@@ -823,18 +823,8 @@ function generateGiftDesign(milestone, productType, options) {
         const P = 100 * S;
         const centerX = W / 2;
 
-        // Top: Nice Numbers branding
-        ctx.fillStyle = theme.muted;
-        ctx.font = `italic ${Math.round(36 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('Nice Numbers', centerX, P + 40 * S);
-
-        // Thin line
-        ctx.strokeStyle = theme.muted + '40';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(P + 100 * S, P + 70 * S);
-        ctx.lineTo(W - P - 100 * S, P + 70 * S);
-        ctx.stroke();
+        // No top brand on the printed keepsake — a gift shouldn't read as an ad.
+        // (The shareable card keeps its branding; that one is meant to travel.)
 
         // Person name
         if (name) {
