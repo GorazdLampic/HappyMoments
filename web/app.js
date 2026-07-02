@@ -4349,6 +4349,7 @@ function getHappyGapDescription(olderName, youngerName, multiple, gapDesc) {
 // ============================================================
 
 let allMilestonesFlat = []; // Store for sharing (individual)
+let _homeMilestones = [];   // Stable list backing the home rows' share/gift taps (see renderHomeScreen)
 let allCombinedMilestonesFlat = []; // Store for sharing (combined)
 let selectedCombinedMilestone = null;
 
@@ -4623,6 +4624,11 @@ function renderHomeScreen() {
         return a.timeUntil - b.timeUntil;
     });
     allMilestonesFlat = all;
+    // Stable copy for the home rows' share/gift actions. allMilestonesFlat gets
+    // rebuilt in a different order by renderPersonColumns/renderMostSpecialMilestones,
+    // which would make the rows' indices point at the WRONG milestone — so the
+    // row actions read from this dedicated array instead.
+    _homeMilestones = all;
 
     // Chunk by time
     const recentlyPassed = all.filter(m => m.recentlyPassed);
@@ -4861,7 +4867,7 @@ window.shareMilestone = shareMilestone;
 
 // Contextual gift entry: pick a physical keepsake printed with THIS milestone.
 function openGiftPicker(idx) {
-    const m = allMilestonesFlat[idx];
+    const m = _homeMilestones[idx] || allMilestonesFlat[idx];
     if (!m || typeof getGiftSuggestions !== 'function') return;
     let val, unit;
     if (m.isCosmic) {
@@ -4907,7 +4913,7 @@ function openGiftPicker(idx) {
 window.openGiftPicker = openGiftPicker;
 
 function homeShareMilestone(idx) {
-    const m = allMilestonesFlat[idx];
+    const m = _homeMilestones[idx] || allMilestonesFlat[idx];
     if (!m) return;
     shareMilestone(m);
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
