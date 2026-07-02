@@ -5863,9 +5863,14 @@ function handleChallengeGroup() {
     if (m) {
         const val = m.value.toLocaleString();
         const unit = m.unitName || '';
-        const name = m.eventName || '';
         const dateStr = m.date.toLocaleDateString(getAppLocale(), { month: 'long', day: 'numeric', year: 'numeric' });
-        message = `Fun discovery: ${name} will be ${val} ${unit} on ${dateStr}! Who else wants to find their special numbers? ${link}`;
+        // First person for the user's own milestone ("Me will be…" reads wrong).
+        if (m.eventName === 'Me') {
+            message = `Fun discovery: I'll be ${val} ${unit} on ${dateStr}! Who else wants to find their special numbers? ${link}`;
+        } else {
+            const name = displayPersonName(m.eventName || '');
+            message = `Fun discovery: ${name} will be ${val} ${unit} on ${dateStr}! Who else wants to find their special numbers? ${link}`;
+        }
     } else {
         message = `I just found some fun number milestones — want to discover yours? Enter your birthday and see what comes up! ${link}`;
     }
@@ -5938,7 +5943,50 @@ function promptShareApp() {
     }, 1500);
 }
 
+// First-person share phrasing for the user's OWN ("Me") milestones — the
+// third-person templates read wrong there ("Me reaches their 200th Mercury
+// return"). Uses a "milestone: {value}" construction so it works for both
+// cosmic ("200th Mercury return") and normal ("25,000 days") without needing
+// verb/possessive agreement. EN + SL localized; other locales fall back to EN
+// (localized self-phrasing is a known i18n follow-up).
+const SELF_SHARE_I18N = {
+    en: [
+        "On {date} I hit a milestone: {value}! 🎉 Worth celebrating.",
+        "Just {countdown} to go — my next milestone: {value}! 🎉",
+        "Coming up on {date}: {value}! 🎉 A number worth celebrating."
+    ],
+    sl: [
+        "Na dan {date} dosežem mejnik: {value}! 🎉 Vredno praznovanja.",
+        "Še {countdown} do mojega mejnika: {value}! 🎉",
+        "{date} me čaka: {value}! 🎉 Številka, vredna praznovanja."
+    ]
+};
+
+function generateSelfShareMessage(m) {
+    const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
+    const countdown = formatTimeDistance(m.timeUntil);
+    let value;
+    if (m.isCosmic) {
+        const ord = typeof ordinal === 'function' ? ordinal(m.value) : m.value;
+        value = (m.value === 1 ? '' : ord + ' ') + m.unitName;
+    } else {
+        value = m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName);
+    }
+    const lang = (getAppLocale() || 'en').split('-')[0].split('_')[0];
+    const tpls = SELF_SHARE_I18N[lang] || SELF_SHARE_I18N.en;
+    const tpl = tpls[Math.abs(m.value | 0) % tpls.length];
+    return tpl
+        .replace(/\{value\}/g, value)
+        .replace(/\{date\}/g, dateStr)
+        .replace(/\{countdown\}/g, countdown)
+        .replace(/  +/g, ' ').replace(/ ([,.!?])/g, '$1').trim();
+}
+
 function generateShareMessage(m) {
+    // The user's own milestones read wrong in third-person templates.
+    if (m.eventName === 'Me') {
+        return generateSelfShareMessage(m) + getAppShareLink(m);
+    }
     const category = getShareCategory(m);
     const template = pickShareTemplate(category);
 
@@ -7381,7 +7429,7 @@ function renderCardDesignPicker() {
     if (!el || typeof CARD_CONFIG === 'undefined') return;
     const prem = (typeof isPremium === 'function') && isPremium();
     const selected = (typeof getCardTheme === 'function') ? getCardTheme() : 'dark';
-    const order = ['dark', 'warm', 'ocean', 'sunset', 'goldfoil', 'rose', 'ivory'];
+    const order = ['dark', 'ocean', 'sunset', 'goldfoil', 'rose', 'ivory'];
     el.innerHTML = order.map(t => {
         const th = CARD_CONFIG.themes[t];
         if (!th) return '';

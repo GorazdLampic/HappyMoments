@@ -74,7 +74,7 @@ const CARD_CONFIG = {
 // ── Card designs: which are free vs premium ──
 // 'dark' is always free; the rest are premium-exclusive perks.
 const FREE_CARD_THEME = 'dark';
-const PREMIUM_CARD_THEMES = ['warm', 'ocean', 'sunset', 'goldfoil', 'rose', 'ivory'];
+const PREMIUM_CARD_THEMES = ['ocean', 'sunset', 'goldfoil', 'rose', 'ivory'];
 
 // The card design the user has chosen. Only honoured for premium users (the
 // free theme is always allowed); otherwise falls back to the free design.
