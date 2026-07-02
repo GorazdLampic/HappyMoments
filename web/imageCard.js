@@ -690,7 +690,9 @@ const GIFT_DESIGN_SIZES = {
 function generateGiftDesign(milestone, productType, options) {
     options = options || {};
     const theme = CARD_CONFIG.themes[options.theme || 'dark'];
-    const dims = GIFT_DESIGN_SIZES[productType] || GIFT_DESIGN_SIZES.poster;
+    // Fallback must be a key that EXISTS (poster/tote/canvas were removed) —
+    // an unknown productType previously crashed on `dims.width`.
+    const dims = GIFT_DESIGN_SIZES[productType] || GIFT_DESIGN_SIZES.mug;
     const W = dims.width;
     const H = dims.height;
 
