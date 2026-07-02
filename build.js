@@ -146,7 +146,10 @@ try {
     console.warn('  (build.gradle not readable; footer version may be incomplete)');
 }
 const versionInfo = `v${versionCode}${versionName ? ' / ' + versionName : ''} · ${buildTime} UTC`;
-html = html.replace('</footer>', `</footer>\n        <!-- build: ${versionInfo} -->`);
+html = html.replace('</footer>', `</footer>\n        <!-- build: ${versionInfo} · ${VERSION} -->`);
+// Visible build tag in the footer so we can confirm exactly which build is live
+// (the ${VERSION} hash matches the service-worker cache name).
+html = html.replace('__BUILD_VERSION__', `v${versionCode}${versionName ? '/' + versionName : ''} · ${VERSION}`);
 
 fs.writeFileSync(path.join(DIST, 'index.html'), html);
 console.log(`  Processed: index.html (v=${VERSION}, build=${buildTime})`);
