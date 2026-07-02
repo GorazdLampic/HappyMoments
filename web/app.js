@@ -4679,7 +4679,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                    <span class="row-gift" title="Send as a real gift" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4730,7 +4730,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                    <span class="row-gift" title="Send as a real gift" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4858,6 +4858,53 @@ async function shareMilestone(m, textOverride) {
     showToast(tt('toast_copied'), 'success');
 }
 window.shareMilestone = shareMilestone;
+
+// Contextual gift entry: pick a physical keepsake printed with THIS milestone.
+function openGiftPicker(idx) {
+    const m = allMilestonesFlat[idx];
+    if (!m || typeof getGiftSuggestions !== 'function') return;
+    let val, unit;
+    if (m.isCosmic) {
+        const ord = (typeof ordinal === 'function') ? ordinal(m.value) : m.value;
+        val = (m.value === 1 ? '' : ord + ' ') + (m.unitName || '');
+        unit = '';
+    } else {
+        val = m.value.toLocaleString();
+        unit = (typeof localizedUnit === 'function') ? localizedUnit(m.value, m.unitName) : (m.unitName || '');
+    }
+    const isSelf = m.eventName === 'Me';
+    const name = isSelf ? '' : displayPersonName(m.eventName || '');
+    const nameEsc = escapeHtml(name);
+    const suggestions = getGiftSuggestions(m) || [];
+    const cards = suggestions.map(p => {
+        const tagline = (p.tagline || '')
+            .replace(/\{value\}/g, val).replace(/\{unit\}/g, escapeHtml(unit)).replace(/\{name\}/g, nameEsc)
+            .replace(/  +/g, ' ').replace(/ ([,.!?])/g, '$1').trim();
+        // Start the gift's printed name blank for self (so they type a real name).
+        const safeName = isSelf ? '' : (m.eventName || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        return `<div class="gift-product-card" onclick="var g=document.getElementById('giftPickerModal'); if(g) g.remove(); openGiftOrder('${p.id}', ${m.value}, '${escapeHtml(m.unitName || '')}', '${safeName}')">
+            <div class="gift-icon">${p.icon}</div>
+            <div class="gift-info">
+                <div class="gift-name">${escapeHtml(p.name)}</div>
+                <div class="gift-tagline">${tagline}</div>
+                <div class="gift-price">${p.currency} ${p.price.toFixed(2)} &middot; shipping included</div>
+            </div>
+        </div>`;
+    }).join('');
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'giftPickerModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `<div class="modal-content">
+        <h3>&#127873; Gift this milestone</h3>
+        <p class="auth-subtitle">Turn <strong>${val}${unit ? ' ' + escapeHtml(unit) : ''}</strong>${name ? ' for ' + nameEsc : ''} into a real keepsake — printed with the number and shipped worldwide.</p>
+        <div class="gift-products">${cards}</div>
+        <button class="auth-skip" onclick="document.getElementById('giftPickerModal').remove()">Maybe later</button>
+    </div>`;
+    document.body.appendChild(modal);
+    if (typeof _track === 'function') _track('gift_picker_opened', { value: m.value, unit: m.unitName });
+}
+window.openGiftPicker = openGiftPicker;
 
 function homeShareMilestone(idx) {
     const m = allMilestonesFlat[idx];
