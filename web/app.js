@@ -3840,7 +3840,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
                 <div class="cmi-main">
                     <span class="cmi-value">${displayVal}</span>
                     <span class="cmi-unit">${localizedUnit(m.value, m.unitName)}</span>
-                    <span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(14)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPickerCombined(${gIdx})" style="cursor:pointer;opacity:0.9;margin-right:10px;font-size:1.15em;">&#127873;</span><span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(14)}</span>
                 </div>
                 <div class="cmi-desc">${m.comboDescription || m.description || ''}</div>
                 ${eventsHtml}
@@ -4687,7 +4687,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:10px;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4738,7 +4738,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:10px;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4882,7 +4882,20 @@ window.shareCombinedMilestone = shareCombinedMilestone;
 
 // Contextual gift entry: pick a physical keepsake printed with THIS milestone.
 function openGiftPicker(idx) {
-    const m = _homeMilestones[idx] || allMilestonesFlat[idx];
+    _openGiftPickerForMilestone(_homeMilestones[idx] || allMilestonesFlat[idx]);
+}
+function openGiftPickerCombined(gIdx) {
+    _openGiftPickerForMilestone(_combinedShareList[gIdx]);
+}
+window.openGiftPickerCombined = openGiftPickerCombined;
+// Person-column / most-special cards index straight into allMilestonesFlat
+// (same as quickShare), so resolve from there — NOT via _homeMilestones, which
+// would alias to a different milestone after renderPersonColumns rebuilds the list.
+function openGiftPickerFlat(idx) {
+    _openGiftPickerForMilestone(allMilestonesFlat[idx]);
+}
+window.openGiftPickerFlat = openGiftPickerFlat;
+function _openGiftPickerForMilestone(m) {
     if (!m || typeof getGiftSuggestions !== 'function') return;
     let val, unit;
     if (m.isCosmic) {
@@ -5228,7 +5241,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone birthday-milestone ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.description}</span><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line1"><span class="cm-num">${m.description}</span><button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${m.globalIdx})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
                             <div class="cm-line2"><span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span></div>
                         </div>
                     `;
@@ -5239,7 +5252,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone cosmic-milestone ${cosmicSpecial ? 'very-special' : ''} ${m.isSaturnReturn ? 'saturn-return' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-cosmic-icon">\u2731</span> <span class="cm-num">${cosmicLabel}</span><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line1"><span class="cm-cosmic-icon">\u2731</span> <span class="cm-num">${cosmicLabel}</span><button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${m.globalIdx})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
                                 <span class="cm-alt-b cm-cosmic-desc">${m.description}</span>
@@ -5269,7 +5282,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${m.isBigMilestone ? 'big-milestone' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${localizedUnit(m.value, m.unitName)}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}<button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${localizedUnit(m.value, m.unitName)}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}<button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${m.globalIdx})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
                                 ${showAlt ? `<span class="cm-alt-b">${showAlt}</span>` : ''}

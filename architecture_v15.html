@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HappyMoments — System Architecture v1.4 (App v2.9.3)</title>
+<title>HappyMoments — System Architecture v1.3.1</title>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{font-size:17px;scroll-behavior:smooth}
@@ -653,7 +653,7 @@
 <!-- Header -->
 <header class="header">
   <h1><span>HappyMoments</span> &mdash; System Architecture</h1>
-  <p class="subtitle">Celebrate Every Moment Worth Sharing &middot; 19 Languages Live (RTL/Arabic deferred) &middot; CLDR Plural Engine &middot; Cosmic Cycles &middot; Sacred Numbers &middot; Cloudflare Edge &middot; Firebase Auth &middot; Stripe + Printful &middot; Gift Store Live &middot; Doc v1.4 &middot; App v2.9.3 (build 93)</p>
+  <p class="subtitle">Celebrate Every Moment Worth Sharing &middot; 21 Languages &middot; Cosmic Cycles &middot; Sacred Numbers &middot; Cloudflare Edge &middot; Firebase Auth &middot; Stripe + Printful &middot; Gift Store Live &middot; v15 (1.3.1)</p>
 </header>
 
 <!-- ====================================================================== -->
@@ -708,16 +708,16 @@
 
     <!-- PWA Box (expanded) -->
     <rect x="170" y="15" width="250" height="170" rx="10" fill="rgba(59,130,246,.06)" stroke="#3b82f6" stroke-width="1.5" opacity=".8"/>
-    <text x="295" y="38" text-anchor="middle" fill="#60a5fa" font-size="14" font-weight="700" letter-spacing="1">PWA FRONTEND (19 LANGS LIVE)</text>
+    <text x="295" y="38" text-anchor="middle" fill="#60a5fa" font-size="14" font-weight="700" letter-spacing="1">PWA FRONTEND (21 LANGS)</text>
     <text x="185" y="57" fill="#aaa" font-size="12">app.js</text>
-    <text x="238" y="57" fill="#888" font-size="11">(~7437 lines, 313KB)</text>
+    <text x="238" y="57" fill="#888" font-size="11">(~4634 lines, 173KB)</text>
     <text x="185" y="74" fill="#aaa" font-size="12">auth.js &middot; analytics.js &middot; checkout.js</text>
-    <text x="185" y="91" fill="#aaa" font-size="12">i18n.js (20 dicts, plural engine) &middot; specialNumbers.js</text>
+    <text x="185" y="91" fill="#aaa" font-size="12">i18n.js &middot; specialNumbers.js (Cosmic+Sacred)</text>
     <text x="185" y="108" fill="#aaa" font-size="12">giftStore.js</text>
     <text x="268" y="108" fill="#fb7185" font-size="11">(28KB, 5 products, 8 collections)</text>
     <text x="185" y="125" fill="#aaa" font-size="12">imageCard.js &middot; sw.js</text>
     <text x="185" y="142" fill="#aaa" font-size="12">shareMessages.js</text>
-    <text x="298" y="142" fill="#888" font-size="11">(197KB, 18 langs)</text>
+    <text x="298" y="142" fill="#888" font-size="11">(153KB, 6 langs)</text>
     <text x="185" y="159" fill="#fb7185" font-size="12">historyFacts.js</text>
     <text x="296" y="159" fill="#888" font-size="11">(82KB, 197 events)</text>
     <text x="185" y="176" fill="#666" font-size="10">SW + dataProtection.js + admin.html + notifications.js</text>
@@ -906,12 +906,12 @@
 
     <!-- Celebration bar -->
     <rect x="30" y="650" width="1140" height="28" rx="6" fill="rgba(6,182,212,.04)" stroke="#06b6d4" stroke-width="1" opacity=".5"/>
-    <text x="600" y="669" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="600" letter-spacing=".5">CELEBRATE: Hero Milestone &middot; Cosmic Cycles &middot; Sacred Numbers &middot; This Day in History (197 events) &middot; Nice Numbers &middot; Palindromes &middot; Share in 18 langs &middot; Gift store</text>
+    <text x="600" y="669" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="600" letter-spacing=".5">CELEBRATE: Hero Milestone &middot; Cosmic Cycles &middot; Sacred Numbers &middot; This Day in History (197 events) &middot; Nice Numbers &middot; Palindromes &middot; Share in 6 langs &middot; Gift store</text>
 
     <!-- New Features callout -->
     <rect x="30" y="686" width="1140" height="46" rx="6" fill="rgba(244,63,94,.04)" stroke="#fb7185" stroke-width="1" opacity=".5"/>
-    <text x="600" y="704" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">NEW IN v1.4 (app v2.9.1&ndash;2.9.3): Full 19-language localization &middot; CLDR plural engine (Slovenian dual, Slavic few/many) &middot; l10n JSON overlay + merge build step &middot; per-locale share messages (18)</text>
-    <text x="600" y="722" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">BCP-47 locale fix &middot; localized units/dates &middot; init-order fix (no first-paint English flash) &middot; Enter-key submit &middot; 5-agent stability test &middot; i18n validator + per-language screenshot tour</text>
+    <text x="600" y="704" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">NEW IN v1.3.1 (v15): Cosmic Cycles (7 planets, Saturn return) &middot; Sacred Numbers (7, 12, 33, 40, 108, 786) &middot; 6-screen Onboarding &middot; Printful Fully Connected</text>
+    <text x="600" y="722" text-anchor="middle" fill="#fb7185" font-size="11" font-weight="600" letter-spacing=".3">Animations (counter roll-up, gold sparkles, stagger fade-in, number glow, tab transitions, pulse) &middot; Unit Fix in shares &middot; Build system with version code in footer</text>
 
     <!-- ============ GITHUB ECOSYSTEM BAR ============ -->
     <rect x="30" y="748" width="540" height="82" rx="8" fill="rgba(35,134,54,.04)" stroke="#238636" stroke-width="1.2" opacity=".7"/>
@@ -982,13 +982,13 @@
   <!-- PWA Frontend -->
   <div class="section pwa">
     <div class="section-title">
-      <span class="icon">&#x26A1;</span> PWA Frontend &mdash; 19 Languages Live
+      <span class="icon">&#x26A1;</span> PWA Frontend &mdash; 21 Languages
     </div>
 
     <div class="module">
-      <div class="module-name">app.js <span style="color:#d4b876;font-size:.85rem;font-weight:400">~7437 lines, 313KB</span></div>
-      <div class="module-desc">Main application: Hero Milestone card, Cosmic Cycles (7 planets, Saturn return), Sacred &amp; Spiritual numbers (7, 12, 33, 40, 108, 786), This Day in History, nice numbers (thematic matching), premium gates, quick share, challenge mechanic, palindrome filter, thematic bonus scoring, animations (counter roll-up, gold sparkles, stagger fade-in, number glow, tab transitions, milestone selection pulse), 6-screen onboarding wizard. i18n display layer: tt() template helper, localizedUnit() (CLDR plurals at all render sites), displayPersonName() ("Me" localization), locale-set-before-first-render init order, global Enter-key submit.</div>
-      <div class="module-file">web/app.js &rarr; dist/app.min.js (minified at build)</div>
+      <div class="module-name">app.js <span style="color:#d4b876;font-size:.85rem;font-weight:400">~4634 lines, 173KB</span></div>
+      <div class="module-desc">Main application: Hero Milestone card, Cosmic Cycles (7 planets, Saturn return), Sacred &amp; Spiritual numbers (7, 12, 33, 40, 108, 786), This Day in History, nice numbers (thematic matching), premium gates, quick share, challenge mechanic, palindrome filter, thematic bonus scoring, animations (counter roll-up, gold sparkles, stagger fade-in, number glow, tab transitions, milestone selection pulse), 6-screen onboarding wizard, unit fix in share messages</div>
+      <div class="module-file">web/app.js &rarr; dist/app.min.js (~104KB)</div>
     </div>
 
     <div class="module">
@@ -1022,9 +1022,9 @@
     </div>
 
     <div class="module">
-      <div class="module-name">i18n.js <span style="color:#60a5fa;font-size:.82rem;font-weight:400">20 DICTS &middot; 592KB</span></div>
-      <div class="module-desc">Runtime i18n module: 402 keys &times; 20 dictionaries (19 live + AR deferred), tt() template helper, CLDR plural engine via Intl.PluralRules (per-locale tables &mdash; Slovenian one/two/few/other dual, Slavic few/many, Romance "many" at 10&#8310;), BCP-47 locale tags (pt_BR&rarr;pt-BR), detectLocale() with AR gated out. Dictionary blocks generated by the l10n overlay + merge build step (see Build Pipeline). Live: 592KB raw &rarr; ~132KB Brotli.</div>
-      <div class="module-file">web/i18n.js &middot; web/l10n/*.json (source overlays)</div>
+      <div class="module-name">i18n.js <span style="color:#60a5fa;font-size:.82rem;font-weight:400">21 LANGS</span></div>
+      <div class="module-desc">EN, ES, DE, PT, PT-BR, IT, FR, HR, SL, NL, PL, RU, ZH, HI, AR, BN, JA, VI, ID, TH, KO</div>
+      <div class="module-file">web/i18n.js</div>
     </div>
 
     <div class="module">
@@ -1034,8 +1034,8 @@
     </div>
 
     <div class="module">
-      <div class="module-name">shareMessages.js <span style="color:#60a5fa;font-size:.82rem;font-weight:400">197KB, 18 langs</span></div>
-      <div class="module-desc">1000+ EN templates + transcreated per-locale sets for 18 languages (13 categories incl. cosmic; ~30+ messages each). {name}/{value}/{unit}/{date} interpolation with localized units; pt_BR resolves to pt at runtime; AR falls back to EN. Generated via the same l10n overlay + merge step.</div>
+      <div class="module-name">shareMessages.js <span style="color:#60a5fa;font-size:.82rem;font-weight:400">153KB, 6 langs</span></div>
+      <div class="module-desc">1000+ EN templates + translated templates for PT, HI, ZH, JA, ES. Unit fix: all share messages always include the unit (min, sec, days, etc.)</div>
       <div class="module-file">web/shareMessages.js</div>
     </div>
 
@@ -1273,7 +1273,7 @@
           <li>Gift banners every 4th milestone</li>
           <li>Watermarked image cards</li>
           <li>App link in all shares</li>
-          <li>19 languages live (+ Arabic/RTL deferred)</li>
+          <li>21 language support</li>
         </ul>
       </div>
       <div class="plan-card premium">
@@ -1344,7 +1344,7 @@
       <div class="module-desc">Counter roll-up, gold sparkles, stagger fade-in, number glow, tab transitions, milestone selection pulse. Polished micro-interactions throughout the app.</div>
     </div>
     <div class="module">
-      <div class="module-name">Share Links (18 languages) <span class="status-badge status-live">localized units</span></div>
+      <div class="module-name">Share Links (6 languages) <span class="status-badge status-live">unit fix</span></div>
       <div class="module-desc">App link in ALL share messages. Unit always included (min, sec, days, etc.). Image cards have "happymoments.app" branding. Instagram Story 1080x1920 format.</div>
     </div>
     <div class="module">
@@ -1988,73 +1988,6 @@
 
 </div>
 
-<!-- ====================================================================== -->
-<!-- TECHNICAL ADDENDUM (v1.4) — for external architecture review            -->
-<!-- ====================================================================== -->
-<div style="max-width:1400px;margin:2.5rem auto 0;padding:0 .2rem">
-  <div style="text-align:center;margin-bottom:1.4rem">
-    <div style="font-size:1.4rem;font-weight:600;color:#d4b876;letter-spacing:.06em">Technical Addendum &mdash; v1.4</div>
-    <div style="color:#888;font-size:.98rem;margin-top:.3rem">Detail added June 2026 for external IT/apps architecture review. Focus: the internationalization build-out (app v2.9.1&ndash;2.9.3), delivery pipeline, quality tooling, and open questions.</div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.3rem">
-
-    <!-- A. i18n architecture -->
-    <div style="background:linear-gradient(135deg,#1e2a3a,#1a2230);border:1px solid #2a4060;border-radius:12px;padding:1.3rem 1.4rem">
-      <div style="color:#60a5fa;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:1rem;margin-bottom:.7rem">&#x1F310; Internationalization Architecture</div>
-      <p style="color:#cfd8e3;font-size:.95rem;margin-bottom:.6rem">Dictionary-based i18n, no framework. <b>402 string keys &times; 20 dictionaries</b> (19 live; Arabic deferred). The runtime <code style="color:#9ecbff">I18N</code> module exposes <code style="color:#9ecbff">tt(key, vars)</code> for templated strings and <code style="color:#9ecbff">I18N.plural(n, noun)</code>.</p>
-      <ul style="color:#aeb9c5;font-size:.92rem;line-height:1.6;padding-left:1.1rem;margin-bottom:.5rem">
-        <li><b>Source of truth:</b> <code style="color:#9ecbff">web/l10n/&lt;locale&gt;.json</code> overlays. <code style="color:#9ecbff">tools/i18n-merge.js</code> regenerates marker-delimited blocks inside <code style="color:#9ecbff">i18n.js</code> + <code style="color:#9ecbff">shareMessages.js</code> (idempotent, <code>JSON.stringify</code>-escaped, key-parity enforced).</li>
-        <li><b>Plural engine:</b> <code style="color:#9ecbff">Intl.PluralRules</code> + per-locale CLDR tables (11 nouns). Handles Slovenian one/two/few/other <b>dual</b>, Slavic few/many, Romance "many" at 10&#8310;.</li>
-        <li><b>Display shims (display-time only):</b> <code style="color:#9ecbff">localizedUnit()</code>, <code style="color:#9ecbff">displayPersonName()</code>. <b>Canonical English is kept in stored data</b> &mdash; localization never mutates persisted values or <code>===</code> logic.</li>
-        <li><b>Locale resolution:</b> saved &rarr; browser tag &rarr; variant map; BCP-47 normalization (<code>pt_BR&rarr;pt-BR</code> before any <code>Intl</code> call); Arabic gated out of auto-detect until RTL ships.</li>
-        <li><b>Transcreated share messages:</b> 18 locales &times; 13 categories (incl. cosmic), ~30+ messages each; <code>pt_BR</code> resolves to <code>pt</code> at runtime.</li>
-      </ul>
-    </div>
-
-    <!-- B. Build & deploy -->
-    <div style="background:linear-gradient(135deg,#2a1e2a,#221a30);border:1px solid #4a2a60;border-radius:12px;padding:1.3rem 1.4rem">
-      <div style="color:#c084fc;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:1rem;margin-bottom:.7rem">&#x1F680; Build, Deploy &amp; Release Pipeline</div>
-      <ul style="color:#c9bcd6;font-size:.92rem;line-height:1.6;padding-left:1.1rem">
-        <li><b>Build:</b> <code style="color:#d8b4fe">build.js</code> minifies <code>web/</code> &rarr; <code>dist/</code> (terser + clean-css), generates a versioned service worker (timestamp cache name), copies static files (<code>_redirects</code>, <code>_headers</code>).</li>
-        <li><b>Deploy:</b> Cloudflare Pages builds <b>from source on push to <code>main</code></b> &rarr; happymoments.app. <code>dist/</code> is git-ignored (CI rebuilds; never serves a stale committed bundle).</li>
-        <li><b>Service worker:</b> network-first for navigations, cache-first for assets, <code>skipWaiting</code> + <code>clients.claim</code> + per-build cache name &rarr; returning users auto-update by their 2nd load. <code>_headers</code> sets <code>sw.js: Cache-Control no-cache</code> for instant pickup.</li>
-        <li><b>Versioning:</b> SW cache tag + Android <code>versionCode/versionName</code> bumped per release (currently <b>93 / 2.9.3</b>). <span style="color:#fbbf24">A web push does NOT build the Android AAB</span> &mdash; the Play Store bundle is a separate GitHub Actions tag build.</li>
-        <li><b>Wrapper:</b> Capacitor packages the same web build as the Android app.</li>
-      </ul>
-    </div>
-
-    <!-- C. Quality & tooling -->
-    <div style="background:linear-gradient(135deg,#1a2e1a,#1a2a1e);border:1px solid #2a6030;border-radius:12px;padding:1.3rem 1.4rem">
-      <div style="color:#4ade80;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:1rem;margin-bottom:.7rem">&#x1F9EA; Quality Engineering &amp; Tooling</div>
-      <ul style="color:#bcd6c2;font-size:.92rem;line-height:1.6;padding-left:1.1rem">
-        <li><code style="color:#86efac">tools/i18n-check.js</code> &mdash; gate: key parity vs EN, placeholder integrity, length budget, plural-table presence (0 errors required to ship).</li>
-        <li><code style="color:#86efac">tools/screenshot-tour.js</code> &mdash; Playwright per-language tours (360&times;800) + multi-viewport; flags page errors &amp; horizontal overflow. 285-shot full-language sweep per release.</li>
-        <li><code style="color:#86efac">tools/find-overflow.js</code>, <code style="color:#86efac">tools/debug-locale.js</code> &mdash; element-level overflow + per-locale console-error probes.</li>
-        <li><b>Localization method:</b> per-language translator agent &rarr; independent native-linguist critic agent &rarr; automated gates. Native owner reviews Slovenian as calibration.</li>
-        <li><b>Release hardening:</b> a 5-agent behavioral review (functional / i18n-correctness / data-safety / code-review / PWA-prod) found 8 defects the visual gates structurally could not (e.g. the returning-user first-paint path).</li>
-        <li style="color:#fbbf24"><b>Known gap:</b> no formal unit/integration test suite &mdash; verification today is browser-automation + validators + adversarial review.</li>
-      </ul>
-    </div>
-
-    <!-- D. Trade-offs & open questions -->
-    <div style="background:linear-gradient(135deg,#2a2018,#2a1a16);border:1px solid #7a4a2a;border-radius:12px;padding:1.3rem 1.4rem">
-      <div style="color:#fb923c;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:1rem;margin-bottom:.7rem">&#x2696; Trade-offs &amp; Open Questions for Review</div>
-      <p style="color:#e0cbb8;font-size:.92rem;margin-bottom:.55rem">Known decisions where external feedback is explicitly welcome:</p>
-      <ul style="color:#e0cbb8;font-size:.92rem;line-height:1.6;padding-left:1.1rem">
-        <li><b>Monolithic frontend:</b> <code>app.js</code> is ~7,400 lines, vanilla JS, no module bundler/framework. Buys zero build complexity + fast iteration; costs maintainability &amp; tree-shaking. <i>Introduce a bundler/module system or component model now?</i></li>
-        <li><b>Eager i18n payload:</b> all 20 dictionaries load on every visit (592KB raw &rarr; ~132KB Brotli). <i>Is per-locale lazy-loading / code-splitting worth it for mobile first-load?</i></li>
-        <li><b>Data &amp; privacy:</b> client-side AES-GCM in <code>localStorage</code>; optional Firebase Auth + Cloudflare D1 sync. <i>Review of key handling, threat model, and PII / GDPR posture.</i></li>
-        <li><b>Test strategy:</b> behavioral + validators, no unit/contract tests. <i>Where would unit/contract tests add the most leverage?</i></li>
-        <li><b>Payments/security:</b> Stripe (test mode) + webhook + Printful via Pages Functions. <i>Review of webhook verification &amp; secret handling.</i></li>
-        <li><b>Accessibility:</b> not yet formally audited (a11y, screen-reader, contrast, focus order). <i>Flagged for a dedicated pass.</i></li>
-        <li><b>RTL / Arabic:</b> deferred &mdash; needs full translation + bidirectional layout. <i>Recommended approach for RTL in a no-framework codebase?</i></li>
-      </ul>
-    </div>
-
-  </div>
-</div>
-
 <!-- Legend -->
 <div class="legend">
   <div class="legend-item">
@@ -2097,8 +2030,8 @@
 
 <!-- Footer -->
 <footer class="footer">
-  <p>Quantum Wave Ltd &mdash; June 2026 &mdash; Doc v1.4 &middot; App v2.9.3 (build 93)</p>
-  <p style="margin-top:.3rem">HappyMoments &middot; Architecture Documentation &middot; prior version preserved as architecture_v15.html</p>
+  <p>Quantum Wave Ltd &mdash; June 2026 &mdash; v1.3.1</p>
+  <p style="margin-top:.3rem">HappyMoments &middot; Architecture Documentation</p>
 </footer>
 
 </body>
