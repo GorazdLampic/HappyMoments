@@ -4690,7 +4690,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="Send as a real gift" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4741,7 +4741,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="Send as a real gift" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.5;margin-right:8px;font-size:1em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(15)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4914,7 +4914,7 @@ function openGiftPicker(idx) {
             <div class="gift-info">
                 <div class="gift-name">${escapeHtml(p.name)}</div>
                 <div class="gift-tagline">${tagline}</div>
-                <div class="gift-price">${p.currency} ${p.price.toFixed(2)} &middot; Shipping included</div>
+                <div class="gift-price">${p.currency} ${p.price.toFixed(2)} &middot; ${tt('gp_ship')}</div>
             </div>
         </div>`;
     }).join('');
@@ -4923,10 +4923,10 @@ function openGiftPicker(idx) {
     modal.id = 'giftPickerModal';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div class="modal-content">
-        <h3>&#127873; Gift this milestone</h3>
-        <p class="auth-subtitle">Turn <strong>${val}${unit ? ' ' + escapeHtml(unit) : ''}</strong>${name ? ' for ' + nameEsc : ''} into a real keepsake — printed with the number and shipped worldwide.</p>
+        <h3>&#127873; ${tt('gp_title')}</h3>
+        <p class="auth-subtitle">${tt('gp_sub', { value: `<strong>${val}${unit ? ' ' + escapeHtml(unit) : ''}</strong>` })}</p>
         <div class="gift-products">${cards}</div>
-        <button class="auth-skip" onclick="document.getElementById('giftPickerModal').remove()">Maybe later</button>
+        <button class="auth-skip" onclick="document.getElementById('giftPickerModal').remove()">${tt('gp_later')}</button>
     </div>`;
     document.body.appendChild(modal);
     if (typeof _track === 'function') _track('gift_picker_opened', { value: m.value, unit: m.unitName });
@@ -7513,7 +7513,7 @@ function renderPremiumUI() {
 function checkPremiumStatus() { renderPremiumUI(); }
 
 // ── Premium perk: choose the share-card design ──
-const CARD_DESIGN_NAMES = { dark:'Classic', warm:'Warm', ocean:'Ocean', sunset:'Sunset', goldfoil:'Gold', rose:'Rose', ivory:'Ivory' };
+const CARD_DESIGN_KEYS = { dark:'cd_n_classic', ocean:'cd_n_ocean', sunset:'cd_n_sunset', goldfoil:'cd_n_gold', rose:'cd_n_rose', ivory:'cd_n_ivory' };
 
 function renderCardDesignPicker() {
     const el = document.getElementById('cardDesignSwatches');
@@ -7534,13 +7534,11 @@ function renderCardDesignPicker() {
                 ${locked ? `<span class="design-lock" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.42);border-radius:9px;font-size:0.95rem;">&#128274;</span>` : ''}
                 ${isSel ? `<span style="position:absolute;top:2px;left:6px;color:var(--warning,#d4b876);font-size:0.85rem;">&#10003;</span>` : ''}
             </div>
-            <div style="font-size:0.7rem;color:${isSel ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};margin-top:4px;">${CARD_DESIGN_NAMES[t] || t}</div>
+            <div style="font-size:0.7rem;color:${isSel ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};margin-top:4px;">${tt(CARD_DESIGN_KEYS[t] || 'cd_n_classic')}</div>
         </div>`;
     }).join('');
     const hint = document.getElementById('cardDesignHint');
-    if (hint) hint.textContent = prem
-        ? 'Pick the look of the cards you share.'
-        : 'Classic is free. Unlock every design with Premium.';
+    if (hint) hint.textContent = prem ? tt('cd_hint_prem') : tt('cd_hint_free');
 }
 
 function selectCardDesign(t) {
@@ -7548,14 +7546,14 @@ function selectCardDesign(t) {
     if (t !== 'dark' && !prem) { showUpgradePrompt('cards'); return; }
     localStorage.setItem('happymoments_card_theme', t);
     renderCardDesignPicker();
-    showToast('Card design updated', 'success');
+    showToast(tt('cd_updated'), 'success');
 }
 window.renderCardDesignPicker = renderCardDesignPicker;
 window.selectCardDesign = selectCardDesign;
 
 // Restore a previous purchase on a new device / after reinstall, by email.
 async function restorePurchase() {
-    const email = (prompt('Enter the email address you paid with:') || '').trim().toLowerCase();
+    const email = (prompt(tt('prem2_restore_prompt')) || '').trim().toLowerCase();
     if (!email || !email.includes('@')) return;
     try {
         const res = await fetch('/api/premium-status?email=' + encodeURIComponent(email));
@@ -7564,9 +7562,9 @@ async function restorePurchase() {
             localStorage.setItem('happymoments_premium_until', String(data.premium_until));
             localStorage.setItem('happymoments_premium_email', email);
             renderPremiumUI();
-            showToast('Premium restored — thank you!', 'success');
+            showToast(tt('prem2_restore_ok'), 'success');
         } else {
-            showToast('No premium found for that email.', 'info');
+            showToast(tt('prem2_restore_none'), 'info');
         }
     } catch {
         showToast(tt('prem_payment_not_configured'), 'info');

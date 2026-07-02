@@ -356,7 +356,7 @@ function openGiftOrder(productId, value, unit, eventName) {
             <div class="gift-design-preview" id="giftDesignPreview">
                 <p class="gift-design-loading">Generating design preview...</p>
             </div>
-            <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;margin:6px 0 0;opacity:0.85;">A close preview — the printed keepsake is finalised during production.</p>
+            <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;margin:6px 0 0;opacity:0.85;">${typeof tt === 'function' ? tt('gp_disclaimer') : 'A close preview — the printed keepsake is finalised during production.'}</p>
 
             <div class="gift-order-form">
                 <div class="gift-form-section">
@@ -421,7 +421,7 @@ function openGiftOrder(productId, value, unit, eventName) {
             </div>
 
             <div class="checkout-price">EUR ${product.price.toFixed(2)}</div>
-            <p class="gift-shipping-note">Shipping included &middot; ships worldwide</p>
+            <p class="gift-shipping-note">${typeof tt === 'function' ? tt('gp_ship_world') : 'Shipping included · ships worldwide'}</p>
 
             <div id="giftOrderError" class="auth-error hidden"></div>
 
