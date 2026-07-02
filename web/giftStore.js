@@ -61,6 +61,7 @@ const GIFT_CATALOG = [
         icon: '&#9749;',
         printful_variant: 1320,
         printful_product: 19,
+        photo: 'img/gift-mug.jpg',
         tagline: '{value} {unit} — every morning',
         designType: 'mug',
         categories: ['birthday', 'round', 'repdigit', 'palindrome', 'generic']
@@ -74,6 +75,7 @@ const GIFT_CATALOG = [
         icon: '&#128085;',
         printful_variant: 4012,
         printful_product: 71,
+        photo: 'img/gift-tshirt.jpg',
         tagline: 'Wearing {value} with pride',
         designType: 'tshirt',
         hasSize: true,
@@ -88,6 +90,7 @@ const GIFT_CATALOG = [
         icon: '&#129380;',
         printful_variant: 19111,
         printful_product: 742,
+        photo: 'img/gift-tumbler.jpg',
         tagline: 'Sip to {value}',
         designType: 'tumbler',
         categories: ['round', 'repdigit', 'birthday', 'scientific', 'generic']
@@ -353,6 +356,7 @@ function openGiftOrder(productId, value, unit, eventName) {
             <div class="gift-design-preview" id="giftDesignPreview">
                 <p class="gift-design-loading">Generating design preview...</p>
             </div>
+            <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;margin:6px 0 0;opacity:0.85;">A close preview — the printed keepsake is finalised during production.</p>
 
             <div class="gift-order-form">
                 <div class="gift-form-section">

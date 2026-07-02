@@ -3666,6 +3666,7 @@ function renderCombinedTab() {
     }
 
     allCombinedMilestonesFlat = [];
+    _combinedShareList = [];
 
     // Extended time period: 5 years = 1825 days (for big combined milestones like 2 billion seconds)
     const maxDaysAhead = 1825;
@@ -3833,9 +3834,12 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
             ? `<div class="cmi-contributors">${contributingEvents.map(e => `<span class="contributor-tag">${e}</span>`).join('')}</div>`
             : '';
 
+        // Register in the stable per-render list so the tap shares the RIGHT
+        // combined milestone (image card + text), not a stale index.
+        const gIdx = _combinedShareList.push(m) - 1;
         return `
             <div class="combined-milestone-item ${isVerySpecial ? 'very-special' : ''}"
-                 onclick="wizardSelectMsRow('','${safeMsg}')" style="cursor:pointer;">
+                 onclick="shareCombinedMilestone(${gIdx})" style="cursor:pointer;">
                 <div class="cmi-main">
                     <span class="cmi-value">${displayVal}</span>
                     <span class="cmi-unit">${localizedUnit(m.value, m.unitName)}</span>
@@ -4351,6 +4355,7 @@ function getHappyGapDescription(olderName, youngerName, multiple, gapDesc) {
 let allMilestonesFlat = []; // Store for sharing (individual)
 let _homeMilestones = [];   // Stable list backing the home rows' share/gift taps (see renderHomeScreen)
 let allCombinedMilestonesFlat = []; // Store for sharing (combined)
+let _combinedShareList = [];        // Stable per-render list backing Together-row taps
 let selectedCombinedMilestone = null;
 
 function getTodayHighlight() {
@@ -4865,6 +4870,19 @@ async function shareMilestone(m, textOverride) {
 }
 window.shareMilestone = shareMilestone;
 
+// Share a Together/combined milestone: image card (labelled with the group) + text.
+function shareCombinedMilestone(idx) {
+    const m = _combinedShareList[idx];
+    if (!m) return;
+    // Combined milestones carry no eventName, so label the card with the people.
+    const names = (m.contributingEvents || []).map(n => displayPersonName(n)).join(' + ');
+    const groupName = (allSets.find(s => s.id === currentSetId) || {}).name || 'Together';
+    const cardM = Object.assign({}, m, { eventName: names || groupName });
+    const text = (typeof generateCombinedShareMessage === 'function') ? generateCombinedShareMessage(m) : undefined;
+    shareMilestone(cardM, text);
+}
+window.shareCombinedMilestone = shareCombinedMilestone;
+
 // Contextual gift entry: pick a physical keepsake printed with THIS milestone.
 function openGiftPicker(idx) {
     const m = _homeMilestones[idx] || allMilestonesFlat[idx];
@@ -4888,12 +4906,15 @@ function openGiftPicker(idx) {
             .replace(/  +/g, ' ').replace(/ ([,.!?])/g, '$1').trim();
         // Start the gift's printed name blank for self (so they type a real name).
         const safeName = isSelf ? '' : (m.eventName || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const media = p.photo
+            ? `<div class="gift-photo"><img src="${p.photo}" alt="" loading="lazy" style="width:56px;height:56px;object-fit:cover;border-radius:8px;background:#fff;"></div>`
+            : `<div class="gift-icon">${p.icon}</div>`;
         return `<div class="gift-product-card" onclick="var g=document.getElementById('giftPickerModal'); if(g) g.remove(); openGiftOrder('${p.id}', ${m.value}, '${escapeHtml(m.unitName || '')}', '${safeName}')">
-            <div class="gift-icon">${p.icon}</div>
+            ${media}
             <div class="gift-info">
                 <div class="gift-name">${escapeHtml(p.name)}</div>
                 <div class="gift-tagline">${tagline}</div>
-                <div class="gift-price">${p.currency} ${p.price.toFixed(2)} &middot; shipping included</div>
+                <div class="gift-price">${p.currency} ${p.price.toFixed(2)} &middot; Shipping included</div>
             </div>
         </div>`;
     }).join('');

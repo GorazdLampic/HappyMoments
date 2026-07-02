@@ -733,6 +733,22 @@ function generateGiftDesign(milestone, productType, options) {
     ctx.stroke();
     ctx.restore();
 
+    // Subtle inset frame — makes the printed piece read as a designed keepsake
+    // instead of a number floating in empty space.
+    ctx.save();
+    ctx.strokeStyle = theme.accent;
+    ctx.globalAlpha = 0.22;
+    ctx.lineWidth = 2 * S;
+    const _fi = 26 * S;
+    if (typeof ctx.roundRect === 'function') {
+        ctx.beginPath();
+        ctx.roundRect(_fi, _fi, W - 2 * _fi, H - 2 * _fi, 14 * S);
+        ctx.stroke();
+    } else {
+        ctx.strokeRect(_fi, _fi, W - 2 * _fi, H - 2 * _fi);
+    }
+    ctx.restore();
+
     // Layout depends on aspect ratio
     const isWide = W > H; // mug is wide
     const val = milestone.value.toLocaleString();
