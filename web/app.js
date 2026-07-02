@@ -1058,6 +1058,8 @@ function toggleProfilePanel() {
     } else {
         moveSettingsIntoProfilePanel();
         if (typeof loadSettingsUI === 'function') loadSettingsUI();
+        renderPremiumUI();
+        renderCardDesignPicker();
         panel.classList.add('visible');
         panel.classList.remove('hidden');
         if (overlay) overlay.classList.remove('hidden');
@@ -7370,6 +7372,47 @@ function renderPremiumUI() {
 }
 // Back-compat alias — older call sites used this name.
 function checkPremiumStatus() { renderPremiumUI(); }
+
+// ── Premium perk: choose the share-card design ──
+const CARD_DESIGN_NAMES = { dark:'Classic', warm:'Warm', ocean:'Ocean', sunset:'Sunset', goldfoil:'Gold', rose:'Rose', ivory:'Ivory' };
+
+function renderCardDesignPicker() {
+    const el = document.getElementById('cardDesignSwatches');
+    if (!el || typeof CARD_CONFIG === 'undefined') return;
+    const prem = (typeof isPremium === 'function') && isPremium();
+    const selected = (typeof getCardTheme === 'function') ? getCardTheme() : 'dark';
+    const order = ['dark', 'warm', 'ocean', 'sunset', 'goldfoil', 'rose', 'ivory'];
+    el.innerHTML = order.map(t => {
+        const th = CARD_CONFIG.themes[t];
+        if (!th) return '';
+        const locked = (t !== 'dark') && !prem;
+        const isSel = t === selected;
+        const grad = `linear-gradient(135deg, ${th.bgGradient[0]}, ${th.bgGradient[1]})`;
+        const ring = isSel ? 'var(--warning,#d4b876)' : 'rgba(255,255,255,0.12)';
+        return `<div onclick="selectCardDesign('${t}')" style="cursor:pointer;text-align:center;">
+            <div style="width:54px;height:54px;border-radius:11px;background:${grad};border:2px solid ${ring};position:relative;box-shadow:0 1px 4px rgba(0,0,0,0.3);">
+                <span style="position:absolute;bottom:6px;right:7px;width:12px;height:12px;border-radius:50%;background:${th.accent};"></span>
+                ${locked ? `<span class="design-lock" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.42);border-radius:9px;font-size:0.95rem;">&#128274;</span>` : ''}
+                ${isSel ? `<span style="position:absolute;top:2px;left:6px;color:var(--warning,#d4b876);font-size:0.85rem;">&#10003;</span>` : ''}
+            </div>
+            <div style="font-size:0.7rem;color:${isSel ? 'var(--warning,#d4b876)' : 'var(--text-muted)'};margin-top:4px;">${CARD_DESIGN_NAMES[t] || t}</div>
+        </div>`;
+    }).join('');
+    const hint = document.getElementById('cardDesignHint');
+    if (hint) hint.textContent = prem
+        ? 'Pick the look of the cards you share.'
+        : 'Classic is free. Unlock every design with Premium.';
+}
+
+function selectCardDesign(t) {
+    const prem = (typeof isPremium === 'function') && isPremium();
+    if (t !== 'dark' && !prem) { showUpgradePrompt('cards'); return; }
+    localStorage.setItem('happymoments_card_theme', t);
+    renderCardDesignPicker();
+    showToast('Card design updated', 'success');
+}
+window.renderCardDesignPicker = renderCardDesignPicker;
+window.selectCardDesign = selectCardDesign;
 
 // Restore a previous purchase on a new device / after reinstall, by email.
 async function restorePurchase() {

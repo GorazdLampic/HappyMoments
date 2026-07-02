@@ -42,9 +42,52 @@ const CARD_CONFIG = {
             accent: '#e87040',
             muted: '#aa7766',
             highlight: '#f0a860',
+        },
+        // ── Premium-exclusive designs ──
+        goldfoil: {
+            bg: '#0d0d0d',
+            bgGradient: ['#0d0d0d', '#1c1608'],
+            text: '#f2ead2',
+            accent: '#e8c86a',
+            muted: '#7a7060',
+            highlight: '#d4b876',
+        },
+        rose: {
+            bg: '#2a1620',
+            bgGradient: ['#2a1620', '#3a1a2c'],
+            text: '#f6e2ea',
+            accent: '#e6a6bc',
+            muted: '#a67e8e',
+            highlight: '#f2c6d6',
+        },
+        ivory: {
+            bg: '#f5f0e6',
+            bgGradient: ['#f7f2ea', '#ede2d0'],
+            text: '#3a352c',
+            accent: '#b8933c',
+            muted: '#9a9080',
+            highlight: '#7a8a6a',
         }
     }
 };
+
+// ── Card designs: which are free vs premium ──
+// 'dark' is always free; the rest are premium-exclusive perks.
+const FREE_CARD_THEME = 'dark';
+const PREMIUM_CARD_THEMES = ['warm', 'ocean', 'sunset', 'goldfoil', 'rose', 'ivory'];
+
+// The card design the user has chosen. Only honoured for premium users (the
+// free theme is always allowed); otherwise falls back to the free design.
+function getCardTheme() {
+    try {
+        const sel = localStorage.getItem('happymoments_card_theme') || FREE_CARD_THEME;
+        if (sel === FREE_CARD_THEME) return FREE_CARD_THEME;
+        const prem = (typeof isPremium === 'function') && isPremium();
+        return (prem && CARD_CONFIG.themes[sel]) ? sel : FREE_CARD_THEME;
+    } catch (e) {
+        return FREE_CARD_THEME;
+    }
+}
 
 // #5 Per-number cards: the card's accent colour and background motif vary by
 // the milestone's category, and the motif is drawn from the ACTUAL number, so
@@ -150,7 +193,7 @@ function drawCategoryMotif(ctx, W, H, accent, category, valueStr) {
 
 function generateMilestoneCard(milestone, options) {
     options = options || {};
-    const theme = CARD_CONFIG.themes[options.theme || 'dark'];
+    const theme = CARD_CONFIG.themes[options.theme || getCardTheme()] || CARD_CONFIG.themes.dark;
     const W = CARD_CONFIG.width;
     const H = CARD_CONFIG.height;
     const P = CARD_CONFIG.padding;
@@ -275,7 +318,7 @@ function generateMilestoneCard(milestone, options) {
 // Generate Instagram Story format card (1080x1920)
 function generateStoryCard(milestone, options) {
     options = options || {};
-    const theme = CARD_CONFIG.themes[options.theme || 'dark'];
+    const theme = CARD_CONFIG.themes[options.theme || getCardTheme()] || CARD_CONFIG.themes.dark;
     const W = CARD_CONFIG.storyWidth;
     const H = CARD_CONFIG.storyHeight;
     const P = 100;
@@ -406,7 +449,7 @@ function generateStoryCard(milestone, options) {
 }
 
 function downloadStoryCard(milestone, theme) {
-    const canvas = generateStoryCard(milestone, { theme: theme || 'dark' });
+    const canvas = generateStoryCard(milestone, { theme: theme || getCardTheme() });
     const link = document.createElement('a');
     link.download = `happymoment-story-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
@@ -416,7 +459,7 @@ function downloadStoryCard(milestone, theme) {
 }
 
 async function shareStoryCard(milestone, theme) {
-    const canvas = generateStoryCard(milestone, { theme: theme || 'dark' });
+    const canvas = generateStoryCard(milestone, { theme: theme || getCardTheme() });
     if (navigator.share && navigator.canShare) {
         try {
             const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
@@ -479,7 +522,7 @@ function drawDecorations(ctx, W, H, theme) {
 
 // Download the card as PNG
 function downloadMilestoneCard(milestone, theme) {
-    const canvas = generateMilestoneCard(milestone, { theme: theme || 'dark' });
+    const canvas = generateMilestoneCard(milestone, { theme: theme || getCardTheme() });
     const link = document.createElement('a');
     link.download = `happymoment-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
@@ -490,7 +533,7 @@ function downloadMilestoneCard(milestone, theme) {
 
 // Share the card using Web Share API (if available)
 async function shareMilestoneCard(milestone, theme) {
-    const canvas = generateMilestoneCard(milestone, { theme: theme || 'dark' });
+    const canvas = generateMilestoneCard(milestone, { theme: theme || getCardTheme() });
 
     // Try Web Share API with file support
     if (navigator.share && navigator.canShare) {
@@ -525,7 +568,7 @@ function renderCardPreview(milestone, containerId, theme) {
     const container = document.getElementById(containerId);
     if (!container || !milestone) return;
 
-    const canvas = generateMilestoneCard(milestone, { theme: theme || 'dark' });
+    const canvas = generateMilestoneCard(milestone, { theme: theme || getCardTheme() });
     canvas.style.width = '100%';
     canvas.style.height = 'auto';
     canvas.style.borderRadius = '8px';
@@ -572,7 +615,7 @@ function renderStoryPreview(milestone, containerId, theme) {
     const container = document.getElementById(containerId);
     if (!container || !milestone) return;
 
-    const canvas = generateStoryCard(milestone, { theme: theme || 'dark' });
+    const canvas = generateStoryCard(milestone, { theme: theme || getCardTheme() });
     canvas.style.width = '50%';
     canvas.style.margin = '0 auto';
     canvas.style.display = 'block';
