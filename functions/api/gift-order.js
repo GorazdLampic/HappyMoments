@@ -86,9 +86,9 @@ export async function onRequestPost(context) {
 
         if (designImage && context.env.DB) {
             try {
-                const b64 = String(designImage).replace(/^data:image\/png;base64,/, '');
-                // sanity bounds: a real design is >40 chars; cap ~3 MB to stay D1-safe
-                if (b64.length > 40 && b64.length < 3_000_000) {
+                const b64 = String(designImage).replace(/^data:image\/[a-z]+;base64,/, '');
+                // D1 rejects values over 2 MB — keep a safe margin (base64 ≈ 1.33× bytes).
+                if (b64.length > 40 && b64.length < 1_900_000) {
                     await context.env.DB.prepare(
                         'CREATE TABLE IF NOT EXISTS gift_files (id TEXT PRIMARY KEY, data TEXT NOT NULL, created INTEGER)'
                     ).run();

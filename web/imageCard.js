@@ -898,7 +898,10 @@ function generateGiftDesign(milestone, productType, options) {
  */
 function generateGiftDesignBase64(milestone, productType, options) {
     const canvas = generateGiftDesign(milestone, productType, options);
-    return canvas.toDataURL('image/png');
+    // High-quality JPEG: the gradient background makes PNG huge (>2 MB, exceeds
+    // Cloudflare D1's value limit, so the print file silently fell back to SVG).
+    // JPEG at 0.92 keeps the look, stays a few hundred KB, and prints fine.
+    return canvas.toDataURL('image/jpeg', 0.92);
 }
 
 if (typeof module !== 'undefined' && module.exports) {

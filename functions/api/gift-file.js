@@ -33,7 +33,8 @@ export async function onRequestGet(context) {
 
     return new Response(bytes, {
         headers: {
-            'Content-Type': 'image/png',
+            // Print files are stored as JPEG now (see generateGiftDesignBase64).
+            'Content-Type': 'image/jpeg',
             'Cache-Control': 'public, max-age=31536000, immutable',
             'Access-Control-Allow-Origin': '*'
         }
