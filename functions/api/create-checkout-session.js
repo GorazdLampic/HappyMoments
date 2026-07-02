@@ -29,6 +29,9 @@ export async function onRequestPost(context) {
         // Create Stripe Checkout Session via REST API (no SDK needed in Workers)
         const params = new URLSearchParams({
             'mode': 'subscription',
+            // Card only — keeps Apple/Google Pay (card wallets) but drops Link and
+            // other methods that confused testers on the checkout page.
+            'payment_method_types[0]': 'card',
             'line_items[0][price_data][currency]': 'eur',
             'line_items[0][price_data][unit_amount]': '149',
             'line_items[0][price_data][recurring][interval]': 'year',

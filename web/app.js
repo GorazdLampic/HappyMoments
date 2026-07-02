@@ -7357,11 +7357,15 @@ function renderPremiumUI() {
     const active = until && until * 1000 > Date.now();
     const statusEl = document.getElementById('accountPremiumStatus');
     if (statusEl) {
-        statusEl.textContent = active ? tt('prem_status_premium') : tt('prem_status_free');
+        // When premium, the richer "You're Premium" block below shows instead.
+        statusEl.textContent = active ? '' : tt('prem_status_free');
         statusEl.className = 'account-status ' + (active ? 'premium' : 'free');
+        statusEl.style.display = active ? 'none' : '';
     }
     const box = document.getElementById('accountUpgradeBox');
     if (box) box.style.display = active ? 'none' : '';
+    const activeEl = document.getElementById('accountPremiumActive');
+    if (activeEl) activeEl.style.display = active ? '' : 'none';
     if (active) { const b = document.getElementById('premiumBanner'); if (b) b.remove(); }
 }
 // Back-compat alias — older call sites used this name.
