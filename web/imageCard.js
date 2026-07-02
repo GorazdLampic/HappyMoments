@@ -230,13 +230,13 @@ function generateMilestoneCard(milestone, options) {
     // Top: app name
     ctx.textAlign = 'center';
     ctx.fillStyle = theme.muted;
-    ctx.font = 'italic 28px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 32px "EB Garamond", Georgia, serif';
     ctx.fillText('Nice Numbers', W / 2, P + 20);
 
     // Tagline
     ctx.fillStyle = catAccent;
-    ctx.font = 'italic 22px "EB Garamond", Georgia, serif';
-    ctx.fillText('Share & Celebrate', W / 2, P + 50);
+    ctx.font = 'italic 26px "EB Garamond", Georgia, serif';
+    ctx.fillText('Share & Celebrate', W / 2, P + 52);
 
     // Thin line
     ctx.strokeStyle = theme.muted + '40';
@@ -246,45 +246,50 @@ function generateMilestoneCard(milestone, options) {
     ctx.lineTo(W - P - 100, P + 72);
     ctx.stroke();
 
-    // Person name
+    // Person name — auto-shrink so long names still fit
     ctx.fillStyle = theme.highlight;
-    ctx.font = 'italic 42px "EB Garamond", Georgia, serif';
-    ctx.fillText(name, W / 2, P + 120);
+    let nameSize = 68;
+    ctx.font = `italic ${nameSize}px "EB Garamond", Georgia, serif`;
+    while (ctx.measureText(name).width > W - P * 2 && nameSize > 34) {
+        nameSize -= 4;
+        ctx.font = `italic ${nameSize}px "EB Garamond", Georgia, serif`;
+    }
+    ctx.fillText(name, W / 2, P + 135);
 
     // Big number — the star of the card
     ctx.fillStyle = catAccent;
-    ctx.font = '300 140px "Source Code Pro", "Courier New", monospace';
+    ctx.font = '300 140px "Helvetica Neue", "Arial", sans-serif';
 
     // Auto-size if number is too wide
     let fontSize = 140;
     while (ctx.measureText(val).width > W - P * 2 - 40 && fontSize > 60) {
         fontSize -= 10;
-        ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
     }
     ctx.fillText(val, W / 2, H / 2 + 20);
 
     // Unit
     ctx.fillStyle = theme.text;
-    ctx.font = 'italic 48px "EB Garamond", Georgia, serif';
-    ctx.fillText(unit, W / 2, H / 2 + 80);
+    ctx.font = 'italic 74px "EB Garamond", Georgia, serif';
+    ctx.fillText(unit, W / 2, H / 2 + 108);
 
     // Why it's special
     if (why) {
         ctx.fillStyle = theme.muted;
-        ctx.font = 'italic 30px "EB Garamond", Georgia, serif';
-        ctx.fillText(why, W / 2, H / 2 + 140);
+        ctx.font = 'italic 40px "EB Garamond", Georgia, serif';
+        ctx.fillText(why, W / 2, H / 2 + 172);
     }
 
     // Date
     ctx.fillStyle = theme.text;
-    ctx.font = '32px "Source Code Pro", "Courier New", monospace';
-    ctx.fillText(dateStr, W / 2, H - P - 120);
+    ctx.font = '42px "Helvetica Neue", "Arial", sans-serif';
+    ctx.fillText(dateStr, W / 2, H - P - 125);
 
     // Countdown
     if (countdown) {
         ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 36px "EB Garamond", Georgia, serif';
-        ctx.fillText(countdown + ' from now', W / 2, H - P - 70);
+        ctx.font = 'italic 46px "EB Garamond", Georgia, serif';
+        ctx.fillText(countdown + ' from now', W / 2, H - P - 65);
     }
 
     // Bottom line
@@ -371,53 +376,58 @@ function generateStoryCard(milestone, options) {
     ctx.lineTo(W - P - 100, P + 100);
     ctx.stroke();
 
-    // Person name — upper third
+    // Person name — upper third (auto-shrink for long names)
     ctx.fillStyle = theme.highlight;
-    ctx.font = 'italic 52px "EB Garamond", Georgia, serif';
+    let nameSize = 78;
+    ctx.font = `italic ${nameSize}px "EB Garamond", Georgia, serif`;
+    while (ctx.measureText(name).width > W - P * 2 && nameSize > 42) {
+        nameSize -= 4;
+        ctx.font = `italic ${nameSize}px "EB Garamond", Georgia, serif`;
+    }
     ctx.fillText(name, W / 2, H * 0.25);
 
     // "will be" text
     ctx.fillStyle = theme.muted;
-    ctx.font = 'italic 36px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 44px "EB Garamond", Georgia, serif';
     ctx.fillText('will be', W / 2, H * 0.32);
 
     // BIG NUMBER — center of story
     ctx.fillStyle = catAccent;
     let fontSize = 180;
-    ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+    ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
     while (ctx.measureText(val).width > W - P * 2 - 40 && fontSize > 80) {
         fontSize -= 10;
-        ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
     }
     ctx.fillText(val, W / 2, H * 0.45);
 
     // Unit
     ctx.fillStyle = theme.text;
-    ctx.font = 'italic 56px "EB Garamond", Georgia, serif';
-    ctx.fillText(unit, W / 2, H * 0.52);
+    ctx.font = 'italic 80px "EB Garamond", Georgia, serif';
+    ctx.fillText(unit, W / 2, H * 0.525);
 
     // Why it's special
     if (why) {
         ctx.fillStyle = theme.muted;
-        ctx.font = 'italic 34px "EB Garamond", Georgia, serif';
-        ctx.fillText(why, W / 2, H * 0.58);
+        ctx.font = 'italic 44px "EB Garamond", Georgia, serif';
+        ctx.fillText(why, W / 2, H * 0.59);
     }
 
     // Date — lower section
     ctx.fillStyle = theme.text;
-    ctx.font = '36px "Source Code Pro", "Courier New", monospace';
+    ctx.font = '46px "Helvetica Neue", "Arial", sans-serif';
     ctx.fillText(dateStr, W / 2, H * 0.68);
 
     // Countdown
     if (countdown) {
         ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 44px "EB Garamond", Georgia, serif';
+        ctx.font = 'italic 54px "EB Garamond", Georgia, serif';
         ctx.fillText(countdown + ' from now', W / 2, H * 0.74);
     }
 
     // Call to action
     ctx.fillStyle = theme.muted;
-    ctx.font = 'italic 30px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 38px "EB Garamond", Georgia, serif';
     ctx.fillText('When is YOUR special number?', W / 2, H * 0.84);
 
     // Bottom line
@@ -767,8 +777,8 @@ function generateGiftDesign(milestone, productType, options) {
         // Person name top
         if (name) {
             ctx.fillStyle = theme.highlight;
-            ctx.font = `italic ${Math.round(48 * S)}px "EB Garamond", Georgia, serif`;
-            ctx.fillText(name, centerX, P + 60 * S);
+            ctx.font = `italic ${Math.round(70 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.fillText(name, centerX, P + 64 * S);
         }
 
         // Thin line
@@ -782,17 +792,17 @@ function generateGiftDesign(milestone, productType, options) {
         // BIG number
         ctx.fillStyle = theme.accent;
         let fontSize = Math.round(200 * S);
-        ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
         while (ctx.measureText(val).width > W - P * 2 - 100 * S && fontSize > 60 * S) {
             fontSize -= Math.round(10 * S);
-            ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+            ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
         }
         ctx.fillText(val, centerX, centerY + 30 * S);
 
         // Unit below
         ctx.fillStyle = theme.text;
-        ctx.font = `italic ${Math.round(56 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText(unit, centerX, centerY + 100 * S);
+        ctx.font = `italic ${Math.round(80 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText(unit, centerX, centerY + 108 * S);
 
         // Personal message
         if (message) {
@@ -827,7 +837,7 @@ function generateGiftDesign(milestone, productType, options) {
         // Person name
         if (name) {
             ctx.fillStyle = theme.highlight;
-            ctx.font = `italic ${Math.round(60 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.font = `italic ${Math.round(82 * S)}px "EB Garamond", Georgia, serif`;
             ctx.fillText(name, centerX, H * 0.22);
         }
 
@@ -839,17 +849,17 @@ function generateGiftDesign(milestone, productType, options) {
         // BIG NUMBER — the hero
         ctx.fillStyle = theme.accent;
         let fontSize = Math.round(220 * S);
-        ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+        ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
         while (ctx.measureText(val).width > W - P * 2 - 40 * S && fontSize > 80 * S) {
             fontSize -= Math.round(10 * S);
-            ctx.font = `300 ${fontSize}px "Source Code Pro", "Courier New", monospace`;
+            ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
         }
         ctx.fillText(val, centerX, H * 0.45);
 
         // Unit
         ctx.fillStyle = theme.text;
-        ctx.font = `italic ${Math.round(64 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText(unit, centerX, H * 0.52);
+        ctx.font = `italic ${Math.round(88 * S)}px "EB Garamond", Georgia, serif`;
+        ctx.fillText(unit, centerX, H * 0.525);
 
         // Personal message
         if (message) {
