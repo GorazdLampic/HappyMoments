@@ -3851,7 +3851,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
                 <div class="cmi-main">
                     <span class="cmi-value">${displayVal}</span>
                     <span class="cmi-unit">${localizedUnit(m.value, m.unitName)}</span>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPickerCombined(${gIdx})" style="cursor:pointer;opacity:0.9;margin-right:4px;font-size:1.15em;">&#127873;</span><span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(20)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPickerCombined(${gIdx})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(20)}</span>
                 </div>
                 <div class="cmi-desc">${m.comboDescription || m.description || ''}</div>
                 ${eventsHtml}
@@ -4698,7 +4698,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:4px;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4749,7 +4749,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:4px;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4856,7 +4856,7 @@ async function shareMilestone(m, textOverride) {
     // Safety net: copy the text+link to the clipboard up front (best-effort).
     // Some apps (e.g. Viber) silently drop a shared image/text, leaving the user
     // with nothing — this guarantees the link is always pasteable afterwards.
-    try { if (navigator.clipboard && text) navigator.clipboard.writeText(text); } catch (e) {}
+    try { if (navigator.clipboard && text) navigator.clipboard.writeText(text).catch(() => {}); } catch (e) {}
     // 1) Image card + text
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
         try {
