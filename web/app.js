@@ -2222,8 +2222,14 @@ function wizardEnableReminders() {
         NOTIF.enable().then(ok => {
             if (ok) {
                 _track('onboard_reminders_enabled');
-                const btn = document.getElementById('wizardReminderBtn');
-                if (btn) { btn.textContent = '\u2713 ' + tt('toast_reminders_enabled'); btn.disabled = true; }
+                // Update every reminder button on screen (there may be one per
+                // finish path) so the confirmation shows wherever it was tapped.
+                document.querySelectorAll('.wizard-reminder-btn, #wizardReminderBtn').forEach(btn => {
+                    btn.textContent = '\u2713 ' + tt('toast_reminders_enabled');
+                    btn.disabled = true;
+                });
+            } else {
+                showToast(tt('notif_denied') || 'Enable reminders in your device settings to get milestone alerts.', 'info');
             }
         });
     }
@@ -4850,14 +4856,39 @@ function shareSelectedMilestone() {
 // Unified share: sends the milestone's image CARD (in the user's selected
 // design) + the text message via the Web Share API — so the card designs
 // actually reach people. Falls back to a text-only share, then copy+download.
+// Robust clipboard copy. The async Clipboard API is often DENIED on mobile
+// (no active gesture / page not focused), which silently left the clipboard
+// empty. The synchronous execCommand path runs inside the tap gesture and works
+// where the async API doesn't. We run BOTH so the text lands on the clipboard
+// on essentially every engine.
+function _copyToClipboardSync(text) {
+    if (!text) return false;
+    let done = false;
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { ta.setSelectionRange(0, text.length); } catch (e) {}
+        done = document.execCommand('copy');
+        document.body.removeChild(ta);
+    } catch (e) {}
+    try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => {}, () => {}); } catch (e) {}
+    return done;
+}
+window._copyToClipboardSync = _copyToClipboardSync;
+
 async function shareMilestone(m, textOverride) {
     if (!m) return;
     const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
-    // Safety net: copy the text+link to the clipboard up front (best-effort).
-    // Some apps (e.g. Viber) silently drop a shared image/text, leaving the user
-    // with nothing — this guarantees the link is always pasteable afterwards.
-    try { if (navigator.clipboard && text) navigator.clipboard.writeText(text).catch(() => {}); } catch (e) {}
-    // 1) Image card + text
+    // GUARANTEE the message+link is on the clipboard, synchronously, inside the
+    // tap gesture — BEFORE any await. Apps like Viber can silently drop a shared
+    // image/text; this ensures the user can always paste the link instead.
+    const copied = _copyToClipboardSync(text);
+    // 1) Native share with the image card + text (WhatsApp, Messages, mail, etc.)
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
         try {
             const canvas = generateMilestoneCard(m, {}); // getCardTheme() applies the chosen design
@@ -4870,15 +4901,15 @@ async function shareMilestone(m, textOverride) {
             }
         } catch (e) { if (e && e.name === 'AbortError') return; }
     }
-    // 2) Text-only share (link stays clickable)
+    // 2) Native text-only share (link stays clickable)
     if (navigator.share) {
         try { await navigator.share({ title: 'Nice Numbers', text }); return; }
         catch (e) { if (e && e.name === 'AbortError') return; }
     }
-    // 3) Last resort: copy the text and download the card so nothing is lost
-    try { await navigator.clipboard.writeText(text); } catch (e) {}
+    // 3) No native share (desktop, or it failed): the text is already copied —
+    //    also save the card image so nothing is lost, and confirm to the user.
     if (typeof downloadMilestoneCard === 'function') { try { downloadMilestoneCard(m); } catch (e) {} }
-    showToast(tt('toast_copied'), 'success');
+    showToast(copied ? tt('toast_copied') : tt('toast_copied'), 'success');
 }
 window.shareMilestone = shareMilestone;
 

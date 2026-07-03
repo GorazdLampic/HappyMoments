@@ -245,6 +245,7 @@
                     <button class="wizard-btn" onclick="wizardBuildShareScreen()" id="wizardShareBtn8">Share with your group &rarr;</button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardCreateAnotherBtn8" style="margin-top:4px;">Who else? Add another group</button>
                     <button class="wizard-btn-secondary" onclick="wizardFinish()" id="wizardDashboardBtn8" style="display:none;margin-top:4px;">Go to my dashboard</button>
+                    <button class="wizard-reminder-btn" onclick="wizardEnableReminders()" id="wizardReminderBtn8" style="margin-top:10px;width:100%;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.45);color:var(--warning,#d4b876);border-radius:10px;padding:11px;font-size:0.95rem;cursor:pointer;">&#128276; <span data-i18n="wiz_remind_me">Remind me before each milestone</span></button>
                 </div>
             </div>
 
@@ -256,6 +257,7 @@
                 </div>
                 <div class="wizard-actions">
                     <button class="wizard-btn" onclick="wizardFinish()" style="line-height:1.4;">Go to my dashboard &rarr;<span style="display:block;font-weight:400;margin-top:2px;font-size:1.05rem;white-space:nowrap;">Explore Solo &middot; Together &middot; Manage</span></button>
+                    <button class="wizard-reminder-btn" onclick="wizardEnableReminders()" id="wizardReminderBtn9" style="margin-top:8px;width:100%;background:rgba(212,184,118,0.12);border:1px solid rgba(212,184,118,0.45);color:var(--warning,#d4b876);border-radius:10px;padding:11px;font-size:0.95rem;cursor:pointer;">&#128276; <span data-i18n="wiz_remind_me">Remind me before each milestone</span></button>
                     <button class="wizard-btn-secondary" onclick="wizardCreateAnotherGroup()" id="wizardAddGroupBtn9" style="margin-top:8px;">Another circle of people?</button>
                 </div>
             </div>
@@ -426,6 +428,7 @@
                 <h2 data-i18n="prem2_title">Premium</h2>
                 <div class="account-status" id="accountPremiumStatus"></div>
                 <div id="accountPremiumActive" style="display:none;text-align:center;margin-top:4px;">
+                    <div style="margin-bottom:8px;"><span style="font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--warning,#d4b876);background:rgba(212,184,118,0.14);border:1px solid rgba(212,184,118,0.4);border-radius:999px;padding:3px 10px;" data-i18n="plan_premium_chip">Your plan: Premium</span></div>
                     <div style="font-size:2.2rem;line-height:1;">&#11088;</div>
                     <div style="font-size:1.15rem;font-weight:600;color:var(--warning,#d4b876);margin-top:6px;" data-i18n="prem2_active">You're Premium</div>
                     <p style="color:var(--text);font-size:0.95rem;margin-top:6px;margin-bottom:0;" data-i18n="prem2_thanks">Thank you for supporting the developers &#128153;</p>
@@ -436,6 +439,15 @@
                     </ul>
                 </div>
                 <div id="accountUpgradeBox" style="margin-top:12px;display:none;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                        <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);background:var(--bg-elevated,rgba(255,255,255,0.06));border:1px solid var(--border,#333);border-radius:999px;padding:3px 10px;" data-i18n="plan_free_chip">Your plan: Free</span>
+                    </div>
+                    <div style="font-size:0.9rem;color:var(--text);margin-bottom:6px;" data-i18n="prem2_unlocks">Upgrade to Premium to unlock:</div>
+                    <ul style="list-style:none;padding:0;margin:0 0 12px;font-size:0.9rem;color:var(--text-muted);">
+                        <li style="margin:5px 0;"><span style="color:var(--warning,#d4b876);">&#10003;</span> <span data-i18n="prem2_b_watermark">Watermark-free share cards</span></li>
+                        <li style="margin:5px 0;"><span style="color:var(--warning,#d4b876);">&#10003;</span> <span data-i18n="prem2_b_designs">Exclusive card designs</span></li>
+                        <li style="margin:5px 0;"><span style="color:var(--warning,#d4b876);">&#10003;</span> <span data-i18n="prem2_b_people">Unlimited people &amp; groups</span></li>
+                    </ul>
                     <button class="btn-primary" id="accountUpgradeBtn" onclick="handleUpgrade()" style="width:100%;"><span style="margin-right:4px;">&#9733;</span><span data-i18n="go_premium">Go Premium</span> &middot; &euro;1.49/year</button>
                     <div style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;text-align:center;" data-i18n="prem2_support">Support development &mdash; keep the app clean</div>
                     <div style="text-align:center;margin-top:10px;">
