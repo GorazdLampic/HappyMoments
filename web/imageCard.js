@@ -289,7 +289,7 @@ function generateMilestoneCard(milestone, options) {
     if (countdown) {
         ctx.fillStyle = theme.accent;
         ctx.font = 'italic 46px "EB Garamond", Georgia, serif';
-        ctx.fillText(countdown + ' from now', W / 2, H - P - 65);
+        ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H - P - 65);
     }
 
     // Bottom line
@@ -422,7 +422,7 @@ function generateStoryCard(milestone, options) {
     if (countdown) {
         ctx.fillStyle = theme.accent;
         ctx.font = 'italic 54px "EB Garamond", Georgia, serif';
-        ctx.fillText(countdown + ' from now', W / 2, H * 0.74);
+        ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H * 0.74);
     }
 
     // Call to action

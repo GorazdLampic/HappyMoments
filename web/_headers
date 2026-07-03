@@ -1,4 +1,16 @@
 # Cloudflare Pages headers
+
+# Defensive security headers on every response. We intentionally DO NOT set a
+# strict script-src (the app uses many inline handlers); instead we lock down the
+# high-value, no-cost directives: block <object>/<embed>, forbid <base> injection
+# (an XSS mitigation), and disallow being framed (clickjacking).
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Content-Security-Policy: object-src 'none'; base-uri 'none'; frame-ancestors 'none'
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
 # Service worker must always be revalidated so PWA updates land immediately
 # (without this, the browser may serve a cached sw.js for up to its max-age).
 /sw.js

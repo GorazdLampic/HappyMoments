@@ -11,6 +11,22 @@ function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
+// Safely embed a user string as a JS single-quoted string argument INSIDE a
+// double-quoted HTML attribute, e.g. onclick="fn('${jsAttr(name)}')". Two layers
+// must be escaped in the right order: first JS-escape (\ ' newline) so the value
+// can't break out of the JS string, THEN HTML-escape so the browser's attribute
+// decode reproduces exactly the JS-escaped string (not a broken-out one). Using
+// only one layer is exploitable (attribute breakout OR entity-decoded quote).
+function jsAttr(str) {
+    if (str == null) return '';
+    const jsEscaped = String(str)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n')
+    return escapeHtml(jsEscaped);
+}
+
 // ============================================================
 // STORAGE KEYS (separate settings)
 // ============================================================
@@ -540,7 +556,7 @@ function showDeepLinkPreview(name, date) {
             <div class="deeplink-milestones">${milestonesHtml}</div>
             <div class="deeplink-cta">
                 <p>${_dlText('whens_yours')}</p>
-                <button class="btn-primary" onclick="acceptDeepLink('${escapeHtml(name)}', '${date.toISOString().split('T')[0]}'); document.getElementById('deepLinkModal').remove();" style="width:100%;">${_dlText('discover_mine')}</button>
+                <button class="btn-primary" onclick="acceptDeepLink('${jsAttr(name)}', '${date.toISOString().split('T')[0]}'); document.getElementById('deepLinkModal').remove();" style="width:100%;">${_dlText('discover_mine')}</button>
             </div>
             <button class="auth-skip" onclick="document.getElementById('deepLinkModal').remove()">${_dlText('just_browsing')}</button>
         </div>
@@ -1673,13 +1689,13 @@ function _shareArrowSvg(size) {
 
 // Visible share chip for hero milestones
 function wizardHeroShareChip(shareText) {
-    const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const safeMsg = jsAttr(shareText);
     return `<button class="hero-share-chip" onclick="event.stopPropagation();wizardSelectMsRow('','${safeMsg}')">${tt('wiz_share')} ${_shareArrowSvg(15)}</button>`;
 }
 
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
     const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 nicenumbers.app';
-    const safeMsg = shareText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const safeMsg = jsAttr(shareText);
     // Tapping a row shares it directly. During onboarding the affordance is
     // labelled ("Share" + arrow) to teach the gesture; the dashboard uses the
     // arrow alone once the user has learned it.
@@ -3027,7 +3043,7 @@ function wizardShowTeamMilestones() {
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">${tt('wiz_belong_all')}</h2>
         ${hero ? `
-            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' \\u2014 nicenumbers.app').replace(/'/g, "\\'")    }')">
+            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${jsAttr(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' — nicenumbers.app')}')">
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number-line">
                     <span class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</span>
@@ -3137,7 +3153,7 @@ function wizardBuildShareScreen() {
                 const u2 = localizedUnit(m.value, m.unitName || m.unit || '');
                 const ds2 = formatMilestoneDate(m.date);
                 const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? nicenumbers.app';
-                moreRows += `<div onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${st2.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer;">
+                moreRows += `<div onclick="wizardShareForPerson('${jsAttr(e.name)}', '${jsAttr(st2)}')" style="display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer;">
                     <span style="color:var(--text);font-size:0.85rem;">${v2} ${u2}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${ds2}</span>
                 </div>`;
@@ -3147,7 +3163,7 @@ function wizardBuildShareScreen() {
                     <span style="color:var(--text);font-weight:600;">${escapeHtml(e.name)}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${val} ${unit} &middot; ${ds}</span>
                 </div>
-                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${e.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}', '${shareText.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" style="padding:10px 12px;font-size:0.95rem;width:100%;margin-top:0;">${tt('wiz_share_with', { name: escapeHtml(e.name) })}</button>
+                <button class="wizard-btn-secondary" onclick="wizardShareForPerson('${jsAttr(e.name)}', '${jsAttr(shareText)}')" style="padding:10px 12px;font-size:0.95rem;width:100%;margin-top:0;">${tt('wiz_share_with', { name: escapeHtml(e.name) })}</button>
                 ${moreRows ? `<div id="${uid}" style="display:none;margin-top:6px;">${moreRows}</div>
                 <div id="${uid}t" style="cursor:pointer;color:var(--warning,#d4b876);padding:5px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('${uid}','${uid}t',0,null,'wiz_more_ms_arrow','wiz_less_arrow')">${tt('wiz_more_ms_arrow')}</div>` : ''}
             </div>`;
@@ -4959,7 +4975,7 @@ function _openGiftPickerForMilestone(m) {
             .replace(/\{value\}/g, val).replace(/\{unit\}/g, escapeHtml(unit)).replace(/\{name\}/g, nameEsc)
             .replace(/  +/g, ' ').replace(/ ([,.!?])/g, '$1').trim();
         // Start the gift's printed name blank for self (so they type a real name).
-        const safeName = isSelf ? '' : (m.eventName || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const safeName = isSelf ? '' : jsAttr(m.eventName || '');
         const media = p.photo
             ? `<div class="gift-photo"><img src="${p.photo}" alt="" loading="lazy" style="width:56px;height:56px;object-fit:cover;border-radius:8px;background:#fff;"></div>`
             : `<div class="gift-icon">${p.icon}</div>`;
@@ -5818,8 +5834,8 @@ function updateSharePreview() {
 
     const message = generateShareMessage(m);
     // Make nicenumbers.app URLs clickable in the preview
-    const messageHtml = message.replace(
-        /(happymoments\.app\/?[^\s]*)/g,
+    const messageHtml = escapeHtml(message).replace(
+        /((?:happymoments|nicenumbers)\.app\/?[^\s]*)/g,
         '<a href="https://$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">$1</a>'
     );
     const hintCount = parseInt(localStorage.getItem('hm_share_hint_count') || '0');
@@ -6134,6 +6150,23 @@ function generateShareMessage(m) {
     if (m.eventName === 'Me') {
         return generateSelfShareMessage(m) + getAppShareLink(m);
     }
+    // Recently-passed milestones must NOT use the future-tense templates
+    // ("will be ...", "coming {date}") — that reads wrong and the card would say
+    // "X from now" for a date already gone. Use a clean past-tense sentence.
+    if (m.recentlyPassed || (typeof m.timeUntil === 'number' && m.timeUntil < 0)) {
+        const dateStr = m.date.toLocaleDateString(getAppLocale(), { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        const name = displayPersonName(m.eventName) || 'Someone';
+        const ago = (typeof formatTimeDistance === 'function') ? formatTimeDistance(m.timeUntil) : '';
+        let msg;
+        if (m.isCosmic) {
+            msg = `${name} just reached ${m.description || m.unitName} on ${dateStr}!`;
+        } else {
+            const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(m.value, getAppLocale()) : m.value.toLocaleString();
+            const unit = (typeof localizedUnit === 'function') ? localizedUnit(m.value, m.unitName) : m.unitName;
+            msg = `${name} just reached ${val} ${unit} on ${dateStr}${ago ? ' (' + ago + ' ago)' : ''}! 🎉`;
+        }
+        return msg + getAppShareLink(m);
+    }
     const category = getShareCategory(m);
     const template = pickShareTemplate(category);
 
@@ -6245,8 +6278,8 @@ function updateCombinedSharePreview() {
 
     const message = generateCombinedShareMessage(m);
     // Make nicenumbers.app URLs clickable in the preview
-    const messageHtml = message.replace(
-        /(happymoments\.app\/?[^\s]*)/g,
+    const messageHtml = escapeHtml(message).replace(
+        /((?:happymoments|nicenumbers)\.app\/?[^\s]*)/g,
         '<a href="https://$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">$1</a>'
     );
     combinedSharePreviewEl.innerHTML = `
@@ -6683,7 +6716,7 @@ function handleImportData(e) {
 function updateSetSwitcher() {
     // Update the dropdown - always show it, include "+ New Group" option
     let options = allSets.map(set =>
-        `<option value="${set.id}" ${set.id === currentSetId ? 'selected' : ''}>${set.name}</option>`
+        `<option value="${escapeHtml(set.id)}" ${set.id === currentSetId ? 'selected' : ''}>${escapeHtml(set.name)}</option>`
     ).join('');
     options += '<option value="__new__">' + tt('ed_new_group_option') + '</option>';
     currentSetSelect.innerHTML = options;

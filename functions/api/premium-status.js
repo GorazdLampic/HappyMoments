@@ -27,7 +27,12 @@ export async function onRequestGet(context) {
                 { headers: { Authorization: `Bearer ${STRIPE_KEY}` } }
             );
             const s = await r.json();
-            const paid = s && (s.payment_status === 'paid' || s.status === 'complete');
+            // STRICT: only a genuinely PAID, LIVE, PREMIUM (subscription) session
+            // grants premium. Without these checks a paid GIFT session — whose id
+            // the client also receives — could be replayed here to unlock premium
+            // for free (cross-product reuse). Test-mode sessions never grant.
+            const isPremiumSession = (s.mode === 'subscription') || (s.metadata && s.metadata.type === 'premium');
+            const paid = s && s.payment_status === 'paid' && s.livemode === true && isPremiumSession;
             if (paid) {
                 const until = Math.floor(Date.now() / 1000) + ONE_YEAR;
                 const custEmail = (s.customer_details && s.customer_details.email) || s.customer_email || '';
