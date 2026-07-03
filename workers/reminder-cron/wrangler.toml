@@ -1,0 +1,20 @@
+name = "nicenumbers-reminder-cron"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Runs daily at 08:00 UTC. Adjust as desired.
+[triggers]
+crons = ["0 8 * * *"]
+
+# Bind the SAME D1 database the Pages app uses.
+# Get database_id from: npx wrangler d1 list
+[[d1_databases]]
+binding = "DB"
+database_name = "REPLACE_WITH_YOUR_D1_DATABASE_NAME"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# Public VAPID values (safe to commit). The PRIVATE key is a secret — set with:
+#   npx wrangler secret put VAPID_PRIVATE_KEY
+[vars]
+VAPID_PUBLIC_KEY = "BMvGiQt8TILpRqG-hgLovGHulzDjd32i2LvDVSnlyyejgc9y4e-NxA7nA20XMcx_icqgZChVpvBz6xkymilByBw"
+VAPID_SUBJECT = "mailto:hello@nicenumbers.app"
