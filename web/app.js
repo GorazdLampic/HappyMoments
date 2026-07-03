@@ -4238,7 +4238,13 @@ function getCombinedMilestoneWording(events) {
 // Generate happy description for combined sum milestones
 function getHappySumDescription(value, unit, wording) {
     const unitConfig = TIME_UNITS[unit];
-    const formattedValue = value.toLocaleString();
+    // Use the SAME formatter as the on-screen row / card / gift so the number in
+    // the shared message always matches what the user saw. formatMilestoneValue
+    // abbreviates only clean round millions/billions and keeps special patterns
+    // (repdigits, palindromes, alternating) EXACT — e.g. 44,444,444 stays
+    // 44,444,444 instead of being rounded to a misleading "44 million".
+    const _loc = (typeof getAppLocale === 'function') ? getAppLocale() : undefined;
+    const formattedValue = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(value, _loc) : value.toLocaleString();
     const namesStr = wording.names ? wording.names.join(' + ') : 'us';
 
     // Check for special number patterns
@@ -4247,37 +4253,29 @@ function getHappySumDescription(value, unit, wording) {
 
     // Special celebratory messages for milestone numbers
     if (unit === 'seconds') {
-        if (value >= 10000000000) {
-            const billions = value / 1000000000;
-            return `🚀 INCREDIBLE! ${namesStr} = ${billions} BILLION seconds combined! Mind-blowing!`;
-        }
-        if (value >= 1000000000) {
-            const billions = value / 1000000000;
-            return `🎉 WOW! ${namesStr} = ${billions} BILLION seconds! Party time!`;
-        }
-        if (value >= 100000000) {
-            const millions = Math.round(value / 1000000);
-            return `✨ ${namesStr} = ${millions} million seconds together!`;
-        }
         if (isRepdigit && value >= 111111111) {
             return `🎯 MAGIC NUMBER! ${namesStr} = ${formattedValue} seconds - all ${String(value)[0]}s!`;
+        }
+        if (value >= 1000000000) {
+            return `🎉 WOW! ${namesStr} = ${formattedValue} seconds! Party time!`;
+        }
+        if (value >= 100000000) {
+            return `✨ ${namesStr} = ${formattedValue} seconds together!`;
         }
     }
 
     if (unit === 'minutes') {
         if (value >= 100000000) {
-            const millions = Math.round(value / 1000000);
-            return `⏰ ${namesStr} = ${millions} million minutes! Epic!`;
+            return `⏰ ${namesStr} = ${formattedValue} minutes! Epic!`;
         }
         if (value >= 10000000) {
-            const millions = Math.round(value / 1000000);
-            return `🎊 ${namesStr} = ${millions} million minutes combined!`;
+            return `🎊 ${namesStr} = ${formattedValue} minutes combined!`;
         }
     }
 
     if (unit === 'hours') {
         if (value >= 1000000) {
-            return `🌟 ${namesStr} = 1 MILLION+ hours! Legendary!`;
+            return `🌟 ${namesStr} = ${formattedValue} hours! Legendary!`;
         }
         if (value >= 100000) {
             return `⭐ ${namesStr} = ${formattedValue} hours of life combined!`;
@@ -4949,7 +4947,7 @@ function _openGiftPickerForMilestone(m) {
         val = (m.value === 1 ? '' : ord + ' ') + (m.unitName || '');
         unit = '';
     } else {
-        val = m.value.toLocaleString();
+        val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(m.value) : m.value.toLocaleString();
         unit = (typeof localizedUnit === 'function') ? localizedUnit(m.value, m.unitName) : (m.unitName || '');
     }
     const isSelf = m.eventName === 'Me';
@@ -5876,7 +5874,7 @@ function fillShareTemplate(template, m) {
         unit = '';
         why = m.description || 'a cosmic cycle milestone';
     } else {
-        val = m.value.toLocaleString();
+        val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(m.value, getAppLocale()) : m.value.toLocaleString();
         unit = localizedUnit(m.value, m.unitName);
         why = m.description || m.type || 'special';
     }
@@ -6119,7 +6117,7 @@ function generateSelfShareMessage(m) {
         const ord = typeof ordinal === 'function' ? ordinal(m.value) : m.value;
         value = (m.value === 1 ? '' : ord + ' ') + m.unitName;
     } else {
-        value = m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName);
+        value = ((typeof formatMilestoneValue === 'function') ? formatMilestoneValue(m.value) : m.value.toLocaleString()) + ' ' + localizedUnit(m.value, m.unitName);
     }
     const lang = (getAppLocale() || 'en').split('-')[0].split('_')[0];
     const tpls = SELF_SHARE_I18N[lang] || SELF_SHARE_I18N.en;

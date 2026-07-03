@@ -213,11 +213,11 @@ function generateMilestoneCard(milestone, options) {
     // #5 Category-driven look: motif from the actual number + per-category accent
     const category = getCardCategory(milestone);
     const catAccent = getCardAccent(category, theme);
-    drawCategoryMotif(ctx, W, H, catAccent, category, milestone.value.toLocaleString());
+    drawCategoryMotif(ctx, W, H, catAccent, category, ((typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString()));
     drawDecorations(ctx, W, H, theme);
 
     // Content
-    const val = milestone.value.toLocaleString();
+    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
     const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
@@ -344,10 +344,10 @@ function generateStoryCard(milestone, options) {
     // #5 Category-driven look (same as square)
     const category = getCardCategory(milestone);
     const catAccent = getCardAccent(category, theme);
-    drawCategoryMotif(ctx, W, H, catAccent, category, milestone.value.toLocaleString());
+    drawCategoryMotif(ctx, W, H, catAccent, category, ((typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString()));
     drawDecorations(ctx, W, H, theme);
 
-    const val = milestone.value.toLocaleString();
+    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
     const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
@@ -763,7 +763,7 @@ function generateGiftDesign(milestone, productType, options) {
 
     // Layout depends on aspect ratio
     const isWide = W > H; // mug is wide
-    const val = milestone.value.toLocaleString();
+    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
     const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
     const name = milestone.eventName || '';
     const message = options.message || '';
