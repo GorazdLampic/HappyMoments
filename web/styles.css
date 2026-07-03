@@ -1999,7 +1999,9 @@ body {
 .combined-milestone-item.selected-for-share { background: var(--bg-elevated); outline: 1px solid var(--text-muted); }
 
 .cmi-main { display: flex; align-items: baseline; gap: var(--space-sm); margin-bottom: 4px; min-width: 0; flex-wrap: wrap; }
-.cmi-main .cmi-share { margin-left: auto; }
+/* Push the gift+share PAIR to the right together (gift first, share beside it) —
+   same right-aligned grouping as the Solo/home rows. */
+.cmi-main .row-gift { margin-left: auto; }
 
 .cmi-value {
     font-family: var(--font-mono);
@@ -3204,10 +3206,10 @@ body {
 .row-share {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     color: var(--warning);
     font-family: var(--font-serif);
-    font-size: 0.85rem;
+    font-size: 1rem;
     flex-shrink: 0;
     margin-left: 8px;
     padding: 4px 6px 4px 4px;
