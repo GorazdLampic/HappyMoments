@@ -6,7 +6,15 @@ If anything here disagrees with another doc, this file wins. Update it in the sa
 - **Public name:** Nice Numbers · tagline **"Share & Celebrate"**
 - **Primary domain:** https://nicenumbers.app  (legacy https://happymoments.app → should 301 here)
 - **Repo:** https://github.com/GorazdLampic/HappyMoments  (folder/repo keep the old name; only the *display* name changed)
-- **Last verified:** 22 Jun 2026
+- **Last verified:** 4 Jul 2026 · web **v96 / 2.9.6**
+
+### What changed since 22 Jun (4 Jul 2026)
+- **Payments are LIVE.** Stripe account activated (identity verified 3 Jul); `pk_live`/`sk_live`/live webhook set. Checkout is **card-only** (`payment_method_types=card`) for both premium and gifts. Printful has a billing card on file.
+- **Premium is now ACCOUNT-LESS.** No sign-in required. Purchase → Stripe → local `happymoments_premium_until`; restore via `/api/premium-status?session_id=` (strict) or `?email=`. Firebase sign-in is legacy/optional — the premium flow no longer uses it.
+- **Service worker is NETWORK-FIRST** for app code (HTML/JS/CSS/JSON); images stay cache-first. Kills the stale-cache problem. `sw.js` served `no-cache`.
+- **Reminder backend (opt-in, non-breaking):** `functions/api/reminders.js` + `workers/reminder-cron/` (Web Push/VAPID). See `docs/REMINDERS_BACKEND.md`. Client wiring deferred pending consent-UX review.
+- **Security hardening (audit 3–4 Jul):** premium-status session grant tightened (paid+livemode+premium-only); XSS sinks fixed via `jsAttr()` double-encoding (gift picker, wizard share, deep-link `?n=`); share-preview escaped before linkify; CSP + security headers in `web/_headers`.
+- **Number alignment:** row = share message = card = gift all use `formatMilestoneValue` (repdigits stay exact; clean rounds abbreviate consistently).
 
 > **Naming truth (read once, never be confused again):** "Nice Numbers" is the **display name** (everything a user sees). "happymoments" survives only as **technical identifiers** — the package id, the Firebase project, localStorage keys, the cache name, and the legacy domain. Those MUST NOT be renamed (doing so breaks existing user data and live backends). See [Identity & naming](#identity--naming).
 
@@ -99,16 +107,22 @@ All backend secrets are set in **Cloudflare Pages → Settings → Environment v
 
 | Variable | Used by | Purpose | Status / notes |
 |---|---|---|---|
-| `STRIPE_SECRET_KEY` | create-checkout-session, webhook, gift-order, health | Stripe API auth | ⚠️ Verify **live** key for beta (was test) |
-| `STRIPE_WEBHOOK_SECRET` | webhook | Verify Stripe webhook signatures | Rotate (pasted in chat 20 Jun) |
-| `PRINTFUL_API_TOKEN` | gift-order | Create Printful draft orders | Rotate (pasted in chat 20 Jun) |
-| `APP_URL` | create-checkout-session, gift-order | Build success/cancel redirect URLs | Should be `https://nicenumbers.app` |
-| `ADMIN_TOKEN` | admin | Gate the admin analytics API (fails closed if unset) | Set; consider Encrypted type |
+| `STRIPE_SECRET_KEY` | create-checkout-session, webhook, gift-order, health, premium-status | Stripe API auth | ✅ **LIVE** `sk_live_` (set 3 Jul) — rotate before wide launch |
+| `STRIPE_WEBHOOK_SECRET` | webhook | Verify Stripe webhook signatures | ✅ **LIVE** `whsec_` (live endpoint `/api/webhook`, 3 Jul) |
+| `PRINTFUL_API_TOKEN` | gift-order, webhook | Create + confirm Printful orders | Rotate before launch; delete unused `PRINTFUL_API_TOKEN2` |
+| `APP_URL` | create-checkout-session, gift-order | Build success/cancel redirect URLs | `https://nicenumbers.app` |
+| `ADMIN_TOKEN` | admin | Gate the admin analytics API (fails closed if unset) | Set; rotate before launch |
+| `VAPID_PRIVATE_KEY` | reminder-cron worker (separate deploy) | Sign Web Push | ⏳ set as **Worker** secret when activating reminders (not Pages) |
 | `DB` (binding, not a var) | all data endpoints | D1 database binding | Bound in Pages settings |
 
 **Client-side config (in repo, not secret):**
 - Firebase web config — `web/auth.js` (public by design; apiKey is not a secret for Firebase web).
-- Stripe **publishable** key — `web/checkout.js` (⚠️ currently a `pk_test_PLACEHOLDER…`; replace with live `pk_live_…` for beta).
+- Stripe **publishable** key — `web/checkout.js` — ✅ live `pk_live_…JZzO` (matches the live account).
+- VAPID **public** key — in `workers/reminder-cron/wrangler.toml` (public by design).
+
+**⚠️ Known security items (from the 3–4 Jul audit — fixed vs open):**
+- ✅ Fixed: premium session-grant strictness, XSS sinks (`jsAttr`), CSP/headers, Printful livemode gate.
+- ⏳ Open (before wide launch): rotate all tokens (some pasted in chat historically); add rate-limiting to `gift-order`/`event` (needs a KV/D1 counter — Pages has no built-in); the `premium-status?email=` restore is an unauthenticated lookup (low value €1.49, but add an emailed magic-code before scaling); relabel `dataProtection.js` "encryption" (key is co-located in localStorage → obfuscation, not real protection).
 
 ---
 
@@ -119,8 +133,10 @@ All backend secrets are set in **Cloudflare Pages → Settings → Environment v
 | `/api/health` | GET | Liveness + reports whether `DB`/Stripe are bound | — |
 | `/api/event` | POST | Store anonymous analytics event in D1 | `DB` |
 | `/api/user` | GET/POST/DELETE | Create/update user after Firebase sign-in; check premium; delete account | `DB`, Firebase ID token (✅ full RS256 signature + claims verification via Web Crypto) |
-| `/api/create-checkout-session` | POST | Stripe Checkout for premium | `STRIPE_SECRET_KEY`, `APP_URL` |
-| `/api/webhook` | POST | Stripe webhook → activate premium | `STRIPE_WEBHOOK_SECRET`, `STRIPE_SECRET_KEY`, `DB` |
+| `/api/create-checkout-session` | POST | Stripe Checkout for premium (subscription, card-only) | `STRIPE_SECRET_KEY`, `APP_URL` |
+| `/api/premium-status` | GET | Account-less premium verify: `?session_id=` (strict: paid+livemode+premium) or `?email=` (restore) | `STRIPE_SECRET_KEY`, `DB` |
+| `/api/webhook` | POST | Stripe webhook → activate premium (by email, account-less) + confirm Printful gift (livemode only) | `STRIPE_WEBHOOK_SECRET`, `STRIPE_SECRET_KEY`, `PRINTFUL_API_TOKEN`, `DB` |
+| `/api/reminders` | POST/DELETE | Opt-in store/erase push subscription + chosen events for milestone reminders | `DB` (fails soft) |
 | `/api/gift-order` | POST | Create Printful draft order + Stripe checkout | `PRINTFUL_API_TOKEN`, `STRIPE_SECRET_KEY`, `APP_URL`, `DB` |
 | `/api/gift-design` | GET | Public SVG design URL Printful can fetch | — |
 | `/api/gift-file` | GET | Serve client-rendered PNG print file stored in D1 | `DB` |
@@ -131,11 +147,14 @@ All backend secrets are set in **Cloudflare Pages → Settings → Environment v
 
 ## 8. Database (Cloudflare D1)
 
-Schema: `schema.sql`. Two tables:
-- **`users`** — `uid` (Firebase), email, display_name, `premium_until`, `stripe_customer_id`, utm_*, timestamps.
+Schema: `schema.sql` (+ tables auto-created on first use by their endpoints). Tables:
+- **`users`** — `uid` (Firebase), email, display_name, `premium_until`, `stripe_customer_id`, utm_*, timestamps. (Legacy account path; account-less premium uses `premium` below.)
 - **`events`** — append-only analytics: `session_id`, `user_id`, `action`, `data` (JSON), `country`, `created_at`.
+- **`premium`** — account-less premium by email: `email` (PK), `premium_until`, `stripe_customer_id`, `updated_at`. Written by `webhook.js`, read by `premium-status.js`.
+- **`gift_files`** — `id` (PK), `data` (base64 JPEG print file, <1.9 MB), `created`. Served by `gift-file.js` to Printful.
+- **`reminders`** — opt-in: `id` (device), `subscription` (JSON), `events` (JSON `[{n,d}]`), `locale`, `tz`, timestamps. Created by `reminders.js`, read by the cron worker.
 
-Apply schema changes via the D1 console or `wrangler d1 execute`. (No migrations framework yet — additive changes only; document any here.)
+Apply schema changes via the D1 console or `wrangler d1 execute`. (No migrations framework yet — additive changes only; document any here. Note: `premium`/`gift_files`/`reminders` are created lazily with `CREATE TABLE IF NOT EXISTS` by their endpoints.)
 
 ---
 
@@ -176,11 +195,11 @@ Source overlays in `web/l10n/*.json` → merged via `tools/i18n-merge.js` into `
 ## 11. Known open items (pointers, not the master list)
 
 The live beta backlog and decisions live in project memory (`project_happymoments_naming.md`, `project_happymoments_beta_plan.md`). Infra-relevant highlights:
-- **Firebase:** ✅ done 22 Jun — `nicenumbers.app` + `www.nicenumbers.app` added to Authorized domains.
-- **Redirect:** ✅ implemented (`functions/_middleware.js`); goes live on next deploy to `main`.
-- **Stripe:** switch to live keys + one real test charge before beta.
-- **Security:** rotate Printful token + Stripe webhook secret; harden `user.js` token verification before real payments.
-- **Android:** label fixed ✅; version still behind web — bump + tag `v95` to cut a fresh AAB.
+- **Stripe:** ✅ LIVE (account verified 3 Jul, live keys + webhook set, card-only). Remaining: the €1.49 Premium real-card smoke test; in Stripe dashboard turn OFF Link + EU methods (Bancontact/EPS/Satispay/MB WAY), keep only Cards, to match the intended simple checkout.
+- **Printful:** ✅ personal card on file + company/VAT on invoices. Switch to company card before volume.
+- **Security (audit 3–4 Jul):** ✅ premium bypass + XSS + headers fixed. Open: rotate all tokens; add rate-limiting to `gift-order`/`event`; magic-code for `premium-status?email=` before scaling; relabel dataProtection.
+- **Reminders backend:** ✅ built (opt-in, non-breaking). To activate: deploy `workers/reminder-cron/` + set `VAPID_PRIVATE_KEY` worker secret + wire client behind a consent screen (see `docs/REMINDERS_BACKEND.md`).
+- **Android:** web is **v96 / 2.9.6**; Android tag/build lags — bump + tag to cut a fresh AAB when shipping to Play.
 
 ---
 
