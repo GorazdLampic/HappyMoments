@@ -158,6 +158,9 @@ export async function onRequestPost(context) {
 
         const stripeParams = new URLSearchParams({
             'mode': 'payment',
+            // Card only — keep checkout simple and predictable (no Bancontact/EPS/
+            // Satispay/MB WAY). Matches the premium checkout.
+            'payment_method_types[0]': 'card',
             'line_items[0][price_data][currency]': 'eur',
             'line_items[0][price_data][unit_amount]': String(priceInCents),
             'line_items[0][price_data][product_data][name]': `Nice Numbers ${variant.name}`,

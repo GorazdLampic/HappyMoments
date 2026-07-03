@@ -3286,6 +3286,12 @@ body {
     justify-content: flex-start;
     padding-top: var(--space-md);
 }
+/* The inner content box also centers vertically by default — override it so
+   top-aligned steps actually start at the top (not re-centered in the space). */
+.wizard-step.wizard-step-top .wizard-content {
+    flex: none;
+    justify-content: flex-start;
+}
 
 /* Short screens: tighter wizard layout so the action buttons stay visible */
 @media (max-height: 760px) {
