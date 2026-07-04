@@ -4882,15 +4882,32 @@ function _copyToClipboardSync(text) {
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.setAttribute('readonly', '');
-        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+        // Keep the element IN the layout — off-screen (-9999px / display:none)
+        // breaks execCommand('copy') on iOS. A 1px, opacity:0 fixed box works
+        // on both iOS and Android. font-size:16px avoids iOS auto-zoom focus quirks.
+        ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;background:transparent;opacity:0;font-size:16px;';
         document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        try { ta.setSelectionRange(0, text.length); } catch (e) {}
+        const isIOS = /ipad|iphone|ipod/i.test(navigator.userAgent || '');
+        if (isIOS) {
+            // iOS needs an explicit Range selection on a contentEditable node.
+            ta.contentEditable = 'true';
+            const range = document.createRange();
+            range.selectNodeContents(ta);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            ta.setSelectionRange(0, 999999);
+        } else {
+            ta.focus();
+            ta.select();
+            try { ta.setSelectionRange(0, text.length); } catch (e) {}
+        }
         done = document.execCommand('copy');
+        ta.blur();
         document.body.removeChild(ta);
     } catch (e) {}
-    try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => {}, () => {}); } catch (e) {}
+    // Also fire the async API (Android Chrome honours it within a gesture).
+    try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => { done = true; }, () => {}); } catch (e) {}
     return done;
 }
 window._copyToClipboardSync = _copyToClipboardSync;
@@ -4902,6 +4919,10 @@ async function shareMilestone(m, textOverride) {
     // tap gesture — BEFORE any await. Apps like Viber can silently drop a shared
     // image/text; this ensures the user can always paste the link instead.
     const copied = _copyToClipboardSync(text);
+    // Shown AFTER the OS share sheet closes — i.e. exactly when the user returns
+    // from an app like Viber that silently dropped the share. Tells them the link
+    // is on the clipboard so they can just paste it.
+    const confirmCopied = () => { if (copied) showToast(tt('toast_link_copied'), 'success', 4000); };
     // 1) Native share with the image card + text (WhatsApp, Messages, mail, etc.)
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
         try {
@@ -4911,19 +4932,20 @@ async function shareMilestone(m, textOverride) {
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({ title: 'Nice Numbers', text, files: [file] });
                 _track('share_card', { value: m.value, unit: m.unitName });
+                confirmCopied();
                 return;
             }
         } catch (e) { if (e && e.name === 'AbortError') return; }
     }
     // 2) Native text-only share (link stays clickable)
     if (navigator.share) {
-        try { await navigator.share({ title: 'Nice Numbers', text }); return; }
+        try { await navigator.share({ title: 'Nice Numbers', text }); confirmCopied(); return; }
         catch (e) { if (e && e.name === 'AbortError') return; }
     }
     // 3) No native share (desktop, or it failed): the text is already copied —
     //    also save the card image so nothing is lost, and confirm to the user.
     if (typeof downloadMilestoneCard === 'function') { try { downloadMilestoneCard(m); } catch (e) {} }
-    showToast(copied ? tt('toast_copied') : tt('toast_copied'), 'success');
+    showToast(tt('toast_copied'), 'success');
 }
 window.shareMilestone = shareMilestone;
 

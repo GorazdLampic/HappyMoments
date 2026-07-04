@@ -223,8 +223,18 @@ export async function onRequestGet(context) {
     const wide = (type === 'mug' || type === 'tumbler'); // horizontal wrap layout
     const W = dims.w, H = dims.h;
     const esc = (s) => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    const val = Number(value) ? Number(value).toLocaleString('en-US') : value;
-    const numLen = val.replace(/,/g,'').length;
+    // Match the client's formatMilestoneValue: abbreviate only clean round
+    // millions/billions, keep everything else exact — so this fallback never
+    // shows a different number than the app/card preview.
+    const fmtVal = (n) => {
+        if (n >= 1000000 && n % 100000 === 0) {
+            if (n >= 1000000000) { const b = n / 1000000000; return (Number.isInteger(b) ? b : parseFloat(b.toFixed(2))).toLocaleString('en-US') + ' billion'; }
+            const m = n / 1000000; return (Number.isInteger(m) ? m : parseFloat(m.toFixed(1))).toLocaleString('en-US') + ' million';
+        }
+        return n.toLocaleString('en-US');
+    };
+    const val = Number(value) ? fmtVal(Number(value)) : value;
+    const numLen = val.replace(/[,\s]/g,'').length;
     const fontSize = numLen > 9 ? Math.floor(H*0.12) : numLen > 6 ? Math.floor(H*0.16) : Math.floor(H*0.22);
 
     const svg = `<?xml version="1.0" encoding="UTF-8"?>

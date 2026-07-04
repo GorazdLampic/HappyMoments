@@ -213,6 +213,7 @@ const I18N = (() => {
             // ── Core toasts (extracted v91) ──
             toast_added: '{name} added!',
             toast_copied: 'Copied to clipboard!',
+            toast_link_copied: 'Link copied — paste it in any app',
             toast_settings_saved: 'Settings saved!',
             toast_enter_name: 'Enter a name',
             toast_enter_date: 'Enter a date',

@@ -336,7 +336,13 @@ function openGiftOrder(productId, value, unit, eventName) {
     // Store milestone context
     _currentGiftMilestone = { value: value, unitName: unit, eventName: eventName || '' };
 
-    const val = typeof value === 'number' ? value.toLocaleString() : value;
+    // Use the SAME formatter as the milestone row + the printed design, so the
+    // "Number on the gift" field, the preview card, and what the user selected
+    // all show an identical number (was toLocaleString → "45,000,000" while the
+    // card showed "45 million").
+    const val = (typeof value === 'number')
+        ? ((typeof formatMilestoneValue === 'function') ? formatMilestoneValue(value) : value.toLocaleString())
+        : value;
     const _esc = typeof escapeHtml === 'function' ? escapeHtml : (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
     const countryOptions = SHIPPING_COUNTRIES.map(c =>
