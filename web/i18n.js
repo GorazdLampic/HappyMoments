@@ -301,7 +301,7 @@ const I18N = (() => {
             // ── Toasts (extracted v92) ──
             toast_reminders_enabled: 'Reminders enabled!',
             toast_reminders_on: 'Reminders on ✓',
-            wiz_remind_me: 'Remind me before each milestone',
+            wiz_remind_me: 'Remind me before very nice milestones',
             notif_denied: 'Enable reminders in your device settings to get milestone alerts.',
             toast_storage_full_data: 'Storage full — cannot save data.',
             toast_storage_full_settings: 'Storage full — cannot save settings.',
