@@ -36,7 +36,7 @@ export async function onRequestPost(context) {
             'line_items[0][price_data][unit_amount]': '149',
             'line_items[0][price_data][recurring][interval]': 'year',
             'line_items[0][price_data][product_data][name]': 'Nice Numbers Premium',
-            'line_items[0][price_data][product_data][description]': 'Unlimited people, exclusive card designs, and watermark-free cards. Billed annually.',
+            'line_items[0][price_data][product_data][description]': 'Unlimited people and watermark-free share cards. Billed annually.',
             'line_items[0][quantity]': '1',
             'success_url': `${appUrl}/index.html?checkout=premium_success&session_id={CHECKOUT_SESSION_ID}`,
             'cancel_url': `${appUrl}/index.html?checkout=premium_cancelled`,

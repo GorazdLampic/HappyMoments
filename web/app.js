@@ -7780,7 +7780,7 @@ function renderCardDesignPicker() {
     el.innerHTML = order.map(t => {
         const th = CARD_CONFIG.themes[t];
         if (!th) return '';
-        const locked = (t !== 'dark') && !prem;
+        const locked = false; // Card designs are free for everyone (not a premium exclusive)
         const isSel = t === selected;
         const grad = `linear-gradient(135deg, ${th.bgGradient[0]}, ${th.bgGradient[1]})`;
         const ring = isSel ? 'var(--warning,#d4b876)' : 'rgba(255,255,255,0.12)';
@@ -7794,12 +7794,11 @@ function renderCardDesignPicker() {
         </div>`;
     }).join('');
     const hint = document.getElementById('cardDesignHint');
-    if (hint) hint.textContent = prem ? tt('cd_hint_prem') : tt('cd_hint_free');
+    if (hint) hint.textContent = tt('cd_hint_prem'); // "Pick the look of the cards you share." — free for all
 }
 
 function selectCardDesign(t) {
-    const prem = (typeof isPremium === 'function') && isPremium();
-    if (t !== 'dark' && !prem) { showUpgradePrompt('cards'); return; }
+    // Card designs are free for everyone — no premium gate.
     localStorage.setItem('happymoments_card_theme', t);
     renderCardDesignPicker();
     showToast(tt('cd_updated'), 'success');

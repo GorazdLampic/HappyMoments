@@ -76,14 +76,12 @@ const CARD_CONFIG = {
 const FREE_CARD_THEME = 'dark';
 const PREMIUM_CARD_THEMES = ['ocean', 'sunset', 'goldfoil', 'rose', 'ivory'];
 
-// The card design the user has chosen. Only honoured for premium users (the
-// free theme is always allowed); otherwise falls back to the free design.
+// The card design the user has chosen. Card designs are FREE for everyone (they
+// are not a premium exclusive), so any valid theme is honoured.
 function getCardTheme() {
     try {
         const sel = localStorage.getItem('happymoments_card_theme') || FREE_CARD_THEME;
-        if (sel === FREE_CARD_THEME) return FREE_CARD_THEME;
-        const prem = (typeof isPremium === 'function') && isPremium();
-        return (prem && CARD_CONFIG.themes[sel]) ? sel : FREE_CARD_THEME;
+        return CARD_CONFIG.themes[sel] ? sel : FREE_CARD_THEME;
     } catch (e) {
         return FREE_CARD_THEME;
     }

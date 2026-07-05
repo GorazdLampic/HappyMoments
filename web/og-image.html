@@ -29,37 +29,40 @@ body { background: #1a1a1a; display: flex; align-items: center; justify-content:
     height: 200%;
     background: radial-gradient(circle at 60% 40%, rgba(212, 184, 118, 0.08) 0%, transparent 50%);
 }
-.number {
-    font-size: 120px;
+.brand {
+    font-size: 104px;
     font-weight: 700;
     color: #d4b876;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
     text-shadow: 0 0 40px rgba(212, 184, 118, 0.3);
     position: relative;
     z-index: 1;
 }
-.label {
-    font-size: 32px;
-    color: #aaa;
-    margin-top: -10px;
-    letter-spacing: 2px;
-    position: relative;
-    z-index: 1;
-}
 .tagline {
-    font-size: 28px;
-    color: #d4b876;
-    margin-top: 30px;
+    font-size: 40px;
+    color: #e0e0e0;
+    margin-top: 6px;
     font-style: italic;
     position: relative;
     z-index: 1;
 }
 .subtitle {
-    font-size: 20px;
-    color: #888;
-    margin-top: 12px;
+    font-size: 26px;
+    color: #aaa;
+    margin-top: 26px;
+    line-height: 1.4;
+    text-align: center;
     position: relative;
     z-index: 1;
+}
+.chips {
+    font-size: 23px;
+    color: rgba(212, 184, 118, 0.55);
+    margin-top: 22px;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    font-family: 'Segoe UI', sans-serif;
 }
 .url {
     position: absolute;
@@ -89,11 +92,10 @@ body { background: #1a1a1a; display: flex; align-items: center; justify-content:
     Then update og:image meta tags in index.html and landing.html.
 -->
 <div class="card">
-    <div class="number">1,000,000,000</div>
-    <div class="label">seconds alive</div>
-    <div class="tagline">When's YOUR billion?</div>
-    <div class="subtitle">Discover hidden number milestones in your life</div>
-    <div class="logo">Nice Numbers</div>
+    <div class="brand">Nice Numbers</div>
+    <div class="tagline">Share &amp; Celebrate</div>
+    <div class="subtitle">The special number milestones in your life —<br>and everyone you care about</div>
+    <div class="chips">10,000 days &nbsp;·&nbsp; a billion heartbeats &nbsp;·&nbsp; 500 million minutes</div>
     <div class="url">nicenumbers.app</div>
 </div>
 </body>
