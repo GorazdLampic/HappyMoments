@@ -230,12 +230,12 @@ function generateMilestoneCard(milestone, options) {
     // Top: app name
     ctx.textAlign = 'center';
     ctx.fillStyle = theme.muted;
-    ctx.font = 'italic 32px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 43px "EB Garamond", Georgia, serif';
     ctx.fillText('Nice Numbers', W / 2, P + 20);
 
     // Tagline
     ctx.fillStyle = catAccent;
-    ctx.font = 'italic 26px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 35px "EB Garamond", Georgia, serif';
     ctx.fillText('Share & Celebrate', W / 2, P + 52);
 
     // Thin line
@@ -270,25 +270,25 @@ function generateMilestoneCard(milestone, options) {
 
     // Unit
     ctx.fillStyle = theme.text;
-    ctx.font = 'italic 74px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 100px "EB Garamond", Georgia, serif';
     ctx.fillText(unit, W / 2, H / 2 + 108);
 
     // Why it's special
     if (why) {
         ctx.fillStyle = theme.muted;
-        ctx.font = 'italic 40px "EB Garamond", Georgia, serif';
+        ctx.font = 'italic 54px "EB Garamond", Georgia, serif';
         ctx.fillText(why, W / 2, H / 2 + 172);
     }
 
     // Date
     ctx.fillStyle = theme.text;
-    ctx.font = '42px "Helvetica Neue", "Arial", sans-serif';
+    ctx.font = '57px "Helvetica Neue", "Arial", sans-serif';
     ctx.fillText(dateStr, W / 2, H - P - 125);
 
     // Countdown
     if (countdown) {
         ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 46px "EB Garamond", Georgia, serif';
+        ctx.font = 'italic 62px "EB Garamond", Georgia, serif';
         ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H - P - 65);
     }
 
@@ -301,7 +301,7 @@ function generateMilestoneCard(milestone, options) {
 
     // Footer — always show app name
     ctx.fillStyle = theme.muted;
-    ctx.font = '22px "EB Garamond", Georgia, serif';
+    ctx.font = '30px "EB Garamond", Georgia, serif';
     ctx.fillText('nicenumbers.app', W / 2, H - P + 5);
 
     // Watermark for free users — premium gets clean cards
@@ -310,7 +310,7 @@ function generateMilestoneCard(milestone, options) {
         ctx.save();
         ctx.globalAlpha = 0.08;
         ctx.fillStyle = theme.text;
-        ctx.font = 'italic 60px "EB Garamond", Georgia, serif';
+        ctx.font = 'italic 81px "EB Garamond", Georgia, serif';
         ctx.translate(W / 2, H / 2);
         ctx.rotate(-Math.PI / 6);
         ctx.fillText('nicenumbers.app', 0, 0);
@@ -360,12 +360,12 @@ function generateStoryCard(milestone, options) {
 
     // Top section — app name
     ctx.fillStyle = theme.muted;
-    ctx.font = 'italic 32px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 43px "EB Garamond", Georgia, serif';
     ctx.fillText('Nice Numbers', W / 2, P + 40);
 
     // Tagline
     ctx.fillStyle = catAccent;
-    ctx.font = 'italic 26px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 35px "EB Garamond", Georgia, serif';
     ctx.fillText('Share & Celebrate', W / 2, P + 75);
 
     // Thin line
@@ -388,7 +388,7 @@ function generateStoryCard(milestone, options) {
 
     // "will be" text
     ctx.fillStyle = theme.muted;
-    ctx.font = 'italic 44px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 59px "EB Garamond", Georgia, serif';
     ctx.fillText('will be', W / 2, H * 0.32);
 
     // BIG NUMBER — center of story
@@ -403,31 +403,31 @@ function generateStoryCard(milestone, options) {
 
     // Unit
     ctx.fillStyle = theme.text;
-    ctx.font = 'italic 80px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 108px "EB Garamond", Georgia, serif';
     ctx.fillText(unit, W / 2, H * 0.525);
 
     // Why it's special
     if (why) {
         ctx.fillStyle = theme.muted;
-        ctx.font = 'italic 44px "EB Garamond", Georgia, serif';
+        ctx.font = 'italic 59px "EB Garamond", Georgia, serif';
         ctx.fillText(why, W / 2, H * 0.59);
     }
 
     // Date — lower section
     ctx.fillStyle = theme.text;
-    ctx.font = '46px "Helvetica Neue", "Arial", sans-serif';
+    ctx.font = '62px "Helvetica Neue", "Arial", sans-serif';
     ctx.fillText(dateStr, W / 2, H * 0.68);
 
     // Countdown
     if (countdown) {
         ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 54px "EB Garamond", Georgia, serif';
+        ctx.font = 'italic 73px "EB Garamond", Georgia, serif';
         ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H * 0.74);
     }
 
     // Call to action
     ctx.fillStyle = theme.muted;
-    ctx.font = 'italic 38px "EB Garamond", Georgia, serif';
+    ctx.font = 'italic 51px "EB Garamond", Georgia, serif';
     ctx.fillText('When is YOUR special number?', W / 2, H * 0.84);
 
     // Bottom line
@@ -439,7 +439,7 @@ function generateStoryCard(milestone, options) {
 
     // Footer
     ctx.fillStyle = theme.accent;
-    ctx.font = '28px "EB Garamond", Georgia, serif';
+    ctx.font = '38px "EB Garamond", Georgia, serif';
     ctx.fillText('nicenumbers.app', W / 2, H - P);
 
     // Watermark for free users
@@ -448,7 +448,7 @@ function generateStoryCard(milestone, options) {
         ctx.save();
         ctx.globalAlpha = 0.06;
         ctx.fillStyle = theme.text;
-        ctx.font = 'italic 70px "EB Garamond", Georgia, serif';
+        ctx.font = 'italic 95px "EB Garamond", Georgia, serif';
         ctx.translate(W / 2, H * 0.45);
         ctx.rotate(-Math.PI / 6);
         ctx.fillText('nicenumbers.app', 0, 0);
@@ -461,7 +461,7 @@ function generateStoryCard(milestone, options) {
 function downloadStoryCard(milestone, theme) {
     const canvas = generateStoryCard(milestone, { theme: theme || getCardTheme() });
     const link = document.createElement('a');
-    link.download = `happymoment-story-${milestone.value}-${milestone.unitName}.png`;
+    link.download = `NiceNumbers-story-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
     if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'story', theme: theme || 'dark', category: getCardCategory(milestone) });
@@ -473,7 +473,7 @@ async function shareStoryCard(milestone, theme) {
     if (navigator.share && navigator.canShare) {
         try {
             const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-            const file = new File([blob], 'happymoment-story.png', { type: 'image/png' });
+            const file = new File([blob], 'NiceNumbers-story.png', { type: 'image/png' });
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({
                     title: 'Nice Numbers',
@@ -534,7 +534,7 @@ function drawDecorations(ctx, W, H, theme) {
 function downloadMilestoneCard(milestone, theme) {
     const canvas = generateMilestoneCard(milestone, { theme: theme || getCardTheme() });
     const link = document.createElement('a');
-    link.download = `happymoment-${milestone.value}-${milestone.unitName}.png`;
+    link.download = `NiceNumbers-${milestone.value}-${milestone.unitName}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
     if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('card_downloaded', { value: milestone.value, unit: milestone.unitName, format: 'square', theme: theme || 'dark', category: getCardCategory(milestone) });
@@ -549,7 +549,7 @@ async function shareMilestoneCard(milestone, theme) {
     if (navigator.share && navigator.canShare) {
         try {
             const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-            const file = new File([blob], 'happymoment.png', { type: 'image/png' });
+            const file = new File([blob], 'NiceNumbers.png', { type: 'image/png' });
 
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({

@@ -535,6 +535,14 @@
                 <a href="legal.html" target="_blank" data-i18n="terms_privacy" style="color:var(--text-muted,#888);font-size:0.8rem;text-decoration:none;">Terms &amp; Privacy</a>
             </div>
 
+            <!-- About / branding + version (moved here from the footer) -->
+            <div style="padding:20px 16px 8px;text-align:center;">
+                <img src="icons/icon-192.png" alt="Nice Numbers" width="64" height="64" style="border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,0.3);">
+                <div style="font-family:var(--font-serif,serif);font-size:1.15rem;color:var(--text-primary);margin-top:8px;">Nice Numbers</div>
+                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">Share &amp; Celebrate</div>
+                <div id="appVersion" style="font-size:0.72rem;color:var(--text-muted);opacity:0.7;margin-top:8px;">__BUILD_VERSION__</div>
+            </div>
+
             <!-- Hidden elements for JS compatibility — no visible UI -->
             <div style="display:none;">
                 <button id="saveSettingsBtn"></button>
@@ -569,7 +577,6 @@
         <!-- Footer -->
         <footer class="app-footer">
             <span class="footer-copy">Nice Numbers &copy; 2026</span>
-            <span class="footer-version" id="appVersion" style="opacity:0.45;font-size:0.72em;margin-left:8px;">__BUILD_VERSION__</span>
         </footer>
 
         <!-- Auth Modal -->

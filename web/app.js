@@ -3884,7 +3884,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
 
         // Register in the stable per-render list so the tap shares the RIGHT
         // combined milestone (image card + text), not a stale index.
-        const gIdx = _combinedShareList.push(m) - 1;
+        const gIdx = _regShare(m); _combinedShareList.push(m);
         return `
             <div class="combined-milestone-item ${isVerySpecial ? 'very-special' : ''}"
                  onclick="shareCombinedMilestone(${gIdx})" style="cursor:pointer;">
@@ -4394,6 +4394,23 @@ let allCombinedMilestonesFlat = []; // Store for sharing (combined)
 let _combinedShareList = [];        // Stable per-render list backing Together-row taps
 let selectedCombinedMilestone = null;
 
+// Robust share/gift target registry. Every milestone row registers its OWN
+// milestone object under a monotonically-increasing token (never reused). The
+// row's onclick carries that token, so a share/gift ALWAYS resolves to the exact
+// milestone that was rendered — even if a backing array was rebuilt, a tab
+// switched, or HTML was copied. This kills the recurring "shared the wrong
+// milestone (e.g. 1 billion seconds)" bug caused by array-index reuse.
+const _shareReg = new Map();
+let _shareTok = 0;
+function _regShare(m) {
+    const t = ++_shareTok;
+    _shareReg.set(t, m);
+    if (_shareReg.size > 1500) { const k = _shareReg.keys().next().value; _shareReg.delete(k); }
+    return t;
+}
+function _getShare(t) { return _shareReg.get(Number(t)); }
+window._getShare = _getShare;
+
 function getTodayHighlight() {
     const now = new Date();
     const highlights = [];
@@ -4719,14 +4736,14 @@ function renderHomeScreen() {
                 dateStr = m.date.toLocaleDateString(locale, dateOpts);
             }
             const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
-            const mIdx = all.indexOf(m);
-            html += `<div class="time-chunk-item" onclick="homeShareMilestone(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
+            const mIdx = all.indexOf(m); const mTok = _regShare(m);
+            html += `<div class="time-chunk-item" onclick="homeShareMilestone(${mTok})" id="tcItem${mIdx}" style="cursor:pointer;">
                 <div class="tc-main">
                     <div class="tc-left">
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mTok})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4770,14 +4787,14 @@ function renderHomeScreen() {
                 dateStr = m.date.toLocaleDateString(locale, dateOpts);
             }
             const isSpecial = !m.isCosmic && (m.isBigMilestone || (m.value >= 10000 && m.value % 10000 === 0));
-            const mIdx = all.indexOf(m);
-            return `<div class="time-chunk-item" onclick="homeShareMilestone(${mIdx})" id="tcItem${mIdx}" style="cursor:pointer;">
+            const mIdx = all.indexOf(m); const mTok = _regShare(m);
+            return `<div class="time-chunk-item" onclick="homeShareMilestone(${mTok})" id="tcItem${mIdx}" style="cursor:pointer;">
                 <div class="tc-main">
                     <div class="tc-left">
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mIdx})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mTok})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4970,7 +4987,9 @@ function openShareSheet(m, textOverride) {
     const link = (text.match(/https?:\/\/[^\s]+/) || ['https://nicenumbers.app/'])[0];
     const enc = encodeURIComponent(text), encLink = encodeURIComponent(link);
     _shareCtx = { m, text };
-    const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || '') || (navigator.maxTouchPoints > 1);
+    // SMS/Messenger only work on an actual PHONE (their URI schemes do nothing on
+    // desktop OR touch laptops), so gate them on the UA — never ship a dead button.
+    const isMobile = /android|iphone|ipod/i.test(navigator.userAgent || '');
     // Group 1: direct messengers (1-to-1, spreads linearly). SMS/Messenger only
     // work on mobile, so they're hidden on desktop rather than shipped as dead buttons.
     const messengers = [
@@ -5050,7 +5069,7 @@ async function _saveForStories() {
         if (typeof generateStoryCard === 'function' && navigator.share && navigator.canShare) {
             const canvas = generateStoryCard(m, {});
             const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-            const file = new File([blob], 'nicenumbers-story.png', { type: 'image/png' });
+            const file = new File([blob], 'NiceNumbers-story.png', { type: 'image/png' });
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({ files: [file], text: _shareCtx.text });
                 if (typeof _track === 'function') _track('share_story', { value: m.value });
@@ -5071,7 +5090,7 @@ async function _createStoryVideo(btn) {
     if (btn) { btn.disabled = true; btn.innerHTML = '🎬 ' + (tt('share_video_making') || 'Creating video…') + ' <span id="svPct">0%</span>'; }
     try {
         const out = await generateStoryVideo(_shareCtx.m, { onProgress: p => { const el = document.getElementById('svPct'); if (el) el.textContent = Math.round(p * 100) + '%'; } });
-        const file = new File([out.blob], `nicenumbers-story.${out.ext}`, { type: out.blob.type });
+        const file = new File([out.blob], `NiceNumbers-story.${out.ext}`, { type: out.blob.type });
         if (btn) { btn.disabled = false; btn.innerHTML = orig; }
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], text: _shareCtx.text });
@@ -5094,7 +5113,7 @@ window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownl
 
 // Share a Together/combined milestone: image card (labelled with the group) + text.
 function shareCombinedMilestone(idx) {
-    const m = _combinedShareList[idx];
+    const m = _getShare(idx) || _combinedShareList[idx];
     if (!m) return;
     // Combined milestones carry no eventName, so label the card with the people.
     const names = (m.contributingEvents || []).map(n => displayPersonName(n)).join(' + ');
@@ -5107,17 +5126,17 @@ window.shareCombinedMilestone = shareCombinedMilestone;
 
 // Contextual gift entry: pick a physical keepsake printed with THIS milestone.
 function openGiftPicker(idx) {
-    _openGiftPickerForMilestone(_homeMilestones[idx] || allMilestonesFlat[idx]);
+    _openGiftPickerForMilestone(_getShare(idx) || _homeMilestones[idx] || allMilestonesFlat[idx]);
 }
 function openGiftPickerCombined(gIdx) {
-    _openGiftPickerForMilestone(_combinedShareList[gIdx]);
+    _openGiftPickerForMilestone(_getShare(gIdx) || _combinedShareList[gIdx]);
 }
 window.openGiftPickerCombined = openGiftPickerCombined;
 // Person-column / most-special cards index straight into allMilestonesFlat
 // (same as quickShare), so resolve from there — NOT via _homeMilestones, which
 // would alias to a different milestone after renderPersonColumns rebuilds the list.
 function openGiftPickerFlat(idx) {
-    _openGiftPickerForMilestone(allMilestonesFlat[idx]);
+    _openGiftPickerForMilestone(_getShare(idx) || allMilestonesFlat[idx]);
 }
 window.openGiftPickerFlat = openGiftPickerFlat;
 function _openGiftPickerForMilestone(m) {
@@ -5169,7 +5188,7 @@ function _openGiftPickerForMilestone(m) {
 window.openGiftPicker = openGiftPicker;
 
 function homeShareMilestone(idx) {
-    const m = _homeMilestones[idx] || allMilestonesFlat[idx];
+    const m = _getShare(idx) || _homeMilestones[idx] || allMilestonesFlat[idx];
     if (!m) return;
     openShareSheet(m);
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
@@ -5466,7 +5485,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone birthday-milestone ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.description}</span><button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${m.globalIdx})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line1"><span class="cm-num">${m.description}</span><button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${_regShare(m)})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${_regShare(m)})" title="Share">&#8599;</button></div>
                             <div class="cm-line2"><span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span></div>
                         </div>
                     `;
@@ -5477,7 +5496,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone cosmic-milestone ${cosmicSpecial ? 'very-special' : ''} ${m.isSaturnReturn ? 'saturn-return' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-cosmic-icon">\u2731</span> <span class="cm-num">${cosmicLabel}</span><button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${m.globalIdx})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line1"><span class="cm-cosmic-icon">\u2731</span> <span class="cm-num">${cosmicLabel}</span><button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${_regShare(m)})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${_regShare(m)})" title="Share">&#8599;</button></div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
                                 <span class="cm-alt-b cm-cosmic-desc">${m.description}</span>
@@ -5507,7 +5526,7 @@ function renderPersonColumns() {
                     html += `
                         <div class="column-milestone ${isVerySpecial ? 'very-special' : ''} ${m.isBigMilestone ? 'big-milestone' : ''} ${hiddenClass} ${selected}"
                              onclick="selectMilestoneForShare(${m.globalIdx})">
-                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${localizedUnit(m.value, m.unitName)}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}<button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${m.globalIdx})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${m.globalIdx})" title="Share">&#8599;</button></div>
+                            <div class="cm-line1"><span class="cm-num">${m.value.toLocaleString()}</span> <span class="cm-unit">${localizedUnit(m.value, m.unitName)}</span>${marker ? `<span class="cm-marker">${marker}</span>` : ''}<button class="quick-gift-btn" onclick="event.stopPropagation(); openGiftPickerFlat(${_regShare(m)})" title="${tt('gp_send_title')}" style="background:none;border:none;cursor:pointer;font-size:1.05em;opacity:0.9;padding:0 2px;">&#127873;</button><button class="quick-share-btn" onclick="event.stopPropagation(); quickShare(${_regShare(m)})" title="Share">&#8599;</button></div>
                             <div class="cm-line2">
                                 <span class="cm-alt-a">${timeUntilStr} · ${dateStr}</span>
                                 ${showAlt ? `<span class="cm-alt-b">${showAlt}</span>` : ''}
@@ -6216,7 +6235,7 @@ function handleChallengeGroup() {
 }
 
 function quickShare(idx) {
-    const m = allMilestonesFlat[idx];
+    const m = _getShare(idx) || allMilestonesFlat[idx];
     if (!m) return;
     openShareSheet(m);
     _track('quick_share', { value: m.value, unit: m.unit });
