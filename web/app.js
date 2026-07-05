@@ -5033,21 +5033,23 @@ function openShareSheet(m, textOverride) {
     modal.className = 'modal';
     modal.id = 'shareSheetModal';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    const canShareFiles = !!(navigator.share && navigator.canShare);
     modal.innerHTML = `<div class="modal-content share-sheet">
         <h3 style="margin-bottom:8px;">${tt('share_title') || 'Share this milestone'}</h3>
         <div class="share-card-preview" id="shareCardPreview"></div>
-        <div class="share-group-label">${tt('share_group_send') || 'Send it to someone'}</div>
-        <div class="share-net-grid">${renderBtns(messengers)}</div>
-        <div class="share-group-label">${tt('share_group_post') || 'Post to your feed'}</div>
+        <!-- PRIMARY: the ONLY way to actually send the card IMAGE to WhatsApp/Viber/
+             Instagram/etc. is the native share sheet with the image file. The
+             per-network buttons below can only carry text+a link (a web page can't
+             attach an image to wa.me), so this is the real "share the card". -->
+        <button class="share-primary" onclick="_shareCardImg()">📲 ${tt('share_the_card') || (canShareFiles ? 'Share the card' : 'Save the card')}</button>
+        <button class="share-media-video-full" onclick="_createStoryVideo(this)">🎬 ${tt('share_as_video') || 'Share as video (9:16)'}</button>
+        <div class="share-group-label">${tt('share_group_post') || 'Post to a feed'}</div>
         <div class="share-net-grid">${renderBtns(socials)}</div>
-        <div class="share-media-row">
-            <button class="share-media" onclick="_shareCardImg()"><span class="share-media-ic">📷</span><span>${tt('share_as_card') || 'Card image'}</span></button>
-            <button class="share-media share-media-video" onclick="_createStoryVideo(this)"><span class="share-media-ic">🎬</span><span>${tt('share_as_video') || 'Video (9:16)'}</span></button>
-        </div>
+        <div class="share-group-label">${tt('share_group_link') || 'Send a quick text link'}</div>
+        <div class="share-net-grid">${renderBtns(messengers)}</div>
         <div class="share-util-row">
             <button class="share-util" onclick="_shareCopy()">🔗 ${tt('share_copy') || 'Copy link'}</button>
             <button class="share-util" onclick="_shareDownload()">⬇️ ${tt('share_save') || 'Save image'}</button>
-            ${navigator.share ? `<button class="share-util" onclick="_shareNative()">↗ ${tt('share_more') || 'More…'}</button>` : ''}
         </div>
         <button class="auth-skip" onclick="document.getElementById('shareSheetModal').remove()">${tt('gp_later') || 'Close'}</button>
     </div>`;
