@@ -233,16 +233,24 @@ function generateMilestoneCard(milestone, options) {
 
     // Tagline
     ctx.fillStyle = catAccent;
-    ctx.font = 'italic 35px "EB Garamond", Georgia, serif';
-    ctx.fillText('Share & Celebrate', W / 2, P + 52);
+    ctx.font = 'italic 48px "EB Garamond", Georgia, serif';
+    ctx.fillText('Share & Celebrate', W / 2, P + 58);
 
     // Thin line
     ctx.strokeStyle = theme.muted + '40';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(P + 100, P + 72);
-    ctx.lineTo(W - P - 100, P + 72);
+    ctx.moveTo(P + 100, P + 82);
+    ctx.lineTo(W - P - 100, P + 82);
     ctx.stroke();
+
+    // Auto-size any text to fit the card width (long units like "Mercury orbits"
+    // or long descriptions used to run off the edge).
+    const fitFont = (txt, base, min, tmpl) => {
+        let s = base; ctx.font = tmpl(s);
+        while (ctx.measureText(txt).width > W - P * 2 && s > min) { s -= 4; ctx.font = tmpl(s); }
+        return s;
+    };
 
     // Person name — auto-shrink so long names still fit
     ctx.fillStyle = theme.highlight;
@@ -268,26 +276,27 @@ function generateMilestoneCard(milestone, options) {
 
     // Unit
     ctx.fillStyle = theme.text;
-    ctx.font = 'italic 114px "EB Garamond", Georgia, serif';
+    fitFont(unit, 114, 46, s => `italic ${s}px "EB Garamond", Georgia, serif`);
     ctx.fillText(unit, W / 2, H / 2 + 116);
 
     // Why it's special
     if (why) {
         ctx.fillStyle = theme.muted;
-        ctx.font = 'italic 60px "EB Garamond", Georgia, serif';
+        fitFont(why, 60, 32, s => `italic ${s}px "EB Garamond", Georgia, serif`);
         ctx.fillText(why, W / 2, H / 2 + 184);
     }
 
     // Date
     ctx.fillStyle = theme.text;
-    ctx.font = '64px "Helvetica Neue", "Arial", sans-serif';
+    fitFont(dateStr, 64, 34, s => `${s}px "Helvetica Neue", "Arial", sans-serif`);
     ctx.fillText(dateStr, W / 2, H - P - 122);
 
     // Countdown
     if (countdown) {
+        const cd = countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now');
         ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 70px "EB Garamond", Georgia, serif';
-        ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H - P - 60);
+        fitFont(cd, 70, 34, s => `italic ${s}px "EB Garamond", Georgia, serif`);
+        ctx.fillText(cd, W / 2, H - P - 60);
     }
 
     // Bottom line
@@ -297,10 +306,12 @@ function generateMilestoneCard(milestone, options) {
     ctx.lineTo(W - P - 100, H - P - 30);
     ctx.stroke();
 
-    // Footer — always show app name
-    ctx.fillStyle = theme.muted;
-    ctx.font = '30px "EB Garamond", Georgia, serif';
-    ctx.fillText('nicenumbers.app', W / 2, H - P + 5);
+    // Footer — the app URL, prominent so people know where to go (the card is an
+    // image, so this can't itself be a hyperlink; the clickable link travels in
+    // the shared message text alongside the card).
+    ctx.fillStyle = catAccent;
+    ctx.font = '44px "EB Garamond", Georgia, serif';
+    ctx.fillText('nicenumbers.app', W / 2, H - P + 14);
 
     // Watermark for free users — premium gets clean cards
     const _isPremium = typeof isPremium === 'function' && isPremium();

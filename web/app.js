@@ -1344,10 +1344,14 @@ function openGroupEditor(setId) {
     overlay.classList.remove('hidden');
     // Put the cursor on the NEW-person field, not the group name — the common
     // action here is adding people, and after adding one you want to type the next.
-    setTimeout(() => {
+    // Blur the group-name field first (it's the first input and can grab focus as
+    // the overlay becomes visible), then focus the person field on the next frame.
+    requestAnimationFrame(() => setTimeout(() => {
+        const gt = document.getElementById('editorGroupTitle');
+        if (gt) gt.blur();
         const f = document.getElementById('editorPersonField');
-        if (f) { f.removeAttribute('readonly'); f.focus(); }
-    }, 80);
+        if (f) { f.removeAttribute('readonly'); try { f.focus({ preventScroll: false }); } catch (e) { f.focus(); } }
+    }, 120));
 }
 
 // Open the group editor primed for adding a special date (wedding, day you met...)
@@ -1725,7 +1729,7 @@ function wizardHeroShareChip(shareText) {
 }
 
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
-    const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 nicenumbers.app';
+    const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 https://nicenumbers.app';
     const safeMsg = jsAttr(shareText);
     // Tapping a row shares it directly. During onboarding the affordance is
     // labelled ("Share" + arrow) to teach the gesture; the dashboard uses the
@@ -2004,7 +2008,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         }
 
         // Build reveal HTML — clean, spacious, large type
-        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — nicenumbers.app';
+        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — https://nicenumbers.app';
         // Age-stats hook only on the "Me" reveal (Step 2), not friend reveals.
         const ageStripHtml = revealElId === 'wizardReveal' ? renderAgeStatsStrip(date) : '';
         if (m.isCosmic) {
@@ -2244,7 +2248,7 @@ function wizardShowCombined(isRefresh) {
                 <div class="hero-meta-text">
                     <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
                 </div>
-                ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — nicenumbers.app')}
+                ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — https://nicenumbers.app')}
             </div>
         `;
     } else {
@@ -2368,7 +2372,7 @@ function wizardDiscoverFriend() {
             const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
             const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
             const dateStr2 = friendM.date.toLocaleDateString(locale, dateOpts);
-            shareMsg = `Did you know you reach ${displayText} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 nicenumbers.app`;
+            shareMsg = `Did you know you reach ${displayText} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 https://nicenumbers.app`;
         } else {
             shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
         }
@@ -2738,7 +2742,7 @@ function wizardShowCombinedAndName() {
             <div class="hero-meta-text">
                 <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
             </div>
-            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — nicenumbers.app')}
+            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — https://nicenumbers.app')}
         </div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_together')}</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('wizCombExtra6','wizCombToggle6',${combinedList.length - TOP6})">${_moreListLabel(combinedList.length - TOP6)}</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
@@ -3101,7 +3105,7 @@ function wizardShowTeamMilestones() {
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">${tt('wiz_belong_all')}</h2>
         ${hero ? `
-            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${jsAttr(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' — nicenumbers.app')}')">
+            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${jsAttr(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' — https://nicenumbers.app')}')">
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number-line">
                     <span class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</span>
@@ -3202,7 +3206,7 @@ function wizardBuildShareScreen() {
             const val = formatMilestoneValue(best.value, locale);
             const unit = localizedUnit(best.value, best.unitName || best.unit || '');
             const ds = formatMilestoneDate(best.date);
-            const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? nicenumbers.app';
+            const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? https://nicenumbers.app';
             const uid = 'share9more_' + e.id.replace(/[^a-z0-9]/gi, '');
             // More milestones for this person — each row shareable
             let moreRows = '';
@@ -3210,7 +3214,7 @@ function wizardBuildShareScreen() {
                 const v2 = formatMilestoneValue(m.value, locale);
                 const u2 = localizedUnit(m.value, m.unitName || m.unit || '');
                 const ds2 = formatMilestoneDate(m.date);
-                const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? nicenumbers.app';
+                const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? https://nicenumbers.app';
                 moreRows += `<div onclick="wizardShareForPerson('${jsAttr(e.name)}', '${jsAttr(st2)}')" style="display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer;">
                     <span style="color:var(--text);font-size:0.85rem;">${v2} ${u2}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${ds2}</span>
@@ -3255,7 +3259,7 @@ function wizardShareForPerson(name, message) {
 
 function wizardShareGroup() {
     const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || tt('wiz_group_family');
-    const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at nicenumbers.app';
+    const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at https://nicenumbers.app';
     showSharePreview(message, groupName);
     _track('onboard_share_group');
 }
@@ -4981,11 +4985,12 @@ async function shareMilestone(m, textOverride) {
     if (!m) return;
     const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
     // Put the message+link on the clipboard for apps (Viber) that silently drop a
-    // shared image/text, so the user can always paste. Use ONLY the async Clipboard
-    // API here — it does NOT consume the transient user activation that
-    // navigator.share needs (the old execCommand path stole that gesture and
-    // dropped the card image). Fire-and-forget: never awaited, never blocks share.
-    try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(() => {}); } catch (e) {}
+    // shared image/text, so the user can always paste. AWAIT it: navigator.share
+    // opens the OS sheet and steals focus, which ABORTS an un-awaited clipboard
+    // write (that left Viber's clipboard empty). The async Clipboard API does NOT
+    // consume the user activation navigator.share needs, so awaiting it is safe —
+    // unlike the old execCommand path, which stole the gesture and dropped the card.
+    try { if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text); } catch (e) {}
     // 1) Native share with the image CARD + text — FIRST, with nothing that
     //    consumes user activation before it.
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
