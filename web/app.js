@@ -2788,6 +2788,19 @@ function wizardGoToGroupBuilder() {
     document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
     _lastWizardStep = 7;
     window.scrollTo(0, 0);
+    _wizardFocusGroupPerson();
+}
+
+// On the onboarding group builder, put the cursor on the new-person field — NOT
+// the group title, which is the first input and otherwise grabs the caret (this
+// is the "cursor at wrong position when adding the 3rd member" fix).
+function _wizardFocusGroupPerson() {
+    requestAnimationFrame(() => setTimeout(() => {
+        const gt = document.getElementById('groupBuilderTitle');
+        if (gt) gt.blur();
+        const f = document.getElementById('groupPersonField');
+        if (f) { f.removeAttribute('readonly'); try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+    }, 120));
 }
 
 function wizardRenderGroupMembers() {
@@ -3371,6 +3384,7 @@ function wizardCreateGroupAndBuild() {
     document.getElementById('wizardStep7')?.classList.add('wizard-step-active');
     _lastWizardStep = 7;
     window.scrollTo(0, 0);
+    _wizardFocusGroupPerson();
 }
 
 function wizardFinish() {
