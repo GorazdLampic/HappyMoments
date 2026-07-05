@@ -4960,15 +4960,11 @@ window._copyToClipboardSync = _copyToClipboardSync;
 async function shareMilestone(m, textOverride) {
     if (!m) return;
     const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
-    // GUARANTEE the message+link is on the clipboard, synchronously, inside the
-    // tap gesture — BEFORE any await. Apps like Viber can silently drop a shared
-    // image/text; this ensures the user can always paste the link instead.
-    const copied = _copyToClipboardSync(text);
-    // Shown AFTER the OS share sheet closes — i.e. exactly when the user returns
-    // from an app like Viber that silently dropped the share. Tells them the link
-    // is on the clipboard so they can just paste it.
-    const confirmCopied = () => { if (copied) showToast(tt('toast_link_copied'), 'success', 4000); };
-    // 1) Native share with the image card + text (WhatsApp, Messages, mail, etc.)
+    // 1) Native share with the image CARD + text — FIRST, with NOTHING that
+    //    consumes user activation before it. (An execCommand('copy') / clipboard
+    //    write here eats the transient user gesture that navigator.share needs,
+    //    which silently dropped the card image to a text-only share — the exact
+    //    regression that stopped cards reaching WhatsApp.)
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
         try {
             const canvas = generateMilestoneCard(m, {}); // getCardTheme() applies the chosen design
@@ -4977,18 +4973,19 @@ async function shareMilestone(m, textOverride) {
             if (navigator.canShare({ files: [file] })) {
                 await navigator.share({ title: 'Nice Numbers', text, files: [file] });
                 _track('share_card', { value: m.value, unit: m.unitName });
-                confirmCopied();
                 return;
             }
         } catch (e) { if (e && e.name === 'AbortError') return; }
     }
     // 2) Native text-only share (link stays clickable)
     if (navigator.share) {
-        try { await navigator.share({ title: 'Nice Numbers', text }); confirmCopied(); return; }
+        try { await navigator.share({ title: 'Nice Numbers', text }); return; }
         catch (e) { if (e && e.name === 'AbortError') return; }
     }
-    // 3) No native share (desktop, or it failed): the text is already copied —
-    //    also save the card image so nothing is lost, and confirm to the user.
+    // 3) No native share at all (desktop w/o Web Share): copy the text + download
+    //    the card so nothing is lost. Safe to touch the clipboard here — there is
+    //    no navigator.share activation to protect on this path.
+    _copyToClipboardSync(text);
     if (typeof downloadMilestoneCard === 'function') { try { downloadMilestoneCard(m); } catch (e) {} }
     showToast(tt('toast_copied'), 'success');
 }
