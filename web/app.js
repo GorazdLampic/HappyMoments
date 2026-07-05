@@ -5982,33 +5982,14 @@ function isCombinedSpecialNumber(num, unit) {
 // ============================================================
 
 function selectMilestoneForShare(idx) {
-    selectedMilestone = idx;
-
-    // Increment share hint counter (hint shown until 3 selections)
-    const hintCount = parseInt(localStorage.getItem('hm_share_hint_count') || '0');
-    localStorage.setItem('hm_share_hint_count', String(hintCount + 1));
-
-    updateSharePreview();
+    // Tapping a milestone CARD now shares it (open the share sheet) — consistent
+    // with the home rows and Together rows. The old flow set a selection + a
+    // sticky preview bar that has since been removed, so tapping the card body
+    // used to do nothing. Capture the milestone BEFORE anything can re-render.
     const m = allMilestonesFlat[idx];
-    // Update gift suggestions and card preview
-    if (typeof renderGiftSuggestions === 'function') renderGiftSuggestions(m);
-    if (typeof renderCardPreview === 'function') renderCardPreview(m, 'cardPreview');
-    renderMilestonesTab();
-
-    // Add selection pulse animation to the newly selected element
-    requestAnimationFrame(() => {
-        const selectedEl = document.querySelector('.column-milestone.selected-for-share');
-        if (selectedEl) {
-            selectedEl.classList.remove('selected-for-share-anim');
-            // Force reflow to restart animation
-            void selectedEl.offsetWidth;
-            selectedEl.classList.add('selected-for-share-anim');
-        }
-    });
-
-    // Auto-scroll to share section
-    const shareCard = document.querySelector('.share-card-priority');
-    if (shareCard) setTimeout(() => shareCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    if (!m) return;
+    selectedMilestone = idx;
+    openShareSheet(m);
 }
 
 function updateSharePreview() {
