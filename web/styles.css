@@ -4458,3 +4458,24 @@ body::after {
 :lang(ru) .wizard-btn-tertiary {
     font-family: 'Georgia', 'Cambria', 'Times New Roman', serif;
 }
+
+/* ── Social share sheet ── */
+.share-sheet { max-width: 380px; }
+.share-card-preview { min-height: 40px; }
+.share-net-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 10px; }
+.share-net {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    border: none; border-radius: 12px; padding: 12px 6px; cursor: pointer; color: #fff;
+    font-family: var(--font-sans); transition: transform var(--transition), filter var(--transition);
+}
+.share-net:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.share-net:active { transform: translateY(0); }
+.share-net-ic { font-size: 1.35rem; line-height: 1; }
+.share-net-lb { font-size: 0.78rem; font-weight: 600; }
+.share-util-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 8px; }
+.share-util {
+    flex: 1 1 auto; min-width: 96px; border: 1px solid var(--border); background: var(--bg-elevated);
+    color: var(--text); border-radius: 10px; padding: 10px 8px; cursor: pointer; font-size: 0.85rem;
+    font-family: var(--font-sans); transition: background var(--transition);
+}
+.share-util:hover { background: var(--bg-hover); }

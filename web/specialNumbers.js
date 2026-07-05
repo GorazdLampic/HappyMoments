@@ -672,9 +672,17 @@ function getSpecialNumbersUpTo(maxValue, settings) {
 // Check if a number is "special" (simplified version for backward compatibility)
 function isSpecialNumber(num, settings) {
     const types = classifyNumber(num, settings);
+    // Only NAME genuinely notable patterns in the description. Repdigits,
+    // palindromes, sequences and alternating patterns are not meaningful to most
+    // people (and a palindrome is essentially a repdigit's cousin), so we do NOT
+    // mention them — the number itself is the milestone. Powers of 2, scientific
+    // constants (π, e, φ) and Fibonacci ARE worth naming. `type` is kept as the
+    // top match so scoring/detection is unchanged.
+    const MENTIONABLE = ['power_of_2', 'scientific', 'fibonacci'];
+    const named = types.filter(t => MENTIONABLE.includes(t.type));
     return {
         type: types[0].type,
-        description: types.map(t => t.description).join(', ')
+        description: named.map(t => t.description).join(', ')
     };
 }
 

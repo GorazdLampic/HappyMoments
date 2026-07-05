@@ -2233,23 +2233,41 @@ function wizardShowCombined(isRefresh) {
 function wizardGoToSummary() { wizardShowCombined(); }
 
 // --- v5 Onboarding: Enable reminders from summary ---
-function wizardEnableReminders() {
-    if (typeof NOTIF !== 'undefined') {
-        NOTIF.enable().then(ok => {
-            if (ok) {
-                _track('onboard_reminders_enabled');
-                // Update every reminder button on screen (there may be one per
-                // finish path) so the confirmation shows wherever it was tapped.
-                document.querySelectorAll('.wizard-reminder-btn, #wizardReminderBtn').forEach(btn => {
-                    btn.textContent = '\u2713 ' + tt('toast_reminders_enabled');
-                    btn.disabled = true;
-                });
-            } else {
-                showToast(tt('notif_denied') || 'Enable reminders in your device settings to get milestone alerts.', 'info');
-            }
+async function wizardEnableReminders() {
+    const markOn = () => {
+        _track('onboard_reminders_enabled');
+        document.querySelectorAll('.wizard-reminder-btn, #wizardReminderBtn').forEach(btn => {
+            btn.textContent = '\u2713 ' + tt('toast_reminders_enabled');
+            btn.disabled = true;
         });
+    };
+    // Not supported at all (e.g. some desktop browsers / privacy modes) \u2014 say so
+    // clearly instead of silently doing nothing.
+    const capNotif = (typeof Capacitor !== 'undefined');
+    if (!capNotif && !('Notification' in window)) {
+        showToast(tt('notif_unsupported') || "This browser can't show reminders. Try adding the app to your phone's home screen.", 'info', 5000);
+        return;
+    }
+    try {
+        let ok = false;
+        if (typeof NOTIF !== 'undefined' && NOTIF.enable) {
+            ok = await NOTIF.enable();
+        } else if ('Notification' in window) {
+            // Direct fallback if the NOTIF module didn't load.
+            const res = await Notification.requestPermission();
+            ok = res === 'granted';
+        }
+        if (ok) markOn();
+        else if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+            showToast(tt('notif_blocked') || 'Reminders are blocked. Allow notifications for this site in your browser settings, then try again.', 'info', 6000);
+        } else {
+            showToast(tt('notif_denied') || 'Reminders not enabled. Tap again and choose "Allow".', 'info', 5000);
+        }
+    } catch (e) {
+        showToast(tt('notif_denied') || 'Reminders not enabled. Tap again and choose "Allow".', 'info', 5000);
     }
 }
+window.wizardEnableReminders = wizardEnableReminders;
 
 // --- Legacy: wizardDiscover still works (for deep links, reset wizard etc.) ---
 function wizardDiscover() {
@@ -4263,15 +4281,12 @@ function getHappySumDescription(value, unit, wording) {
     const formattedValue = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(value, _loc) : value.toLocaleString();
     const namesStr = wording.names ? wording.names.join(' + ') : 'us';
 
-    // Check for special number patterns
-    const isRepdigit = /^(\d)\1+$/.test(String(value));
-    const isPalindrome = String(value) === String(value).split('').reverse().join('');
-
-    // Special celebratory messages for milestone numbers
+    // Celebratory messages by size. We deliberately DO NOT call out repdigits or
+    // palindromes ("all 4s", "palindrome") — most people don't find those
+    // meaningful, and palindrome ⊂ repdigit anyway. Only genuinely notable
+    // patterns (powers of 2, Pi/scientific constants) are worth naming, and those
+    // are surfaced elsewhere via classifyNumber's mentionable filter.
     if (unit === 'seconds') {
-        if (isRepdigit && value >= 111111111) {
-            return `🎯 MAGIC NUMBER! ${namesStr} = ${formattedValue} seconds - all ${String(value)[0]}s!`;
-        }
         if (value >= 1000000000) {
             return `🎉 WOW! ${namesStr} = ${formattedValue} seconds! Party time!`;
         }
@@ -4334,13 +4349,6 @@ function getHappySumDescription(value, unit, wording) {
         }
     }
 
-    // Special patterns
-    if (isRepdigit && value >= 1111) {
-        return `🎯 ${namesStr} = ${formattedValue} ${unitConfig.plural} - all ${String(value)[0]}s! Lucky!`;
-    }
-    if (isPalindrome && value >= 10001) {
-        return `🪞 ${namesStr} = ${formattedValue} ${unitConfig.plural} - palindrome magic!`;
-    }
 
     // Default happy message
     return `🌟 ${namesStr} = ${formattedValue} ${unitConfig.plural}! Celebrate!`;
@@ -4949,6 +4957,79 @@ async function shareMilestone(m, textOverride) {
 }
 window.shareMilestone = shareMilestone;
 
+// ── Social share sheet ────────────────────────────────────────────────────────
+// Explicit per-network buttons so a milestone can be spread anywhere — the real
+// growth lever. Works on desktop too (native share is limited there), and gives
+// Viber its own reliable button. Social intents carry text+link (their preview
+// shows the app's og image); the image card rides along via "Save image" or the
+// native "More…" sheet.
+let _shareCtx = null;
+function openShareSheet(m, textOverride) {
+    if (!m) return;
+    const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
+    const link = (text.match(/https?:\/\/[^\s]+/) || ['https://nicenumbers.app/'])[0];
+    const enc = encodeURIComponent(text), encLink = encodeURIComponent(link);
+    _shareCtx = { m, text };
+    const nets = [
+        { id: 'whatsapp', label: 'WhatsApp', bg: '#25D366', ic: '💬', url: `https://wa.me/?text=${enc}` },
+        { id: 'telegram', label: 'Telegram', bg: '#29A9EB', ic: '✈️', url: `https://t.me/share/url?url=${encLink}&text=${enc}` },
+        { id: 'facebook', label: 'Facebook', bg: '#1877F2', ic: 'f', url: `https://www.facebook.com/sharer/sharer.php?u=${encLink}&quote=${enc}` },
+        { id: 'x', label: 'X', bg: '#000000', ic: '𝕏', url: `https://twitter.com/intent/tweet?text=${enc}` },
+        { id: 'viber', label: 'Viber', bg: '#7360F2', ic: '📞', url: `viber://forward?text=${enc}` },
+        { id: 'email', label: 'Email', bg: '#5B6470', ic: '✉️', url: `mailto:?subject=${encodeURIComponent(tt('share_email_subject') || 'A nice number milestone')}&body=${enc}` }
+    ];
+    const btns = nets.map(n =>
+        `<button class="share-net" data-url="${escapeHtml(n.url)}" onclick="_shareVia('${n.id}', this)" style="background:${n.bg};">
+            <span class="share-net-ic">${n.ic}</span><span class="share-net-lb">${n.label}</span>
+        </button>`).join('');
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'shareSheetModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `<div class="modal-content share-sheet">
+        <h3 style="margin-bottom:10px;">${tt('share_title') || 'Share this milestone'}</h3>
+        <div class="share-card-preview" id="shareCardPreview"></div>
+        <div class="share-net-grid">${btns}</div>
+        <div class="share-util-row">
+            <button class="share-util" onclick="_shareCopy()">🔗 ${tt('share_copy') || 'Copy link'}</button>
+            <button class="share-util" onclick="_shareDownload()">⬇️ ${tt('share_save') || 'Save image'}</button>
+            ${navigator.share ? `<button class="share-util" onclick="_shareNative()">↗ ${tt('share_more') || 'More…'}</button>` : ''}
+        </div>
+        <button class="auth-skip" onclick="document.getElementById('shareSheetModal').remove()">${tt('gp_later') || 'Close'}</button>
+    </div>`;
+    document.body.appendChild(modal);
+    // Card preview (best-effort)
+    try {
+        if (typeof generateMilestoneCard === 'function') {
+            const canvas = generateMilestoneCard(m, {});
+            canvas.style.cssText = 'width:100%;max-width:240px;height:auto;border-radius:8px;display:block;margin:0 auto 12px;';
+            const p = document.getElementById('shareCardPreview');
+            if (p) { p.innerHTML = ''; p.appendChild(canvas); }
+        }
+    } catch (e) {}
+    if (typeof _track === 'function') _track('share_sheet_opened', { value: m.value, unit: m.unitName });
+}
+function _shareVia(id, btn) {
+    const url = btn && btn.getAttribute('data-url');
+    if (typeof _track === 'function') _track('share_network', { network: id });
+    // Also copy the text as a safety net (some intents drop long text).
+    if (_shareCtx) { try { _copyToClipboardSync(_shareCtx.text); } catch (e) {} }
+    if (url) window.open(url, '_blank', 'noopener');
+}
+function _shareCopy() {
+    if (_shareCtx && _copyToClipboardSync(_shareCtx.text)) showToast(tt('toast_link_copied'), 'success');
+}
+function _shareDownload() {
+    if (_shareCtx && typeof downloadMilestoneCard === 'function') { try { downloadMilestoneCard(_shareCtx.m); } catch (e) {} }
+}
+function _shareNative() {
+    const modal = document.getElementById('shareSheetModal');
+    if (modal) modal.remove();
+    if (_shareCtx) shareMilestone(_shareCtx.m, _shareCtx.text);
+}
+window.openShareSheet = openShareSheet;
+window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative;
+
 // Share a Together/combined milestone: image card (labelled with the group) + text.
 function shareCombinedMilestone(idx) {
     const m = _combinedShareList[idx];
@@ -4958,7 +5039,7 @@ function shareCombinedMilestone(idx) {
     const groupName = (allSets.find(s => s.id === currentSetId) || {}).name || 'Together';
     const cardM = Object.assign({}, m, { eventName: names || groupName });
     const text = (typeof generateCombinedShareMessage === 'function') ? generateCombinedShareMessage(m) : undefined;
-    shareMilestone(cardM, text);
+    openShareSheet(cardM, text);
 }
 window.shareCombinedMilestone = shareCombinedMilestone;
 
@@ -5028,7 +5109,7 @@ window.openGiftPicker = openGiftPicker;
 function homeShareMilestone(idx) {
     const m = _homeMilestones[idx] || allMilestonesFlat[idx];
     if (!m) return;
-    shareMilestone(m);
+    openShareSheet(m);
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
 }
 
@@ -5914,7 +5995,9 @@ function fillShareTemplate(template, m) {
     } else {
         val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(m.value, getAppLocale()) : m.value.toLocaleString();
         unit = localizedUnit(m.value, m.unitName);
-        why = m.description || m.type || 'special';
+        // Never fall back to the raw pattern type (e.g. "repdigit"/"palindrome") —
+        // m.description is now empty for those on purpose. Use a neutral word.
+        why = m.description || 'a special number';
     }
 
     // If template uses {value} but not {unit}, combine them so unit is never lost
@@ -6073,16 +6156,8 @@ function handleChallengeGroup() {
 function quickShare(idx) {
     const m = allMilestonesFlat[idx];
     if (!m) return;
-    const message = generateShareMessage(m);
-    if (navigator.share) {
-        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast(tt('toast_copied'), 'success');
-        }).catch(() => {});
-    }
+    openShareSheet(m);
     _track('quick_share', { value: m.value, unit: m.unit });
-    promptShareApp();
 }
 
 function shareAppLink() {
