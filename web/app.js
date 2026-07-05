@@ -4970,26 +4970,38 @@ function openShareSheet(m, textOverride) {
     const link = (text.match(/https?:\/\/[^\s]+/) || ['https://nicenumbers.app/'])[0];
     const enc = encodeURIComponent(text), encLink = encodeURIComponent(link);
     _shareCtx = { m, text };
-    const nets = [
+    const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || '') || (navigator.maxTouchPoints > 1);
+    // Group 1: direct messengers (1-to-1, spreads linearly). SMS/Messenger only
+    // work on mobile, so they're hidden on desktop rather than shipped as dead buttons.
+    const messengers = [
         { id: 'whatsapp', label: 'WhatsApp', bg: '#25D366', ic: '💬', url: `https://wa.me/?text=${enc}` },
         { id: 'telegram', label: 'Telegram', bg: '#29A9EB', ic: '✈️', url: `https://t.me/share/url?url=${encLink}&text=${enc}` },
-        { id: 'facebook', label: 'Facebook', bg: '#1877F2', ic: 'f', url: `https://www.facebook.com/sharer/sharer.php?u=${encLink}&quote=${enc}` },
-        { id: 'x', label: 'X', bg: '#000000', ic: '𝕏', url: `https://twitter.com/intent/tweet?text=${enc}` },
         { id: 'viber', label: 'Viber', bg: '#7360F2', ic: '📞', url: `viber://forward?text=${enc}` },
+        { id: 'messenger', label: 'Messenger', bg: '#0084FF', ic: '💬', url: `fb-messenger://share/?link=${encLink}`, mobileOnly: true },
+        { id: 'sms', label: 'SMS', bg: '#34C759', ic: '💬', url: `sms:?&body=${enc}`, mobileOnly: true },
         { id: 'email', label: 'Email', bg: '#5B6470', ic: '✉️', url: `mailto:?subject=${encodeURIComponent(tt('share_email_subject') || 'A nice number milestone')}&body=${enc}` }
     ];
-    const btns = nets.map(n =>
-        `<button class="share-net" data-url="${escapeHtml(n.url)}" onclick="_shareVia('${n.id}', this)" style="background:${n.bg};">
-            <span class="share-net-ic">${n.ic}</span><span class="share-net-lb">${n.label}</span>
-        </button>`).join('');
+    // Group 2: broadcast feeds (1-to-many, spreads exponentially). Instagram &
+    // TikTok have NO web share intent — served by the "Save for Stories" button.
+    const socials = [
+        { id: 'facebook', label: 'Facebook', bg: '#1877F2', ic: 'f', url: `https://www.facebook.com/sharer/sharer.php?u=${encLink}&quote=${enc}` },
+        { id: 'x', label: 'X', bg: '#000000', ic: '𝕏', url: `https://twitter.com/intent/tweet?text=${enc}` },
+        { id: 'linkedin', label: 'LinkedIn', bg: '#0A66C2', ic: 'in', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encLink}` }
+    ];
+    const renderBtns = (arr) => arr.filter(n => !n.mobileOnly || isMobile).map(n =>
+        `<button class="share-net" data-url="${escapeHtml(n.url)}" onclick="_shareVia('${n.id}', this)" style="background:${n.bg};"><span class="share-net-ic">${n.ic}</span><span class="share-net-lb">${n.label}</span></button>`).join('');
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.id = 'shareSheetModal';
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     modal.innerHTML = `<div class="modal-content share-sheet">
-        <h3 style="margin-bottom:10px;">${tt('share_title') || 'Share this milestone'}</h3>
+        <h3 style="margin-bottom:8px;">${tt('share_title') || 'Share this milestone'}</h3>
         <div class="share-card-preview" id="shareCardPreview"></div>
-        <div class="share-net-grid">${btns}</div>
+        <div class="share-group-label">${tt('share_group_send') || 'Send it to someone'}</div>
+        <div class="share-net-grid">${renderBtns(messengers)}</div>
+        <div class="share-group-label">${tt('share_group_post') || 'Post to your feed'}</div>
+        <div class="share-net-grid">${renderBtns(socials)}</div>
+        <button class="share-stories" onclick="_saveForStories()">📲 ${tt('share_stories') || 'Save for Instagram / TikTok (9:16)'}</button>
         <div class="share-util-row">
             <button class="share-util" onclick="_shareCopy()">🔗 ${tt('share_copy') || 'Copy link'}</button>
             <button class="share-util" onclick="_shareDownload()">⬇️ ${tt('share_save') || 'Save image'}</button>
@@ -5027,8 +5039,31 @@ function _shareNative() {
     if (modal) modal.remove();
     if (_shareCtx) shareMilestone(_shareCtx.m, _shareCtx.text);
 }
+// Instagram/TikTok can't be posted to from the web, so we produce a 9:16
+// Stories-ready image. On mobile we native-share it (user picks Instagram →
+// Story); on desktop we download it so they can post from their phone.
+async function _saveForStories() {
+    if (!_shareCtx) return;
+    const m = _shareCtx.m;
+    try {
+        if (typeof generateStoryCard === 'function' && navigator.share && navigator.canShare) {
+            const canvas = generateStoryCard(m, {});
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const file = new File([blob], 'nicenumbers-story.png', { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], text: _shareCtx.text });
+                if (typeof _track === 'function') _track('share_story', { value: m.value });
+                return;
+            }
+        }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    // Desktop / no file-share support: download the 9:16 card.
+    if (typeof downloadStoryCard === 'function') { try { downloadStoryCard(m); } catch (e) {} }
+    showToast(tt('share_story_saved') || 'Saved a 9:16 image — post it to your Story or Reel!', 'success', 4500);
+    if (typeof _track === 'function') _track('share_story_download', { value: m.value });
+}
 window.openShareSheet = openShareSheet;
-window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative;
+window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative; window._saveForStories = _saveForStories;
 
 // Share a Together/combined milestone: image card (labelled with the group) + text.
 function shareCombinedMilestone(idx) {

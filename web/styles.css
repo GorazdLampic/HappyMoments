@@ -4479,3 +4479,17 @@ body::after {
     font-family: var(--font-sans); transition: background var(--transition);
 }
 .share-util:hover { background: var(--bg-hover); }
+
+/* Share sheet groups + Stories button */
+.share-group-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-muted); text-align: left; margin: 10px 2px 6px;
+}
+.share-stories {
+    width: 100%; margin: 4px 0 10px; padding: 13px; border: none; border-radius: 12px; cursor: pointer;
+    color: #fff; font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600;
+    background: linear-gradient(95deg, #F58529, #DD2A7B 55%, #8134AF 90%);
+    box-shadow: 0 2px 10px rgba(221,42,123,0.35);
+}
+.share-stories:hover { filter: brightness(1.06); }
+.share-stories:active { transform: translateY(1px); }
