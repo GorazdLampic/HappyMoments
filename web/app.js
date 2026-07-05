@@ -5020,8 +5020,10 @@ function openShareSheet(m, textOverride) {
         <div class="share-net-grid">${renderBtns(messengers)}</div>
         <div class="share-group-label">${tt('share_group_post') || 'Post to your feed'}</div>
         <div class="share-net-grid">${renderBtns(socials)}</div>
-        <button class="share-stories" onclick="_createStoryVideo(this)">🎬 ${tt('share_video') || 'Create video for Stories (9:16)'}</button>
-        <div style="text-align:center;margin:-4px 0 8px;"><a href="#" onclick="_saveForStories();return false;" style="font-size:0.8rem;color:var(--text-muted);text-decoration:underline;">${tt('share_stories_img') || 'or save a still image'}</a></div>
+        <div class="share-media-row">
+            <button class="share-media" onclick="_shareCardImg()"><span class="share-media-ic">📷</span><span>${tt('share_as_card') || 'Card image'}</span></button>
+            <button class="share-media share-media-video" onclick="_createStoryVideo(this)"><span class="share-media-ic">🎬</span><span>${tt('share_as_video') || 'Video (9:16)'}</span></button>
+        </div>
         <div class="share-util-row">
             <button class="share-util" onclick="_shareCopy()">🔗 ${tt('share_copy') || 'Copy link'}</button>
             <button class="share-util" onclick="_shareDownload()">⬇️ ${tt('share_save') || 'Save image'}</button>
@@ -5108,8 +5110,16 @@ async function _createStoryVideo(btn) {
         _saveForStories();
     }
 }
+// Share just the CARD image (no video). Native share-sheet with the card image +
+// text on mobile; on desktop shareMilestone downloads it + copies the text.
+function _shareCardImg() {
+    if (!_shareCtx) return;
+    const modal = document.getElementById('shareSheetModal');
+    if (modal) modal.remove();
+    shareMilestone(_shareCtx.m, _shareCtx.text);
+}
 window.openShareSheet = openShareSheet;
-window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative; window._saveForStories = _saveForStories; window._createStoryVideo = _createStoryVideo;
+window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative; window._saveForStories = _saveForStories; window._createStoryVideo = _createStoryVideo; window._shareCardImg = _shareCardImg;
 
 // Share a Together/combined milestone: image card (labelled with the group) + text.
 function shareCombinedMilestone(idx) {

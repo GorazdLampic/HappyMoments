@@ -224,6 +224,8 @@ const I18N = (() => {
             share_stories: 'Save for Instagram / TikTok (9:16)',
             share_story_saved: 'Saved a 9:16 image — post it to your Story or Reel!',
             share_video: 'Create video for Stories (9:16)',
+            share_as_card: 'Card image',
+            share_as_video: 'Video (9:16)',
             share_stories_img: 'or save a still image',
             share_video_making: 'Creating video…',
             share_video_saved: 'Video saved (9:16) — post it to your Story or Reel!',

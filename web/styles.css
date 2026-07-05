@@ -4493,3 +4493,19 @@ body::after {
 }
 .share-stories:hover { filter: brightness(1.06); }
 .share-stories:active { transform: translateY(1px); }
+
+/* Share sheet: Card vs Video media buttons */
+.share-media-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 4px 0 10px; }
+.share-media {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text);
+    border-radius: 12px; padding: 13px 8px; cursor: pointer; font-size: 0.92rem; font-weight: 600;
+    font-family: var(--font-sans);
+}
+.share-media:hover { background: var(--bg-hover); }
+.share-media-ic { font-size: 1.2rem; }
+.share-media-video {
+    color: #fff; border: none;
+    background: linear-gradient(95deg, #F58529, #DD2A7B 55%, #8134AF 90%);
+}
+.share-media-video:hover { filter: brightness(1.06); background: linear-gradient(95deg, #F58529, #DD2A7B 55%, #8134AF 90%); }
