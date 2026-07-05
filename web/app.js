@@ -3911,7 +3911,7 @@ function renderCombinedMilestonesList(milestones, type, eventNames = '') {
                 <div class="cmi-main">
                     <span class="cmi-value">${displayVal}</span>
                     <span class="cmi-unit">${localizedUnit(m.value, m.unitName)}</span>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPickerCombined(${gIdx})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(20)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPickerCombined(${gIdx})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share cmi-share">${tt('wiz_share')} ${_shareArrowSvg(20)}</span><span class="row-more" onclick="event.stopPropagation(); openShareSheetTok(${gIdx})" title="More options" style="cursor:pointer;margin-left:8px;opacity:0.5;font-size:1.3em;line-height:1;">⋯</span>
                 </div>
                 <div class="cmi-desc">${m.comboDescription || m.description || ''}</div>
                 ${eventsHtml}
@@ -4763,7 +4763,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mTok})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mTok})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span><span class="row-more" onclick="event.stopPropagation(); openShareSheetTok(${mTok})" title="More options" style="cursor:pointer;margin-left:9px;opacity:0.5;font-size:1.3em;line-height:1;">⋯</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -4814,7 +4814,7 @@ function renderHomeScreen() {
                         <span class="tc-value ${isSpecial ? 'starred' : ''}" style="white-space:nowrap;">${isSpecial ? '\u2605 ' : ''}${displayText}</span>
                         <span class="tc-person">${escapeHtml(displayPersonName(m.eventName))}</span>
                     </div>
-                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mTok})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span>
+                    <span class="row-gift" title="${tt('gp_send_title')}" onclick="event.stopPropagation(); openGiftPicker(${mTok})" style="cursor:pointer;opacity:0.9;margin-right:0;font-size:1.15em;">&#127873;</span><span class="row-share tc-share" title="Share">${_shareArrowSvg(22)}</span><span class="row-more" onclick="event.stopPropagation(); openShareSheetTok(${mTok})" title="More options" style="cursor:pointer;margin-left:9px;opacity:0.5;font-size:1.3em;line-height:1;">⋯</span>
                 </div>
                 <div class="tc-date">${dateStr}</div>
             </div>`;
@@ -5140,7 +5140,9 @@ function _shareCardImg() {
     if (modal) modal.remove();
     shareMilestone(_shareCtx.m, _shareCtx.text);
 }
-window.openShareSheet = openShareSheet;
+// Open the social/video sheet for a registered token (the "⋯ more" affordance).
+function openShareSheetTok(tok) { const m = _getShare(tok); if (m) openShareSheet(m); }
+window.openShareSheet = openShareSheet; window.openShareSheetTok = openShareSheetTok;
 window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative; window._saveForStories = _saveForStories; window._createStoryVideo = _createStoryVideo; window._shareCardImg = _shareCardImg;
 
 // Share a Together/combined milestone: image card (labelled with the group) + text.
@@ -5152,7 +5154,7 @@ function shareCombinedMilestone(idx) {
     const groupName = (allSets.find(s => s.id === currentSetId) || {}).name || 'Together';
     const cardM = Object.assign({}, m, { eventName: names || groupName });
     const text = (typeof generateCombinedShareMessage === 'function') ? generateCombinedShareMessage(m) : undefined;
-    openShareSheet(cardM, text);
+    shareMilestone(cardM, text);
 }
 window.shareCombinedMilestone = shareCombinedMilestone;
 
@@ -5222,7 +5224,7 @@ window.openGiftPicker = openGiftPicker;
 function homeShareMilestone(idx) {
     const m = _getShare(idx) || _homeMilestones[idx] || allMilestonesFlat[idx];
     if (!m) return;
-    openShareSheet(m);
+    shareMilestone(m);
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
 }
 
@@ -6011,7 +6013,7 @@ function selectMilestoneForShare(idx) {
     const m = allMilestonesFlat[idx];
     if (!m) return;
     selectedMilestone = idx;
-    openShareSheet(m);
+    shareMilestone(m);
 }
 
 function updateSharePreview() {
@@ -6250,7 +6252,7 @@ function handleChallengeGroup() {
 function quickShare(idx) {
     const m = _getShare(idx) || allMilestonesFlat[idx];
     if (!m) return;
-    openShareSheet(m);
+    shareMilestone(m);
     _track('quick_share', { value: m.value, unit: m.unit });
 }
 
