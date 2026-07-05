@@ -57,6 +57,7 @@ const jsFiles = [
     'giftStore.js',
     'dataProtection.js',
     'imageCard.js',
+    'storyVideo.js',
     'checkout.js',
     'analytics.js',
     'auth.js',

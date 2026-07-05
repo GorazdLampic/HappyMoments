@@ -5001,7 +5001,8 @@ function openShareSheet(m, textOverride) {
         <div class="share-net-grid">${renderBtns(messengers)}</div>
         <div class="share-group-label">${tt('share_group_post') || 'Post to your feed'}</div>
         <div class="share-net-grid">${renderBtns(socials)}</div>
-        <button class="share-stories" onclick="_saveForStories()">📲 ${tt('share_stories') || 'Save for Instagram / TikTok (9:16)'}</button>
+        <button class="share-stories" onclick="_createStoryVideo(this)">🎬 ${tt('share_video') || 'Create video for Stories (9:16)'}</button>
+        <div style="text-align:center;margin:-4px 0 8px;"><a href="#" onclick="_saveForStories();return false;" style="font-size:0.8rem;color:var(--text-muted);text-decoration:underline;">${tt('share_stories_img') || 'or save a still image'}</a></div>
         <div class="share-util-row">
             <button class="share-util" onclick="_shareCopy()">🔗 ${tt('share_copy') || 'Copy link'}</button>
             <button class="share-util" onclick="_shareDownload()">⬇️ ${tt('share_save') || 'Save image'}</button>
@@ -5062,8 +5063,34 @@ async function _saveForStories() {
     showToast(tt('share_story_saved') || 'Saved a 9:16 image — post it to your Story or Reel!', 'success', 4500);
     if (typeof _track === 'function') _track('share_story_download', { value: m.value });
 }
+// Animated 9:16 video for Stories/Reels/TikTok — the real broadcast lever
+// (motion gets posted publicly; a static image usually doesn't).
+async function _createStoryVideo(btn) {
+    if (!_shareCtx || typeof generateStoryVideo !== 'function') { _saveForStories(); return; }
+    const orig = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '🎬 ' + (tt('share_video_making') || 'Creating video…') + ' <span id="svPct">0%</span>'; }
+    try {
+        const out = await generateStoryVideo(_shareCtx.m, { onProgress: p => { const el = document.getElementById('svPct'); if (el) el.textContent = Math.round(p * 100) + '%'; } });
+        const file = new File([out.blob], `nicenumbers-story.${out.ext}`, { type: out.blob.type });
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], text: _shareCtx.text });
+            if (typeof _track === 'function') _track('share_story_video', { fmt: out.ext });
+            return;
+        }
+        const url = URL.createObjectURL(out.blob);
+        const a = document.createElement('a'); a.href = url; a.download = file.name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 8000);
+        showToast((tt('share_video_saved') || 'Video saved (9:16) — post it to your Story or Reel!') + (out.ext === 'webm' ? ' · WebM' : ''), 'success', 5000);
+        if (typeof _track === 'function') _track('share_story_video_dl', { fmt: out.ext });
+    } catch (e) {
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+        showToast(tt('share_video_unsupported') || "Video isn't supported in this browser — saved a still image instead.", 'info', 4500);
+        _saveForStories();
+    }
+}
 window.openShareSheet = openShareSheet;
-window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative; window._saveForStories = _saveForStories;
+window._shareVia = _shareVia; window._shareCopy = _shareCopy; window._shareDownload = _shareDownload; window._shareNative = _shareNative; window._saveForStories = _saveForStories; window._createStoryVideo = _createStoryVideo;
 
 // Share a Together/combined milestone: image card (labelled with the group) + text.
 function shareCombinedMilestone(idx) {
