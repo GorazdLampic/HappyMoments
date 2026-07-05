@@ -82,7 +82,8 @@ function generateStoryVideo(milestone, opts) {
             if (name) {
                 ctx.globalAlpha = clamp((el - 200) / 500);
                 ctx.fillStyle = theme.highlight;
-                ctx.font = 'italic 89px "EB Garamond", Georgia, serif';
+                let nf = 132; ctx.font = `italic ${nf}px "EB Garamond", Georgia, serif`;
+                while (ctx.measureText(name).width > W - 140 && nf > 60) { nf -= 6; ctx.font = `italic ${nf}px "EB Garamond", Georgia, serif`; }
                 ctx.fillText(name, W / 2, H * 0.31);
                 ctx.globalAlpha = 1;
             }
@@ -104,8 +105,8 @@ function generateStoryVideo(milestone, opts) {
             if (unit) {
                 ctx.globalAlpha = clamp((el - 2450) / 500);
                 ctx.fillStyle = theme.text;
-                ctx.font = 'italic 113px "EB Garamond", Georgia, serif';
-                ctx.fillText(unit, W / 2, cY + 150);
+                ctx.font = 'italic 156px "EB Garamond", Georgia, serif';
+                ctx.fillText(unit, W / 2, cY + 175);
                 ctx.globalAlpha = 1;
             }
 
@@ -113,13 +114,13 @@ function generateStoryVideo(milestone, opts) {
             if (dateStr) {
                 ctx.globalAlpha = clamp((el - 3000) / 600);
                 ctx.fillStyle = theme.muted;
-                ctx.font = '59px "EB Garamond", Georgia, serif';
+                ctx.font = '84px "EB Garamond", Georgia, serif';
                 ctx.fillText(dateStr, W / 2, H * 0.73);
                 ctx.globalAlpha = 1;
             }
             ctx.globalAlpha = clamp((el - 3400) / 600) * 0.85;
             ctx.fillStyle = theme.muted;
-            ctx.font = '54px "EB Garamond", Georgia, serif';
+            ctx.font = '72px "EB Garamond", Georgia, serif';
             ctx.fillText('nicenumbers.app', W / 2, H - 130);
             ctx.globalAlpha = 1;
 

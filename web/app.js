@@ -1342,6 +1342,12 @@ function openGroupEditor(setId) {
 
     document.getElementById('groupEditorContent').innerHTML = html;
     overlay.classList.remove('hidden');
+    // Put the cursor on the NEW-person field, not the group name — the common
+    // action here is adding people, and after adding one you want to type the next.
+    setTimeout(() => {
+        const f = document.getElementById('editorPersonField');
+        if (f) { f.removeAttribute('readonly'); f.focus(); }
+    }, 80);
 }
 
 // Open the group editor primed for adding a special date (wedding, day you met...)
@@ -1365,14 +1371,28 @@ function closeGroupEditor() {
         }
     }
     document.getElementById('groupEditorOverlay')?.classList.add('hidden');
-    // Refresh whatever tab we're on
-    selectedPersonIds = appData.events.map(e => e.id);
-    renderPersonFilter();
-    renderMilestonesTab();
+    // Refresh whatever tab we're on — including the Solo/Together group selector,
+    // so a just-created group is active and populated immediately (previously it
+    // only appeared after toggling Together→Solo).
     renderEventSetsList();
     renderPeopleTabGroups();
     updateSetSwitcher();
+    refreshActiveHomeView();
 }
+
+// Re-render whichever home view (Solo or Together) is currently visible, INCLUDING
+// its group sub-tab selector, so group create/edit shows up without a manual tab
+// toggle. Solo content is drawn by renderMilestonesTab; switchHomeView refreshes
+// the sub-tabs (and Together's combined content).
+function refreshActiveHomeView() {
+    selectedPersonIds = appData.events.map(e => e.id);
+    renderPersonFilter();
+    renderMilestonesTab();
+    const groupView = document.getElementById('homeViewGroup');
+    const groupActive = !!groupView && groupView.style.display !== 'none';
+    switchHomeView(groupActive ? 'group' : 'me');
+}
+window.refreshActiveHomeView = refreshActiveHomeView;
 
 function editorAddMember() {
     const name = document.getElementById('editorPersonField')?.value?.trim();
@@ -4960,11 +4980,14 @@ window._copyToClipboardSync = _copyToClipboardSync;
 async function shareMilestone(m, textOverride) {
     if (!m) return;
     const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
-    // 1) Native share with the image CARD + text — FIRST, with NOTHING that
-    //    consumes user activation before it. (An execCommand('copy') / clipboard
-    //    write here eats the transient user gesture that navigator.share needs,
-    //    which silently dropped the card image to a text-only share — the exact
-    //    regression that stopped cards reaching WhatsApp.)
+    // Put the message+link on the clipboard for apps (Viber) that silently drop a
+    // shared image/text, so the user can always paste. Use ONLY the async Clipboard
+    // API here — it does NOT consume the transient user activation that
+    // navigator.share needs (the old execCommand path stole that gesture and
+    // dropped the card image). Fire-and-forget: never awaited, never blocks share.
+    try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(() => {}); } catch (e) {}
+    // 1) Native share with the image CARD + text — FIRST, with nothing that
+    //    consumes user activation before it.
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
         try {
             const canvas = generateMilestoneCard(m, {}); // getCardTheme() applies the chosen design

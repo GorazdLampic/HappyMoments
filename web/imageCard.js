@@ -246,20 +246,20 @@ function generateMilestoneCard(milestone, options) {
 
     // Person name — auto-shrink so long names still fit
     ctx.fillStyle = theme.highlight;
-    let nameSize = 68;
+    let nameSize = 78;
     ctx.font = `italic ${nameSize}px "EB Garamond", Georgia, serif`;
     while (ctx.measureText(name).width > W - P * 2 && nameSize > 34) {
         nameSize -= 4;
         ctx.font = `italic ${nameSize}px "EB Garamond", Georgia, serif`;
     }
-    ctx.fillText(name, W / 2, P + 135);
+    ctx.fillText(name, W / 2, P + 138);
 
     // Big number — the star of the card
     ctx.fillStyle = catAccent;
-    ctx.font = '300 140px "Helvetica Neue", "Arial", sans-serif';
+    ctx.font = '300 158px "Helvetica Neue", "Arial", sans-serif';
 
     // Auto-size if number is too wide
-    let fontSize = 140;
+    let fontSize = 158;
     while (ctx.measureText(val).width > W - P * 2 - 40 && fontSize > 60) {
         fontSize -= 10;
         ctx.font = `300 ${fontSize}px "Helvetica Neue", "Arial", sans-serif`;
@@ -268,26 +268,26 @@ function generateMilestoneCard(milestone, options) {
 
     // Unit
     ctx.fillStyle = theme.text;
-    ctx.font = 'italic 100px "EB Garamond", Georgia, serif';
-    ctx.fillText(unit, W / 2, H / 2 + 108);
+    ctx.font = 'italic 114px "EB Garamond", Georgia, serif';
+    ctx.fillText(unit, W / 2, H / 2 + 116);
 
     // Why it's special
     if (why) {
         ctx.fillStyle = theme.muted;
-        ctx.font = 'italic 54px "EB Garamond", Georgia, serif';
-        ctx.fillText(why, W / 2, H / 2 + 172);
+        ctx.font = 'italic 60px "EB Garamond", Georgia, serif';
+        ctx.fillText(why, W / 2, H / 2 + 184);
     }
 
     // Date
     ctx.fillStyle = theme.text;
-    ctx.font = '57px "Helvetica Neue", "Arial", sans-serif';
-    ctx.fillText(dateStr, W / 2, H - P - 125);
+    ctx.font = '64px "Helvetica Neue", "Arial", sans-serif';
+    ctx.fillText(dateStr, W / 2, H - P - 122);
 
     // Countdown
     if (countdown) {
         ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 62px "EB Garamond", Georgia, serif';
-        ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H - P - 65);
+        ctx.font = 'italic 70px "EB Garamond", Georgia, serif';
+        ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H - P - 60);
     }
 
     // Bottom line
