@@ -40,3 +40,4 @@ web/icons/icon-*.png
 # Legacy React Native app (top-level only)
 /app/
 _align2.mjs
+_*.mjs
