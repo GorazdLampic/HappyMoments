@@ -249,6 +249,17 @@ function showToast(message, type = 'info', duration = 3000) {
 // ============================================================
 
 const onboardingSection = document.getElementById('onboarding');
+
+// Enter advances the reveal screens (2 & 3), which have a single forward action.
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    if (!onboardingSection || onboardingSection.classList.contains('hidden')) return;
+    const active = document.querySelector('.wizard-step.wizard-step-active');
+    if (!active || (active.id !== 'wizardStep2' && active.id !== 'wizardStep3')) return;
+    const btn = active.querySelector('.wizard-actions .wizard-btn:not(.wizard-btn-secondary):not(.wizard-back)');
+    if (btn && btn.offsetParent !== null) { e.preventDefault(); btn.click(); }
+});
+
 const tabNav = document.getElementById('tabNav');
 const eventsTab = document.getElementById('eventsTab');
 const milestonesTab = document.getElementById('milestonesTab');
@@ -2989,11 +3000,20 @@ function wizardShowGroupReveal() {
         shareBtn8.onclick = function() { wizardShowTeamMilestones(); };
     }
 
-    // Hide "Who else?" and dashboard during Phase 1 — too early; they appear in Phase 2
+    // Hide "Who else?" during Phase 1, but ALWAYS keep a dashboard exit — without
+    // it, adding a new person to a 2nd+ group strands the user on this reveal with
+    // no way out, and the wizard ends up drawn over the dashboard ("written above
+    // the first group"). wizardFinish (its onclick) dismisses the wizard cleanly.
     const createAnotherBtn = document.getElementById('wizardCreateAnotherBtn8');
     if (createAnotherBtn) createAnotherBtn.style.display = 'none';
     const dashboardBtn8P1 = document.getElementById('wizardDashboardBtn8');
-    if (dashboardBtn8P1) dashboardBtn8P1.style.display = 'none';
+    if (dashboardBtn8P1) {
+        dashboardBtn8P1.style.display = '';
+        dashboardBtn8P1.classList.add('wizard-btn-secondary');
+        dashboardBtn8P1.classList.remove('wizard-btn');
+        dashboardBtn8P1.textContent = tt('wiz_go_dashboard') || 'Go to my dashboard';
+        dashboardBtn8P1.onclick = function() { wizardFinish(); };
+    }
 
     document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('wizard-step-active'));
     const step8El = document.getElementById('wizardStep8');
