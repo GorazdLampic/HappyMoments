@@ -28,17 +28,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate PNG icons from SVG
-        run: |
-          node -e "
-          const sharp = require('sharp');
-          const fs = require('fs');
-          const svg = fs.readFileSync('web/icons/icon.svg');
-          const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
-          Promise.all(sizes.map(size =>
-            sharp(svg).resize(size, size).png().toFile('web/icons/icon-' + size + '.png')
-          )).then(() => console.log('Icons generated'));
-          "
+      # NOTE: App icons are the committed 3-7-8 "Nice Numbers" PNGs in
+      # web/icons/icon-*.png (source of truth). We intentionally do NOT
+      # regenerate them from icon.svg here — that step used to overwrite the
+      # in-app/profile logo with the old smiling-3 while the native launcher
+      # (mipmaps) stayed 3-7-8, causing the mismatch.
 
       - name: Build production assets
         run: node build.js

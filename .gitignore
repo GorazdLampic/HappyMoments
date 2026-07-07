@@ -34,8 +34,9 @@ google-services.json
 .firebase/
 .wrangler/
 
-# Generated icons (built from SVG)
-web/icons/icon-*.png
+# App icons are the committed 3-7-8 "Nice Numbers" PNGs (source of truth).
+# Do NOT ignore them — they must ship as-is, not be regenerated from the old
+# smiling-3 icon.svg (which was overwriting the in-app/profile logo on builds).
 
 # Legacy React Native app (top-level only)
 /app/
