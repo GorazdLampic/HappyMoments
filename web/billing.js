@@ -24,6 +24,7 @@
 
 var PREMIUM_PRODUCT_ID = 'premium_yearly';   // must match the Play Console product id
 var PREMIUM_FALLBACK_DAYS = 366;             // used only if the receipt carries no expiry
+var _billingInited = false;                  // guard: deviceready + DOMContentLoaded both fire
 
 function billingIsNativeAndroid() {
     try {
@@ -56,6 +57,8 @@ function _billingExpiryFromTransaction(t) {
 
 function initBilling() {
     if (!billingIsNativeAndroid()) return;   // no-op on web
+    if (_billingInited) return;              // run once even if both events fire
+    _billingInited = true;
     try {
         var store = CdvPurchase.store;
         var Product = CdvPurchase.ProductType;
@@ -73,12 +76,12 @@ function initBilling() {
             // For now we trust Play's native purchase and finish directly.
             .approved(function (t) { t.finish(); })
             .finished(function (t) {
-                if (store.owned(PREMIUM_PRODUCT_ID)) {
+                if (store.owned({ id: PREMIUM_PRODUCT_ID, platform: Platform.GOOGLE_PLAY })) {
                     _billingSetPremiumUntil(_billingExpiryFromTransaction(t));
                 }
             })
             .receiptUpdated(function () {
-                if (store.owned(PREMIUM_PRODUCT_ID)) {
+                if (store.owned({ id: PREMIUM_PRODUCT_ID, platform: Platform.GOOGLE_PLAY })) {
                     _billingSetPremiumUntil(0);
                 }
             });
