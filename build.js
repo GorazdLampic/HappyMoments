@@ -58,6 +58,7 @@ const jsFiles = [
     'dataProtection.js',
     'imageCard.js',
     'storyVideo.js',
+    'billing.js',
     'checkout.js',
     'analytics.js',
     'auth.js',

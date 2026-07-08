@@ -7792,6 +7792,12 @@ async function handleUpgrade() {
 
     _track('checkout_started', { product: 'premium' });
 
+    // Native Android must use Google Play Billing (Play policy forbids Stripe
+    // for in-app digital goods). Web keeps Stripe below.
+    if (typeof billingIsNativeAndroid === 'function' && billingIsNativeAndroid()) {
+        if (typeof startAndroidPurchase === 'function') { startAndroidPurchase(); return; }
+    }
+
     try {
         // Account-less: go straight to Stripe. Stripe collects the email itself
         // (for the receipt + restore) — no sign-in required.
