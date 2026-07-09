@@ -402,7 +402,7 @@
     "prem_feat_support": "Dukung developer independen",
     "prem_gate_used_views": "Kamu sudah memakai {count} tampilan Bersama gratis.",
     "prem_gate_upgrade_for": "Upgrade ke Premium untuk akses tanpa batas.",
-    "prem_gate_upgrade_btn": "Upgrade — €1.49/tahun",
+    "prem_gate_upgrade_btn": "Upgrade — {price}/tahun",
     "age_intro_lived": "Sampai sekarang kamu telah hidup selama",
     "age_more_coming": "Dan angka-angka terbaik masih menanti di depan — bukan cuma milikmu sendiri, tapi juga momen yang kamu bagi bersama orang-orang tercinta. ✨",
     "dash_recent_ping": "sapa dia 🎉",

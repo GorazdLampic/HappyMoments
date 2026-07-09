@@ -400,5 +400,5 @@
   "prem_feat_support": "Apoie um desenvolvedor independente",
   "prem_gate_used_views": "Você usou suas {count} visualizações gratuitas da aba Juntos.",
   "prem_gate_upgrade_for": "Assine o Premium para ter acesso ilimitado.",
-  "prem_gate_upgrade_btn": "Assinar — €1.49/ano"
+  "prem_gate_upgrade_btn": "Assinar — {price}/ano"
 }

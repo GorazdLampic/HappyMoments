@@ -402,7 +402,7 @@
     "prem_feat_support": "支持独立开发者",
     "prem_gate_used_views": "你已用完{count}次“一起”页面的免费查看。",
     "prem_gate_upgrade_for": "升级 Premium，使用不再受限。",
-    "prem_gate_upgrade_btn": "升级 €1.49/年",
+    "prem_gate_upgrade_btn": "升级 {price}/年",
     "age_intro_lived": "到目前为止，你已经活了",
     "age_more_coming": "而最棒的数字还在前方——不只是你自己的，还有那些与你所爱之人共享的瞬间。✨",
     "dash_recent_ping": "打个招呼 🎉",

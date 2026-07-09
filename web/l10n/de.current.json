@@ -400,5 +400,5 @@
   "prem_feat_support": "Unterstütze einen unabhängigen Entwickler",
   "prem_gate_used_views": "Du hast deine {count} kostenlosen Team-Ansichten aufgebraucht.",
   "prem_gate_upgrade_for": "Hol dir Premium für unbegrenzten Zugriff.",
-  "prem_gate_upgrade_btn": "Upgrade – €1.49/Jahr"
+  "prem_gate_upgrade_btn": "Upgrade – {price}/Jahr"
 }

@@ -400,5 +400,5 @@
   "prem_feat_support": "Поддержка независимого разработчика",
   "prem_gate_used_views": "Бесплатные просмотры «Вместе» закончились ({count}).",
   "prem_gate_upgrade_for": "Перейди на Premium — доступ без ограничений.",
-  "prem_gate_upgrade_btn": "Premium — €1.49/год"
+  "prem_gate_upgrade_btn": "Premium — {price}/год"
 }

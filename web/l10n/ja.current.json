@@ -400,5 +400,5 @@
   "prem_feat_support": "個人開発者を応援できます",
   "prem_gate_used_views": "チームタブの無料表示{count}回を使い切りました。",
   "prem_gate_upgrade_for": "Premiumにアップグレードすると無制限で使えます。",
-  "prem_gate_upgrade_btn": "アップグレード — €1.49／年"
+  "prem_gate_upgrade_btn": "アップグレード — {price}／年"
 }

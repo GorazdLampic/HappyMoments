@@ -400,5 +400,5 @@
   "prem_feat_support": "Steun een onafhankelijke ontwikkelaar",
   "prem_gate_used_views": "Je {count} gratis weergaven van tabblad Samen zijn op.",
   "prem_gate_upgrade_for": "Upgrade naar Premium voor onbeperkte toegang.",
-  "prem_gate_upgrade_btn": "Upgrade — €1.49/jaar"
+  "prem_gate_upgrade_btn": "Upgrade — {price}/jaar"
 }

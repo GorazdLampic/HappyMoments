@@ -400,5 +400,5 @@
   "prem_feat_support": "Podpri neodvisnega razvijalca",
   "prem_gate_used_views": "Porabljenih je vseh {count} brezplačnih ogledov.",
   "prem_gate_upgrade_for": "Nadgradi na Premium za neomejen dostop.",
-  "prem_gate_upgrade_btn": "Nadgradi — €1.49/leto"
+  "prem_gate_upgrade_btn": "Nadgradi — {price}/leto"
 }

@@ -402,7 +402,7 @@
     "prem_feat_support": "একজন স্বাধীন ডেভেলপারের পাশে দাঁড়াও",
     "prem_gate_used_views": "তোমার {count}টা ফ্রি একসাথে-ভিউ শেষ।",
     "prem_gate_upgrade_for": "সীমাহীন ব্যবহারের জন্য Premium-এ আপগ্রেড করো।",
-    "prem_gate_upgrade_btn": "আপগ্রেড — €1.49/বছর",
+    "prem_gate_upgrade_btn": "আপগ্রেড — {price}/বছর",
     "age_intro_lived": "এখন পর্যন্ত আপনি বেঁচে আছেন",
     "age_more_coming": "আর সেরা সংখ্যাগুলো এখনও সামনে — শুধু আপনার নিজের নয়, বরং সেগুলোও যা আপনি প্রিয় মানুষদের সঙ্গে ভাগ করে নেন। ✨",
     "dash_recent_ping": "খোঁজ নিন 🎉",

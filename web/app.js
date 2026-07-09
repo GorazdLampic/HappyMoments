@@ -96,6 +96,33 @@ function tt(key, vars) {
     return s;
 }
 
+// Single source of truth for the premium price shown anywhere in the UI.
+// Web/Stripe charges exactly €1.49 (create-checkout-session unit_amount=149, no
+// tax), so €1.49 is the correct fallback there. On native Android, Play must
+// show a VAT-inclusive price (e.g. €1.79 in SI, different per country), so
+// billing.js captures the live localized store price into window.__hmPlayPrice
+// and the UI mirrors the Play sheet exactly — no hardcoded mismatch.
+var PREMIUM_PRICE_FALLBACK = '€1.49';
+function premiumPriceStr() {
+    try { if (window.__hmPlayPrice) return window.__hmPlayPrice; } catch (e) {}
+    return PREMIUM_PRICE_FALLBACK;
+}
+window.premiumPriceStr = premiumPriceStr;
+
+// Refresh already-rendered price labels once the live Play price arrives
+// (billing.js calls this). Transient surfaces (upgrade modal, gate button) are
+// rebuilt on open, so we only update the persistent account button + banner.
+function refreshPremiumPriceUI() {
+    try {
+        var p = premiumPriceStr();
+        var nodes = document.querySelectorAll('.js-premium-price');
+        for (var i = 0; i < nodes.length; i++) nodes[i].textContent = p;
+        var banner = document.getElementById('premiumBanner');
+        if (banner) { banner.remove(); if (typeof showPremiumBanner === 'function') showPremiumBanner(); }
+    } catch (e) {}
+}
+window.refreshPremiumPriceUI = refreshPremiumPriceUI;
+
 // Localized display form of milestoneCalculator's English unitName ('days' →
 // 'dni'/'Tage'/...). Display sites only — never use for unitName comparisons.
 // Unknown units (cosmic names, 'x', '%') pass through unchanged.
@@ -3735,7 +3762,7 @@ function renderCombinedTab() {
             <div class="premium-gate-overlay">
                 <p>${tt('prem_gate_used_views', { count: FREE_TEAM_VIEWS })}</p>
                 <p>${tt('prem_gate_upgrade_for')}</p>
-                <button class="btn-primary" onclick="showUpgradePrompt('team')" style="margin-top: 12px;">${tt('prem_gate_upgrade_btn')}</button>
+                <button class="btn-primary" onclick="showUpgradePrompt('team')" style="margin-top: 12px;">${tt('prem_gate_upgrade_btn', { price: premiumPriceStr() })}</button>
             </div>`;
         return;
     }
@@ -7692,7 +7719,7 @@ function showPremiumBanner() {
     banner.innerHTML = `
         <span class="premium-banner-star">&#9733;</span>
         <span class="premium-banner-text">${_ut('go_premium')}</span>
-        <span class="premium-banner-price">&euro;1.49/year</span>
+        <span class="premium-banner-price js-premium-price-wrap">${premiumPriceStr()}/year</span>
         <span class="premium-banner-text">&mdash; ${_ut('clean_experience')}</span>
     `;
     banner.onclick = () => { handleUpgrade(); };
@@ -7770,7 +7797,7 @@ function showUpgradePrompt(reason) {
             <h3>${tt('prem_modal_title')}</h3>
             <p class="auth-subtitle">${subtitle}</p>
             <div style="margin: 16px 0; padding: 16px; background: var(--bg-elevated); border-radius: var(--radius-sm);">
-                <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 12px;">&euro;1.49<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> ${tt('prem_per_year')}</span></div>
+                <div style="font-size: var(--font-size-2xl); color: var(--warning); margin-bottom: 12px;">${premiumPriceStr()}<span style="font-size: var(--font-size-sm); color: var(--text-secondary);"> ${tt('prem_per_year')}</span></div>
                 <ul style="text-align: left; font-size: var(--font-size-sm); color: var(--text-secondary); list-style: none; padding: 0;">
                     <li>&#10003; ${tt('prem_feat_unlimited')}</li>
                     <li>&#10003; ${tt('prem_feat_views')}</li>

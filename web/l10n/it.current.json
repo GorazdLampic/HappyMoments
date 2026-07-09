@@ -400,5 +400,5 @@
   "prem_feat_support": "Sostieni uno sviluppatore indipendente",
   "prem_gate_used_views": "Hai usato le {count} visualizzazioni gratuite di Insieme.",
   "prem_gate_upgrade_for": "Passa a Premium per un accesso illimitato.",
-  "prem_gate_upgrade_btn": "Passa a Premium — €1.49/anno"
+  "prem_gate_upgrade_btn": "Passa a Premium — {price}/anno"
 }

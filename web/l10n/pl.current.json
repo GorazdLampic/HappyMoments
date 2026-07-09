@@ -400,5 +400,5 @@
   "prem_feat_support": "Wspierasz niezależnego twórcę",
   "prem_gate_used_views": "Darmowe wyświetlenia karty Razem ({count}) już się skończyły.",
   "prem_gate_upgrade_for": "Przejdź na Premium i korzystaj bez ograniczeń.",
-  "prem_gate_upgrade_btn": "Premium — €1.49/rok"
+  "prem_gate_upgrade_btn": "Premium — {price}/rok"
 }

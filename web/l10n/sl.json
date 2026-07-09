@@ -402,7 +402,7 @@
     "prem_feat_support": "Podpri neodvisnega razvijalca",
     "prem_gate_used_views": "Porabljenih je vseh {count} brezplačnih ogledov.",
     "prem_gate_upgrade_for": "Nadgradi na Premium za neomejen dostop.",
-    "prem_gate_upgrade_btn": "Nadgradi — €1.49/leto",
+    "prem_gate_upgrade_btn": "Nadgradi — {price}/leto",
     "age_intro_lived": "Doslej si preživel",
     "age_more_coming": "Najlepše številke pa so šele pred tabo — ne le tvoje, ampak tudi tiste, ki jih deliš z ljudmi, ki jih imaš rad. ✨",
     "dash_recent_ping": "javi se 🎉",

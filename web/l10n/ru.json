@@ -402,7 +402,7 @@
     "prem_feat_support": "Поддержка независимого разработчика",
     "prem_gate_used_views": "Бесплатные просмотры «Вместе» закончились ({count}).",
     "prem_gate_upgrade_for": "Перейди на Premium — доступ без ограничений.",
-    "prem_gate_upgrade_btn": "Premium — €1.49/год",
+    "prem_gate_upgrade_btn": "Premium — {price}/год",
     "age_intro_lived": "Ты уже прожил",
     "age_more_coming": "А самые красивые числа ещё впереди — и твои собственные, и те, что ты делишь с дорогими тебе людьми. ✨",
     "dash_recent_ping": "напиши 🎉",

@@ -402,7 +402,7 @@
     "prem_feat_support": "Apoias um programador independente",
     "prem_gate_used_views": "Já usaste as tuas {count} visualizações gratuitas da Equipa.",
     "prem_gate_upgrade_for": "Passa a Premium para teres acesso ilimitado.",
-    "prem_gate_upgrade_btn": "Premium — €1.49/ano",
+    "prem_gate_upgrade_btn": "Premium — {price}/ano",
     "age_intro_lived": "Até agora já viveste",
     "age_more_coming": "E os melhores números ainda estão para vir — não só os teus, mas também os que partilhas com quem gostas. ✨",
     "dash_recent_ping": "dá notícias! 🎉",

@@ -401,7 +401,7 @@
     "prem_feat_support": "Support an independent developer",
     "prem_gate_used_views": "You've used your {count} free Team views.",
     "prem_gate_upgrade_for": "Upgrade to Premium for unlimited access.",
-    "prem_gate_upgrade_btn": "Upgrade — €1.49/year"
+    "prem_gate_upgrade_btn": "Upgrade — {price}/year"
   },
   "plurals": {
     "day": {

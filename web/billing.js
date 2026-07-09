@@ -46,6 +46,28 @@ function _billingSetPremiumUntil(expirySeconds) {
     try { if (typeof _track === 'function') _track('payment_complete', { product: 'premium', via: 'play_billing' }); } catch (e) {}
 }
 
+// Read the live, localized, VAT-inclusive price Play will actually charge and
+// expose it so the UI mirrors the purchase sheet exactly (no €1.49 vs €1.79
+// mismatch). Play formats it per the store locale ("€1.79", "1,79 €", …).
+function _billingCapturePrice() {
+    try {
+        var store = CdvPurchase.store;
+        var product = store.get(PREMIUM_PRODUCT_ID, CdvPurchase.Platform.GOOGLE_PLAY);
+        if (!product) return;
+        var price = null;
+        var offer = typeof product.getOffer === 'function' ? product.getOffer() : null;
+        if (offer && offer.pricingPhases && offer.pricingPhases.length) {
+            // Last phase = the ongoing recurring price (after any intro/trial).
+            price = offer.pricingPhases[offer.pricingPhases.length - 1].price;
+        }
+        if (!price && product.pricing && product.pricing.price) price = product.pricing.price;
+        if (price && price !== window.__hmPlayPrice) {
+            window.__hmPlayPrice = price;
+            if (typeof refreshPremiumPriceUI === 'function') refreshPremiumPriceUI();
+        }
+    } catch (e) {}
+}
+
 function _billingExpiryFromTransaction(t) {
     // cordova-plugin-purchase surfaces expiry on the verified transaction.
     try {
@@ -71,6 +93,8 @@ function initBilling() {
         }]);
 
         store.when()
+            // Once Play returns product metadata, mirror its real price in the UI.
+            .productUpdated(function () { _billingCapturePrice(); })
             // TODO (v1.1 hardening): set store.validator to iaptic/our endpoint and
             // switch .approved to `t => t.verify()` + `.verified(r => r.finish())`.
             // For now we trust Play's native purchase and finish directly.
@@ -86,7 +110,10 @@ function initBilling() {
                 }
             });
 
-        store.initialize([Platform.GOOGLE_PLAY]);
+        var initDone = store.initialize([Platform.GOOGLE_PLAY]);
+        if (initDone && typeof initDone.then === 'function') {
+            initDone.then(function () { _billingCapturePrice(); }).catch(function () {});
+        }
     } catch (e) {
         try { console.warn('initBilling failed', e); } catch (_) {}
     }

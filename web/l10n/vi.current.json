@@ -400,5 +400,5 @@
   "prem_feat_support": "Ủng hộ một nhà phát triển độc lập",
   "prem_gate_used_views": "Bạn đã dùng hết {count} lượt xem miễn phí của thẻ Cùng nhau.",
   "prem_gate_upgrade_for": "Nâng cấp lên Premium để truy cập không giới hạn.",
-  "prem_gate_upgrade_btn": "Nâng cấp — €1.49/năm"
+  "prem_gate_upgrade_btn": "Nâng cấp — {price}/năm"
 }

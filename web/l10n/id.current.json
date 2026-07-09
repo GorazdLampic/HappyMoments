@@ -400,5 +400,5 @@
   "prem_feat_support": "Dukung developer independen",
   "prem_gate_used_views": "Kamu sudah memakai {count} tampilan Bersama gratis.",
   "prem_gate_upgrade_for": "Upgrade ke Premium untuk akses tanpa batas.",
-  "prem_gate_upgrade_btn": "Upgrade — €1.49/tahun"
+  "prem_gate_upgrade_btn": "Upgrade — {price}/tahun"
 }

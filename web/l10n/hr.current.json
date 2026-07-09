@@ -400,5 +400,5 @@
   "prem_feat_support": "Podrži neovisnog autora aplikacije",
   "prem_gate_used_views": "Iskorišteno je svih {count} besplatnih pregleda kartice Zajedno.",
   "prem_gate_upgrade_for": "Nadogradi na Premium za neograničen pristup.",
-  "prem_gate_upgrade_btn": "Nadogradi — €1.49/god."
+  "prem_gate_upgrade_btn": "Nadogradi — {price}/god."
 }

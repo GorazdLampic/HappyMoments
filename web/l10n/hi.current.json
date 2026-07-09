@@ -400,5 +400,5 @@
   "prem_feat_support": "एक इंडिपेंडेंट डेवलपर को सपोर्ट करें",
   "prem_gate_used_views": "आपके {count} फ़्री टीम व्यू पूरे हो गए।",
   "prem_gate_upgrade_for": "अनलिमिटेड एक्सेस के लिए Premium लें।",
-  "prem_gate_upgrade_btn": "अपग्रेड करें — €1.49/साल"
+  "prem_gate_upgrade_btn": "अपग्रेड करें — {price}/साल"
 }

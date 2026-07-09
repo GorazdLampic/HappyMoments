@@ -400,5 +400,5 @@
   "prem_feat_support": "독립 개발자를 응원하기",
   "prem_gate_used_views": "무료 '함께' 탭 보기 {count}회를 모두 사용했어요.",
   "prem_gate_upgrade_for": "Premium으로 업그레이드하면 제한 없이 사용할 수 있어요.",
-  "prem_gate_upgrade_btn": "업그레이드 — €1.49/년"
+  "prem_gate_upgrade_btn": "업그레이드 — {price}/년"
 }
