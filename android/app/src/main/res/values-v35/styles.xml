@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Android 15 (API 35) enforces edge-to-edge. This app draws its own header
+         and bottom tab bar and is not yet laid out for insets on every screen, so
+         we opt out of the enforcement here to keep the known-good layout. Removing
+         the StatusBar backgroundColor (capacitor.config.json) already stops the
+         deprecated Window.setStatusBarColor() call that Play flagged. This override
+         applies only on API 35+, so pre-15 behaviour is unchanged. -->
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:background">@null</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="android:background">@drawable/splash</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+
+</resources>

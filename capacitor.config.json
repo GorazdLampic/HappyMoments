@@ -19,8 +19,7 @@
       "splashImmersive": true
     },
     "StatusBar": {
-      "style": "DARK",
-      "backgroundColor": "#1a1a1a"
+      "style": "DARK"
     },
     "LocalNotifications": {
       "smallIcon": "ic_stat_icon",
