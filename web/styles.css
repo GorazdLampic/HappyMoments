@@ -205,7 +205,11 @@ body {
 
 .header {
     text-align: center;
-    padding: var(--space-lg) 0 var(--space-md);
+    /* Android 16 (targetSdk 36) enforces edge-to-edge with no opt-out, so the
+       WebView draws under the status bar. Pad the header down by the top inset
+       (needs viewport-fit=cover in the meta viewport). Falls back to 0 on
+       devices/browsers without a notch/inset. */
+    padding: calc(var(--space-lg) + env(safe-area-inset-top, 0px)) 0 var(--space-md);
     border-bottom: 1px solid var(--border);
     position: relative;
     margin-bottom: var(--space-md);
