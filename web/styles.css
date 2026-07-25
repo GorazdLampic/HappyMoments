@@ -215,6 +215,15 @@ body {
     margin-bottom: var(--space-md);
 }
 
+/* Native Android: the WebView draws under the status bar (edge-to-edge is
+   enforced at targetSdk 36 and can't be opted out), and some WebViews report
+   env(safe-area-inset-top)=0. Guarantee a minimum top clearance so the header
+   never sits under the clock/battery. On web (no .native-android) this rule
+   doesn't apply, so nothing changes there. */
+html.native-android .header {
+    padding-top: calc(var(--space-lg) + max(env(safe-area-inset-top, 0px), 34px));
+}
+
 .header h1 {
     font-family: var(--font-serif);
     font-size: var(--font-size-3xl);

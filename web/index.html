@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <script>/* Tag the native app so CSS can guarantee status-bar clearance even when the
+       Android WebView reports env(safe-area-inset-top)=0. Runs before render. */
+      try { if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) document.documentElement.classList.add('native-android'); } catch (e) {}</script>
     <title>Nice Numbers - Celebrate Life's Special Numbers</title>
 
     <!-- PWA Meta Tags -->
