@@ -2433,13 +2433,16 @@ function wizardShare() {
     const m = window._wizardMilestone;
     if (m) {
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
-        if (navigator.share) {
-            navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-        } else {
-            navigator.clipboard.writeText(message).then(() => {
-                showToast(_t('wizard_copied_share'), 'success');
-            }).catch(() => {});
-        }
+        (async () => {
+            if (await _nativeShareSheet({ title: 'Nice Numbers', text: message })) return;
+            if (navigator.share) {
+                navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(message).then(() => {
+                    showToast(_t('wizard_copied_share'), 'success');
+                }).catch(() => {});
+            }
+        })();
         _track('wizard_share', { value: m.value, unit: m.unit });
     }
 }
@@ -2514,16 +2517,19 @@ function wizardSharePerson3() {
     if (m) {
         const name = window._wizardPerson3Name || 'your friend';
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
-        if (navigator.share) {
-            navigator.share({ title: 'Nice Numbers for ' + name, text: message })
-                .then(() => wizardNext(9))
-                .catch(() => wizardNext(9));
-        } else {
-            navigator.clipboard.writeText(message).then(() => {
-                showToast(tt('toast_copied_send', { name: name }), 'success');
-                setTimeout(() => wizardNext(9), 1500);
-            }).catch(() => wizardNext(9));
-        }
+        (async () => {
+            if (await _nativeShareSheet({ title: 'Nice Numbers for ' + name, text: message })) { wizardNext(9); return; }
+            if (navigator.share) {
+                navigator.share({ title: 'Nice Numbers for ' + name, text: message })
+                    .then(() => wizardNext(9))
+                    .catch(() => wizardNext(9));
+            } else {
+                navigator.clipboard.writeText(message).then(() => {
+                    showToast(tt('toast_copied_send', { name: name }), 'success');
+                    setTimeout(() => wizardNext(9), 1500);
+                }).catch(() => wizardNext(9));
+            }
+        })();
         _track('onboard_share_person3', { value: m.value, unit: m.unit });
     } else {
         wizardNext(9);
@@ -5022,6 +5028,31 @@ function _copyToClipboardSync(text) {
 }
 window._copyToClipboardSync = _copyToClipboardSync;
 
+// Native OS share sheet via the @capacitor/share plugin. The Web Share API
+// (navigator.share) does NOT exist inside the Capacitor Android WebView, so on
+// native we must call the plugin to reach WhatsApp/Viber/Telegram/etc. Mirrors
+// the plugin-access pattern used in notifications.js.
+function _sharePlugin() {
+    try {
+        return (typeof window.Capacitor !== 'undefined'
+            && typeof window.Capacitor.isNativePlatform === 'function'
+            && window.Capacitor.isNativePlatform()
+            && window.Capacitor.Plugins && window.Capacitor.Plugins.Share) || null;
+    } catch (e) { return null; }
+}
+// Returns true if the native sheet handled it (opened, or the user dismissed it);
+// false if not native / unavailable / a real error, so the caller falls back to
+// the Web Share API + clipboard path unchanged.
+async function _nativeShareSheet(opts) {
+    const plugin = _sharePlugin();
+    if (!plugin) return false;
+    try { await plugin.share(opts); return true; }
+    catch (e) {
+        const msg = ((e && (e.message || e.toString())) || '').toLowerCase();
+        return msg.indexOf('cancel') !== -1; // user dismissed = done; real error = fall back
+    }
+}
+
 async function shareMilestone(m, textOverride) {
     if (!m) return;
     const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
@@ -5032,6 +5063,14 @@ async function shareMilestone(m, textOverride) {
     // consume the user activation navigator.share needs, so awaiting it is safe —
     // unlike the old execCommand path, which stole the gesture and dropped the card.
     try { if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text); } catch (e) {}
+    // 0) NATIVE (Android): navigator.share doesn't exist in the Capacitor WebView,
+    //    so open the real OS share sheet via the @capacitor/share plugin. Text+link
+    //    only (sharing the PNG file would need @capacitor/filesystem); the link
+    //    still carries the og:image preview in WhatsApp/Viber/Telegram/etc.
+    if (await _nativeShareSheet({ title: 'Nice Numbers', text, dialogTitle: (typeof tt === 'function' ? tt('share_title') : '') || 'Share' })) {
+        try { _track('share_native', { value: m.value, unit: m.unitName }); } catch (e) {}
+        return;
+    }
     // 1) Native share with the image CARD + text — FIRST, with nothing that
     //    consumes user activation before it.
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
