@@ -215,14 +215,17 @@ function generateMilestoneCard(milestone, options) {
     drawDecorations(ctx, W, H, theme);
 
     // Content
-    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
-    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
+    const _du = (typeof displayNumberAndUnit === 'function')
+        ? displayNumberAndUnit(milestone.value, milestone.unitName, { plain: true })
+        : { num: milestone.value.toLocaleString(), unit: (milestone.unitName || '') };
+    const val = _du.num;
+    const unit = _du.unit || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
-    const countdown = typeof formatTimeDistance === 'function'
-        ? formatTimeDistance(milestone.timeUntil) : '';
+    // Countdown intentionally omitted from the shareable card — a celebratory
+    // share shouldn't read "in 3 months 1 week". Dashboard rows keep it.
     const why = milestone.description || '';
 
     // Top: app name
@@ -291,14 +294,6 @@ function generateMilestoneCard(milestone, options) {
     fitFont(dateStr, 64, 34, s => `${s}px "Helvetica Neue", "Arial", sans-serif`);
     ctx.fillText(dateStr, W / 2, H - P - 122);
 
-    // Countdown
-    if (countdown) {
-        const cd = countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now');
-        ctx.fillStyle = theme.accent;
-        fitFont(cd, 70, 34, s => `italic ${s}px "EB Garamond", Georgia, serif`);
-        ctx.fillText(cd, W / 2, H - P - 60);
-    }
-
     // Bottom line
     ctx.strokeStyle = theme.muted + '40';
     ctx.beginPath();
@@ -356,13 +351,16 @@ function generateStoryCard(milestone, options) {
     drawCategoryMotif(ctx, W, H, catAccent, category, ((typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString()));
     drawDecorations(ctx, W, H, theme);
 
-    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
-    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
+    const _du = (typeof displayNumberAndUnit === 'function')
+        ? displayNumberAndUnit(milestone.value, milestone.unitName, { plain: true })
+        : { num: milestone.value.toLocaleString(), unit: (milestone.unitName || '') };
+    const val = _du.num;
+    const unit = _du.unit || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
-    const countdown = typeof formatTimeDistance === 'function' ? formatTimeDistance(milestone.timeUntil) : '';
+    // Countdown intentionally omitted from the shareable story card.
     const why = milestone.description || '';
 
     ctx.textAlign = 'center';
@@ -426,13 +424,6 @@ function generateStoryCard(milestone, options) {
     ctx.fillStyle = theme.text;
     ctx.font = '62px "Helvetica Neue", "Arial", sans-serif';
     ctx.fillText(dateStr, W / 2, H * 0.68);
-
-    // Countdown
-    if (countdown) {
-        ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 73px "EB Garamond", Georgia, serif';
-        ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H * 0.74);
-    }
 
     // Call to action
     ctx.fillStyle = theme.muted;
@@ -772,8 +763,13 @@ function generateGiftDesign(milestone, productType, options) {
 
     // Layout depends on aspect ratio
     const isWide = W > H; // mug is wide
-    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
-    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
+    // Printed keepsake: plain digits (no thousands separators — "123456", not
+    // "123,456") but keep the full unit word; the print area has room.
+    const _du = (typeof displayNumberAndUnit === 'function')
+        ? displayNumberAndUnit(milestone.value, milestone.unitName, { plain: true, fullUnit: true })
+        : { num: milestone.value.toLocaleString(), unit: (milestone.unitName || '') };
+    const val = _du.num;
+    const unit = _du.unit || '';
     const name = milestone.eventName || '';
     const message = options.message || '';
 

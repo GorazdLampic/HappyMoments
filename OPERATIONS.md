@@ -6,7 +6,21 @@ If anything here disagrees with another doc, this file wins. Update it in the sa
 - **Public name:** Nice Numbers · tagline **"Share & Celebrate"**
 - **Primary domain:** https://nicenumbers.app  (legacy https://happymoments.app → should 301 here)
 - **Repo:** https://github.com/GorazdLampic/HappyMoments  (folder/repo keep the old name; only the *display* name changed)
-- **Last verified:** 4 Jul 2026 · web **v96 / 2.9.6**
+- **Last verified:** 11 Jul 2026 · Android **build 105 / 2.12.3** · web cache **v103**
+
+### Play Store status (11 Jul 2026) — READ FIRST
+- **Developer verification: PASSED.** Org account "Quantum Wave Ltd" is fully registered for Android developer verification. Not a blocker anymore.
+- **Build 104 (2.12.2) is IN REVIEW** ("V pregledu") since **10 Jul 2026**. First-time review on a new account can take a few days → ~7 days. Nothing to do but wait.
+  - ⚠️ **Verify the review track is Production, not just Internal testing.** In Play Console → **Release → Production**, confirm the in-review release is there. If the only in-review item is under **Testing → Internal testing**, approval will NOT reach the public — promote a release to Production.
+- **Build 105 (2.12.3) is already built** (edge-to-edge deprecated-API fix, untested on device). Ship it as the next update **after** 104 is approved and live.
+- **Post-approval TODO:** listing display name → "Nice Numbers" (with space); category → Lifestyle; ship + device-test 105; verify Data safety form; real-card smoke test of the €1.79 subscription.
+
+### What changed since 4 Jul (11 Jul 2026) — Play Billing + rebrand builds
+- **Android premium now goes through GOOGLE PLAY BILLING, not Stripe.** Google requires digital in-app purchases to use Play Billing. Engine: `cordova-plugin-purchase` (Fovea) **13.12.0** → Play Billing Library **7.1.1**. Client wiring in `web/billing.js`. Product id **`premium_yearly`** (must match the Play Console subscription id). Play formats the price per locale — **currently €1.79/yr** in EUR. The app reads the live Play price at runtime (no hard-coded number) so the in-app price always matches the purchase sheet.
+- **Dual billing model now in effect:** **Android app premium → Play Billing (`premium_yearly`, €1.79)**; **web premium → Stripe card**; **gifts (all platforms) → Stripe + Printful**. (Confirm whether the web Stripe premium at €1.49 is being retired or kept as the web-only path — see open items.)
+- **`get.html` added** — a free "download the app" chooser (Android / iPhone / Web) reachable from marketing links. The `/get` rewrite rule was removed (it caused a redirect loop); `get.html` is served directly.
+- **Version jump:** 100→105 across 6–10 Jul: onboarding focus fixes, bottom-tab tappability, in-app 3-7-8 icon fix (101), billing scaffolding + first billing build (102), billing hardening for first purchase test (103), live Play price display (104), edge-to-edge API fix (105).
+- **Android is no longer behind web.** The earlier "versionCode 94 behind" gap is closed — the tag pipeline is current at **105 / 2.12.3**.
 
 ### What changed since 22 Jun (4 Jul 2026)
 - **Payments are LIVE.** Stripe account activated (identity verified 3 Jul); `pk_live`/`sk_live`/live webhook set. Checkout is **card-only** (`payment_method_types=card`) for both premium and gifts. Printful has a billing card on file.
@@ -40,6 +54,8 @@ If anything here disagrees with another doc, this file wins. Update it in the sa
 ```
 
 Frontend talks to the backend with **relative `/api/*` calls on the same origin** — no separate API host, no CORS for first-party traffic. (`_middleware.js` CORS exists for safety / other origins.)
+
+> **Native caveat (build 109):** inside the Capacitor Android WebView the app is served from `https://localhost`, so a *relative* `/api/*` call would hit the local bundle (returning `index.html`, not JSON — this was the "DOCTYPE is not valid JSON" gift error). The web client now routes API calls through `apiUrl()` (app.js), which prefixes `https://nicenumbers.app` when `Capacitor.isNativePlatform()`. The native origins `https://localhost` + `capacitor://localhost` are in the `_middleware.js` CORS allowlist. Android *premium* still uses the native Play Billing plugin (no fetch); only *gifts* and web-premium/restore hit the backend from the app.
 
 ---
 
@@ -85,7 +101,7 @@ Cloudflare runs `node build.js` (configured in the Pages dashboard) which minifi
 ### Android (tag-triggered)
 `git tag vNN && git push --tags` → GitHub Actions (`.github/workflows/build-android.yml`) builds a **signed release AAB** + debug APK → publishes them to the GitHub Release tagged `latest`. You then **manually** download the AAB and upload it to Play Console.
 
-> **Current gap:** Android `versionCode`/`versionName` (94 / 2.9.4) is ~9 commits BEHIND web. The last Android tag predates the Nice Numbers rebrand. Next Android build needs: fix `strings.xml` label → bump version → new tag.
+> **Status (11 Jul 2026):** Android is **current** at `versionCode 105 / 2.12.3` (billing-enabled, Nice Numbers rebrand shipped). Build 104 is in Play review; 105 is built and waiting to ship next. The old "94 behind web" gap is closed.
 
 ---
 
@@ -93,9 +109,10 @@ Cloudflare runs `node build.js` (configured in the Pages dashboard) which minifi
 
 | Service | Used by | Configured in | Repo touch-points |
 |---|---|---|---|
+| **Google Play Billing** | **Android** app premium subscription | Play Console → Monetize → Products → Subscriptions (`premium_yearly`) | `web/billing.js`, `cordova-plugin-purchase` 13.12.0 (Billing 7.1.1) |
 | **Cloudflare Pages** | Everything (host + functions) | CF dashboard → Pages project | `build.js`, `web/_headers`, `web/_redirects` |
 | **Cloudflare D1** | analytics, users, gift orders | CF dashboard → D1, bound as `DB` | `schema.sql`, all `functions/api/*` |
-| **Stripe** | premium + gift payment | Stripe dashboard + CF env vars | `web/checkout.js`, `functions/api/create-checkout-session.js`, `webhook.js`, `gift-order.js` |
+| **Stripe** | **web** premium + **gift** payment (all platforms) | Stripe dashboard + CF env vars | `web/checkout.js`, `functions/api/create-checkout-session.js`, `webhook.js`, `gift-order.js` |
 | **Printful** | gift fulfilment | Printful dashboard + CF env var | `functions/api/gift-order.js`, `gift-design.js`, `gift-file.js` |
 | **Firebase Auth** | sign-in / premium identity | Firebase console | `web/auth.js`, `functions/api/user.js` |
 
@@ -182,7 +199,7 @@ npm run android      # build + cap sync + open Android Studio
 ### Ship an Android build
 1. Fix any display strings (`strings.xml`). 2. Bump `versionCode` + `versionName` in `android/app/build.gradle` (+ bump `web/sw.js` CACHE_NAME to busy the PWA cache for web). 3. `git tag vNN && git push origin vNN`. 4. Wait for GitHub Actions → download `app-release.aab` from the `latest` GitHub Release. 5. Upload to Play Console → Internal testing.
 
-**Signing:** the AAB is signed with the upload keystore stored in the `UPLOAD_KEYSTORE_BASE64` GitHub secret (passwords default to `happymoments2026` if `KEYSTORE_PASSWORD`/`KEY_PASSWORD` secrets are unset). Every build MUST use this same keystore or Play rejects the upload ("wrong signing key"). Health check: a successful run should have **no `keystore-backup` artifact** — if one appears, the secret was lost and a throwaway key was generated (do NOT upload that AAB). Last good build: **v95 / 2.9.5**, 22 Jun 2026.
+**Signing:** the AAB is signed with the upload keystore stored in the `UPLOAD_KEYSTORE_BASE64` GitHub secret (passwords default to `happymoments2026` if `KEYSTORE_PASSWORD`/`KEY_PASSWORD` secrets are unset). Every build MUST use this same keystore or Play rejects the upload ("wrong signing key"). Health check: a successful run should have **no `keystore-backup` artifact** — if one appears, the secret was lost and a throwaway key was generated (do NOT upload that AAB). Latest build: **105 / 2.12.3** (11 Jul 2026); build **104 / 2.12.2** is the one currently in Play review.
 
 ### Rotate a secret
 1. Generate new value in the service dashboard (Stripe/Printful/etc.). 2. Update it in Cloudflare Pages → Environment variables (Production). 3. Trigger a redeploy (push or "Retry deployment"). 4. Verify via `/api/health` or a live test.
@@ -195,11 +212,12 @@ Source overlays in `web/l10n/*.json` → merged via `tools/i18n-merge.js` into `
 ## 11. Known open items (pointers, not the master list)
 
 The live beta backlog and decisions live in project memory (`project_happymoments_naming.md`, `project_happymoments_beta_plan.md`). Infra-relevant highlights:
-- **Stripe:** ✅ LIVE (account verified 3 Jul, live keys + webhook set, card-only). Remaining: the €1.49 Premium real-card smoke test; in Stripe dashboard turn OFF Link + EU methods (Bancontact/EPS/Satispay/MB WAY), keep only Cards, to match the intended simple checkout.
+- **Play Billing (Android premium):** ✅ LIVE-ready — `premium_yearly` subscription (€1.79/yr, Play-formatted per locale) via `cordova-plugin-purchase`. Remaining: real-card purchase smoke test once 104 is approved; consider a receipt validator (`store.validator`, TODO in `billing.js`) before scaling.
+- **Stripe:** ✅ LIVE (account verified 3 Jul, live keys + webhook set, card-only). Now scoped to **web premium + gifts** (Android premium moved to Play Billing). **Decide:** keep the €1.49 web Stripe premium as a web-only path, or retire it so pricing is unified at €1.79. Remaining regardless: real-card gift smoke test; in Stripe dashboard turn OFF Link + EU methods (Bancontact/EPS/Satispay/MB WAY), keep only Cards.
 - **Printful:** ✅ personal card on file + company/VAT on invoices. Switch to company card before volume.
 - **Security (audit 3–4 Jul):** ✅ premium bypass + XSS + headers fixed. Open: rotate all tokens; add rate-limiting to `gift-order`/`event`; magic-code for `premium-status?email=` before scaling; relabel dataProtection.
 - **Reminders backend:** ✅ built (opt-in, non-breaking). To activate: deploy `workers/reminder-cron/` + set `VAPID_PRIVATE_KEY` worker secret + wire client behind a consent screen (see `docs/REMINDERS_BACKEND.md`).
-- **Android:** web is **v96 / 2.9.6**; Android tag/build lags — bump + tag to cut a fresh AAB when shipping to Play.
+- **Android:** ✅ current at **105 / 2.12.3**; **104 in Play review**. Post-approval: rename listing → "Nice Numbers", category → Lifestyle, ship 105, verify Data safety.
 
 ---
 

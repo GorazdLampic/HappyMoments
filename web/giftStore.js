@@ -341,7 +341,7 @@ function openGiftOrder(productId, value, unit, eventName) {
     // all show an identical number (was toLocaleString → "45,000,000" while the
     // card showed "45 million").
     const val = (typeof value === 'number')
-        ? ((typeof formatMilestoneValue === 'function') ? formatMilestoneValue(value) : value.toLocaleString())
+        ? ((typeof formatMilestoneValuePlain === 'function') ? formatMilestoneValuePlain(value) : value.toLocaleString())
         : value;
     const _esc = typeof escapeHtml === 'function' ? escapeHtml : (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
@@ -536,8 +536,12 @@ async function submitGiftOrder(productId, value, unit) {
     }
 
     try {
-        // Submit to backend (Stripe checkout, Printful fulfilled separately)
-        const response = await fetch('/api/gift-order', {
+        // Submit to backend (Stripe checkout, Printful fulfilled separately).
+        // On native the app is served from https://localhost, so a relative
+        // "/api/*" call would hit the local bundle (returning index.html) — use
+        // the absolute backend origin via apiUrl().
+        const _giftEndpoint = (typeof apiUrl === 'function') ? apiUrl('/api/gift-order') : '/api/gift-order';
+        const response = await fetch(_giftEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -559,7 +563,17 @@ async function submitGiftOrder(productId, value, unit) {
             })
         });
 
-        const result = await response.json();
+        // Parse defensively: an error page (or, on a mis-routed native call, the
+        // SPA's index.html) is NOT JSON, and response.json() would throw the raw
+        // "Unexpected token '<' … DOCTYPE is not valid JSON" the user saw.
+        const raw = await response.text();
+        let result;
+        try {
+            result = raw ? JSON.parse(raw) : {};
+        } catch (e) {
+            console.error('Gift order: non-JSON response', response.status, raw.slice(0, 120));
+            throw new Error('The gift service is temporarily unreachable. Please try again in a moment.');
+        }
 
         if (!response.ok) {
             // Handle "coming soon" gracefully

@@ -170,6 +170,64 @@ function formatMilestoneValue(value, locale) {
     return value.toLocaleString(locale);
 }
 
+// Same word-form abbreviation as formatMilestoneValue, but the plain-digit form
+// carries NO thousands separators — cleaner on a printed gift and on a share
+// card ("123456" not "123,456"). Word-form giants ("850 million") are untouched.
+function formatMilestoneValuePlain(value, locale) {
+    if (value >= 1000000 && value % 100000 === 0) {
+        return formatMilestoneValue(value, locale); // word form, no separators anyway
+    }
+    return value.toLocaleString(locale, { useGrouping: false });
+}
+
+// Short localized unit ("min", "sec", "hr"…) for long numbers, reusing the
+// unit_* keys so it stays translated. Unknown units (cosmic names) pass through.
+function shortUnit(count, unitName) {
+    const K = { seconds: 'unit_sec', minutes: 'unit_min', hours: 'unit_hrs', days: 'unit_d', weeks: 'unit_w', months: 'unit_mo', years: 'unit_y' };
+    const key = K[unitName];
+    if (!key) return typeof localizedUnit === 'function' ? localizedUnit(count, unitName) : unitName;
+    const EN = { unit_sec: 'sec', unit_min: 'min', unit_hrs: 'hr', unit_d: 'd', unit_w: 'w', unit_mo: 'mo', unit_y: 'y' };
+    return (typeof I18N !== 'undefined' && I18N.t) ? I18N.t(key) : EN[key];
+}
+
+// A long value + the full unit word ("52,525,252 minutes") overflows the row
+// (pushing the ⋯ button onto a second line) and crowds the card. For long
+// numbers, drop the separators and use the short unit. Round giants keep their
+// readable word form ("850 million seconds"). opts.plain forces no separators;
+// opts.fullUnit keeps the full unit word (used on gift prints, which have room).
+function displayNumberAndUnit(value, unitName, opts) {
+    opts = opts || {};
+    const locale = opts.locale;
+    const wordForm = (value >= 1000000 && value % 100000 === 0);
+    const isLong = !wordForm && String(value).replace(/\D/g, '').length >= 7;
+    const num = (opts.plain || isLong)
+        ? (typeof formatMilestoneValuePlain === 'function' ? formatMilestoneValuePlain(value, locale) : String(value))
+        : formatMilestoneValue(value, locale);
+    const unit = (isLong && !opts.fullUnit)
+        ? shortUnit(value, unitName)
+        : (typeof localizedUnit === 'function' ? localizedUnit(value, unitName) : unitName);
+    return { num: num, unit: unit, text: num + ' ' + unit };
+}
+
+// On native (Capacitor) the app is served from https://localhost, so a relative
+// "/api/*" fetch hits the local bundle (which returns index.html) instead of the
+// Cloudflare backend — the cause of the "DOCTYPE is not valid JSON" gift error.
+// Force an absolute origin when running natively; stay same-origin on web.
+function apiUrl(path) {
+    try {
+        if (typeof window.Capacitor !== 'undefined'
+            && typeof window.Capacitor.isNativePlatform === 'function'
+            && window.Capacitor.isNativePlatform()) {
+            return 'https://nicenumbers.app' + path;
+        }
+    } catch (e) {}
+    return path;
+}
+window.apiUrl = apiUrl;
+window.formatMilestoneValuePlain = formatMilestoneValuePlain;
+window.shortUnit = shortUnit;
+window.displayNumberAndUnit = displayNumberAndUnit;
+
 // Auto-add a member once name + a complete valid date are entered —
 // no need to tap "+ Add". Validation is silent (no error toasts mid-typing);
 // a wrong-but-valid date can still be edited or removed in the member list.
@@ -2169,7 +2227,7 @@ function wizardShowMyMore() {
 
     function renderMsRow(m) {
         const dateStr = formatMilestoneDate(m.date);
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         return wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, tt('me_label'), isBig ? 'wizard-milestone-star' : '');
     }
@@ -2222,7 +2280,7 @@ function wizardShowTheirMore() {
     let html = `<h2 class="wizard-question">${tt('wiz_their_milestones', { name: escapeHtml(friendEvent.name) })}</h2>`;
     html += '<div class="wizard-milestone-list">';
     upcoming.forEach(m => {
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
         const dateStr = formatMilestoneDate(m.date);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         html += wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, friendEvent.name, isBig ? 'wizard-milestone-star' : '');
@@ -2644,14 +2702,14 @@ function wizardDiscoverFriendV2() {
         let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
         html += `<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_milestones')}</div>`;
         upcoming.slice(0, TOP5).forEach(m => {
-            const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+            const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
             const ds = formatMilestoneDate(m.date);
             html += wizardMilestoneRow(displayText, ds, name);
         });
         if (upcoming.length > TOP5) {
             html += `<div id="friendMoreExtra" style="display:none;">`;
             upcoming.slice(TOP5).forEach(m => {
-                const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+                const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
                 const ds = formatMilestoneDate(m.date);
                 html += wizardMilestoneRow(displayText, ds, name);
             });
@@ -4815,7 +4873,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName);
+                displayText = displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text;
             }
             const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
@@ -4866,7 +4924,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName);
+                displayText = displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text;
             }
             const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
@@ -5333,7 +5391,11 @@ function homeShareMilestone(idx) {
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
 }
 
-function showSharePreview(message, recipientName) {
+async function showSharePreview(message, recipientName) {
+    // Native (the Capacitor Android WebView has no navigator.share) → open the
+    // real OS share sheet via @capacitor/share. Without this, group/person
+    // wizard shares only copied to clipboard and no app picker appeared.
+    if (await _nativeShareSheet({ title: 'Nice Numbers', text: message })) return;
     // Direct native share — show app picker immediately
     navigator.clipboard.writeText(message).catch(() => {});
     if (navigator.share) {
@@ -6302,25 +6364,27 @@ function generateChallengeMessage(m) {
     return templates[Math.floor(Math.random() * templates.length)];
 }
 
-function handleChallengeFriends() {
+async function handleChallengeFriends() {
     const idx = selectedMilestone !== null ? selectedMilestone : 0;
     const m = allMilestonesFlat[idx];
     if (!m) { showToast(tt('toast_select_milestone_first'), 'info'); return; }
 
     const message = generateChallengeMessage(m);
-    if (navigator.share) {
-        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast(tt('wizard_copied_share'), 'success');
-        }).catch(() => {
-            showToast(message, 'info', 8000);
-        });
+    if (!(await _nativeShareSheet({ title: 'Nice Numbers', text: message }))) {
+        if (navigator.share) {
+            navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast(tt('wizard_copied_share'), 'success');
+            }).catch(() => {
+                showToast(message, 'info', 8000);
+            });
+        }
     }
     _track('challenge_share', { value: m.value, unit: m.unit });
 }
 
-function handleChallengeGroup() {
+async function handleChallengeGroup() {
     // Get user's own milestone to use as social proof
     const idx = selectedMilestone !== null ? selectedMilestone : 0;
     const m = allMilestonesFlat[idx];
@@ -6344,12 +6408,14 @@ function handleChallengeGroup() {
         message = `I just found some fun number milestones — want to discover yours? Enter your birthday and see what comes up! ${link}`;
     }
 
-    if (navigator.share) {
-        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast(tt('toast_copied_group'), 'success');
-        }).catch(() => {});
+    if (!(await _nativeShareSheet({ title: 'Nice Numbers', text: message }))) {
+        if (navigator.share) {
+            navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast(tt('toast_copied_group'), 'success');
+            }).catch(() => {});
+        }
     }
     _track('group_challenge', { locale });
 }
@@ -6361,9 +6427,11 @@ function quickShare(idx) {
     _track('quick_share', { value: m.value, unit: m.unit });
 }
 
-function shareAppLink() {
+async function shareAppLink() {
     const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\nhttps://nicenumbers.app';
-    if (navigator.share) {
+    if (await _nativeShareSheet({ title: 'Nice Numbers', text })) {
+        // native OS share sheet handled it
+    } else if (navigator.share) {
         navigator.share({ title: 'Nice Numbers', text }).catch(() => {});
     } else {
         navigator.clipboard.writeText(text).then(() => {
@@ -7549,7 +7617,7 @@ async function handleDeleteAccount() {
         // Delete from our backend first
         try {
             const token = await HM_AUTH.getIdToken();
-            await fetch('/api/user', {
+            await fetch(apiUrl('/api/user'), {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -7867,7 +7935,7 @@ async function handleUpgrade() {
     try {
         // Account-less: go straight to Stripe. Stripe collects the email itself
         // (for the receipt + restore) — no sign-in required.
-        const res = await fetch('/api/create-checkout-session', {
+        const res = await fetch(apiUrl('/api/create-checkout-session'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: 'premium' })
@@ -7946,7 +8014,7 @@ async function restorePurchase() {
     const email = (prompt(tt('prem2_restore_prompt')) || '').trim().toLowerCase();
     if (!email || !email.includes('@')) return;
     try {
-        const res = await fetch('/api/premium-status?email=' + encodeURIComponent(email));
+        const res = await fetch(apiUrl('/api/premium-status?email=' + encodeURIComponent(email)));
         const data = await res.json();
         if (data.premium && data.premium_until) {
             localStorage.setItem('happymoments_premium_until', String(data.premium_until));
@@ -7972,7 +8040,7 @@ async function checkPremiumReturn() {
             try {
                 // Verify with the backend that the session was actually paid
                 // (server checks Stripe directly — can't be faked), then activate.
-                const res = await fetch('/api/premium-status?session_id=' + encodeURIComponent(sessionId));
+                const res = await fetch(apiUrl('/api/premium-status?session_id=' + encodeURIComponent(sessionId)));
                 const data = await res.json();
                 if (data.premium && data.premium_until) {
                     localStorage.setItem('happymoments_premium_until', String(data.premium_until));

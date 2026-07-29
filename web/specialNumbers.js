@@ -311,7 +311,8 @@ const DEFAULT_SETTINGS = {
         scientific: true,
         fibonacci: false,
         powers2: true,  // filtered to ≤1024 in generation
-        lucky: false
+        lucky: false,
+        cosmic: true    // celestial numbers (planetary returns); Settings toggle
     },
     constants: {
         pi: true,
