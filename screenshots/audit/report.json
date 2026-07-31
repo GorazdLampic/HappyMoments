@@ -2,7 +2,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "01-screen1-intro.png",
-    "scrollHeight": 947,
+    "scrollHeight": 913,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -10,7 +10,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "02-screen2-your-reveal.png",
-    "scrollHeight": 886,
+    "scrollHeight": 853,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -18,7 +18,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "03-screen3-your-more.png",
-    "scrollHeight": 886,
+    "scrollHeight": 853,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -26,7 +26,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "04-screen4-add-person.png",
-    "scrollHeight": 886,
+    "scrollHeight": 853,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -34,7 +34,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "05-screen5-friend-reveal.png",
-    "scrollHeight": 886,
+    "scrollHeight": 853,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -42,7 +42,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "06-screen6-combined-name.png",
-    "scrollHeight": 928,
+    "scrollHeight": 894,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -50,7 +50,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "07-screen7-group-builder.png",
-    "scrollHeight": 886,
+    "scrollHeight": 853,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -58,7 +58,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "08-screen7-after-autoadd.png",
-    "scrollHeight": 886,
+    "scrollHeight": 853,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -66,7 +66,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "09-screen8-phase1-individual.png",
-    "scrollHeight": 886,
+    "scrollHeight": 853,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -74,7 +74,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "10-screen8-phase2-combined.png",
-    "scrollHeight": 986,
+    "scrollHeight": 952,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -90,7 +90,7 @@
   {
     "viewport": "iphone-390x844",
     "screen": "12-dashboard-together.png",
-    "scrollHeight": 5293,
+    "scrollHeight": 5259,
     "clientHeight": 844,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -122,7 +122,7 @@
   {
     "viewport": "android-360x800",
     "screen": "01-screen1-intro.png",
-    "scrollHeight": 905,
+    "scrollHeight": 872,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -130,7 +130,7 @@
   {
     "viewport": "android-360x800",
     "screen": "02-screen2-your-reveal.png",
-    "scrollHeight": 845,
+    "scrollHeight": 811,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -138,7 +138,7 @@
   {
     "viewport": "android-360x800",
     "screen": "03-screen3-your-more.png",
-    "scrollHeight": 845,
+    "scrollHeight": 811,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -146,7 +146,7 @@
   {
     "viewport": "android-360x800",
     "screen": "04-screen4-add-person.png",
-    "scrollHeight": 845,
+    "scrollHeight": 811,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -154,7 +154,7 @@
   {
     "viewport": "android-360x800",
     "screen": "05-screen5-friend-reveal.png",
-    "scrollHeight": 845,
+    "scrollHeight": 811,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -162,7 +162,7 @@
   {
     "viewport": "android-360x800",
     "screen": "06-screen6-combined-name.png",
-    "scrollHeight": 921,
+    "scrollHeight": 888,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -170,7 +170,7 @@
   {
     "viewport": "android-360x800",
     "screen": "07-screen7-group-builder.png",
-    "scrollHeight": 845,
+    "scrollHeight": 811,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -178,7 +178,7 @@
   {
     "viewport": "android-360x800",
     "screen": "08-screen7-after-autoadd.png",
-    "scrollHeight": 845,
+    "scrollHeight": 811,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -186,7 +186,7 @@
   {
     "viewport": "android-360x800",
     "screen": "09-screen8-phase1-individual.png",
-    "scrollHeight": 845,
+    "scrollHeight": 811,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -194,7 +194,7 @@
   {
     "viewport": "android-360x800",
     "screen": "10-screen8-phase2-combined.png",
-    "scrollHeight": 1006,
+    "scrollHeight": 973,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true
@@ -210,7 +210,7 @@
   {
     "viewport": "android-360x800",
     "screen": "12-dashboard-together.png",
-    "scrollHeight": 5298,
+    "scrollHeight": 5265,
     "clientHeight": 800,
     "horizOverflow": false,
     "overflowsViewport": true

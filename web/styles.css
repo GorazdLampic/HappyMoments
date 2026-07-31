@@ -226,12 +226,13 @@ html.native-android .header {
 
 .header h1 {
     font-family: var(--font-serif);
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-2xl);
     font-weight: 400;
     font-style: italic;
     color: var(--text-primary);
     letter-spacing: 0.02em;
-    margin-bottom: 2px;
+    margin-bottom: 0;
+    white-space: nowrap;
     background: none;
     -webkit-background-clip: unset;
     -webkit-text-fill-color: unset;
@@ -241,18 +242,25 @@ html.native-android .header {
 .header-tagline {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     color: var(--accent, #d4b876);
     letter-spacing: 0.04em;
-    margin: 0 0 4px;
-    /* Always sit on its own line below the logo+title lockup, so it never
-       collides with the absolutely-positioned profile icon on the right. */
-    flex-basis: 100%;
+    margin: 0;
+    white-space: nowrap;
 }
+/* Standard (upright, sans) ampersand instead of the fancy italic serif glyph. */
+.header-tagline .amp { font-style: normal; font-family: 'Helvetica Neue', Arial, sans-serif; }
 
-/* App-header logo lockup: the Nice Numbers icon next to the wordmark. */
-.brand-lockup { display: inline-flex; align-items: center; gap: 8px; }
-.header-logo { width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0; }
+/* App-header logo: mirrors the profile/settings button on the right. */
+.header-logo {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+}
 
 .tagline {
     font-size: var(--font-size-sm);
@@ -715,9 +723,13 @@ html.native-android .header {
     display: flex;
     align-items: baseline;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 2px 14px;
+    flex-wrap: nowrap;
+    gap: 0 10px;
     position: relative;
+    /* Clear the absolute logo (left) and profile button (right) so the centered
+       title + tagline never sit under them. */
+    padding-left: 50px;
+    padding-right: 46px;
 }
 .profile-icon {
     position: absolute;
