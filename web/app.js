@@ -7963,7 +7963,7 @@ function openSupportModal() {
     };
     const chipStyle = 'background:var(--bg-elevated,rgba(255,255,255,0.06));border:1.5px solid var(--warning,#d4b876);color:var(--warning,#d4b876);border-radius:999px;padding:10px 20px;font:inherit;font-weight:600;cursor:pointer;';
     const chips = presets.map(amt => {
-        const arg = native ? `'tip_${amt}'` : amt;
+        const arg = native ? `'tip${amt}'` : amt;
         return `<button style="${chipStyle}" onclick="handleTip(${arg})">${chipLabel(amt)}</button>`;
     }).join('');
     const customBlock = native ? '' : `

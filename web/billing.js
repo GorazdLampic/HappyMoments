@@ -28,7 +28,7 @@ var _billingInited = false;                  // guard: deviceready + DOMContentL
 
 // One-time "Support the developers" tips — CONSUMABLE Play products (buyable
 // repeatedly). IDs must match the in-app products created in Play Console.
-var TIP_PRODUCT_IDS = ['tip_2', 'tip_5', 'tip_10', 'tip_50'];
+var TIP_PRODUCT_IDS = ['tip2', 'tip5', 'tip10', 'tip50'];  // must match Play Console product IDs
 var _pendingTip = null;
 
 function billingIsNativeAndroid() {
@@ -190,7 +190,7 @@ function getTipProducts() {
                 if (o && o.pricingPhases && o.pricingPhases.length) price = o.pricingPhases[0].price;
                 if (!price && p.pricing && p.pricing.price) price = p.pricing.price;
             }
-            out.push({ id: id, amount: parseInt(id.split('_')[1], 10), price: price });
+            out.push({ id: id, amount: parseInt(id.replace(/\D/g, ''), 10), price: price });
         });
     } catch (e) {}
     return out;
