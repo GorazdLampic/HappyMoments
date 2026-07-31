@@ -31,10 +31,9 @@ export async function onRequestPost(context) {
         return Response.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    const { type, uid, email, returnOrigin } = body;
+    const { type, uid, email, returnOrigin, amount } = body;
 
-    // For now, only premium subscription
-    if (type !== 'premium') {
+    if (type !== 'premium' && type !== 'donation') {
         return Response.json({ error: 'Invalid product type' }, { status: 400 });
     }
 
@@ -42,26 +41,44 @@ export async function onRequestPost(context) {
     const returnBase = resolveReturnBase(returnOrigin, appUrl);
 
     try {
-        // Create Stripe Checkout Session via REST API (no SDK needed in Workers)
-        const params = new URLSearchParams({
-            'mode': 'subscription',
-            // Card only — keeps Apple/Google Pay (card wallets) but drops Link and
-            // other methods that confused testers on the checkout page.
-            'payment_method_types[0]': 'card',
-            'line_items[0][price_data][currency]': 'eur',
-            'line_items[0][price_data][unit_amount]': '149',
-            'line_items[0][price_data][recurring][interval]': 'year',
-            'line_items[0][price_data][product_data][name]': 'Nice Numbers Premium',
-            // No "Billed annually." here — Stripe already shows that for a yearly
-            // recurring price, so repeating it made it appear twice.
-            'line_items[0][price_data][product_data][description]': 'Watermark-free share cards and exclusive card designs.',
-            'line_items[0][quantity]': '1',
-            'success_url': `${returnBase}/index.html?checkout=premium_success&session_id={CHECKOUT_SESSION_ID}`,
-            'cancel_url': `${returnBase}/index.html?checkout=premium_cancelled`,
-            'metadata[uid]': uid || '',
-            'metadata[type]': 'premium',
-            'allow_promotion_codes': 'true'
-        });
+        let params;
+        if (type === 'premium') {
+            // Yearly subscription. Card only (keeps card wallets, drops Link etc.).
+            params = new URLSearchParams({
+                'mode': 'subscription',
+                'payment_method_types[0]': 'card',
+                'line_items[0][price_data][currency]': 'eur',
+                'line_items[0][price_data][unit_amount]': '149',
+                'line_items[0][price_data][recurring][interval]': 'year',
+                'line_items[0][price_data][product_data][name]': 'Nice Numbers Premium',
+                // No "Billed annually." — Stripe already shows it for a yearly price.
+                'line_items[0][price_data][product_data][description]': 'Watermark-free share cards and exclusive card designs.',
+                'line_items[0][quantity]': '1',
+                'success_url': `${returnBase}/index.html?checkout=premium_success&session_id={CHECKOUT_SESSION_ID}`,
+                'cancel_url': `${returnBase}/index.html?checkout=premium_cancelled`,
+                'metadata[uid]': uid || '',
+                'metadata[type]': 'premium',
+                'allow_promotion_codes': 'true'
+            });
+        } else {
+            // One-time "Support the developers" tip — mode=payment (NOT recurring).
+            const cents = parseInt(amount, 10);
+            if (!(cents >= 200 && cents <= 50000)) {
+                return Response.json({ error: 'Invalid amount' }, { status: 400 });
+            }
+            params = new URLSearchParams({
+                'mode': 'payment',
+                'payment_method_types[0]': 'card',
+                'line_items[0][price_data][currency]': 'eur',
+                'line_items[0][price_data][unit_amount]': String(cents),
+                'line_items[0][price_data][product_data][name]': 'Support Nice Numbers',
+                'line_items[0][price_data][product_data][description]': 'A one-time thank-you to the developers.',
+                'line_items[0][quantity]': '1',
+                'success_url': `${returnBase}/index.html?checkout=support_success`,
+                'cancel_url': `${returnBase}/index.html?checkout=support_cancelled`,
+                'metadata[type]': 'donation'
+            });
+        }
 
         if (email) {
             params.set('customer_email', email);

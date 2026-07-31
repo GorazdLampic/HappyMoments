@@ -490,6 +490,17 @@ const I18N = (() => {
             prem_gate_used_views: 'You\'ve used your {count} free Team views.',
             prem_gate_upgrade_for: 'Upgrade to Premium for unlimited access.',
             prem_gate_upgrade_btn: 'Upgrade — {price}/year',
+            // ── Support the developers (one-time tip) ──
+            support_devs_btn: 'Support the developers',
+            support_devs_sub: 'A one-time thank-you — no subscription',
+            support_title: 'Support the developers',
+            support_body: 'Nice Numbers is free. If you enjoy it, a one-time tip helps us keep building — thank you!',
+            support_onetime: 'One-time payment — not a subscription.',
+            support_custom: 'Or enter your own amount (€)',
+            support_give: 'Give',
+            support_range: 'Please enter an amount between €2 and €500.',
+            support_thanks: 'Thank you so much for your support! 💙',
+            support_later: 'Maybe later',
             // ── Premium card (account-less) ──
             prem2_title: 'Premium',
             prem2_active: "You're Premium",

@@ -173,6 +173,12 @@ function checkCheckoutResult() {
     } else if (checkoutResult === 'gift_cancelled') {
         showToast('Gift order cancelled. Your design is saved if you want to try again.', 'info');
         window.history.replaceState({}, '', window.location.pathname);
+    } else if (checkoutResult === 'support_success') {
+        window.history.replaceState({}, '', window.location.pathname);
+        if (typeof HM_ANALYTICS !== 'undefined') HM_ANALYTICS.track('support_payment_success', {});
+        if (typeof showSupportThanks === 'function') showSupportThanks();
+    } else if (checkoutResult === 'support_cancelled') {
+        window.history.replaceState({}, '', window.location.pathname);
     }
 }
 

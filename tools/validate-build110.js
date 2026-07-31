@@ -67,6 +67,15 @@ function serve() {
         out.notifApi = (typeof NOTIF !== 'undefined') && typeof NOTIF.scheduleMilestoneNotifications === 'function';
         // #3 celestial toggle present + gated
         out.cosmicToggle = !!document.querySelector('[data-pattern="cosmic"]');
+        // Support the developers (one-time tip): button + modal open, one-time copy
+        out.supportBtn = !!document.querySelector('[data-i18n="support_devs_btn"]');
+        try {
+            openSupportModal();
+            const m = document.getElementById('supportModal');
+            out.supportModalOneTime = !!m && /one-time/i.test(m.textContent) && /not a subscription/i.test(m.textContent);
+            out.supportHasPresets = !!m && m.textContent.includes('€2') && m.textContent.includes('€50');
+            if (m) m.remove();
+        } catch (e) { out.supportErr = e.message; }
         return out;
     });
 
@@ -76,6 +85,9 @@ function serve() {
         ['#7 short number keeps full unit', r.shortNum && r.shortNum.unit === 'days', JSON.stringify(r.shortNum)],
         ['#1 gift design renders (with editable unit)', r.giftCanvas && r.giftCanvas.w > 0 && !r.giftError, JSON.stringify(r.giftCanvas || r.giftError)],
         ['#3 Nice Numbers logo in app header', r.headerLogo === true, r.headerLogo],
+        ['Support button present', r.supportBtn === true, r.supportBtn],
+        ['Support modal shows presets €2–€50', r.supportHasPresets === true, r.supportErr || r.supportHasPresets],
+        ['Support modal states one-time', r.supportModalOneTime === true, r.supportErr || r.supportModalOneTime],
         ['#2 full country list (>200)', r.countryCount > 200, r.countryCount],
         ['#2 US states present', r.hasUSStates === true, JSON.stringify(r.stateCountries)],
         ['#2 State dropdown appears for US', r.stateForUS === true, r.stateErr || r.stateForUS],

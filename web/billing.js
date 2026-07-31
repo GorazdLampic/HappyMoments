@@ -26,6 +26,11 @@ var PREMIUM_PRODUCT_ID = 'premium_yearly';   // must match the Play Console prod
 var PREMIUM_FALLBACK_DAYS = 366;             // used only if the receipt carries no expiry
 var _billingInited = false;                  // guard: deviceready + DOMContentLoaded both fire
 
+// One-time "Support the developers" tips — CONSUMABLE Play products (buyable
+// repeatedly). IDs must match the in-app products created in Play Console.
+var TIP_PRODUCT_IDS = ['tip_2', 'tip_5', 'tip_10', 'tip_50'];
+var _pendingTip = null;
+
 function billingIsNativeAndroid() {
     try {
         return typeof Capacitor !== 'undefined'
@@ -86,11 +91,15 @@ function initBilling() {
         var Product = CdvPurchase.ProductType;
         var Platform = CdvPurchase.Platform;
 
-        store.register([{
+        var _regs = [{
             id: PREMIUM_PRODUCT_ID,
             type: Product.PAID_SUBSCRIPTION,
             platform: Platform.GOOGLE_PLAY
-        }]);
+        }];
+        TIP_PRODUCT_IDS.forEach(function (tid) {
+            _regs.push({ id: tid, type: Product.CONSUMABLE, platform: Platform.GOOGLE_PLAY });
+        });
+        store.register(_regs);
 
         store.when()
             // Once Play returns product metadata, mirror its real price in the UI.
@@ -102,6 +111,13 @@ function initBilling() {
             .finished(function (t) {
                 if (store.owned({ id: PREMIUM_PRODUCT_ID, platform: Platform.GOOGLE_PLAY })) {
                     _billingSetPremiumUntil(_billingExpiryFromTransaction(t));
+                }
+                // A one-time tip just completed → thank the buyer (consumables are
+                // not "owned" after finishing, so track it via _pendingTip).
+                if (_pendingTip) {
+                    _pendingTip = null;
+                    try { if (typeof _track === 'function') _track('payment_complete', { product: 'tip', via: 'play_billing' }); } catch (e) {}
+                    try { if (typeof onTipComplete === 'function') onTipComplete(); } catch (e) {}
                 }
             })
             .receiptUpdated(function () {
@@ -140,6 +156,49 @@ function startAndroidPurchase() {
 function restoreAndroidPurchases() {
     if (!billingIsNativeAndroid()) return;
     try { CdvPurchase.store.restorePurchases(); } catch (e) {}
+}
+
+// One-time tip: order a CONSUMABLE tip product (Play Billing). `productId` is one
+// of TIP_PRODUCT_IDS. Consumables can be purchased repeatedly.
+function startAndroidTip(productId) {
+    if (!billingIsNativeAndroid()) return false;
+    try {
+        var store = CdvPurchase.store;
+        var product = store.get(productId, CdvPurchase.Platform.GOOGLE_PLAY);
+        var offer = product && product.getOffer();
+        if (!offer) { if (typeof showToast === 'function') showToast('Store not ready — try again in a moment', 'info'); return false; }
+        _pendingTip = productId;
+        offer.order();
+        return true;
+    } catch (e) {
+        if (typeof showToast === 'function') showToast('Could not start', 'info');
+        return false;
+    }
+}
+
+// Localized Play prices for the tip tiers, for the Support UI.
+function getTipProducts() {
+    var out = [];
+    if (!billingIsNativeAndroid()) return out;
+    try {
+        var store = CdvPurchase.store;
+        TIP_PRODUCT_IDS.forEach(function (id) {
+            var p = store.get(id, CdvPurchase.Platform.GOOGLE_PLAY);
+            var price = null;
+            if (p) {
+                var o = p.getOffer && p.getOffer();
+                if (o && o.pricingPhases && o.pricingPhases.length) price = o.pricingPhases[0].price;
+                if (!price && p.pricing && p.pricing.price) price = p.pricing.price;
+            }
+            out.push({ id: id, amount: parseInt(id.split('_')[1], 10), price: price });
+        });
+    } catch (e) {}
+    return out;
+}
+
+if (typeof window !== 'undefined') {
+    window.startAndroidTip = startAndroidTip;
+    window.getTipProducts = getTipProducts;
 }
 
 // Initialize once the plugin + Capacitor are ready.

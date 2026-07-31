@@ -7948,6 +7948,87 @@ async function handleUpgrade() {
     }
 }
 
+// ── Support the developers (one-time tip) ──────────────────────────────────
+// Web → Stripe one-time payment (custom amount allowed). Android → Play Billing
+// consumable tip tiers (Play policy requires IAP; fixed amounts only).
+function openSupportModal() {
+    if (typeof _track === 'function') _track('support_opened', {});
+    const native = (typeof billingIsNativeAndroid === 'function') && billingIsNativeAndroid();
+    const presets = [2, 5, 10, 50];
+    let tipProducts = [];
+    if (native && typeof getTipProducts === 'function') tipProducts = getTipProducts();
+    const chipLabel = (amt) => {
+        if (native) { const p = tipProducts.find(t => t.amount === amt); if (p && p.price) return p.price; }
+        return '€' + amt;
+    };
+    const chipStyle = 'background:var(--bg-elevated,rgba(255,255,255,0.06));border:1.5px solid var(--warning,#d4b876);color:var(--warning,#d4b876);border-radius:999px;padding:10px 20px;font:inherit;font-weight:600;cursor:pointer;';
+    const chips = presets.map(amt => {
+        const arg = native ? `'tip_${amt}'` : amt;
+        return `<button style="${chipStyle}" onclick="handleTip(${arg})">${chipLabel(amt)}</button>`;
+    }).join('');
+    const customBlock = native ? '' : `
+        <div style="margin-top:14px;">
+            <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;">${tt('support_custom')}</div>
+            <div style="display:flex;gap:8px;">
+                <input type="number" id="supportCustom" min="2" max="500" step="1" inputmode="numeric" placeholder="7" class="checkout-email-input" style="flex:1;">
+                <button class="btn-primary" style="width:auto;padding:0 18px;" onclick="handleTipCustom()">${tt('support_give')}</button>
+            </div>
+        </div>`;
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'supportModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `
+        <div class="modal-content auth-modal" style="text-align:center;">
+            <div style="font-size:2.4rem;line-height:1;">&#128153;</div>
+            <h3>${tt('support_title')}</h3>
+            <p class="auth-subtitle">${tt('support_body')}</p>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0 4px;">${chips}</div>
+            ${customBlock}
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:14px;">${tt('support_onetime')}</p>
+            <button class="auth-skip" onclick="document.getElementById('supportModal').remove()">${tt('support_later')}</button>
+        </div>`;
+    document.body.appendChild(modal);
+}
+
+async function handleTip(arg) {
+    const native = (typeof billingIsNativeAndroid === 'function') && billingIsNativeAndroid();
+    if (typeof _track === 'function') _track('support_started', { native: native });
+    if (native) {
+        if (typeof startAndroidTip === 'function') startAndroidTip(String(arg));
+        const m = document.getElementById('supportModal'); if (m) m.remove();
+        return;
+    }
+    const amount = Math.round(Number(arg));
+    if (!(amount >= 2 && amount <= 500)) { showToast(tt('support_range'), 'info'); return; }
+    try {
+        const res = await fetch(apiUrl('/api/create-checkout-session'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'donation', amount: amount * 100, returnOrigin: window.location.origin })
+        });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+        else showToast(tt('prem_payment_not_configured'), 'info');
+    } catch (e) { showToast(tt('prem_payment_not_configured'), 'info'); }
+}
+function handleTipCustom() {
+    const el = document.getElementById('supportCustom');
+    handleTip(el ? Math.round(Number(el.value)) : 0);
+}
+function onTipComplete() {
+    const m = document.getElementById('supportModal'); if (m) m.remove();
+    showSupportThanks();
+}
+function showSupportThanks() {
+    showToast(tt('support_thanks'), 'success', 6000);
+}
+window.openSupportModal = openSupportModal;
+window.handleTip = handleTip;
+window.handleTipCustom = handleTipCustom;
+window.onTipComplete = onTipComplete;
+window.showSupportThanks = showSupportThanks;
+
 // Render the premium section of the profile from local state (no account).
 function renderPremiumUI() {
     const until = parseInt(localStorage.getItem('happymoments_premium_until') || '0', 10);
