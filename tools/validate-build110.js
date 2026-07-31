@@ -44,8 +44,8 @@ function serve() {
                 { theme: 'dark', message: 'hi', custom: 'Made with love', numberText: '123456', unitText: 'light-years' });
             out.giftCanvas = { w: c.width, h: c.height };
         } catch (e) { out.giftError = e.message; }
-        // #3 logo preloads (same-origin, so it renders into the print without tainting)
-        out.logoLoaded = await (typeof ensureGiftLogo === 'function' ? ensureGiftLogo() : Promise.resolve(false));
+        // #3 logo now lives in the app header (not on the printed gift)
+        out.headerLogo = !!document.querySelector('.header-logo');
         // #2 countries + states
         out.countryCount = (typeof SHIPPING_COUNTRIES !== 'undefined') ? SHIPPING_COUNTRIES.length : -1;
         out.hasUSStates = (typeof COUNTRY_STATES !== 'undefined') && Array.isArray(COUNTRY_STATES.US) && COUNTRY_STATES.US.length > 0;
@@ -75,7 +75,7 @@ function serve() {
         ['#7 long number → short unit "min"', r.longUnit && r.longUnit.unit === 'min', JSON.stringify(r.longUnit)],
         ['#7 short number keeps full unit', r.shortNum && r.shortNum.unit === 'days', JSON.stringify(r.shortNum)],
         ['#1 gift design renders (with editable unit)', r.giftCanvas && r.giftCanvas.w > 0 && !r.giftError, JSON.stringify(r.giftCanvas || r.giftError)],
-        ['#3 gift logo image loads', r.logoLoaded === true, r.logoLoaded],
+        ['#3 Nice Numbers logo in app header', r.headerLogo === true, r.headerLogo],
         ['#2 full country list (>200)', r.countryCount > 200, r.countryCount],
         ['#2 US states present', r.hasUSStates === true, JSON.stringify(r.stateCountries)],
         ['#2 State dropdown appears for US', r.stateForUS === true, r.stateErr || r.stateForUS],

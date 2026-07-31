@@ -245,7 +245,14 @@ html.native-android .header {
     color: var(--accent, #d4b876);
     letter-spacing: 0.04em;
     margin: 0 0 4px;
+    /* Always sit on its own line below the logo+title lockup, so it never
+       collides with the absolutely-positioned profile icon on the right. */
+    flex-basis: 100%;
 }
+
+/* App-header logo lockup: the Nice Numbers icon next to the wordmark. */
+.brand-lockup { display: inline-flex; align-items: center; gap: 8px; }
+.header-logo { width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0; }
 
 .tagline {
     font-size: var(--font-size-sm);

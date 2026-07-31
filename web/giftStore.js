@@ -638,16 +638,16 @@ function openGiftOrder(productId, value, unit, eventName) {
                         <input type="text" id="giftUnit" value="${_esc(unit)}" maxlength="40" class="checkout-email-input" oninput="_refreshGiftPreview()">
                     </div>
                     <div class="form-group">
+                        <label>Custom line on the gift (optional)</label>
+                        <input type="text" id="giftCustom" placeholder="Anything you like" maxlength="60" class="checkout-email-input" oninput="_refreshGiftPreview()">
+                    </div>
+                    <div class="form-group">
                         <label>Name on the gift</label>
                         <input type="text" id="giftRecipient" value="${_esc(eventName || '')}" placeholder="Who is this for?" class="checkout-email-input" oninput="_refreshGiftPreview()">
                     </div>
                     <div class="form-group">
                         <label>Personal message (optional)</label>
                         <input type="text" id="giftMessage" placeholder="e.g. Happy 10,000 days!" maxlength="80" class="checkout-email-input" oninput="_refreshGiftPreview()">
-                    </div>
-                    <div class="form-group">
-                        <label>Custom line (optional)</label>
-                        <input type="text" id="giftCustom" placeholder="Anything you like" maxlength="60" class="checkout-email-input" oninput="_refreshGiftPreview()">
                     </div>
                     ${product.hasSize ? `
                     <div class="form-group">
@@ -716,8 +716,6 @@ function openGiftOrder(productId, value, unit, eventName) {
     setTimeout(() => {
         renderGiftDesignPreview(product.designType, value, unit, eventName || '');
         _updateStateField();
-        // Re-render once the logo image has loaded so it appears in the preview.
-        if (typeof ensureGiftLogo === 'function') ensureGiftLogo().then(_refreshGiftPreview);
     }, 50);
 }
 
@@ -816,8 +814,6 @@ async function submitGiftOrder(productId, value, unit) {
     // (the same canvas the user previews). Falls back to server SVG if unavailable.
     let designImage = null;
     try {
-        // Make sure the logo image is loaded so it's baked into the print PNG.
-        if (typeof ensureGiftLogo === 'function') { try { await ensureGiftLogo(); } catch (e) {} }
         if (typeof generateGiftDesignBase64 === 'function') {
             const milestone = {
                 value: value,
