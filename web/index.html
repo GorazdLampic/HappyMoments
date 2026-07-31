@@ -734,40 +734,58 @@
     <!-- Service Worker Registration for PWA (with update detection) -->
     <script>
         if ('serviceWorker' in navigator && !window.location.search.includes('reset')) {
+            var _swRefreshing = false, _updateDismissed = false;
+            // The new worker only takes control after the user taps Refresh (which
+            // messages SKIP_WAITING). When it does, reload ONCE to run the new code.
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                if (_swRefreshing) return;
+                _swRefreshing = true;
+                window.location.reload();
+            });
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(reg => {
                         console.log('Nice Numbers: Service Worker registered');
 
-                        function notifyUpdate() {
-                            if (document.getElementById('updateToast')) return;
+                        function showUpdate(worker) {
+                            if (!worker || _updateDismissed || document.getElementById('updateToast')) return;
                             var toast = document.createElement('div');
                             toast.id = 'updateToast';
-                            toast.className = 'toast toast-info';
-                            toast.style.display = 'flex';
-                            toast.style.alignItems = 'center';
-                            toast.style.gap = '12px';
+                            toast.className = 'toast toast-info show';
+                            // .toast has pointer-events:none (for auto-dismiss status
+                            // toasts) — this one has buttons, so it MUST be clickable.
+                            toast.style.cssText = 'display:flex;align-items:center;gap:12px;pointer-events:auto;z-index:100001;';
                             var msg = document.createElement('span');
                             msg.textContent = (typeof t === 'function' && t('update_ready') !== 'update_ready') ? t('update_ready') : 'A new version is ready.';
                             var btn = document.createElement('button');
                             btn.textContent = (typeof t === 'function' && t('update_refresh') !== 'update_refresh') ? t('update_refresh') : 'Refresh';
                             btn.style.cssText = 'background:var(--accent,#a855f7);color:#fff;border:none;border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer;flex-shrink:0;';
-                            btn.onclick = function() { window.location.reload(); };
+                            btn.onclick = function() {
+                                btn.disabled = true;
+                                worker.postMessage({ type: 'SKIP_WAITING' });
+                                // Fallback in case controllerchange doesn't fire.
+                                setTimeout(function() { if (!_swRefreshing) { _swRefreshing = true; window.location.reload(); } }, 2500);
+                            };
+                            var close = document.createElement('button');
+                            close.setAttribute('aria-label', 'Dismiss');
+                            close.textContent = '×';
+                            close.style.cssText = 'background:transparent;color:inherit;border:none;font-size:1.3rem;line-height:1;cursor:pointer;flex-shrink:0;opacity:0.7;';
+                            close.onclick = function() { _updateDismissed = true; toast.remove(); };
                             toast.appendChild(msg);
                             toast.appendChild(btn);
+                            toast.appendChild(close);
                             document.body.appendChild(toast);
-                            requestAnimationFrame(function() { toast.classList.add('show'); });
                         }
 
-                        // Update already downloaded while page was loading
-                        if (reg.waiting && navigator.serviceWorker.controller) notifyUpdate();
+                        // A new worker was already waiting when the page loaded
+                        if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
 
-                        // Update found during this session
+                        // A new worker installed during this session
                         reg.addEventListener('updatefound', () => {
                             var nw = reg.installing;
                             if (!nw) return;
                             nw.addEventListener('statechange', () => {
-                                if (nw.state === 'installed' && navigator.serviceWorker.controller) notifyUpdate();
+                                if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdate(reg.waiting || nw);
                             });
                         });
 

@@ -8,7 +8,7 @@
     "build": "node build.js",
     "native-contract": "node tools/native-contract.js",
     "smoke": "node tools/prod-api-smoke.js",
-    "release-check": "node build.js && node tools/native-contract.js && node tools/test-niceness.js && node tools/validate-build110.js && node tools/screenshot-tour.js",
+    "release-check": "node build.js && node tools/native-contract.js && node tools/test-niceness.js && node tools/validate-build110.js && node tools/test-sw-update.js && node tools/screenshot-tour.js",
     "build:icons": "node scripts/generate-icons.js",
     "cap:sync": "npx cap sync",
     "cap:open": "npx cap open android",

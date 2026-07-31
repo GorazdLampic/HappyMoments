@@ -48,6 +48,18 @@ function serve() {
         out.countryCount = (typeof SHIPPING_COUNTRIES !== 'undefined') ? SHIPPING_COUNTRIES.length : -1;
         out.hasUSStates = (typeof COUNTRY_STATES !== 'undefined') && Array.isArray(COUNTRY_STATES.US) && COUNTRY_STATES.US.length > 0;
         out.stateCountries = (typeof COUNTRY_STATES !== 'undefined') ? Object.keys(COUNTRY_STATES) : [];
+        // #2 State field behaviour (inject a minimal country/state DOM)
+        try {
+            const host = document.createElement('div');
+            host.innerHTML = '<select id="shipCountry"><option value="US">US</option><option value="SI">SI</option></select><div id="shipStateGroup" style="display:none;"></div>';
+            document.body.appendChild(host);
+            const sel = host.querySelector('#shipCountry');
+            sel.value = 'US'; _updateStateField();
+            out.stateForUS = !!document.getElementById('shipState') && document.getElementById('shipStateGroup').style.display !== 'none';
+            sel.value = 'SI'; _updateStateField();
+            out.stateForSI = !document.getElementById('shipState');
+            host.remove();
+        } catch (e) { out.stateErr = e.message; }
         // #4 reminder module
         out.notifDefaults = (typeof NOTIF !== 'undefined') ? NOTIF.getPrefs() : null;
         out.notifApi = (typeof NOTIF !== 'undefined') && typeof NOTIF.scheduleMilestoneNotifications === 'function';
@@ -63,6 +75,8 @@ function serve() {
         ['#1 gift design renders', r.giftCanvas && r.giftCanvas.w > 0 && !r.giftError, JSON.stringify(r.giftCanvas || r.giftError)],
         ['#2 full country list (>200)', r.countryCount > 200, r.countryCount],
         ['#2 US states present', r.hasUSStates === true, JSON.stringify(r.stateCountries)],
+        ['#2 State dropdown appears for US', r.stateForUS === true, r.stateErr || r.stateForUS],
+        ['#2 no State dropdown for SI', r.stateForSI === true, r.stateErr || r.stateForSI],
         ['#4 reminders default OFF, no hourly flags', r.notifDefaults && r.notifDefaults.enabled === false && !('hourBefore' in r.notifDefaults), JSON.stringify(r.notifDefaults)],
         ['#4 reminder API present', r.notifApi === true, r.notifApi],
         ['#3 celestial toggle in DOM', r.cosmicToggle === true, r.cosmicToggle],
