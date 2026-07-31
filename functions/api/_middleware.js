@@ -8,6 +8,11 @@ const ALLOWED_ORIGINS = [
     'https://www.nicenumbers.app',
     'https://happymoments.app',
     'https://www.happymoments.app',
+    // Capacitor native WebView origins (Android androidScheme:https → https://localhost,
+    // iOS → capacitor://localhost). Needed so the app's /api/* calls aren't CORS-blocked.
+    'https://localhost',
+    'capacitor://localhost',
+    'http://localhost',
     'http://localhost:3000',
     'http://localhost:8788'
 ];
