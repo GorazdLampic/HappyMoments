@@ -1,6 +1,16 @@
 {
   "locale": "pl",
   "translations": {
+    "support_devs_btn": "Wesprzyj twórców",
+    "support_devs_sub": "Jednorazowe podziękowanie — bez subskrypcji",
+    "support_title": "Wesprzyj twórców",
+    "support_body": "Nice Numbers jest darmowe. Jeśli Ci się podoba, jednorazowy datek pomoże nam tworzyć dalej — dziękujemy!",
+    "support_onetime": "Płatność jednorazowa — nie subskrypcja.",
+    "support_custom": "Lub wpisz własną kwotę (€)",
+    "support_give": "Wesprzyj",
+    "support_range": "Wpisz kwotę od €2 do €500.",
+    "support_thanks": "Bardzo dziękujemy za wsparcie! 💙",
+    "support_later": "Może później",
     "tab_personal": "Osobiste",
     "tab_team": "Razem",
     "tab_data": "Dane",

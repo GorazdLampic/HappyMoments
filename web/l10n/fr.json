@@ -1,6 +1,16 @@
 {
   "locale": "fr",
   "translations": {
+    "support_devs_btn": "Soutenir les développeurs",
+    "support_devs_sub": "Un merci ponctuel — sans abonnement",
+    "support_title": "Soutenir les développeurs",
+    "support_body": "Nice Numbers est gratuit. Si vous l'appréciez, un pourboire ponctuel nous aide à continuer — merci !",
+    "support_onetime": "Paiement unique — pas un abonnement.",
+    "support_custom": "Ou saisissez votre propre montant (€)",
+    "support_give": "Donner",
+    "support_range": "Veuillez saisir un montant entre 2 € et 500 €.",
+    "support_thanks": "Merci beaucoup pour votre soutien ! 💙",
+    "support_later": "Peut-être plus tard",
     "tab_personal": "Perso",
     "tab_team": "Ensemble",
     "tab_data": "Données",

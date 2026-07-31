@@ -1,6 +1,16 @@
 {
   "locale": "hi",
   "translations": {
+    "support_devs_btn": "डेवलपर्स का साथ दें",
+    "support_devs_sub": "एक बार का धन्यवाद — कोई सब्सक्रिप्शन नहीं",
+    "support_title": "डेवलपर्स का साथ दें",
+    "support_body": "Nice Numbers मुफ़्त है। अगर आपको यह पसंद है, तो एक बार का सहयोग हमें इसे बनाते रहने में मदद करता है — धन्यवाद!",
+    "support_onetime": "एक बार का भुगतान — कोई सब्सक्रिप्शन नहीं।",
+    "support_custom": "या अपनी राशि दर्ज करें (€)",
+    "support_give": "दें",
+    "support_range": "कृपया €2 और €500 के बीच की राशि दर्ज करें।",
+    "support_thanks": "आपके सहयोग के लिए बहुत-बहुत धन्यवाद! 💙",
+    "support_later": "शायद बाद में",
     "tab_personal": "निजी",
     "tab_team": "टीम",
     "tab_data": "डेटा",

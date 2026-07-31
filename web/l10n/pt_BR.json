@@ -1,6 +1,16 @@
 {
   "locale": "pt_BR",
   "translations": {
+    "support_devs_btn": "Apoie os desenvolvedores",
+    "support_devs_sub": "Um agradecimento único — sem assinatura",
+    "support_title": "Apoie os desenvolvedores",
+    "support_body": "O Nice Numbers é gratuito. Se você gosta, uma contribuição única nos ajuda a continuar — obrigado!",
+    "support_onetime": "Pagamento único — não é uma assinatura.",
+    "support_custom": "Ou digite seu próprio valor (€)",
+    "support_give": "Dar",
+    "support_range": "Digite um valor entre 2 € e 500 €.",
+    "support_thanks": "Muito obrigado pelo seu apoio! 💙",
+    "support_later": "Talvez mais tarde",
     "tab_personal": "Pessoal",
     "tab_team": "Juntos",
     "tab_data": "Dados",

@@ -1,6 +1,16 @@
 {
   "locale": "ko",
   "translations": {
+    "support_devs_btn": "개발자 후원하기",
+    "support_devs_sub": "일회성 감사 — 구독이 아니에요",
+    "support_title": "개발자 후원하기",
+    "support_body": "Nice Numbers는 무료예요. 마음에 드셨다면 일회성 후원이 계속 개발하는 데 큰 힘이 됩니다 — 감사합니다!",
+    "support_onetime": "일회성 결제 — 구독이 아닙니다.",
+    "support_custom": "또는 원하는 금액을 입력하세요 (€)",
+    "support_give": "후원하기",
+    "support_range": "€2에서 €500 사이의 금액을 입력해 주세요.",
+    "support_thanks": "후원해 주셔서 정말 감사합니다! 💙",
+    "support_later": "나중에",
     "tab_personal": "나",
     "tab_team": "함께",
     "tab_data": "데이터",

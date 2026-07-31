@@ -1,6 +1,16 @@
 {
   "locale": "hr",
   "translations": {
+    "support_devs_btn": "Podržite razvijatelje",
+    "support_devs_sub": "Jednokratno hvala — bez pretplate",
+    "support_title": "Podržite razvijatelje",
+    "support_body": "Nice Numbers je besplatan. Ako vam se sviđa, jednokratni doprinos pomaže nam da nastavimo graditi — hvala!",
+    "support_onetime": "Jednokratno plaćanje — nije pretplata.",
+    "support_custom": "Ili unesite vlastiti iznos (€)",
+    "support_give": "Doniraj",
+    "support_range": "Unesite iznos između €2 i €500.",
+    "support_thanks": "Puno vam hvala na podršci! 💙",
+    "support_later": "Možda kasnije",
     "tab_personal": "Osobno",
     "tab_team": "Zajedno",
     "tab_data": "Podaci",

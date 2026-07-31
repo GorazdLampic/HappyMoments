@@ -1,6 +1,16 @@
 {
   "locale": "zh",
   "translations": {
+    "support_devs_btn": "支持开发者",
+    "support_devs_sub": "一次性的感谢 — 非订阅",
+    "support_title": "支持开发者",
+    "support_body": "Nice Numbers 是免费的。如果你喜欢它，一次性的打赏能帮助我们继续开发 — 谢谢你！",
+    "support_onetime": "一次性付款 — 非订阅。",
+    "support_custom": "或输入你想要的金额（€）",
+    "support_give": "赞助",
+    "support_range": "请输入 €2 到 €500 之间的金额。",
+    "support_thanks": "非常感谢你的支持！💙",
+    "support_later": "以后再说",
     "tab_personal": "个人",
     "tab_team": "一起",
     "tab_data": "数据",

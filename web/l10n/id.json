@@ -1,6 +1,16 @@
 {
   "locale": "id",
   "translations": {
+    "support_devs_btn": "Dukung pengembang",
+    "support_devs_sub": "Ucapan terima kasih sekali saja — bukan langganan",
+    "support_title": "Dukung pengembang",
+    "support_body": "Nice Numbers gratis. Jika Anda menyukainya, dukungan sekali saja membantu kami terus berkarya — terima kasih!",
+    "support_onetime": "Pembayaran sekali saja — bukan langganan.",
+    "support_custom": "Atau masukkan jumlah Anda sendiri (€)",
+    "support_give": "Beri",
+    "support_range": "Silakan masukkan jumlah antara €2 dan €500.",
+    "support_thanks": "Terima kasih banyak atas dukungan Anda! 💙",
+    "support_later": "Mungkin nanti",
     "tab_personal": "Pribadi",
     "tab_team": "Bersama",
     "tab_data": "Data",

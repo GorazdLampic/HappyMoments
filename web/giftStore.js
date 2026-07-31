@@ -643,7 +643,7 @@ function openGiftOrder(productId, value, unit, eventName) {
                     </div>
                     <div class="form-group">
                         <label>Name on the gift</label>
-                        <input type="text" id="giftRecipient" value="${_esc(eventName || '')}" placeholder="Who is this for?" class="checkout-email-input" oninput="_refreshGiftPreview()">
+                        <input type="text" id="giftRecipient" value="${_esc(eventName === 'Me' ? '' : (eventName || ''))}" placeholder="Who is this for?" class="checkout-email-input" oninput="_refreshGiftPreview()">
                     </div>
                     <div class="form-group">
                         <label>Personal message (optional)</label>

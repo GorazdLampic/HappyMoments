@@ -2101,7 +2101,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 </div>
                 <div class="hero-meta">
                     <div class="hero-meta-text">
-                        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                        <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${countdownText}</span></div>
                     </div>
                     ${wizardHeroShareChip(heroShareMsg)}
                 </div>
@@ -2118,7 +2118,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 </div>
                 <div class="hero-meta">
                     <div class="hero-meta-text">
-                        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                        <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${countdownText}</span></div>
                     </div>
                     ${wizardHeroShareChip(heroShareMsg)}
                 </div>
@@ -2328,7 +2328,7 @@ function wizardShowCombined(isRefresh) {
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-text">
-                    <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
+                    <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
                 </div>
                 ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — https://nicenumbers.app')}
             </div>
@@ -2828,7 +2828,7 @@ function wizardShowCombinedAndName() {
         </div>
         <div class="hero-meta">
             <div class="hero-meta-text">
-                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
+                <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
             </div>
             ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — https://nicenumbers.app')}
         </div>

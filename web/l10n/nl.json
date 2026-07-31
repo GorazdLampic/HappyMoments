@@ -1,6 +1,16 @@
 {
   "locale": "nl",
   "translations": {
+    "support_devs_btn": "Steun de ontwikkelaars",
+    "support_devs_sub": "Een eenmalig bedankje — geen abonnement",
+    "support_title": "Steun de ontwikkelaars",
+    "support_body": "Nice Numbers is gratis. Als je het leuk vindt, helpt een eenmalige bijdrage ons om door te bouwen — bedankt!",
+    "support_onetime": "Eenmalige betaling — geen abonnement.",
+    "support_custom": "Of voer je eigen bedrag in (€)",
+    "support_give": "Geven",
+    "support_range": "Voer een bedrag in tussen €2 en €500.",
+    "support_thanks": "Heel erg bedankt voor je steun! 💙",
+    "support_later": "Misschien later",
     "tab_personal": "Persoonlijk",
     "tab_team": "Samen",
     "tab_data": "Gegevens",

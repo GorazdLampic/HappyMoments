@@ -1,6 +1,16 @@
 {
   "locale": "de",
   "translations": {
+    "support_devs_btn": "Entwickler unterstützen",
+    "support_devs_sub": "Ein einmaliges Dankeschön — kein Abo",
+    "support_title": "Entwickler unterstützen",
+    "support_body": "Nice Numbers ist kostenlos. Wenn es dir gefällt, hilft uns ein einmaliger Beitrag, weiterzumachen — danke!",
+    "support_onetime": "Einmalige Zahlung — kein Abo.",
+    "support_custom": "Oder gib deinen eigenen Betrag ein (€)",
+    "support_give": "Geben",
+    "support_range": "Bitte gib einen Betrag zwischen €2 und €500 ein.",
+    "support_thanks": "Vielen Dank für deine Unterstützung! 💙",
+    "support_later": "Vielleicht später",
     "tab_personal": "Persönlich",
     "tab_team": "Team",
     "tab_data": "Daten",
