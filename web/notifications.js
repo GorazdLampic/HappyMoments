@@ -1,33 +1,47 @@
 /**
- * Nice Numbers — Push Notification System
- * Schedules local notifications for upcoming milestones.
+ * Nice Numbers — Reminder System
+ * Schedules local notifications before the NICEST upcoming milestones.
  *
- * Two strategies:
- * 1. Capacitor (Android) — uses @capacitor/local-notifications to schedule
- *    exact alarms that fire even when the app is closed.
- * 2. PWA / Web — uses the Notification API with periodic in-app checks
- *    (setInterval). Only fires while tab is open, but the service worker
- *    fallback lets showNotification work from background.
+ * Design (v2, build 110):
+ * - Touchpoints: a MONTH, a WEEK, and a DAY before a milestone. No same-day, no
+ *   hourly — this is daily content, and a nudge only helps with lead time.
+ * - Only the nicest numbers qualify (nicenessGrade cutoff), across the user
+ *   themselves (weighted a little higher), everyone on their list, and team
+ *   combinations.
+ * - Throttled to at most 2 notifications per calendar month so reminders stay
+ *   rare and special.
  *
- * `scheduleMilestoneNotifications()` is the main entry point — called on
- * every app open and after data changes. It is idempotent: cancels old
- * scheduled notifications and re-schedules based on current data.
+ * Two delivery strategies:
+ * 1. Capacitor (Android) — @capacitor/local-notifications schedules exact alarms
+ *    that fire even when the app is closed.
+ * 2. PWA / Web — setTimeout while the tab is open (+ service-worker fallback).
+ *
+ * `scheduleMilestoneNotifications()` is the entry point — idempotent: cancels
+ * old scheduled notifications and re-schedules from current data.
  */
 
 const NOTIF = (() => {
     const STORAGE_KEY = 'happymoments_notif_prefs';
     const SCHEDULED_KEY = 'happymoments_scheduled_ids';
-    const CHECK_INTERVAL = 60 * 60 * 1000; // Check every hour (web fallback)
-    const MAX_NOTIFICATIONS = 20; // Cap to avoid flooding the OS tray
-    const SCHEDULE_HORIZON_DAYS = 30; // Look 30 days ahead for scheduling
+    const CHECK_INTERVAL = 60 * 60 * 1000; // web-only: refresh the schedule hourly
+    const MAX_NOTIFICATIONS = 12;          // hard cap on total scheduled items
     let checkTimer = null;
 
     const defaults = {
         enabled: false,
-        dayBefore: true,
-        hourBefore: true,
-        onDay: true,
     };
+
+    // Reminder touchpoints BEFORE a milestone. Order matters only for labels.
+    const OFFSETS = [
+        { key: '1mo', days: 30, lead: 'a month' },  // time to plan
+        { key: '1w',  days: 7,  lead: 'a week' },    // time to buy a gift
+        { key: '1d',  days: 1,  lead: 'tomorrow' },  // time to send a card / call
+    ];
+    const TOP_TIER_CUTOFF = 72;  // only genuinely nice numbers (nicenessGrade 0-100)
+    const ME_WEIGHT = 1.2;       // the user's own milestones rank a little higher
+    const MAX_PER_MONTH = 2;     // never more than 2 reminders in a calendar month
+    const HORIZON_DAYS = 40;     // far enough to schedule the month-before touchpoint
+    const DAY_MS = 24 * 60 * 60 * 1000;
 
     // ------------------------------------------------------------------
     // Preferences
@@ -56,7 +70,6 @@ const NOTIF = (() => {
     }
 
     function getCapLocalNotif() {
-        // Capacitor v6 registers plugins on window.Capacitor.Plugins
         if (isCapacitor() && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
             return window.Capacitor.Plugins.LocalNotifications;
         }
@@ -68,7 +81,6 @@ const NOTIF = (() => {
     // ------------------------------------------------------------------
 
     async function requestPermission() {
-        // Capacitor path
         const capNotif = getCapLocalNotif();
         if (capNotif) {
             try {
@@ -79,7 +91,6 @@ const NOTIF = (() => {
                 return false;
             }
         }
-        // Web path
         if (!('Notification' in window)) return false;
         if (Notification.permission === 'granted') return true;
         if (Notification.permission === 'denied') return false;
@@ -103,7 +114,7 @@ const NOTIF = (() => {
         prefs.enabled = true;
         savePrefs(prefs);
         startChecking();
-        scheduleMilestoneNotifications(); // schedule right away
+        scheduleMilestoneNotifications();
         if (typeof showToast === 'function') {
             showToast('Milestone reminders enabled!', 'success');
         }
@@ -121,9 +132,7 @@ const NOTIF = (() => {
     function isEnabled() {
         const prefs = getPrefs();
         if (!prefs.enabled) return false;
-        // Capacitor: trust the prefs flag (permission checked at enable time)
         if (isCapacitor()) return true;
-        // Web: also verify browser permission
         return ('Notification' in window) && Notification.permission === 'granted';
     }
 
@@ -148,168 +157,151 @@ const NOTIF = (() => {
     }
 
     // ------------------------------------------------------------------
+    // Helpers for the new nicest-milestone selection
+    // ------------------------------------------------------------------
+
+    function fireTimeAt(milestoneDate, offsetDays) {
+        const at = new Date(milestoneDate.getTime() - offsetDays * DAY_MS);
+        at.setHours(9, 0, 0, 0); // morning-of, local time
+        return at;
+    }
+
+    // Plain "123456 minutes" label for the notification text.
+    function niceLabel(value, unitName) {
+        const num = (typeof formatMilestoneValuePlain === 'function')
+            ? formatMilestoneValuePlain(value) : String(value);
+        const unit = (typeof localizedUnit === 'function')
+            ? localizedUnit(value, unitName) : (unitName || '');
+        return (num + ' ' + unit).trim();
+    }
+
+    // ------------------------------------------------------------------
     // Build the list of notifications to schedule
     // ------------------------------------------------------------------
 
     function buildNotificationList() {
-        const prefs = getPrefs();
+        if (!isEnabled()) return [];
         const now = new Date();
         const events = getAllEvents();
         if (events.length === 0) return [];
+        const settings = (typeof appSettings !== 'undefined') ? appSettings : undefined;
 
-        const candidates = [];
+        // 1) Collect candidate milestones (self + others + combinations), each
+        //    scored by mathematical niceness with a small boost for "Me".
+        const candidates = []; // { score, name, milestone }
 
-        events.forEach(event => {
-            const eventDate = event.date;
-            const name = event.name || 'Someone';
-            const type = event.type || 'birthday';
+        function consider(milestone, name, isMe) {
+            if (!milestone || typeof milestone.value !== 'number') return;
+            // Cosmic: only the Saturn return is special enough to remind about.
+            if (milestone.isCosmic && !milestone.isSaturnReturn) return;
+            const grade = milestone.isSaturnReturn ? 90
+                : ((typeof nicenessGrade === 'function') ? nicenessGrade(milestone.value) : 0);
+            if (grade < TOP_TIER_CUTOFF) return;
 
-            // ---- A) Birthday/Anniversary annual occurrence ----
-            const thisYear = now.getFullYear();
-            const nextDate = new Date(thisYear, eventDate.getMonth(), eventDate.getDate(), 9, 0, 0);
-            if (nextDate <= now) nextDate.setFullYear(thisYear + 1);
-
-            const msUntilAnnual = nextDate.getTime() - now.getTime();
-            const daysUntilAnnual = msUntilAnnual / (24 * 60 * 60 * 1000);
-
-            if (daysUntilAnnual <= SCHEDULE_HORIZON_DAYS) {
-                const age = nextDate.getFullYear() - eventDate.getFullYear();
-                const dateStr = nextDate.toISOString().slice(0, 10);
-
-                if (prefs.dayBefore) {
-                    const fireAt = new Date(nextDate.getTime() - 24 * 60 * 60 * 1000);
-                    fireAt.setHours(9, 0, 0, 0);
-                    if (fireAt > now) {
-                        const title = type === 'birthday'
-                            ? `${name} turns ${age} tomorrow!`
-                            : `${age} years since ${name} tomorrow!`;
-                        candidates.push({
-                            id: stableId(`${event.id}_annual_${dateStr}_1d`),
-                            title: title,
-                            body: 'Plan something special for this Nice Numbers!',
-                            at: fireAt,
-                            sortKey: fireAt.getTime(),
-                        });
-                    }
-                }
-                if (prefs.hourBefore) {
-                    const fireAt = new Date(nextDate.getTime() - 60 * 60 * 1000);
-                    if (fireAt > now) {
-                        const title = type === 'birthday'
-                            ? `${name} turns ${age} in 1 hour!`
-                            : `${age}-year anniversary of ${name} in 1 hour!`;
-                        candidates.push({
-                            id: stableId(`${event.id}_annual_${dateStr}_1h`),
-                            title: title,
-                            body: 'Time to celebrate!',
-                            at: fireAt,
-                            sortKey: fireAt.getTime(),
-                        });
-                    }
-                }
-                if (prefs.onDay) {
-                    const fireAt = new Date(nextDate);
-                    fireAt.setHours(9, 0, 0, 0);
-                    if (fireAt > now) {
-                        const title = type === 'birthday'
-                            ? `Happy Birthday, ${name}! Turning ${age}!`
-                            : `${name} -- ${age}-year anniversary today!`;
-                        candidates.push({
-                            id: stableId(`${event.id}_annual_${dateStr}_day`),
-                            title: title,
-                            body: 'A beautiful number to celebrate.',
-                            at: fireAt,
-                            sortKey: fireAt.getTime(),
-                        });
-                    }
-                }
+            let mDate = milestone.date instanceof Date ? milestone.date
+                : (milestone.date ? new Date(milestone.date) : null);
+            if ((!mDate || isNaN(mDate)) && typeof milestone.timeUntil === 'number') {
+                mDate = new Date(now.getTime() + milestone.timeUntil);
             }
+            if (!mDate || isNaN(mDate) || !(mDate > now)) return;
+            if ((mDate.getTime() - now.getTime()) / DAY_MS > HORIZON_DAYS) return;
 
-            // ---- B) Number milestones (the core feature) ----
-            if (typeof findAllUpcomingMilestones === 'function' && typeof appSettings !== 'undefined') {
-                // Get upcoming milestones within our horizon
-                const milestones = findAllUpcomingMilestones(eventDate, 10, SCHEDULE_HORIZON_DAYS, appSettings);
+            candidates.push({
+                score: grade * (isMe ? ME_WEIGHT : 1),
+                name: name,
+                milestone: { ...milestone, date: mDate }
+            });
+        }
 
-                // Also add big milestones (1 billion seconds, etc.) even if further out
-                if (typeof findBigMilestones === 'function') {
-                    const bigOnes = findBigMilestones(eventDate, appSettings);
-                    bigOnes.forEach(bm => {
-                        const daysAway = bm.timeUntil / (24 * 60 * 60 * 1000);
-                        if (daysAway <= SCHEDULE_HORIZON_DAYS && !milestones.some(m => m.value === bm.value && m.unit === bm.unit)) {
-                            milestones.push(bm);
-                        }
-                    });
-                }
-
-                // Also add cosmic milestones (planetary returns)
-                if (typeof findCosmicMilestones === 'function') {
-                    const cosmicOnes = findCosmicMilestones(eventDate);
-                    cosmicOnes.forEach(cm => {
-                        const daysAway = cm.timeUntil / (24 * 60 * 60 * 1000);
-                        if (daysAway <= SCHEDULE_HORIZON_DAYS && !milestones.some(m => m.value === cm.value && m.unit === cm.unit)) {
-                            milestones.push(cm);
-                        }
-                    });
-                }
-
-                // Filter to "very special" numbers to avoid noise
-                const special = milestones.filter(m => {
-                    if (typeof isVerySpecialNumber === 'function') return isVerySpecialNumber(m.value);
-                    return m.value >= 1000 && m.value % 1000 === 0;
+        // Self + everyone on the list
+        events.forEach(event => {
+            const isMe = event.name === 'Me';
+            const name = (typeof displayPersonName === 'function')
+                ? displayPersonName(event.name) : (event.name || 'Someone');
+            if (typeof findAllUpcomingMilestones === 'function') {
+                (findAllUpcomingMilestones(event.date, 20, HORIZON_DAYS, settings) || [])
+                    .forEach(m => consider(m, name, isMe));
+            }
+            if (typeof findBigMilestones === 'function') {
+                (findBigMilestones(event.date, settings) || []).forEach(bm => {
+                    if (bm.timeUntil / DAY_MS <= HORIZON_DAYS) consider(bm, name, isMe);
                 });
-
-                // Take up to 5 per person
-                special.slice(0, 5).forEach(m => {
-                    const milestoneDate = m.date instanceof Date ? m.date : new Date(m.date);
-                    const valueStr = m.value.toLocaleString();
-                    const unitLabel = m.unitName || m.unit;
-                    const dateStr = milestoneDate.toISOString().slice(0, 10);
-
-                    if (prefs.dayBefore) {
-                        const fireAt = new Date(milestoneDate.getTime() - 24 * 60 * 60 * 1000);
-                        fireAt.setHours(9, 0, 0, 0);
-                        if (fireAt > now) {
-                            candidates.push({
-                                id: stableId(`${event.id}_m_${m.value}_${m.unit}_1d`),
-                                title: `${name} reaches ${valueStr} ${unitLabel} tomorrow!`,
-                                body: 'A special number milestone is coming. Plan something!',
-                                at: fireAt,
-                                sortKey: fireAt.getTime(),
-                            });
-                        }
-                    }
-                    if (prefs.hourBefore) {
-                        const fireAt = new Date(milestoneDate.getTime() - 60 * 60 * 1000);
-                        if (fireAt > now) {
-                            candidates.push({
-                                id: stableId(`${event.id}_m_${m.value}_${m.unit}_1h`),
-                                title: `${name} is about to hit ${valueStr} ${unitLabel}!`,
-                                body: 'Just 1 hour to go -- get ready to celebrate!',
-                                at: fireAt,
-                                sortKey: fireAt.getTime(),
-                            });
-                        }
-                    }
-                    if (prefs.onDay) {
-                        const fireAt = new Date(milestoneDate);
-                        fireAt.setHours(9, 0, 0, 0);
-                        if (fireAt > now) {
-                            candidates.push({
-                                id: stableId(`${event.id}_m_${m.value}_${m.unit}_day`),
-                                title: `Today is the day! ${name} is ${valueStr} ${unitLabel} old!`,
-                                body: 'Share this moment!',
-                                at: fireAt,
-                                sortKey: fireAt.getTime(),
-                            });
-                        }
-                    }
+            }
+            if (typeof findCosmicMilestones === 'function') {
+                (findCosmicMilestones(event.date) || []).forEach(cm => {
+                    if (cm.timeUntil / DAY_MS <= HORIZON_DAYS) consider(cm, name, isMe);
                 });
             }
         });
 
-        // Sort by fire time, cap to MAX_NOTIFICATIONS
-        candidates.sort((a, b) => a.sortKey - b.sortKey);
-        return candidates.slice(0, MAX_NOTIFICATIONS);
+        // Combinations of team members
+        if (events.length >= 2 && typeof suggestCombinations === 'function'
+            && typeof findCombinationMilestones === 'function') {
+            try {
+                (suggestCombinations(events) || []).slice(0, 8).forEach(combo => {
+                    const label = combo.label || combo.name || 'Your team';
+                    (findCombinationMilestones(combo, events, 10, HORIZON_DAYS, settings) || [])
+                        .forEach(m => consider(m, label, false));
+                });
+            } catch (e) { /* combinations are best-effort */ }
+        }
+
+        if (candidates.length === 0) return [];
+
+        // 2) De-dup by (name, value, unit); keep the highest score.
+        const seen = new Map();
+        candidates.forEach(c => {
+            const key = c.name + '|' + c.milestone.value + '|' + (c.milestone.unitName || c.milestone.unit);
+            if (!seen.has(key) || seen.get(key).score < c.score) seen.set(key, c);
+        });
+        const ranked = [...seen.values()].sort((a, b) => b.score - a.score);
+
+        // 3) Greedily schedule the highest-scored milestones, capping each calendar
+        //    month at MAX_PER_MONTH notifications so reminders stay rare. A
+        //    milestone's touchpoints are added all-or-nothing to keep them coherent.
+        const monthCount = {};
+        const chosen = [];
+        for (const c of ranked) {
+            const m = c.milestone;
+            const points = [];
+            OFFSETS.forEach(off => {
+                const at = fireTimeAt(m.date, off.days);
+                if (at > now) points.push({ off, at });
+            });
+            if (points.length === 0) continue;
+
+            const trial = { ...monthCount };
+            let ok = true;
+            points.forEach(p => {
+                const mk = p.at.getFullYear() + '-' + p.at.getMonth();
+                trial[mk] = (trial[mk] || 0) + 1;
+                if (trial[mk] > MAX_PER_MONTH) ok = false;
+            });
+            if (!ok) continue;
+            Object.assign(monthCount, trial);
+
+            const label = niceLabel(m.value, m.unitName || m.unit);
+            points.forEach(p => {
+                const when = p.off.key === '1d' ? 'tomorrow' : ('in ' + p.off.lead);
+                const title = m.isCosmic
+                    ? (c.name + ': ' + (m.description || 'a rare milestone') + ' ' + when)
+                    : (c.name + ' reaches ' + label + ' ' + when);
+                const body = p.off.key === '1mo' ? 'A special number is coming up — time to plan.'
+                    : p.off.key === '1w' ? 'One week to go — a good moment for a gift.'
+                    : 'Tomorrow! Send a card, call, or share it.';
+                chosen.push({
+                    id: stableId(c.name + '_' + m.value + '_' + (m.unitName || m.unit) + '_' + p.off.key),
+                    title: title,
+                    body: body,
+                    at: p.at,
+                    sortKey: p.at.getTime(),
+                });
+            });
+            if (chosen.length >= MAX_NOTIFICATIONS) break;
+        }
+
+        chosen.sort((a, b) => a.sortKey - b.sortKey);
+        return chosen.slice(0, MAX_NOTIFICATIONS);
     }
 
     // Stable numeric ID from string (Capacitor requires numeric IDs)
@@ -318,7 +310,6 @@ const NOTIF = (() => {
         for (let i = 0; i < str.length; i++) {
             hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
         }
-        // Ensure positive and within 32-bit int range
         return Math.abs(hash) % 2147483647 || 1;
     }
 
@@ -359,14 +350,12 @@ const NOTIF = (() => {
     }
 
     // ------------------------------------------------------------------
-    // Schedule / Cancel — Web/PWA path (uses setInterval + immediate send)
+    // Schedule / Cancel — Web/PWA path (setTimeout)
     // ------------------------------------------------------------------
 
-    // For the web path, we track scheduled timeouts so we can cancel them
     let webTimeouts = [];
 
     function scheduleWeb(notifications) {
-        // Clear existing timeouts
         webTimeouts.forEach(t => clearTimeout(t));
         webTimeouts = [];
 
@@ -378,16 +367,14 @@ const NOTIF = (() => {
             const notifKey = `web_${n.id}`;
 
             if (delay <= 0) {
-                // Already past — send immediately if not already sent
                 if (!notified.has(notifKey)) {
                     sendWebNotification(n.title, n.body);
                     markNotified(notifKey);
                 }
                 return;
             }
-
-            // setTimeout max is ~24.8 days (2^31 ms). Our horizon is 30 days,
-            // so in rare edge cases delay > 2^31. Cap and rely on re-schedule.
+            // setTimeout max is ~24.8 days (2^31 ms). Longer delays are re-armed
+            // on the next hourly refresh / app open.
             if (delay > 2147483647) return;
 
             const tid = setTimeout(() => {
@@ -414,7 +401,6 @@ const NOTIF = (() => {
                 tag: 'happymoments-' + Date.now(),
             });
         } catch (e) {
-            // Service worker notification fallback (required on Android Chrome PWA)
             if (navigator.serviceWorker && navigator.serviceWorker.ready) {
                 navigator.serviceWorker.ready.then(reg => {
                     reg.showNotification(title, {
@@ -442,21 +428,13 @@ const NOTIF = (() => {
         localStorage.setItem(SCHEDULED_KEY, JSON.stringify(ids));
     }
 
-    // ------------------------------------------------------------------
-    // Cancel all previously scheduled
-    // ------------------------------------------------------------------
-
     async function cancelAllScheduled() {
         const oldIds = getStoredIds();
-
         if (isCapacitor() && oldIds.length > 0) {
             await cancelCapacitor(oldIds);
         }
-
-        // Clear web timeouts
         webTimeouts.forEach(t => clearTimeout(t));
         webTimeouts = [];
-
         storeIds([]);
     }
 
@@ -466,18 +444,10 @@ const NOTIF = (() => {
 
     async function scheduleMilestoneNotifications() {
         if (!isEnabled()) return;
-
-        // 1. Cancel old scheduled notifications
         await cancelAllScheduled();
-
-        // 2. Build fresh list
         const notifications = buildNotificationList();
         if (notifications.length === 0) return;
-
-        // 3. Store IDs for future cancellation
         storeIds(notifications.map(n => n.id));
-
-        // 4. Schedule using the appropriate platform
         if (isCapacitor()) {
             await scheduleCapacitor(notifications);
         } else {
@@ -486,102 +456,15 @@ const NOTIF = (() => {
     }
 
     // ------------------------------------------------------------------
-    // Legacy: checkMilestones() — hourly in-app check (web fallback)
-    //
-    // This catches milestones that arrive while the tab is open.
-    // On Capacitor, scheduled alarms handle this, so this is a no-op.
+    // Web-only periodic refresh: re-arm the schedule so newly-eligible
+    // milestones (and long delays beyond setTimeout's ceiling) get picked up.
+    // On Capacitor the OS alarms handle firing, so this is a no-op there.
     // ------------------------------------------------------------------
 
     function checkMilestones() {
         if (!isEnabled()) return;
-        if (isCapacitor()) return; // Capacitor handles via OS alarms
-
-        const prefs = getPrefs();
-        const now = new Date();
-        const notified = getNotifiedSet();
-        const events = getAllEvents();
-        if (events.length === 0) return;
-
-        events.forEach(event => {
-            const eventDate = event.date;
-            const name = event.name || 'Someone';
-            const type = event.type || 'birthday';
-
-            // --- Annual birthday/anniversary check ---
-            const thisYear = now.getFullYear();
-            const nextDate = new Date(thisYear, eventDate.getMonth(), eventDate.getDate());
-            if (nextDate < now) nextDate.setFullYear(thisYear + 1);
-
-            const msUntil = nextDate.getTime() - now.getTime();
-            const hoursUntil = msUntil / (60 * 60 * 1000);
-            const age = nextDate.getFullYear() - eventDate.getFullYear();
-            const notifId = `${event.id}_${nextDate.getFullYear()}`;
-
-            if (prefs.dayBefore && hoursUntil > 22 && hoursUntil <= 26 && !notified.has(notifId + '_1d')) {
-                const title = type === 'birthday'
-                    ? `${name} turns ${age} tomorrow!`
-                    : `${age} years since ${name} tomorrow!`;
-                sendWebNotification(title, 'Get ready to celebrate this Nice Numbers!');
-                markNotified(notifId + '_1d');
-            }
-
-            if (prefs.hourBefore && hoursUntil > 0 && hoursUntil <= 1.5 && !notified.has(notifId + '_1h')) {
-                const title = type === 'birthday'
-                    ? `${name} turns ${age} today!`
-                    : `${age} years since ${name} today!`;
-                sendWebNotification(title, 'Time to celebrate!');
-                markNotified(notifId + '_1h');
-            }
-
-            if (prefs.onDay && hoursUntil > 1.5 && hoursUntil <= 14 && !notified.has(notifId + '_day')) {
-                const isMorning = now.getHours() >= 7 && now.getHours() <= 10;
-                if (isMorning) {
-                    const title = type === 'birthday'
-                        ? `Happy Birthday, ${name}! Turning ${age}!`
-                        : `${name} -- ${age}-year anniversary today!`;
-                    sendWebNotification(title, 'A beautiful number to celebrate.');
-                    markNotified(notifId + '_day');
-                }
-            }
-
-            // --- Number milestone check (within 2 days for live detection) ---
-            if (typeof findAllUpcomingMilestones === 'function' && typeof appSettings !== 'undefined') {
-                const milestones = findAllUpcomingMilestones(eventDate, 10, 2, appSettings);
-                const special = milestones.filter(m =>
-                    typeof isVerySpecialNumber === 'function' && isVerySpecialNumber(m.value)
-                );
-
-                special.forEach(m => {
-                    const mHours = m.timeUntil / (60 * 60 * 1000);
-                    const mId = `${event.id}_${m.value}_${m.unit}`;
-
-                    if (prefs.dayBefore && mHours > 22 && mHours <= 26 && !notified.has(mId + '_1d')) {
-                        sendWebNotification(
-                            `${name}: ${m.value.toLocaleString()} ${m.unitName} tomorrow!`,
-                            'A special number milestone is coming.'
-                        );
-                        markNotified(mId + '_1d');
-                    }
-                    if (prefs.hourBefore && mHours > 0 && mHours <= 1.5 && !notified.has(mId + '_1h')) {
-                        sendWebNotification(
-                            `${name} is about to hit ${m.value.toLocaleString()} ${m.unitName}!`,
-                            'Just minutes to go!'
-                        );
-                        markNotified(mId + '_1h');
-                    }
-                    if (prefs.onDay && mHours > 1.5 && mHours <= 14 && !notified.has(mId + '_day')) {
-                        const isMorning = now.getHours() >= 7 && now.getHours() <= 10;
-                        if (isMorning) {
-                            sendWebNotification(
-                                `Today! ${name} is ${m.value.toLocaleString()} ${m.unitName} old!`,
-                                'Share this moment!'
-                            );
-                            markNotified(mId + '_day');
-                        }
-                    }
-                });
-            }
-        });
+        if (isCapacitor()) return;
+        scheduleMilestoneNotifications();
     }
 
     // ------------------------------------------------------------------
@@ -598,7 +481,6 @@ const NOTIF = (() => {
     function markNotified(id) {
         const set = getNotifiedSet();
         set.add(id);
-        // Keep only recent entries (last 200)
         const arr = [...set].slice(-200);
         localStorage.setItem('happymoments_notified', JSON.stringify(arr));
     }
@@ -609,7 +491,7 @@ const NOTIF = (() => {
 
     function startChecking() {
         stopChecking();
-        checkMilestones(); // Check immediately
+        checkMilestones();
         checkTimer = setInterval(checkMilestones, CHECK_INTERVAL);
     }
 

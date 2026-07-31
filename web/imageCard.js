@@ -768,10 +768,15 @@ function generateGiftDesign(milestone, productType, options) {
     const _du = (typeof displayNumberAndUnit === 'function')
         ? displayNumberAndUnit(milestone.value, milestone.unitName, { plain: true, fullUnit: true })
         : { num: milestone.value.toLocaleString(), unit: (milestone.unitName || '') };
-    const val = _du.num;
+    // The number line is user-editable (options.numberText); fall back to the
+    // auto-formatted value. Unit stays auto-derived from the milestone.
+    const val = (options.numberText != null && String(options.numberText).trim() !== '')
+        ? String(options.numberText).trim() : _du.num;
     const unit = _du.unit || '';
     const name = milestone.eventName || '';
     const message = options.message || '';
+    // Extra free-text line the buyer can add, printed near the bottom.
+    const custom = (options.custom != null) ? String(options.custom).trim() : '';
 
     ctx.textAlign = 'center';
 
@@ -818,10 +823,12 @@ function generateGiftDesign(milestone, productType, options) {
             ctx.fillText(message, centerX, H - P - 60 * S);
         }
 
-        // Bottom branding
-        ctx.fillStyle = theme.muted + '80';
-        ctx.font = `${Math.round(22 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('nicenumbers.app', centerX, H - P);
+        // Custom free-text line near the bottom (same size as the message)
+        if (custom) {
+            ctx.fillStyle = theme.text;
+            ctx.font = `italic ${Math.round(32 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.fillText(custom, centerX, H - P);
+        }
 
     } else {
         // === PORTRAIT / SQUARE layout: poster, tshirt, tote, canvas ===
@@ -835,13 +842,8 @@ function generateGiftDesign(milestone, productType, options) {
         if (name) {
             ctx.fillStyle = theme.highlight;
             ctx.font = `italic ${Math.round(82 * S)}px "EB Garamond", Georgia, serif`;
-            ctx.fillText(name, centerX, H * 0.22);
+            ctx.fillText(name, centerX, H * 0.24);
         }
-
-        // "celebrates" text
-        ctx.fillStyle = theme.muted;
-        ctx.font = `italic ${Math.round(36 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('celebrates', centerX, H * 0.28);
 
         // BIG NUMBER — the hero
         ctx.fillStyle = theme.accent;
@@ -880,17 +882,12 @@ function generateGiftDesign(milestone, productType, options) {
             if (line) ctx.fillText(line, centerX, y);
         }
 
-        // Bottom thin line
-        ctx.strokeStyle = theme.muted + '40';
-        ctx.beginPath();
-        ctx.moveTo(P + 100 * S, H - P - 60 * S);
-        ctx.lineTo(W - P - 100 * S, H - P - 60 * S);
-        ctx.stroke();
-
-        // Bottom branding
-        ctx.fillStyle = theme.muted + '80';
-        ctx.font = `${Math.round(28 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('nicenumbers.app', centerX, H - P - 10 * S);
+        // Custom free-text line near the bottom (same size as the message)
+        if (custom) {
+            ctx.fillStyle = theme.text;
+            ctx.font = `italic ${Math.round(40 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.fillText(custom, centerX, H - P - 10 * S);
+        }
     }
 
     return canvas;

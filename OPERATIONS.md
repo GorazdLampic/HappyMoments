@@ -196,6 +196,11 @@ npm run android      # build + cap sync + open Android Studio
 ### Ship a web change
 1. Edit under `web/`. 2. `git commit` → `git push` to `main`. 3. Cloudflare auto-deploys. 4. Hard-refresh; the versioned `sw.js` busts the PWA cache.
 
+### Release gate + deploy ordering (build 110) — READ BEFORE SHIPPING
+To stop the "web works, native doesn't" and "deploy-order" regressions:
+- **`npm run release-check`** MUST be green before tagging any build: `build.js` → `native-contract.js` (static: every `/api` call uses `apiUrl()`, every text share is native-guarded) → `test-niceness.js` → `validate-build110.js` (renders the gift design + checks number formatting / countries / reminders / celestial toggle in real Chromium) → `screenshot-tour.js` (0 page errors, 0 overflow).
+- **Backend-first deploy rule:** the native app calls **production** `nicenumbers.app`. Any `functions/` change the app depends on (CORS origins, endpoints, params) MUST reach `main`/production **before** the native build that needs it ships to testers — else the app hits an un-updated backend (the build-109 "Failed to fetch" cause). After a backend deploy run **`npm run smoke`** (`prod-api-smoke.js`) to confirm `/api/health` is bound and the native origin (`https://localhost`) is echoed in CORS. Native origin allow-list lives in `functions/api/_middleware.js`.
+
 ### Ship an Android build
 1. Fix any display strings (`strings.xml`). 2. Bump `versionCode` + `versionName` in `android/app/build.gradle` (+ bump `web/sw.js` CACHE_NAME to busy the PWA cache for web). 3. `git tag vNN && git push origin vNN`. 4. Wait for GitHub Actions → download `app-release.aab` from the `latest` GitHub Release. 5. Upload to Play Console → Internal testing.
 

@@ -776,16 +776,10 @@ function loadNotifUI() {
     const options = document.getElementById('notifOptions');
     if (!toggle || !options) return;
 
-    const prefs = NOTIF.getPrefs();
     toggle.checked = NOTIF.isEnabled();
     options.style.display = NOTIF.isEnabled() ? 'block' : 'none';
-
-    const dayEl = document.getElementById('notifDay');
-    const hourEl = document.getElementById('notifHour');
-    const onDayEl = document.getElementById('notifOnDay');
-    if (dayEl) dayEl.checked = prefs.dayBefore;
-    if (hourEl) hourEl.checked = prefs.hourBefore;
-    if (onDayEl) onDayEl.checked = prefs.onDay;
+    // Cadence is fixed (month/week/day before the nicest milestones) — no per-offset
+    // toggles to keep Settings quiet; a single on/off is the only control.
 }
 
 async function toggleNotifications(enabled) {

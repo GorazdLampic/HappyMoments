@@ -42,7 +42,8 @@ export async function onRequestPost(context) {
     }
 
     const { productType, milestoneValue, milestoneUnit, milestoneName,
-            personalMessage, customerEmail, shippingAddress, size, designImage } = body;
+            personalMessage, customerEmail, shippingAddress, size, designImage,
+            customLine, numberText } = body;
 
     if (!productType || !GIFT_PRICES[productType]) {
         return Response.json({ error: 'Invalid product type' }, { status: 400 });
@@ -76,6 +77,8 @@ export async function onRequestPost(context) {
             unit: milestoneUnit,
             name: milestoneName || '',
             message: personalMessage || '',
+            custom: customLine || '',
+            number: numberText || '',
             type: productType
         });
         // Print file URL that Printful will fetch.
@@ -116,6 +119,9 @@ export async function onRequestPost(context) {
                         address1: shippingAddress.address1,
                         city: shippingAddress.city,
                         country_code: shippingAddress.country_code,
+                        // Printful requires state_code for US/CA/AU/JP/BR; omitted
+                        // (undefined → dropped by JSON) for countries without states.
+                        state_code: shippingAddress.state_code || undefined,
                         zip: shippingAddress.zip
                     },
                     items: [{
@@ -214,6 +220,8 @@ export async function onRequestGet(context) {
     const unit = url.searchParams.get('unit') || 'days';
     const name = url.searchParams.get('name') || '';
     const message = url.searchParams.get('message') || '';
+    const custom = url.searchParams.get('custom') || '';
+    const numberText = url.searchParams.get('number') || '';
     const type = url.searchParams.get('type') || 'mug';
 
     const sizes = {
@@ -233,7 +241,7 @@ export async function onRequestGet(context) {
         }
         return n.toLocaleString('en-US');
     };
-    const val = Number(value) ? fmtVal(Number(value)) : value;
+    const val = numberText ? numberText : (Number(value) ? fmtVal(Number(value)) : value);
     const numLen = val.replace(/[,\s]/g,'').length;
     const fontSize = numLen > 9 ? Math.floor(H*0.12) : numLen > 6 ? Math.floor(H*0.16) : Math.floor(H*0.22);
 
@@ -246,7 +254,7 @@ ${name ? `<text x="${W/2}" y="${wide?'30%':'28%'}" text-anchor="middle" font-fam
 <text x="${W/2}" y="${wide?'55%':'50%'}" text-anchor="middle" font-family="Courier New,monospace" font-size="${fontSize}" fill="#d4b876" font-weight="300">${esc(val)}</text>
 <text x="${W/2}" y="${wide?'70%':'60%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.06)}" fill="#e0e0e0" font-style="italic">${esc(unit)}</text>
 ${message ? `<text x="${W/2}" y="${wide?'82%':'72%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.04)}" fill="#888" font-style="italic">${esc(message)}</text>` : ''}
-<text x="${W/2}" y="${wide?'95%':'92%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.025)}" fill="#888">nicenumbers.app</text>
+${custom ? `<text x="${W/2}" y="${wide?'95%':'90%'}" text-anchor="middle" font-family="Georgia,serif" font-size="${Math.floor(H*0.04)}" fill="#e0e0e0" font-style="italic">${esc(custom)}</text>` : ''}
 </svg>`;
 
     return new Response(svg, {
