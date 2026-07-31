@@ -630,6 +630,10 @@ function openGiftOrder(productId, value, unit, eventName) {
                 <div class="gift-form-section">
                     <div class="gift-form-section-title">Customization</div>
                     <div class="form-group">
+                        <label>Name on the gift</label>
+                        <input type="text" id="giftRecipient" value="${_esc(eventName === 'Me' ? '' : (eventName || ''))}" placeholder="Who is this for?" class="checkout-email-input" oninput="_refreshGiftPreview()">
+                    </div>
+                    <div class="form-group">
                         <label>Number on the gift</label>
                         <input type="text" id="giftNumber" value="${val}" maxlength="40" class="checkout-email-input" oninput="_refreshGiftPreview()">
                     </div>
@@ -640,10 +644,6 @@ function openGiftOrder(productId, value, unit, eventName) {
                     <div class="form-group">
                         <label>Custom line on the gift (optional)</label>
                         <input type="text" id="giftCustom" placeholder="Anything you like" maxlength="60" class="checkout-email-input" oninput="_refreshGiftPreview()">
-                    </div>
-                    <div class="form-group">
-                        <label>Name on the gift</label>
-                        <input type="text" id="giftRecipient" value="${_esc(eventName === 'Me' ? '' : (eventName || ''))}" placeholder="Who is this for?" class="checkout-email-input" oninput="_refreshGiftPreview()">
                     </div>
                     <div class="form-group">
                         <label>Personal message (optional)</label>

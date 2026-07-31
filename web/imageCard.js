@@ -788,10 +788,12 @@ function generateGiftDesign(milestone, productType, options) {
         const centerX = W / 2;
         const centerY = H / 2;
 
-        // Person name top
+        // Person name top — same size as the unit/custom (auto-shrink for long names)
         if (name) {
             ctx.fillStyle = theme.highlight;
-            ctx.font = `italic ${Math.round(70 * S)}px "EB Garamond", Georgia, serif`;
+            let ns = Math.round(80 * S);
+            ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(name).width > W - P * 2 && ns > 30 * S) { ns -= Math.round(4 * S); ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`; }
             ctx.fillText(name, centerX, P + 64 * S);
         }
 
@@ -840,10 +842,12 @@ function generateGiftDesign(milestone, productType, options) {
         const P = 100 * S;
         const centerX = W / 2;
 
-        // Person name
+        // Person name — same size as the unit/custom (auto-shrink for long names)
         if (name) {
             ctx.fillStyle = theme.highlight;
-            ctx.font = `italic ${Math.round(82 * S)}px "EB Garamond", Georgia, serif`;
+            let ns = Math.round(88 * S);
+            ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(name).width > W - P * 2 && ns > 34 * S) { ns -= Math.round(4 * S); ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`; }
             ctx.fillText(name, centerX, H * 0.22);
         }
 
