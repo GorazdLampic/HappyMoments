@@ -3,6 +3,21 @@
  * Requires: STRIPE_SECRET_KEY in environment
  */
 
+// Only return the buyer to an origin we own — on native this is https://localhost
+// (so Stripe redirects back INTO the app), on web it's the site they came from.
+function resolveReturnBase(origin, appUrl) {
+    const allowed = [
+        'https://nicenumbers.app', 'https://www.nicenumbers.app',
+        'https://happymoments.app', 'https://www.happymoments.app',
+        'https://localhost'
+    ];
+    if (typeof origin === 'string' &&
+        (allowed.includes(origin) || /^https:\/\/[a-z0-9-]+\.happymoments\.pages\.dev$/.test(origin))) {
+        return origin;
+    }
+    return appUrl;
+}
+
 export async function onRequestPost(context) {
     const STRIPE_KEY = context.env.STRIPE_SECRET_KEY;
     if (!STRIPE_KEY) {
@@ -16,7 +31,7 @@ export async function onRequestPost(context) {
         return Response.json({ error: 'Invalid request' }, { status: 400 });
     }
 
-    const { type, uid, email } = body;
+    const { type, uid, email, returnOrigin } = body;
 
     // For now, only premium subscription
     if (type !== 'premium') {
@@ -24,6 +39,7 @@ export async function onRequestPost(context) {
     }
 
     const appUrl = context.env.APP_URL || 'https://nicenumbers.app';
+    const returnBase = resolveReturnBase(returnOrigin, appUrl);
 
     try {
         // Create Stripe Checkout Session via REST API (no SDK needed in Workers)
@@ -36,10 +52,12 @@ export async function onRequestPost(context) {
             'line_items[0][price_data][unit_amount]': '149',
             'line_items[0][price_data][recurring][interval]': 'year',
             'line_items[0][price_data][product_data][name]': 'Nice Numbers Premium',
-            'line_items[0][price_data][product_data][description]': 'Unlimited people and watermark-free share cards. Billed annually.',
+            // No "Billed annually." here — Stripe already shows that for a yearly
+            // recurring price, so repeating it made it appear twice.
+            'line_items[0][price_data][product_data][description]': 'Watermark-free share cards and exclusive card designs.',
             'line_items[0][quantity]': '1',
-            'success_url': `${appUrl}/index.html?checkout=premium_success&session_id={CHECKOUT_SESSION_ID}`,
-            'cancel_url': `${appUrl}/index.html?checkout=premium_cancelled`,
+            'success_url': `${returnBase}/index.html?checkout=premium_success&session_id={CHECKOUT_SESSION_ID}`,
+            'cancel_url': `${returnBase}/index.html?checkout=premium_cancelled`,
             'metadata[uid]': uid || '',
             'metadata[type]': 'premium',
             'allow_promotion_codes': 'true'
