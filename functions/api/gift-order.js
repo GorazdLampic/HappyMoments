@@ -43,7 +43,7 @@ export async function onRequestPost(context) {
 
     const { productType, milestoneValue, milestoneUnit, milestoneName,
             personalMessage, customerEmail, shippingAddress, size, designImage,
-            customLine, numberText } = body;
+            customLine, numberText, unitText } = body;
 
     if (!productType || !GIFT_PRICES[productType]) {
         return Response.json({ error: 'Invalid product type' }, { status: 400 });
@@ -74,7 +74,7 @@ export async function onRequestPost(context) {
         const appUrl = context.env.APP_URL || 'https://nicenumbers.app';
         const designParams = new URLSearchParams({
             value: String(milestoneValue),
-            unit: milestoneUnit,
+            unit: (unitText || milestoneUnit),
             name: milestoneName || '',
             message: personalMessage || '',
             custom: customLine || '',

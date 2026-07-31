@@ -687,6 +687,45 @@ const GIFT_DESIGN_SIZES = {
  * @param {Object} [options] - { theme, message }
  * @returns {HTMLCanvasElement} - Canvas with the design rendered
  */
+// Preload the app logo for the gift print (drawn top-centre with the wordmark).
+// Same-origin (bundled), so it does NOT taint the canvas — toDataURL stays allowed.
+let _giftLogoImg = null, _giftLogoReady = false, _giftLogoPromise = null;
+function ensureGiftLogo() {
+    if (_giftLogoPromise) return _giftLogoPromise;
+    _giftLogoPromise = new Promise(resolve => {
+        try {
+            const img = new Image();
+            img.onload = () => { _giftLogoImg = img; _giftLogoReady = true; resolve(true); };
+            img.onerror = () => resolve(false);
+            img.src = 'icons/icon-512.png';
+        } catch (e) { resolve(false); }
+    });
+    return _giftLogoPromise;
+}
+if (typeof window !== 'undefined') { window.ensureGiftLogo = ensureGiftLogo; try { ensureGiftLogo(); } catch (e) {} }
+
+// Logo + "Nice Numbers" wordmark, centred horizontally at vertical position cy.
+function _drawGiftBrand(ctx, W, S, theme, cy) {
+    ctx.save();
+    const wordSize = Math.round(44 * S);
+    ctx.font = `${wordSize}px "EB Garamond", Georgia, serif`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    const word = 'Nice Numbers';
+    const wordW = ctx.measureText(word).width;
+    const hasLogo = _giftLogoReady && _giftLogoImg;
+    const logoH = Math.round(66 * S);
+    const gap = Math.round(16 * S);
+    const totalW = (hasLogo ? logoH + gap : 0) + wordW;
+    let x = (W - totalW) / 2;
+    if (hasLogo) { ctx.drawImage(_giftLogoImg, x, cy - logoH / 2, logoH, logoH); x += logoH + gap; }
+    ctx.fillStyle = theme.text;
+    ctx.fillText(word, x, cy);
+    ctx.restore();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+}
+
 function generateGiftDesign(milestone, productType, options) {
     options = options || {};
     const theme = CARD_CONFIG.themes[options.theme || 'dark'];
@@ -772,7 +811,9 @@ function generateGiftDesign(milestone, productType, options) {
     // auto-formatted value. Unit stays auto-derived from the milestone.
     const val = (options.numberText != null && String(options.numberText).trim() !== '')
         ? String(options.numberText).trim() : _du.num;
-    const unit = _du.unit || '';
+    // Unit line is editable too (options.unitText) — e.g. "seconds" / "Mercury return".
+    const unit = (options.unitText != null && String(options.unitText).trim() !== '')
+        ? String(options.unitText).trim() : (_du.unit || '');
     const name = milestone.eventName || '';
     const message = options.message || '';
     // Extra free-text line the buyer can add, printed near the bottom.
@@ -786,19 +827,22 @@ function generateGiftDesign(milestone, productType, options) {
         const centerX = W / 2;
         const centerY = H / 2;
 
-        // Person name top
+        // Logo + Nice Numbers wordmark, top-centre
+        _drawGiftBrand(ctx, W, S, theme, P + 6 * S);
+
+        // Person name
         if (name) {
             ctx.fillStyle = theme.highlight;
-            ctx.font = `italic ${Math.round(70 * S)}px "EB Garamond", Georgia, serif`;
-            ctx.fillText(name, centerX, P + 64 * S);
+            ctx.font = `italic ${Math.round(64 * S)}px "EB Garamond", Georgia, serif`;
+            ctx.fillText(name, centerX, P + 140 * S);
         }
 
         // Thin line
         ctx.strokeStyle = theme.muted + '40';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(W * 0.25, P + 80 * S);
-        ctx.lineTo(W * 0.75, P + 80 * S);
+        ctx.moveTo(W * 0.25, P + 160 * S);
+        ctx.lineTo(W * 0.75, P + 160 * S);
         ctx.stroke();
 
         // BIG number
@@ -820,13 +864,15 @@ function generateGiftDesign(milestone, productType, options) {
         if (message) {
             ctx.fillStyle = theme.muted;
             ctx.font = `italic ${Math.round(32 * S)}px "EB Garamond", Georgia, serif`;
-            ctx.fillText(message, centerX, H - P - 60 * S);
+            ctx.fillText(message, centerX, H - P - 96 * S);
         }
 
-        // Custom free-text line near the bottom (same size as the message)
+        // Custom line — same size as the unit words (auto-shrunk to fit)
         if (custom) {
             ctx.fillStyle = theme.text;
-            ctx.font = `italic ${Math.round(32 * S)}px "EB Garamond", Georgia, serif`;
+            let cs = Math.round(80 * S);
+            ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(custom).width > W - P * 2 && cs > 24 * S) { cs -= Math.round(4 * S); ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`; }
             ctx.fillText(custom, centerX, H - P);
         }
 
@@ -835,8 +881,8 @@ function generateGiftDesign(milestone, productType, options) {
         const P = 100 * S;
         const centerX = W / 2;
 
-        // No top brand on the printed keepsake — a gift shouldn't read as an ad.
-        // (The shareable card keeps its branding; that one is meant to travel.)
+        // Logo + Nice Numbers wordmark, top-centre
+        _drawGiftBrand(ctx, W, S, theme, H * 0.10);
 
         // Person name
         if (name) {
@@ -882,10 +928,12 @@ function generateGiftDesign(milestone, productType, options) {
             if (line) ctx.fillText(line, centerX, y);
         }
 
-        // Custom free-text line near the bottom (same size as the message)
+        // Custom line — same size as the unit words (auto-shrunk to fit)
         if (custom) {
             ctx.fillStyle = theme.text;
-            ctx.font = `italic ${Math.round(40 * S)}px "EB Garamond", Georgia, serif`;
+            let cs = Math.round(88 * S);
+            ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(custom).width > W - P * 2 && cs > 28 * S) { cs -= Math.round(4 * S); ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`; }
             ctx.fillText(custom, centerX, H - P - 10 * S);
         }
     }

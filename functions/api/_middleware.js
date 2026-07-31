@@ -17,9 +17,13 @@ const ALLOWED_ORIGINS = [
     'http://localhost:8788'
 ];
 
+// Cloudflare Pages branch previews: <branch>.happymoments.pages.dev
+const PREVIEW_ORIGIN = /^https:\/\/[a-z0-9-]+\.happymoments\.pages\.dev$/;
+
 function corsHeaders(request) {
     const origin = request.headers.get('Origin') || '';
-    const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+    const allowed = (ALLOWED_ORIGINS.includes(origin) || PREVIEW_ORIGIN.test(origin))
+        ? origin : ALLOWED_ORIGINS[0];
     return {
         'Access-Control-Allow-Origin': allowed,
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',

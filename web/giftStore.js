@@ -630,8 +630,12 @@ function openGiftOrder(productId, value, unit, eventName) {
                 <div class="gift-form-section">
                     <div class="gift-form-section-title">Customization</div>
                     <div class="form-group">
-                        <label>Number on the gift <span style="opacity:0.6;">(${_esc(unit)})</span></label>
+                        <label>Number on the gift</label>
                         <input type="text" id="giftNumber" value="${val}" maxlength="40" class="checkout-email-input" oninput="_refreshGiftPreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit / label on the gift</label>
+                        <input type="text" id="giftUnit" value="${_esc(unit)}" maxlength="40" class="checkout-email-input" oninput="_refreshGiftPreview()">
                     </div>
                     <div class="form-group">
                         <label>Name on the gift</label>
@@ -712,6 +716,8 @@ function openGiftOrder(productId, value, unit, eventName) {
     setTimeout(() => {
         renderGiftDesignPreview(product.designType, value, unit, eventName || '');
         _updateStateField();
+        // Re-render once the logo image has loaded so it appears in the preview.
+        if (typeof ensureGiftLogo === 'function') ensureGiftLogo().then(_refreshGiftPreview);
     }, 50);
 }
 
@@ -731,11 +737,13 @@ function renderGiftDesignPreview(designType, value, unit, name) {
         const custEl = document.getElementById('giftCustom');
         const nameEl = document.getElementById('giftRecipient');
         const numberText = numEl ? numEl.value : '';
+        const unitEl = document.getElementById('giftUnit');
+        const unitText = unitEl ? unitEl.value : '';
         const message = msgEl ? msgEl.value : '';
         const custom = custEl ? custEl.value : '';
         const useName = nameEl ? nameEl.value : name;
         const milestone = { value: value, unitName: unit, eventName: useName };
-        const canvas = generateGiftDesign(milestone, designType, { theme: 'dark', message: message, custom: custom, numberText: numberText });
+        const canvas = generateGiftDesign(milestone, designType, { theme: 'dark', message: message, custom: custom, numberText: numberText, unitText: unitText });
 
         // Scale down for preview
         canvas.style.width = '100%';
@@ -763,6 +771,7 @@ async function submitGiftOrder(productId, value, unit) {
     const personalMessage = (document.getElementById('giftMessage')?.value || '').trim();
     const customLine = (document.getElementById('giftCustom')?.value || '').trim();
     const numberText = (document.getElementById('giftNumber')?.value || '').trim();
+    const unitText = (document.getElementById('giftUnit')?.value || '').trim();
     const sizeEl = document.getElementById('giftSize');
     const size = sizeEl ? sizeEl.value : null;
 
@@ -807,13 +816,15 @@ async function submitGiftOrder(productId, value, unit) {
     // (the same canvas the user previews). Falls back to server SVG if unavailable.
     let designImage = null;
     try {
+        // Make sure the logo image is loaded so it's baked into the print PNG.
+        if (typeof ensureGiftLogo === 'function') { try { await ensureGiftLogo(); } catch (e) {} }
         if (typeof generateGiftDesignBase64 === 'function') {
             const milestone = {
                 value: value,
                 unitName: unit,
                 eventName: recipientName || (_currentGiftMilestone ? _currentGiftMilestone.eventName : '')
             };
-            designImage = generateGiftDesignBase64(milestone, product.id, { theme: 'dark', message: personalMessage, custom: customLine, numberText: numberText });
+            designImage = generateGiftDesignBase64(milestone, product.id, { theme: 'dark', message: personalMessage, custom: customLine, numberText: numberText, unitText: unitText });
         }
     } catch (err) {
         console.error('Gift design render failed, falling back to server design:', err);
@@ -846,6 +857,7 @@ async function submitGiftOrder(productId, value, unit) {
                 size: size,
                 customLine: customLine,
                 numberText: numberText,
+                unitText: unitText,
                 designImage: designImage
             })
         });

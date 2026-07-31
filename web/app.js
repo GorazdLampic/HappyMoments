@@ -215,11 +215,14 @@ function displayNumberAndUnit(value, unitName, opts) {
 // Force an absolute origin when running natively; stay same-origin on web.
 function apiUrl(path) {
     try {
-        if (typeof window.Capacitor !== 'undefined'
+        const isNative = typeof window.Capacitor !== 'undefined'
             && typeof window.Capacitor.isNativePlatform === 'function'
-            && window.Capacitor.isNativePlatform()) {
-            return 'https://nicenumbers.app' + path;
-        }
+            && window.Capacitor.isNativePlatform();
+        // Branch previews (<branch>.happymoments.pages.dev) have no backend bound,
+        // so route their API calls to production too — lets gifts/premium be tested
+        // on the preview. Production + custom domains stay same-origin.
+        const isPreview = typeof location !== 'undefined' && /\.pages\.dev$/.test(location.hostname);
+        if (isNative || isPreview) return 'https://nicenumbers.app' + path;
     } catch (e) {}
     return path;
 }
