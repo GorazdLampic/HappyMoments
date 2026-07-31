@@ -818,21 +818,21 @@ function generateGiftDesign(milestone, productType, options) {
         ctx.font = `italic ${Math.round(80 * S)}px "EB Garamond", Georgia, serif`;
         ctx.fillText(unit, centerX, centerY + 108 * S);
 
-        // Custom line — directly under the unit, same size (auto-shrunk to fit).
-        // This is the gift's own text; the personal message is a separate note below.
+        // Custom line — pushed into the lower third for balanced spacing (the
+        // number + unit stay close together up top). Same size as the unit.
         if (custom) {
             ctx.fillStyle = theme.text;
             let cs = Math.round(80 * S);
             ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`;
             while (ctx.measureText(custom).width > W - P * 2 && cs > 24 * S) { cs -= Math.round(4 * S); ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`; }
-            ctx.fillText(custom, centerX, centerY + 200 * S);
+            ctx.fillText(custom, centerX, H * 0.82);
         }
 
-        // Personal message (separate note, smaller, near the bottom)
+        // Personal message (separate note, smaller, at the very bottom)
         if (message) {
             ctx.fillStyle = theme.muted;
             ctx.font = `italic ${Math.round(32 * S)}px "EB Garamond", Georgia, serif`;
-            ctx.fillText(message, centerX, H - P);
+            ctx.fillText(message, centerX, H * 0.95);
         }
 
     } else {
@@ -869,7 +869,7 @@ function generateGiftDesign(milestone, productType, options) {
             let cs = Math.round(88 * S);
             ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`;
             while (ctx.measureText(custom).width > W - P * 2 && cs > 28 * S) { cs -= Math.round(4 * S); ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`; }
-            ctx.fillText(custom, centerX, H * 0.60);
+            ctx.fillText(custom, centerX, H * 0.72);
         }
 
         // Personal message (separate note, smaller, wrapped)
@@ -879,7 +879,7 @@ function generateGiftDesign(milestone, productType, options) {
             const maxWidth = W - P * 2;
             const words = message.split(' ');
             let line = '';
-            let y = H * 0.71;
+            let y = H * 0.85;
             for (const word of words) {
                 const test = line + (line ? ' ' : '') + word;
                 if (ctx.measureText(test).width > maxWidth) {

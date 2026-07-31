@@ -7935,7 +7935,7 @@ async function handleUpgrade() {
         const res = await fetch(apiUrl('/api/create-checkout-session'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'premium' })
+            body: JSON.stringify({ type: 'premium', returnOrigin: window.location.origin })
         });
         const data = await res.json();
         if (data.url) {

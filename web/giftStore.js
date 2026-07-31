@@ -854,6 +854,7 @@ async function submitGiftOrder(productId, value, unit) {
                 customLine: customLine,
                 numberText: numberText,
                 unitText: unitText,
+                returnOrigin: window.location.origin,
                 designImage: designImage
             })
         });
