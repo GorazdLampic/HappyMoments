@@ -215,14 +215,17 @@ function generateMilestoneCard(milestone, options) {
     drawDecorations(ctx, W, H, theme);
 
     // Content
-    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
-    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
+    const _du = (typeof displayNumberAndUnit === 'function')
+        ? displayNumberAndUnit(milestone.value, milestone.unitName, { plain: true })
+        : { num: milestone.value.toLocaleString(), unit: (milestone.unitName || '') };
+    const val = _du.num;
+    const unit = _du.unit || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
-    const countdown = typeof formatTimeDistance === 'function'
-        ? formatTimeDistance(milestone.timeUntil) : '';
+    // Countdown intentionally omitted from the shareable card — a celebratory
+    // share shouldn't read "in 3 months 1 week". Dashboard rows keep it.
     const why = milestone.description || '';
 
     // Top: app name
@@ -291,14 +294,6 @@ function generateMilestoneCard(milestone, options) {
     fitFont(dateStr, 64, 34, s => `${s}px "Helvetica Neue", "Arial", sans-serif`);
     ctx.fillText(dateStr, W / 2, H - P - 122);
 
-    // Countdown
-    if (countdown) {
-        const cd = countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now');
-        ctx.fillStyle = theme.accent;
-        fitFont(cd, 70, 34, s => `italic ${s}px "EB Garamond", Georgia, serif`);
-        ctx.fillText(cd, W / 2, H - P - 60);
-    }
-
     // Bottom line
     ctx.strokeStyle = theme.muted + '40';
     ctx.beginPath();
@@ -356,13 +351,16 @@ function generateStoryCard(milestone, options) {
     drawCategoryMotif(ctx, W, H, catAccent, category, ((typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString()));
     drawDecorations(ctx, W, H, theme);
 
-    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
-    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
+    const _du = (typeof displayNumberAndUnit === 'function')
+        ? displayNumberAndUnit(milestone.value, milestone.unitName, { plain: true })
+        : { num: milestone.value.toLocaleString(), unit: (milestone.unitName || '') };
+    const val = _du.num;
+    const unit = _du.unit || '';
     const name = milestone.eventName || '';
     const dateStr = milestone.date.toLocaleDateString((typeof getAppLocale==='function'?getAppLocale():'en'), {
         weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
-    const countdown = typeof formatTimeDistance === 'function' ? formatTimeDistance(milestone.timeUntil) : '';
+    // Countdown intentionally omitted from the shareable story card.
     const why = milestone.description || '';
 
     ctx.textAlign = 'center';
@@ -426,13 +424,6 @@ function generateStoryCard(milestone, options) {
     ctx.fillStyle = theme.text;
     ctx.font = '62px "Helvetica Neue", "Arial", sans-serif';
     ctx.fillText(dateStr, W / 2, H * 0.68);
-
-    // Countdown
-    if (countdown) {
-        ctx.fillStyle = theme.accent;
-        ctx.font = 'italic 73px "EB Garamond", Georgia, serif';
-        ctx.fillText(countdown + (milestone.timeUntil < 0 ? ' ago' : ' from now'), W / 2, H * 0.74);
-    }
 
     // Call to action
     ctx.fillStyle = theme.muted;
@@ -772,10 +763,22 @@ function generateGiftDesign(milestone, productType, options) {
 
     // Layout depends on aspect ratio
     const isWide = W > H; // mug is wide
-    const val = (typeof formatMilestoneValue === 'function') ? formatMilestoneValue(milestone.value) : milestone.value.toLocaleString();
-    const unit = (typeof localizedUnit === 'function' ? localizedUnit(milestone.value, milestone.unitName) : milestone.unitName) || '';
+    // Printed keepsake: plain digits (no thousands separators — "123456", not
+    // "123,456") but keep the full unit word; the print area has room.
+    const _du = (typeof displayNumberAndUnit === 'function')
+        ? displayNumberAndUnit(milestone.value, milestone.unitName, { plain: true, fullUnit: true })
+        : { num: milestone.value.toLocaleString(), unit: (milestone.unitName || '') };
+    // The number line is user-editable (options.numberText); fall back to the
+    // auto-formatted value. Unit stays auto-derived from the milestone.
+    const val = (options.numberText != null && String(options.numberText).trim() !== '')
+        ? String(options.numberText).trim() : _du.num;
+    // Unit line is editable too (options.unitText) — e.g. "seconds" / "Mercury return".
+    const unit = (options.unitText != null && String(options.unitText).trim() !== '')
+        ? String(options.unitText).trim() : (_du.unit || '');
     const name = milestone.eventName || '';
     const message = options.message || '';
+    // Extra free-text line the buyer can add, printed near the bottom.
+    const custom = (options.custom != null) ? String(options.custom).trim() : '';
 
     ctx.textAlign = 'center';
 
@@ -785,10 +788,12 @@ function generateGiftDesign(milestone, productType, options) {
         const centerX = W / 2;
         const centerY = H / 2;
 
-        // Person name top
+        // Person name top — same size as the unit/custom (auto-shrink for long names)
         if (name) {
             ctx.fillStyle = theme.highlight;
-            ctx.font = `italic ${Math.round(70 * S)}px "EB Garamond", Georgia, serif`;
+            let ns = Math.round(80 * S);
+            ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(name).width > W - P * 2 && ns > 30 * S) { ns -= Math.round(4 * S); ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`; }
             ctx.fillText(name, centerX, P + 64 * S);
         }
 
@@ -810,42 +815,41 @@ function generateGiftDesign(milestone, productType, options) {
         }
         ctx.fillText(val, centerX, centerY + 30 * S);
 
-        // Unit below
+        // Unit below the number
         ctx.fillStyle = theme.text;
         ctx.font = `italic ${Math.round(80 * S)}px "EB Garamond", Georgia, serif`;
         ctx.fillText(unit, centerX, centerY + 108 * S);
 
-        // Personal message
+        // Custom line — pushed into the lower third for balanced spacing (the
+        // number + unit stay close together up top). Same size as the unit.
+        if (custom) {
+            ctx.fillStyle = theme.text;
+            let cs = Math.round(80 * S);
+            ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(custom).width > W - P * 2 && cs > 24 * S) { cs -= Math.round(4 * S); ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`; }
+            ctx.fillText(custom, centerX, H * 0.82);
+        }
+
+        // Personal message (separate note, smaller, at the very bottom)
         if (message) {
             ctx.fillStyle = theme.muted;
             ctx.font = `italic ${Math.round(32 * S)}px "EB Garamond", Georgia, serif`;
-            ctx.fillText(message, centerX, H - P - 60 * S);
+            ctx.fillText(message, centerX, H * 0.95);
         }
-
-        // Bottom branding
-        ctx.fillStyle = theme.muted + '80';
-        ctx.font = `${Math.round(22 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('nicenumbers.app', centerX, H - P);
 
     } else {
         // === PORTRAIT / SQUARE layout: poster, tshirt, tote, canvas ===
         const P = 100 * S;
         const centerX = W / 2;
 
-        // No top brand on the printed keepsake — a gift shouldn't read as an ad.
-        // (The shareable card keeps its branding; that one is meant to travel.)
-
-        // Person name
+        // Person name — same size as the unit/custom (auto-shrink for long names)
         if (name) {
             ctx.fillStyle = theme.highlight;
-            ctx.font = `italic ${Math.round(82 * S)}px "EB Garamond", Georgia, serif`;
+            let ns = Math.round(88 * S);
+            ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(name).width > W - P * 2 && ns > 34 * S) { ns -= Math.round(4 * S); ctx.font = `italic ${ns}px "EB Garamond", Georgia, serif`; }
             ctx.fillText(name, centerX, H * 0.22);
         }
-
-        // "celebrates" text
-        ctx.fillStyle = theme.muted;
-        ctx.font = `italic ${Math.round(36 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('celebrates', centerX, H * 0.28);
 
         // BIG NUMBER — the hero
         ctx.fillStyle = theme.accent;
@@ -862,15 +866,24 @@ function generateGiftDesign(milestone, productType, options) {
         ctx.font = `italic ${Math.round(88 * S)}px "EB Garamond", Georgia, serif`;
         ctx.fillText(unit, centerX, H * 0.525);
 
-        // Personal message
+        // Custom line — directly under the unit, same size (auto-shrunk to fit).
+        // The gift's own text; the personal message is a separate note below.
+        if (custom) {
+            ctx.fillStyle = theme.text;
+            let cs = Math.round(88 * S);
+            ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`;
+            while (ctx.measureText(custom).width > W - P * 2 && cs > 28 * S) { cs -= Math.round(4 * S); ctx.font = `italic ${cs}px "EB Garamond", Georgia, serif`; }
+            ctx.fillText(custom, centerX, H * 0.72);
+        }
+
+        // Personal message (separate note, smaller, wrapped)
         if (message) {
             ctx.fillStyle = theme.muted;
             ctx.font = `italic ${Math.round(40 * S)}px "EB Garamond", Georgia, serif`;
-            // Word-wrap long messages
             const maxWidth = W - P * 2;
             const words = message.split(' ');
             let line = '';
-            let y = H * 0.60;
+            let y = H * 0.85;
             for (const word of words) {
                 const test = line + (line ? ' ' : '') + word;
                 if (ctx.measureText(test).width > maxWidth) {
@@ -883,18 +896,6 @@ function generateGiftDesign(milestone, productType, options) {
             }
             if (line) ctx.fillText(line, centerX, y);
         }
-
-        // Bottom thin line
-        ctx.strokeStyle = theme.muted + '40';
-        ctx.beginPath();
-        ctx.moveTo(P + 100 * S, H - P - 60 * S);
-        ctx.lineTo(W - P - 100 * S, H - P - 60 * S);
-        ctx.stroke();
-
-        // Bottom branding
-        ctx.fillStyle = theme.muted + '80';
-        ctx.font = `${Math.round(28 * S)}px "EB Garamond", Georgia, serif`;
-        ctx.fillText('nicenumbers.app', centerX, H - P - 10 * S);
     }
 
     return canvas;

@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <script>/* Tag the native app so CSS can guarantee status-bar clearance even when the
+       Android WebView reports env(safe-area-inset-top)=0. Runs before render. */
+      try { if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) document.documentElement.classList.add('native-android'); } catch (e) {}</script>
     <title>Nice Numbers - Celebrate Life's Special Numbers</title>
 
     <!-- PWA Meta Tags -->
@@ -58,8 +61,9 @@
     <div id="app">
         <!-- Header -->
         <header class="header" id="appHeader">
+            <img class="header-logo" src="icons/icon-192.png" alt="">
             <h1>Nice Numbers</h1>
-            <p class="header-tagline">Share &amp; Celebrate</p>
+            <p class="header-tagline">Share <span class="amp">&amp;</span> Celebrate</p>
             <button class="profile-icon" id="profileBtn" onclick="toggleProfilePanel()" title="Profile &amp; Settings">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </button>
@@ -453,6 +457,10 @@
                         <a href="#" onclick="restorePurchase(); return false;" style="font-size:0.8rem;color:var(--text-muted);" data-i18n="prem2_restore_link">Already bought? Restore purchase</a>
                     </div>
                 </div>
+                <div style="margin-top:14px;text-align:center;">
+                    <button class="btn-secondary" onclick="openSupportModal()" style="width:100%;"><span style="margin-right:6px;">&#128153;</span><span data-i18n="support_devs_btn">Support the developers</span></button>
+                    <div style="font-size:0.76rem;color:var(--text-muted);margin-top:5px;" data-i18n="support_devs_sub">A one-time thank-you &mdash; no subscription</div>
+                </div>
             </div>
 
             <!-- Share card design (premium perk) -->
@@ -479,6 +487,7 @@
                             <label class="pattern-option"><input type="checkbox" data-pattern="scientific" checked><span data-i18n="scientific">Scientific (Pi, e, Phi)</span></label>
                             <label class="pattern-option"><input type="checkbox" data-pattern="fibonacci"><span>Fibonacci (5, 8, 13, 21, 34...)</span></label>
                             <label class="pattern-option"><input type="checkbox" data-pattern="powers2" checked><span>Powers of 2 (8, 16... 512, 1024)</span></label>
+                            <label class="pattern-option"><input type="checkbox" data-pattern="cosmic" checked><span>Celestial numbers (planetary returns)</span></label>
                         </div>
                     </div>
                     <div class="card">
@@ -523,9 +532,7 @@
                     <span data-i18n="enable_reminders">Notify me before milestones</span>
                 </label>
                 <div id="notifOptions" class="notif-options" style="display:none;">
-                    <label class="toggle-option"><input type="checkbox" id="notifDay" checked onchange="updateNotifPrefs()"><span data-i18n="day_before">1 day before</span></label>
-                    <label class="toggle-option"><input type="checkbox" id="notifHour" checked onchange="updateNotifPrefs()"><span data-i18n="hour_before">1 hour before</span></label>
-                    <label class="toggle-option"><input type="checkbox" id="notifOnDay" checked onchange="updateNotifPrefs()"><span data-i18n="on_the_day">On the day</span></label>
+                    <p style="font-size:0.78rem;color:var(--text-muted);margin:4px 0 0;line-height:1.4;">Only the nicest milestones — a month, a week, and a day ahead. Rare, never spammy.</p>
                 </div>
             </div>
 
@@ -732,40 +739,58 @@
     <!-- Service Worker Registration for PWA (with update detection) -->
     <script>
         if ('serviceWorker' in navigator && !window.location.search.includes('reset')) {
+            var _swRefreshing = false, _updateDismissed = false;
+            // The new worker only takes control after the user taps Refresh (which
+            // messages SKIP_WAITING). When it does, reload ONCE to run the new code.
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                if (_swRefreshing) return;
+                _swRefreshing = true;
+                window.location.reload();
+            });
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(reg => {
                         console.log('Nice Numbers: Service Worker registered');
 
-                        function notifyUpdate() {
-                            if (document.getElementById('updateToast')) return;
+                        function showUpdate(worker) {
+                            if (!worker || _updateDismissed || document.getElementById('updateToast')) return;
                             var toast = document.createElement('div');
                             toast.id = 'updateToast';
-                            toast.className = 'toast toast-info';
-                            toast.style.display = 'flex';
-                            toast.style.alignItems = 'center';
-                            toast.style.gap = '12px';
+                            toast.className = 'toast toast-info show';
+                            // .toast has pointer-events:none (for auto-dismiss status
+                            // toasts) — this one has buttons, so it MUST be clickable.
+                            toast.style.cssText = 'display:flex;align-items:center;gap:12px;pointer-events:auto;z-index:100001;';
                             var msg = document.createElement('span');
                             msg.textContent = (typeof t === 'function' && t('update_ready') !== 'update_ready') ? t('update_ready') : 'A new version is ready.';
                             var btn = document.createElement('button');
                             btn.textContent = (typeof t === 'function' && t('update_refresh') !== 'update_refresh') ? t('update_refresh') : 'Refresh';
                             btn.style.cssText = 'background:var(--accent,#a855f7);color:#fff;border:none;border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer;flex-shrink:0;';
-                            btn.onclick = function() { window.location.reload(); };
+                            btn.onclick = function() {
+                                btn.disabled = true;
+                                worker.postMessage({ type: 'SKIP_WAITING' });
+                                // Fallback in case controllerchange doesn't fire.
+                                setTimeout(function() { if (!_swRefreshing) { _swRefreshing = true; window.location.reload(); } }, 2500);
+                            };
+                            var close = document.createElement('button');
+                            close.setAttribute('aria-label', 'Dismiss');
+                            close.textContent = '×';
+                            close.style.cssText = 'background:transparent;color:inherit;border:none;font-size:1.3rem;line-height:1;cursor:pointer;flex-shrink:0;opacity:0.7;';
+                            close.onclick = function() { _updateDismissed = true; toast.remove(); };
                             toast.appendChild(msg);
                             toast.appendChild(btn);
+                            toast.appendChild(close);
                             document.body.appendChild(toast);
-                            requestAnimationFrame(function() { toast.classList.add('show'); });
                         }
 
-                        // Update already downloaded while page was loading
-                        if (reg.waiting && navigator.serviceWorker.controller) notifyUpdate();
+                        // A new worker was already waiting when the page loaded
+                        if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
 
-                        // Update found during this session
+                        // A new worker installed during this session
                         reg.addEventListener('updatefound', () => {
                             var nw = reg.installing;
                             if (!nw) return;
                             nw.addEventListener('statechange', () => {
-                                if (nw.state === 'installed' && navigator.serviceWorker.controller) notifyUpdate();
+                                if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdate(reg.waiting || nw);
                             });
                         });
 

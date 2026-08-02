@@ -1,0 +1,135 @@
+[
+  {
+    "profile": "01-baby",
+    "note": "baby ~5mo (edge: few milestones)",
+    "errors": [],
+    "milestones": [
+      "1,000,000"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "02-toddler",
+    "note": "toddler ~2.5y",
+    "errors": [],
+    "milestones": [
+      "1,357,531"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "03-child",
+    "note": "child ~10y",
+    "errors": [],
+    "milestones": [
+      "90,000"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "04-teen",
+    "note": "teen ~15y",
+    "errors": [],
+    "milestones": [
+      "500,000,000"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "05-near10kdays",
+    "note": "~27y near 10,000 days",
+    "errors": [],
+    "milestones": [
+      "10,001"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "06-nearBillion",
+    "note": "~31y near 1 billion seconds",
+    "errors": [],
+    "milestones": [
+      "1,000,000,000"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "07-midlife",
+    "note": "50y",
+    "errors": [],
+    "milestones": [
+      "444,444"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "08-elderly",
+    "note": "85y (Saturn returns, big numbers)",
+    "errors": [],
+    "milestones": [
+      "31,415"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "09-leapday",
+    "note": "leap-day (edge)",
+    "errors": [],
+    "milestones": [
+      "11,111"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "10-lucky8",
+    "note": "08/08/88 (lucky 8s)",
+    "errors": [],
+    "milestones": [
+      "20,000,000"
+    ],
+    "notes": []
+  },
+  {
+    "profile": "DEEP-05",
+    "errors": [],
+    "notes": [
+      "OK screen2 -> more",
+      "OK screen3 -> add person",
+      "OK add friend",
+      "OK to combined",
+      "FAIL exit to dashboard: elementHandle.click: Timeout 30000ms exceeded.",
+      "OK render dashboard",
+      "OK share (no crash on web path)",
+      "OK open gift modal",
+      "OK close gift",
+      "OK open support modal",
+      "OK close support",
+      "OK open settings"
+    ],
+    "dashMilestones": [
+      "★ 240,000 hours",
+      "19191919 min",
+      "★ 10,000 days",
+      "9,999 days",
+      "10,001 days",
+      "★ 320,000 hours",
+      "10,101 days",
+      "333 months",
+      "444 months",
+      "13,531 days",
+      "888888888 sec",
+      "Mars return — energy renewal cycle"
+    ],
+    "settingsToggles": [
+      "powers",
+      "repdigits",
+      "alternating",
+      "palindromes",
+      "sequential",
+      "scientific",
+      "fibonacci",
+      "powers2",
+      "cosmic"
+    ]
+  }
+]

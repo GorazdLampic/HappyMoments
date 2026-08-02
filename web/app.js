@@ -170,6 +170,67 @@ function formatMilestoneValue(value, locale) {
     return value.toLocaleString(locale);
 }
 
+// Same word-form abbreviation as formatMilestoneValue, but the plain-digit form
+// carries NO thousands separators — cleaner on a printed gift and on a share
+// card ("123456" not "123,456"). Word-form giants ("850 million") are untouched.
+function formatMilestoneValuePlain(value, locale) {
+    if (value >= 1000000 && value % 100000 === 0) {
+        return formatMilestoneValue(value, locale); // word form, no separators anyway
+    }
+    return value.toLocaleString(locale, { useGrouping: false });
+}
+
+// Short localized unit ("min", "sec", "hr"…) for long numbers, reusing the
+// unit_* keys so it stays translated. Unknown units (cosmic names) pass through.
+function shortUnit(count, unitName) {
+    const K = { seconds: 'unit_sec', minutes: 'unit_min', hours: 'unit_hrs', days: 'unit_d', weeks: 'unit_w', months: 'unit_mo', years: 'unit_y' };
+    const key = K[unitName];
+    if (!key) return typeof localizedUnit === 'function' ? localizedUnit(count, unitName) : unitName;
+    const EN = { unit_sec: 'sec', unit_min: 'min', unit_hrs: 'hr', unit_d: 'd', unit_w: 'w', unit_mo: 'mo', unit_y: 'y' };
+    return (typeof I18N !== 'undefined' && I18N.t) ? I18N.t(key) : EN[key];
+}
+
+// A long value + the full unit word ("52,525,252 minutes") overflows the row
+// (pushing the ⋯ button onto a second line) and crowds the card. For long
+// numbers, drop the separators and use the short unit. Round giants keep their
+// readable word form ("850 million seconds"). opts.plain forces no separators;
+// opts.fullUnit keeps the full unit word (used on gift prints, which have room).
+function displayNumberAndUnit(value, unitName, opts) {
+    opts = opts || {};
+    const locale = opts.locale;
+    const wordForm = (value >= 1000000 && value % 100000 === 0);
+    const isLong = !wordForm && String(value).replace(/\D/g, '').length >= 7;
+    const num = (opts.plain || isLong)
+        ? (typeof formatMilestoneValuePlain === 'function' ? formatMilestoneValuePlain(value, locale) : String(value))
+        : formatMilestoneValue(value, locale);
+    const unit = (isLong && !opts.fullUnit)
+        ? shortUnit(value, unitName)
+        : (typeof localizedUnit === 'function' ? localizedUnit(value, unitName) : unitName);
+    return { num: num, unit: unit, text: num + ' ' + unit };
+}
+
+// On native (Capacitor) the app is served from https://localhost, so a relative
+// "/api/*" fetch hits the local bundle (which returns index.html) instead of the
+// Cloudflare backend — the cause of the "DOCTYPE is not valid JSON" gift error.
+// Force an absolute origin when running natively; stay same-origin on web.
+function apiUrl(path) {
+    try {
+        const isNative = typeof window.Capacitor !== 'undefined'
+            && typeof window.Capacitor.isNativePlatform === 'function'
+            && window.Capacitor.isNativePlatform();
+        // Branch previews (<branch>.happymoments.pages.dev) have no backend bound,
+        // so route their API calls to production too — lets gifts/premium be tested
+        // on the preview. Production + custom domains stay same-origin.
+        const isPreview = typeof location !== 'undefined' && /\.pages\.dev$/.test(location.hostname);
+        if (isNative || isPreview) return 'https://nicenumbers.app' + path;
+    } catch (e) {}
+    return path;
+}
+window.apiUrl = apiUrl;
+window.formatMilestoneValuePlain = formatMilestoneValuePlain;
+window.shortUnit = shortUnit;
+window.displayNumberAndUnit = displayNumberAndUnit;
+
 // Auto-add a member once name + a complete valid date are entered —
 // no need to tap "+ Add". Validation is silent (no error toasts mid-typing);
 // a wrong-but-valid date can still be edited or removed in the member list.
@@ -718,16 +779,10 @@ function loadNotifUI() {
     const options = document.getElementById('notifOptions');
     if (!toggle || !options) return;
 
-    const prefs = NOTIF.getPrefs();
     toggle.checked = NOTIF.isEnabled();
     options.style.display = NOTIF.isEnabled() ? 'block' : 'none';
-
-    const dayEl = document.getElementById('notifDay');
-    const hourEl = document.getElementById('notifHour');
-    const onDayEl = document.getElementById('notifOnDay');
-    if (dayEl) dayEl.checked = prefs.dayBefore;
-    if (hourEl) hourEl.checked = prefs.hourBefore;
-    if (onDayEl) onDayEl.checked = prefs.onDay;
+    // Cadence is fixed (month/week/day before the nicest milestones) — no per-offset
+    // toggles to keep Settings quiet; a single on/off is the only control.
 }
 
 async function toggleNotifications(enabled) {
@@ -2046,7 +2101,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 </div>
                 <div class="hero-meta">
                     <div class="hero-meta-text">
-                        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                        <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${countdownText}</span></div>
                     </div>
                     ${wizardHeroShareChip(heroShareMsg)}
                 </div>
@@ -2063,7 +2118,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
                 </div>
                 <div class="hero-meta">
                     <div class="hero-meta-text">
-                        <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${countdownText}</span></div>
+                        <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${countdownText}</span></div>
                     </div>
                     ${wizardHeroShareChip(heroShareMsg)}
                 </div>
@@ -2169,7 +2224,7 @@ function wizardShowMyMore() {
 
     function renderMsRow(m) {
         const dateStr = formatMilestoneDate(m.date);
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         return wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, tt('me_label'), isBig ? 'wizard-milestone-star' : '');
     }
@@ -2222,7 +2277,7 @@ function wizardShowTheirMore() {
     let html = `<h2 class="wizard-question">${tt('wiz_their_milestones', { name: escapeHtml(friendEvent.name) })}</h2>`;
     html += '<div class="wizard-milestone-list">';
     upcoming.forEach(m => {
-        const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+        const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
         const dateStr = formatMilestoneDate(m.date);
         const isBig = !m.isCosmic && (m.isBigMilestone || m.isSaturnReturn || (m.value >= 10000 && m.value % 10000 === 0));
         html += wizardMilestoneRow((isBig ? '\u2605 ' : '') + displayText, dateStr, friendEvent.name, isBig ? 'wizard-milestone-star' : '');
@@ -2273,7 +2328,7 @@ function wizardShowCombined(isRefresh) {
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-text">
-                    <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
+                    <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
                 </div>
                 ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — https://nicenumbers.app')}
             </div>
@@ -2433,13 +2488,16 @@ function wizardShare() {
     const m = window._wizardMilestone;
     if (m) {
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
-        if (navigator.share) {
-            navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-        } else {
-            navigator.clipboard.writeText(message).then(() => {
-                showToast(_t('wizard_copied_share'), 'success');
-            }).catch(() => {});
-        }
+        (async () => {
+            if (await _nativeShareSheet({ title: 'Nice Numbers', text: message })) return;
+            if (navigator.share) {
+                navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(message).then(() => {
+                    showToast(_t('wizard_copied_share'), 'success');
+                }).catch(() => {});
+            }
+        })();
         _track('wizard_share', { value: m.value, unit: m.unit });
     }
 }
@@ -2514,16 +2572,19 @@ function wizardSharePerson3() {
     if (m) {
         const name = window._wizardPerson3Name || 'your friend';
         const message = typeof generateShareMessage === 'function' ? generateShareMessage(m) : '';
-        if (navigator.share) {
-            navigator.share({ title: 'Nice Numbers for ' + name, text: message })
-                .then(() => wizardNext(9))
-                .catch(() => wizardNext(9));
-        } else {
-            navigator.clipboard.writeText(message).then(() => {
-                showToast(tt('toast_copied_send', { name: name }), 'success');
-                setTimeout(() => wizardNext(9), 1500);
-            }).catch(() => wizardNext(9));
-        }
+        (async () => {
+            if (await _nativeShareSheet({ title: 'Nice Numbers for ' + name, text: message })) { wizardNext(9); return; }
+            if (navigator.share) {
+                navigator.share({ title: 'Nice Numbers for ' + name, text: message })
+                    .then(() => wizardNext(9))
+                    .catch(() => wizardNext(9));
+            } else {
+                navigator.clipboard.writeText(message).then(() => {
+                    showToast(tt('toast_copied_send', { name: name }), 'success');
+                    setTimeout(() => wizardNext(9), 1500);
+                }).catch(() => wizardNext(9));
+            }
+        })();
         _track('onboard_share_person3', { value: m.value, unit: m.unit });
     } else {
         wizardNext(9);
@@ -2638,14 +2699,14 @@ function wizardDiscoverFriendV2() {
         let html = '<div id="friendMoreList" style="margin-top:12px;border-top:1px solid var(--border,#333);padding-top:10px;opacity:0;transition:opacity 0.5s ease;">';
         html += `<div style="font-size:0.75rem;color:var(--warning,#d4b876);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_milestones')}</div>`;
         upcoming.slice(0, TOP5).forEach(m => {
-            const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+            const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
             const ds = formatMilestoneDate(m.date);
             html += wizardMilestoneRow(displayText, ds, name);
         });
         if (upcoming.length > TOP5) {
             html += `<div id="friendMoreExtra" style="display:none;">`;
             upcoming.slice(TOP5).forEach(m => {
-                const displayText = m.isCosmic ? (m.description || m.unitName) : (formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName));
+                const displayText = m.isCosmic ? (m.description || m.unitName) : (displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text);
                 const ds = formatMilestoneDate(m.date);
                 html += wizardMilestoneRow(displayText, ds, name);
             });
@@ -2767,7 +2828,7 @@ function wizardShowCombinedAndName() {
         </div>
         <div class="hero-meta">
             <div class="hero-meta-text">
-                <div class="wizard-reveal-date">${dateDisplay} &middot; <span class="wizard-reveal-countdown">${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
+                <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
             </div>
             ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — https://nicenumbers.app')}
         </div>
@@ -4809,7 +4870,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName);
+                displayText = displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text;
             }
             const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
@@ -4860,7 +4921,7 @@ function renderHomeScreen() {
             if (m.isCosmic) {
                 displayText = m.description || m.unitName;
             } else {
-                displayText = formatMilestoneValue(m.value, locale) + ' ' + localizedUnit(m.value, m.unitName);
+                displayText = displayNumberAndUnit(m.value, m.unitName, { locale: locale }).text;
             }
             const dateOpts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             let dateStr;
@@ -5022,6 +5083,31 @@ function _copyToClipboardSync(text) {
 }
 window._copyToClipboardSync = _copyToClipboardSync;
 
+// Native OS share sheet via the @capacitor/share plugin. The Web Share API
+// (navigator.share) does NOT exist inside the Capacitor Android WebView, so on
+// native we must call the plugin to reach WhatsApp/Viber/Telegram/etc. Mirrors
+// the plugin-access pattern used in notifications.js.
+function _sharePlugin() {
+    try {
+        return (typeof window.Capacitor !== 'undefined'
+            && typeof window.Capacitor.isNativePlatform === 'function'
+            && window.Capacitor.isNativePlatform()
+            && window.Capacitor.Plugins && window.Capacitor.Plugins.Share) || null;
+    } catch (e) { return null; }
+}
+// Returns true if the native sheet handled it (opened, or the user dismissed it);
+// false if not native / unavailable / a real error, so the caller falls back to
+// the Web Share API + clipboard path unchanged.
+async function _nativeShareSheet(opts) {
+    const plugin = _sharePlugin();
+    if (!plugin) return false;
+    try { await plugin.share(opts); return true; }
+    catch (e) {
+        const msg = ((e && (e.message || e.toString())) || '').toLowerCase();
+        return msg.indexOf('cancel') !== -1; // user dismissed = done; real error = fall back
+    }
+}
+
 async function shareMilestone(m, textOverride) {
     if (!m) return;
     const text = textOverride || (typeof generateShareMessage === 'function' ? generateShareMessage(m) : '');
@@ -5032,6 +5118,14 @@ async function shareMilestone(m, textOverride) {
     // consume the user activation navigator.share needs, so awaiting it is safe —
     // unlike the old execCommand path, which stole the gesture and dropped the card.
     try { if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text); } catch (e) {}
+    // 0) NATIVE (Android): navigator.share doesn't exist in the Capacitor WebView,
+    //    so open the real OS share sheet via the @capacitor/share plugin. Text+link
+    //    only (sharing the PNG file would need @capacitor/filesystem); the link
+    //    still carries the og:image preview in WhatsApp/Viber/Telegram/etc.
+    if (await _nativeShareSheet({ title: 'Nice Numbers', text, dialogTitle: (typeof tt === 'function' ? tt('share_title') : '') || 'Share' })) {
+        try { _track('share_native', { value: m.value, unit: m.unitName }); } catch (e) {}
+        return;
+    }
     // 1) Native share with the image CARD + text — FIRST, with nothing that
     //    consumes user activation before it.
     if (navigator.share && navigator.canShare && typeof generateMilestoneCard === 'function') {
@@ -5294,7 +5388,11 @@ function homeShareMilestone(idx) {
     _track('home_share', { value: m.value, unit: m.unit, person: m.eventName });
 }
 
-function showSharePreview(message, recipientName) {
+async function showSharePreview(message, recipientName) {
+    // Native (the Capacitor Android WebView has no navigator.share) → open the
+    // real OS share sheet via @capacitor/share. Without this, group/person
+    // wizard shares only copied to clipboard and no app picker appeared.
+    if (await _nativeShareSheet({ title: 'Nice Numbers', text: message })) return;
     // Direct native share — show app picker immediately
     navigator.clipboard.writeText(message).catch(() => {});
     if (navigator.share) {
@@ -6263,25 +6361,27 @@ function generateChallengeMessage(m) {
     return templates[Math.floor(Math.random() * templates.length)];
 }
 
-function handleChallengeFriends() {
+async function handleChallengeFriends() {
     const idx = selectedMilestone !== null ? selectedMilestone : 0;
     const m = allMilestonesFlat[idx];
     if (!m) { showToast(tt('toast_select_milestone_first'), 'info'); return; }
 
     const message = generateChallengeMessage(m);
-    if (navigator.share) {
-        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast(tt('wizard_copied_share'), 'success');
-        }).catch(() => {
-            showToast(message, 'info', 8000);
-        });
+    if (!(await _nativeShareSheet({ title: 'Nice Numbers', text: message }))) {
+        if (navigator.share) {
+            navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast(tt('wizard_copied_share'), 'success');
+            }).catch(() => {
+                showToast(message, 'info', 8000);
+            });
+        }
     }
     _track('challenge_share', { value: m.value, unit: m.unit });
 }
 
-function handleChallengeGroup() {
+async function handleChallengeGroup() {
     // Get user's own milestone to use as social proof
     const idx = selectedMilestone !== null ? selectedMilestone : 0;
     const m = allMilestonesFlat[idx];
@@ -6305,12 +6405,14 @@ function handleChallengeGroup() {
         message = `I just found some fun number milestones — want to discover yours? Enter your birthday and see what comes up! ${link}`;
     }
 
-    if (navigator.share) {
-        navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(message).then(() => {
-            showToast(tt('toast_copied_group'), 'success');
-        }).catch(() => {});
+    if (!(await _nativeShareSheet({ title: 'Nice Numbers', text: message }))) {
+        if (navigator.share) {
+            navigator.share({ title: 'Nice Numbers', text: message }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(message).then(() => {
+                showToast(tt('toast_copied_group'), 'success');
+            }).catch(() => {});
+        }
     }
     _track('group_challenge', { locale });
 }
@@ -6322,9 +6424,11 @@ function quickShare(idx) {
     _track('quick_share', { value: m.value, unit: m.unit });
 }
 
-function shareAppLink() {
+async function shareAppLink() {
     const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\nhttps://nicenumbers.app';
-    if (navigator.share) {
+    if (await _nativeShareSheet({ title: 'Nice Numbers', text })) {
+        // native OS share sheet handled it
+    } else if (navigator.share) {
         navigator.share({ title: 'Nice Numbers', text }).catch(() => {});
     } else {
         navigator.clipboard.writeText(text).then(() => {
@@ -7510,7 +7614,7 @@ async function handleDeleteAccount() {
         // Delete from our backend first
         try {
             const token = await HM_AUTH.getIdToken();
-            await fetch('/api/user', {
+            await fetch(apiUrl('/api/user'), {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -7828,10 +7932,10 @@ async function handleUpgrade() {
     try {
         // Account-less: go straight to Stripe. Stripe collects the email itself
         // (for the receipt + restore) — no sign-in required.
-        const res = await fetch('/api/create-checkout-session', {
+        const res = await fetch(apiUrl('/api/create-checkout-session'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'premium' })
+            body: JSON.stringify({ type: 'premium', returnOrigin: window.location.origin })
         });
         const data = await res.json();
         if (data.url) {
@@ -7843,6 +7947,87 @@ async function handleUpgrade() {
         showToast(tt('prem_payment_not_configured'), 'info');
     }
 }
+
+// ── Support the developers (one-time tip) ──────────────────────────────────
+// Web → Stripe one-time payment (custom amount allowed). Android → Play Billing
+// consumable tip tiers (Play policy requires IAP; fixed amounts only).
+function openSupportModal() {
+    if (typeof _track === 'function') _track('support_opened', {});
+    const native = (typeof billingIsNativeAndroid === 'function') && billingIsNativeAndroid();
+    const presets = [2, 5, 10, 50];
+    let tipProducts = [];
+    if (native && typeof getTipProducts === 'function') tipProducts = getTipProducts();
+    const chipLabel = (amt) => {
+        if (native) { const p = tipProducts.find(t => t.amount === amt); if (p && p.price) return p.price; }
+        return '€' + amt;
+    };
+    const chipStyle = 'background:var(--bg-elevated,rgba(255,255,255,0.06));border:1.5px solid var(--warning,#d4b876);color:var(--warning,#d4b876);border-radius:999px;padding:10px 20px;font:inherit;font-weight:600;cursor:pointer;';
+    const chips = presets.map(amt => {
+        const arg = native ? `'tip${amt}'` : amt;
+        return `<button style="${chipStyle}" onclick="handleTip(${arg})">${chipLabel(amt)}</button>`;
+    }).join('');
+    const customBlock = native ? '' : `
+        <div style="margin-top:14px;">
+            <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;">${tt('support_custom')}</div>
+            <div style="display:flex;gap:8px;">
+                <input type="number" id="supportCustom" min="2" max="500" step="1" inputmode="numeric" placeholder="7" class="checkout-email-input" style="flex:1;">
+                <button class="btn-primary" style="width:auto;padding:0 18px;" onclick="handleTipCustom()">${tt('support_give')}</button>
+            </div>
+        </div>`;
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'supportModal';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `
+        <div class="modal-content auth-modal" style="text-align:center;">
+            <div style="font-size:2.4rem;line-height:1;">&#128153;</div>
+            <h3>${tt('support_title')}</h3>
+            <p class="auth-subtitle">${tt('support_body')}</p>
+            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0 4px;">${chips}</div>
+            ${customBlock}
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:14px;">${tt('support_onetime')}</p>
+            <button class="auth-skip" onclick="document.getElementById('supportModal').remove()">${tt('support_later')}</button>
+        </div>`;
+    document.body.appendChild(modal);
+}
+
+async function handleTip(arg) {
+    const native = (typeof billingIsNativeAndroid === 'function') && billingIsNativeAndroid();
+    if (typeof _track === 'function') _track('support_started', { native: native });
+    if (native) {
+        if (typeof startAndroidTip === 'function') startAndroidTip(String(arg));
+        const m = document.getElementById('supportModal'); if (m) m.remove();
+        return;
+    }
+    const amount = Math.round(Number(arg));
+    if (!(amount >= 2 && amount <= 500)) { showToast(tt('support_range'), 'info'); return; }
+    try {
+        const res = await fetch(apiUrl('/api/create-checkout-session'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'donation', amount: amount * 100, returnOrigin: window.location.origin })
+        });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+        else showToast(tt('prem_payment_not_configured'), 'info');
+    } catch (e) { showToast(tt('prem_payment_not_configured'), 'info'); }
+}
+function handleTipCustom() {
+    const el = document.getElementById('supportCustom');
+    handleTip(el ? Math.round(Number(el.value)) : 0);
+}
+function onTipComplete() {
+    const m = document.getElementById('supportModal'); if (m) m.remove();
+    showSupportThanks();
+}
+function showSupportThanks() {
+    showToast(tt('support_thanks'), 'success', 6000);
+}
+window.openSupportModal = openSupportModal;
+window.handleTip = handleTip;
+window.handleTipCustom = handleTipCustom;
+window.onTipComplete = onTipComplete;
+window.showSupportThanks = showSupportThanks;
 
 // Render the premium section of the profile from local state (no account).
 function renderPremiumUI() {
@@ -7907,7 +8092,7 @@ async function restorePurchase() {
     const email = (prompt(tt('prem2_restore_prompt')) || '').trim().toLowerCase();
     if (!email || !email.includes('@')) return;
     try {
-        const res = await fetch('/api/premium-status?email=' + encodeURIComponent(email));
+        const res = await fetch(apiUrl('/api/premium-status?email=' + encodeURIComponent(email)));
         const data = await res.json();
         if (data.premium && data.premium_until) {
             localStorage.setItem('happymoments_premium_until', String(data.premium_until));
@@ -7933,7 +8118,7 @@ async function checkPremiumReturn() {
             try {
                 // Verify with the backend that the session was actually paid
                 // (server checks Stripe directly — can't be faked), then activate.
-                const res = await fetch('/api/premium-status?session_id=' + encodeURIComponent(sessionId));
+                const res = await fetch(apiUrl('/api/premium-status?session_id=' + encodeURIComponent(sessionId)));
                 const data = await res.json();
                 if (data.premium && data.premium_until) {
                     localStorage.setItem('happymoments_premium_until', String(data.premium_until));

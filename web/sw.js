@@ -30,6 +30,8 @@ const urlsToCache = [
 ];
 
 // Install event - cache all resources
+// Does NOT skipWaiting() — the new worker waits until the page sends SKIP_WAITING
+// (on the user's "Refresh" tap). Prevents the stuck/repeating update toast.
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -37,8 +39,11 @@ self.addEventListener('install', event => {
         console.log('Nice Numbers: Caching app files');
         return cache.addAll(urlsToCache);
       })
-      .then(() => self.skipWaiting())
   );
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // Activate event - clean up old caches

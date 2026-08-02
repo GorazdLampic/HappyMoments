@@ -437,6 +437,13 @@ function ordinal(n) {
  * @returns {Array} Array of milestone objects with isCosmic flag
  */
 function findCosmicMilestones(startDate) {
+    // Respect the "Celestial numbers" Settings toggle (default on). Gating here,
+    // at the single source, covers every caller in one place.
+    try {
+        if (typeof appSettings !== 'undefined' && appSettings.patterns && appSettings.patterns.cosmic === false) {
+            return [];
+        }
+    } catch (e) {}
     const start = startDate instanceof Date ? startDate : new Date(startDate);
     const now = new Date();
     const maxMs = 1.5 * 365.25 * 24 * 60 * 60 * 1000; // 1.5 years ahead

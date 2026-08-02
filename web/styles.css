@@ -205,20 +205,40 @@ body {
 
 .header {
     text-align: center;
-    padding: var(--space-lg) 0 var(--space-md);
+    /* Android 16 (targetSdk 36) enforces edge-to-edge with no opt-out, so the
+       WebView draws under the status bar. Pad the header down by the top inset
+       (needs viewport-fit=cover in the meta viewport). Falls back to 0 on
+       devices/browsers without a notch/inset. */
+    /* Symmetric padding so the logo, title/tagline, and profile icon all sit on
+       the SAME vertical centre. The status-bar clearance is a MARGIN (below) so it
+       doesn't push the content off-centre. */
+    padding: var(--space-md) 0;
     border-bottom: 1px solid var(--border);
     position: relative;
+    margin-top: env(safe-area-inset-top, 0px);
     margin-bottom: var(--space-md);
+}
+
+/* Native Android: the WebView draws under the status bar (edge-to-edge is
+   enforced at targetSdk 36 and can't be opted out), and some WebViews report
+   env(safe-area-inset-top)=0. Guarantee a minimum top clearance so the header
+   never sits under the clock/battery. On web (no .native-android) this rule
+   doesn't apply, so nothing changes there. */
+html.native-android .header {
+    /* Status-bar clearance as a margin (keeps the header's internal padding
+       symmetric, so the title stays centred with the icons). */
+    margin-top: max(env(safe-area-inset-top, 0px), 34px);
 }
 
 .header h1 {
     font-family: var(--font-serif);
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-2xl);
     font-weight: 400;
     font-style: italic;
     color: var(--text-primary);
     letter-spacing: 0.02em;
-    margin-bottom: 2px;
+    margin-bottom: 0;
+    white-space: nowrap;
     background: none;
     -webkit-background-clip: unset;
     -webkit-text-fill-color: unset;
@@ -228,10 +248,24 @@ body {
 .header-tagline {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     color: var(--accent, #d4b876);
     letter-spacing: 0.04em;
-    margin: 0 0 4px;
+    margin: 0;
+    white-space: nowrap;
+}
+/* Standard (upright, sans) ampersand instead of the fancy italic serif glyph. */
+.header-tagline .amp { font-style: normal; font-family: 'Helvetica Neue', Arial, sans-serif; }
+
+/* App-header logo: mirrors the profile/settings button on the right. */
+.header-logo {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
 }
 
 .tagline {
@@ -693,12 +727,20 @@ body {
 
 .header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 2px 14px;
+    flex-wrap: nowrap;
+    gap: 0 10px;
     position: relative;
+    /* Clear the absolute logo (left) and profile button (right) so the centered
+       title + tagline never sit under them. */
+    padding-left: 50px;
+    padding-right: 46px;
 }
+/* Nudge the title's own baseline offset so its optical centre lines up with the
+   logo + profile icons (which are absolutely centred). */
+.header h1 { line-height: 1; }
+.header-tagline { line-height: 1; }
 .profile-icon {
     position: absolute;
     right: 0;

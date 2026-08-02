@@ -6,6 +6,9 @@
   "scripts": {
     "serve": "python serve.py",
     "build": "node build.js",
+    "native-contract": "node tools/native-contract.js",
+    "smoke": "node tools/prod-api-smoke.js",
+    "release-check": "node build.js && node tools/native-contract.js && node tools/test-niceness.js && node tools/validate-build110.js && node tools/test-sw-update.js && node tools/screenshot-tour.js",
     "build:icons": "node scripts/generate-icons.js",
     "cap:sync": "npx cap sync",
     "cap:open": "npx cap open android",
@@ -37,13 +40,13 @@
     "terser": "^5.48.0"
   },
   "dependencies": {
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/cli": "^6.0.0",
-    "@capacitor/core": "^6.0.0",
-    "@capacitor/local-notifications": "^6.0.0",
-    "@capacitor/share": "^6.0.0",
-    "@capacitor/splash-screen": "^6.0.0",
-    "@capacitor/status-bar": "^6.0.0",
-    "cordova-plugin-purchase": "^13.12.0"
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/local-notifications": "^7.0.0",
+    "@capacitor/share": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0",
+    "cordova-plugin-purchase": "13.18.0"
   }
 }
