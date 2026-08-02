@@ -501,6 +501,10 @@ const I18N = (() => {
             support_range: 'Please enter an amount between €2 and €500.',
             support_thanks: 'Thank you so much for your support! 💙',
             support_later: 'Maybe later',
+            // ── "Get the app" banner (Android web visitors) ──
+            getapp_title: 'Get the Nice Numbers app',
+            getapp_sub: 'Free on Google Play',
+            getapp_btn: 'Install',
             // ── Premium card (account-less) ──
             prem2_title: 'Premium',
             prem2_active: "You're Premium",

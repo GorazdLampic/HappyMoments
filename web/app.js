@@ -8194,6 +8194,41 @@ function updateHappyCounter() {
 // START APP
 // ============================================================
 
+// ── "Get the app" banner ───────────────────────────────────────────────────
+// Shown ONLY to Android users browsing the WEB app (not inside the native app,
+// not an installed PWA) — so someone who opens a shared link on Android gets a
+// one-tap path to install from Google Play. iPhone/desktop keep the web app.
+function _isAndroidWebVisitor() {
+    try {
+        if (!/android/i.test(navigator.userAgent || '')) return false;
+        if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) return false;
+        if ((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone) return false;
+        return true;
+    } catch (e) { return false; }
+}
+function maybeShowGetAppBanner() {
+    try {
+        if (localStorage.getItem('nn_getapp_dismissed')) return;
+        if (!_isAndroidWebVisitor() || document.getElementById('getAppBanner')) return;
+        var bar = document.createElement('div');
+        bar.id = 'getAppBanner';
+        bar.className = 'getapp-banner';
+        bar.innerHTML =
+            '<img src="icons/icon-192.png" alt="" class="getapp-logo">' +
+            '<div class="getapp-text"><strong>' + tt('getapp_title') + '</strong><span>' + tt('getapp_sub') + '</span></div>' +
+            '<a class="getapp-cta" href="https://play.google.com/store/apps/details?id=si.quantumwave.happymoments" target="_blank" rel="noopener" onclick="if(typeof _track===\'function\')_track(\'getapp_click\',{});">' + tt('getapp_btn') + '</a>' +
+            '<button class="getapp-close" aria-label="Dismiss" onclick="dismissGetAppBanner()">×</button>';
+        document.body.appendChild(bar);
+        if (typeof _track === 'function') _track('getapp_shown', {});
+    } catch (e) {}
+}
+function dismissGetAppBanner() {
+    try { localStorage.setItem('nn_getapp_dismissed', '1'); } catch (e) {}
+    var b = document.getElementById('getAppBanner'); if (b) b.remove();
+}
+window.maybeShowGetAppBanner = maybeShowGetAppBanner;
+window.dismissGetAppBanner = dismissGetAppBanner;
+
 document.addEventListener('DOMContentLoaded', () => {
     init();
 
@@ -8207,6 +8242,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show premium banner for free users
     showPremiumBanner();
+
+    // Android web visitors: offer the Google Play app (shared-link recipients)
+    maybeShowGetAppBanner();
 
     // Clean UTM params from URL (after analytics captured them)
     if (window.location.search.includes('utm_')) {

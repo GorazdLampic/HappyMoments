@@ -257,6 +257,22 @@ html.native-android .header {
 /* Standard (upright, sans) ampersand instead of the fancy italic serif glyph. */
 .header-tagline .amp { font-style: normal; font-family: 'Helvetica Neue', Arial, sans-serif; }
 
+/* "Get the app" banner — Android web visitors → Google Play (dismissible). */
+.getapp-banner {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 9500;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: var(--bg-card, #fff);
+    border-top: 1px solid var(--border, #333);
+    box-shadow: 0 -2px 14px rgba(0,0,0,0.18);
+}
+.getapp-logo { width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0; }
+.getapp-text { display: flex; flex-direction: column; line-height: 1.25; flex: 1; min-width: 0; }
+.getapp-text strong { font-size: 0.92rem; color: var(--text-primary, #222); }
+.getapp-text span { font-size: 0.78rem; color: var(--text-muted, #888); }
+.getapp-cta { background: var(--warning, #d4b876); color: #1a1a1a; border-radius: 999px; padding: 9px 20px; font-weight: 700; font-size: 0.9rem; text-decoration: none; flex-shrink: 0; white-space: nowrap; }
+.getapp-close { background: transparent; border: none; color: var(--text-muted, #888); font-size: 1.4rem; line-height: 1; cursor: pointer; flex-shrink: 0; padding: 0 2px; }
+
 /* App-header logo: mirrors the profile/settings button on the right. */
 .header-logo {
     position: absolute;
