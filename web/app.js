@@ -6376,7 +6376,7 @@ function getDeepLinkUrl(event) {
             if (document.getElementById('nn-hide-gift')) return;
             var s = document.createElement('style');
             s.id = 'nn-hide-gift';
-            s.textContent = '.row-gift,.quick-gift-btn{display:none !important;}';
+            s.textContent = '.row-gift,.quick-gift-btn,.gift-banner{display:none !important;}';
             (document.head || document.documentElement).appendChild(s);
         };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
