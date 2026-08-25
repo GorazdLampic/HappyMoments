@@ -1811,7 +1811,7 @@ function wizardHeroShareChip(shareText) {
 }
 
 function wizardMilestoneRow(displayText, dateStr, personName, extraClass) {
-    const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 https://nicenumbers.app';
+    const shareText = (personName ? personName + ': ' : '') + displayText + ' ' + tt('share_on') + ' ' + dateStr + ' \u2014 ' + SHARE_APP_URL;
     const safeMsg = jsAttr(shareText);
     // Tapping a row shares it directly. During onboarding the affordance is
     // labelled ("Share" + arrow) to teach the gesture; the dashboard uses the
@@ -2090,7 +2090,7 @@ function _wizardCreateAndReveal(name, dateStr, revealElId, revealStepId) {
         }
 
         // Build reveal HTML — clean, spacious, large type
-        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — https://nicenumbers.app';
+        const heroShareMsg = name + ': ' + (m.isCosmic ? (m.description || m.unitName) : (m.value.toLocaleString() + ' ' + localizedUnit(m.value, m.unitName))) + ' on ' + formatMilestoneDate(m.date) + ' — ' + SHARE_APP_URL;
         // Age-stats hook only on the "Me" reveal (Step 2), not friend reveals.
         const ageStripHtml = revealElId === 'wizardReveal' ? renderAgeStatsStrip(date) : '';
         if (m.isCosmic) {
@@ -2330,7 +2330,7 @@ function wizardShowCombined(isRefresh) {
                 <div class="hero-meta-text">
                     <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
                 </div>
-                ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — https://nicenumbers.app')}
+                ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' days combined on ' + dateDisplay + ' — ' + SHARE_APP_URL)}
             </div>
         `;
     } else {
@@ -2454,7 +2454,7 @@ function wizardDiscoverFriend() {
             const dateOpts = { month: 'long', day: 'numeric', year: 'numeric' };
             const locale = typeof getAppLocale === 'function' ? getAppLocale() : undefined;
             const dateStr2 = friendM.date.toLocaleDateString(locale, dateOpts);
-            shareMsg = `Did you know you reach ${displayText} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 https://nicenumbers.app`;
+            shareMsg = `Did you know you reach ${displayText} on ${dateStr2}? That\u2019s worth celebrating! \ud83c\udf89 ${SHARE_APP_URL}`;
         } else {
             shareMsg = typeof generateShareMessage === 'function' ? generateShareMessage(friendM) : '';
         }
@@ -2830,7 +2830,7 @@ function wizardShowCombinedAndName() {
             <div class="hero-meta-text">
                 <div class="wizard-reveal-date">${dateDisplay} <span class="wizard-reveal-countdown">&middot;&nbsp;${tt('wiz_in_time', { time: bestDist.toLocaleString(locale) + ' ' + plural(bestDist, 'day') })}</span></div>
             </div>
-            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — https://nicenumbers.app')}
+            ${wizardHeroShareChip(namesStr + ': ' + bestTarget.toLocaleString(locale) + ' ' + (hero ? localizedUnit(bestTarget, hero.unitName || hero.unit) : localizedUnit(2, 'days')) + ' combined on ' + dateDisplay + ' — ' + SHARE_APP_URL)}
         </div>
         ${moreCombinedHtml ? `<div style="margin-top:14px;border-top:1px solid var(--border,#333);padding-top:10px;"><div style="font-size:0.75rem;color:var(--warning);text-transform:uppercase;letter-spacing:0.08em;padding:4px 0 6px;font-weight:600;">${tt('wiz_more_together')}</div><div class="wizard-milestone-list">${moreCombinedHtml}</div>${extraCombinedHtml ? `<div id="wizCombExtra6" style="display:none;" class="wizard-milestone-list">${extraCombinedHtml}</div><div id="wizCombToggle6" style="cursor:pointer;color:var(--warning,#d4b876);padding:8px;text-align:center;font-size:0.88rem;" onclick="toggleMoreList('wizCombExtra6','wizCombToggle6',${combinedList.length - TOP6})">${_moreListLabel(combinedList.length - TOP6)}</div>` : ''}</div>` : ''}
         <div style="border-top:1px solid var(--border,#333);margin-top:14px;padding-top:12px;">
@@ -3206,7 +3206,7 @@ function wizardShowTeamMilestones() {
     el.innerHTML = `
         <h2 class="wizard-question" style="font-size:1.4rem;line-height:1.35;margin-top:0;margin-bottom:var(--space-sm);">${tt('wiz_belong_all')}</h2>
         ${hero ? `
-            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${jsAttr(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' — https://nicenumbers.app')}')">
+            <div style="cursor:pointer;" onclick="wizardSelectMsRow('heroTeam','${jsAttr(groupName + ': ' + hero.value.toLocaleString(locale) + ' ' + localizedUnit(hero.value, hero.unitName || hero.unit) + ' combined on ' + formatMilestoneDate(hero.date) + ' — ' + SHARE_APP_URL)}')">
             <div class="wizard-reveal-number-wrap">
                 <div class="wizard-reveal-number-line">
                     <span class="wizard-reveal-number" style="font-size:2rem;margin:6px 0 2px;">${hero.value.toLocaleString(locale)}</span>
@@ -3307,7 +3307,7 @@ function wizardBuildShareScreen() {
             const val = formatMilestoneValue(best.value, locale);
             const unit = localizedUnit(best.value, best.unitName || best.unit || '');
             const ds = formatMilestoneDate(best.date);
-            const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? https://nicenumbers.app';
+            const shareText = 'Did you know you turn ' + val + ' ' + unit + ' on ' + ds + '? ' + SHARE_APP_URL;
             const uid = 'share9more_' + e.id.replace(/[^a-z0-9]/gi, '');
             // More milestones for this person — each row shareable
             let moreRows = '';
@@ -3315,7 +3315,7 @@ function wizardBuildShareScreen() {
                 const v2 = formatMilestoneValue(m.value, locale);
                 const u2 = localizedUnit(m.value, m.unitName || m.unit || '');
                 const ds2 = formatMilestoneDate(m.date);
-                const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? https://nicenumbers.app';
+                const st2 = 'Did you know you turn ' + v2 + ' ' + u2 + ' on ' + ds2 + '? ' + SHARE_APP_URL;
                 moreRows += `<div onclick="wizardShareForPerson('${jsAttr(e.name)}', '${jsAttr(st2)}')" style="display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-top:1px solid rgba(255,255,255,0.06);cursor:pointer;">
                     <span style="color:var(--text);font-size:0.85rem;">${v2} ${u2}</span>
                     <span style="color:var(--text-muted);font-size:0.8rem;">${ds2}</span>
@@ -3360,7 +3360,7 @@ function wizardShareForPerson(name, message) {
 
 function wizardShareGroup() {
     const groupName = document.getElementById('groupBuilderTitle')?.value?.trim() || tt('wiz_group_family');
-    const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at https://nicenumbers.app';
+    const message = 'Our ' + groupName + ' group has amazing milestones coming! Discover yours at ' + SHARE_APP_URL;
     showSharePreview(message, groupName);
     _track('onboard_share_group');
 }
@@ -6305,6 +6305,10 @@ function getShareCategory(m) {
 }
 
 const APP_SHARE_LINK_DEFAULT = '\n\nDiscover your special numbers \u2192 https://nicenumbers.app';
+// UTM-tagged base URL for the inline share strings that DON'T route through
+// getAppShareLink(), so those shares are attributable too (utm_source=share
+// shows up in analytics.js -> /api/admin?action=campaigns).
+const SHARE_APP_URL = 'https://nicenumbers.app/?utm_source=share&utm_medium=app&utm_campaign=quickshare';
 
 function getAppShareLink(milestone) {
     const locale = getAppLocale().split('-')[0];
@@ -6316,22 +6320,34 @@ function getAppShareLink(milestone) {
         linkText = APP_SHARE_LINK_DEFAULT;
     }
 
-    // Generate personalized deep link if milestone has event info
-    if (milestone && milestone.eventName && milestone.eventId) {
+    // Build the shared link's query string.
+    // - UTM tags let the backend attribute visits/installs back to shares
+    //   (analytics.js captures utm_*; /api/admin?action=campaigns groups them).
+    //   Without this an install that came from a share is invisible — especially
+    //   Android installs, which never open the web deep link.
+    // - The personalized n/d deep link is added ONLY when sharing SOMEONE ELSE's
+    //   milestone. The user's own ("Me") milestone must not leak "Me" to the
+    //   recipient ("Me will be ..."); a self-share simply invites them to find
+    //   THEIR own number, landing on the normal app (with attribution) instead of
+    //   a bare homepage. This is the fix for the 380-shares → 15-opens leak.
+    const params = new URLSearchParams();
+    const isSelfShare = !milestone || milestone.eventName === 'Me' || !milestone.eventId;
+    if (!isSelfShare) {
         const event = appData.events.find(e => e.id === milestone.eventId);
         if (event && event.date) {
             const dateStr = event.date instanceof Date
                 ? event.date.toISOString().split('T')[0]
                 : String(event.date).split('T')[0];
-            const params = new URLSearchParams({
-                n: event.name,
-                d: dateStr,
-                hl: locale
-            });
-            return linkText.replace('https://nicenumbers.app', `https://nicenumbers.app/?${params.toString()}`);
+            params.set('n', event.name);
+            params.set('d', dateStr);
         }
     }
-    return linkText;
+    params.set('hl', locale);
+    params.set('utm_source', 'share');
+    params.set('utm_medium', 'app');
+    params.set('utm_campaign', (milestone && milestone.unitName) ? String(milestone.unitName) : 'milestone');
+
+    return linkText.replace('https://nicenumbers.app', `https://nicenumbers.app/?${params.toString()}`);
 }
 
 // Generate deep link URL for a specific event
@@ -6341,9 +6357,32 @@ function getDeepLinkUrl(event) {
         ? event.date.toISOString().split('T')[0]
         : String(event.date).split('T')[0];
     const locale = (typeof getAppLocale === 'function') ? getAppLocale().split('-')[0] : 'en';
-    const params = new URLSearchParams({ n: event.name, d: dateStr, hl: locale });
+    const params = new URLSearchParams({ n: event.name, d: dateStr, hl: locale,
+        utm_source: 'share', utm_medium: 'app', utm_campaign: 'deeplink' });
     return `https://nicenumbers.app/?${params.toString()}`;
 }
+
+// Gift icon is hidden for a user's first few app opens. Rationale (from the
+// funnel: high share-intent, near-zero recipient pull): the first experience
+// should be purely find -> share. A "buy a gift" icon on day one is a
+// distraction that competes with sharing. It appears from the Nth open onward.
+(function initGiftVisibility() {
+    try {
+        var REVEAL_AFTER = 3; // opens; gift becomes visible on the 4th open
+        var n = (parseInt(localStorage.getItem('nn_open_count') || '0', 10) || 0) + 1;
+        localStorage.setItem('nn_open_count', String(n));
+        if (n > REVEAL_AFTER) return; // gift visible — do nothing
+        var apply = function () {
+            if (document.getElementById('nn-hide-gift')) return;
+            var s = document.createElement('style');
+            s.id = 'nn-hide-gift';
+            s.textContent = '.row-gift,.quick-gift-btn{display:none !important;}';
+            (document.head || document.documentElement).appendChild(s);
+        };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
+        else apply();
+    } catch (e) {}
+})();
 
 function generateChallengeMessage(m) {
     if (!m) return null;
@@ -6352,7 +6391,7 @@ function generateChallengeMessage(m) {
     const dateStr = m.date.toLocaleDateString(getAppLocale(), { month: 'long', day: 'numeric', year: 'numeric' });
     const name = m.eventName || '';
 
-    const link = 'https://nicenumbers.app';
+    const link = SHARE_APP_URL;
     const templates = [
         `I just discovered something fun — ${name} will be ${val} ${unit} on${dateStr}! Have you checked YOUR special numbers? ${link}`,
         `Fun fact: ${name} hits ${val} ${unit} on ${dateStr}! Want to find your own special number milestones? ${link}`,
@@ -6425,7 +6464,7 @@ function quickShare(idx) {
 }
 
 async function shareAppLink() {
-    const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\nhttps://nicenumbers.app';
+    const text = 'Discover when you turn 1 billion seconds, 10,000 days, or hit a special number milestone. Track milestones for everyone you care about!\n\n' + SHARE_APP_URL;
     if (await _nativeShareSheet({ title: 'Nice Numbers', text })) {
         // native OS share sheet handled it
     } else if (navigator.share) {
@@ -6476,15 +6515,18 @@ function promptShareApp() {
 // verb/possessive agreement. EN + SL localized; other locales fall back to EN
 // (localized self-phrasing is a known i18n follow-up).
 const SELF_SHARE_I18N = {
+    // Recipient-first: the shared text must make the READER want to find their
+    // own number, not just admire the sender's. Each line plants "you have one
+    // too" before the app link (which follows via getAppShareLink).
     en: [
-        "On {date} I hit a milestone: {value}! 🎉 Worth celebrating.",
-        "Just {countdown} to go — my next milestone: {value}! 🎉",
-        "Coming up on {date}: {value}! 🎉 A number worth celebrating."
+        "I just found out I hit {value} on {date} 🎉 — a number I never knew existed. You've got one hiding in your birthday too. What's yours?",
+        "On {date} I reach {value} 🎉 Turns out everyone has a once-in-a-lifetime number like this. When's yours?",
+        "{value} — that's me, {date} 🎉 You have a date like this you've never celebrated. Find it:"
     ],
     sl: [
-        "Na dan {date} dosežem mejnik: {value}! 🎉 Vredno praznovanja.",
-        "Še {countdown} do mojega mejnika: {value}! 🎉",
-        "{date} me čaka: {value}! 🎉 Številka, vredna praznovanja."
+        "Pravkar sem izvedel, da dosežem {value} dne {date} 🎉 — številka, za katero nisem vedel. Tudi ti imaš svojo, skrito v rojstnem dnevu. Kdaj je tvoja?",
+        "Na dan {date} dosežem {value} 🎉 Vsak ima svojo enkratno številko kot je ta. Kdaj je tvoja?",
+        "{value} — to sem jaz, {date} 🎉 Tudi ti imaš tak datum, ki ga še nisi praznoval. Poišči ga:"
     ]
 };
 

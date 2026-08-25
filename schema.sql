@@ -23,9 +23,21 @@ CREATE TABLE IF NOT EXISTS events (
     action TEXT NOT NULL,
     data TEXT,
     country TEXT,
+    device_id TEXT,
+    platform TEXT,
+    app_version TEXT,
     created_at INTEGER NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_events_action ON events(action);
 CREATE INDEX IF NOT EXISTS idx_events_created ON events(created_at);
 CREATE INDEX IF NOT EXISTS idx_events_user ON events(user_id);
+CREATE INDEX IF NOT EXISTS idx_events_device ON events(device_id);
+CREATE INDEX IF NOT EXISTS idx_events_platform ON events(platform);
+
+-- For an EXISTING database, apply these once (additive, safe on a live table):
+--   ALTER TABLE events ADD COLUMN device_id TEXT;
+--   ALTER TABLE events ADD COLUMN platform TEXT;
+--   ALTER TABLE events ADD COLUMN app_version TEXT;
+--   CREATE INDEX IF NOT EXISTS idx_events_device ON events(device_id);
+--   CREATE INDEX IF NOT EXISTS idx_events_platform ON events(platform);

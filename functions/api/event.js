@@ -20,8 +20,11 @@ export async function onRequestPost(context) {
 
         const country = context.request.headers.get('CF-IPCountry') || 'XX';
         const stmt = db.prepare(
-            'INSERT INTO events (session_id, user_id, action, data, country, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO events (session_id, user_id, action, data, country, device_id, platform, app_version, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
+
+        // Normalize platform to a small known set so the app-vs-web split stays clean.
+        const PLATFORMS = new Set(['web', 'android', 'ios']);
 
         const batch = events.map(e => stmt.bind(
             String(e.sid || '').slice(0, 20),
@@ -29,6 +32,9 @@ export async function onRequestPost(context) {
             String(e.action || '').slice(0, 50),
             JSON.stringify(e.data || {}).slice(0, 500),
             country,
+            e.did ? String(e.did).slice(0, 40) : null,
+            PLATFORMS.has(e.platform) ? e.platform : (e.platform ? 'other' : null),
+            e.ver ? String(e.ver).slice(0, 20) : null,
             e.ts || Date.now()
         ));
 
