@@ -166,7 +166,7 @@ All backend secrets are set in **Cloudflare Pages → Settings → Environment v
 
 Schema: `schema.sql` (+ tables auto-created on first use by their endpoints). Tables:
 - **`users`** — `uid` (Firebase), email, display_name, `premium_until`, `stripe_customer_id`, utm_*, timestamps. (Legacy account path; account-less premium uses `premium` below.)
-- **`events`** — append-only analytics: `session_id`, `user_id`, `action`, `data` (JSON), `country`, `created_at`.
+- **`events`** — append-only analytics: `session_id`, `user_id`, `action`, `data` (JSON), `country`, `device_id`, `platform` (`web`/`android`/`ios`/`other`), `app_version`, `created_at`. `device_id` = persistent anonymous id (localStorage `nn_device_id`) for retention/DAU; `platform` distinguishes app vs web. **Native delivery fix:** `analytics.js` sends beacons through the absolute `nicenumbers.app` origin when native (was a relative `/api/event` that hit the local bundle and silently dropped every in-app event) and uses a `text/plain` beacon (CORS-safelisted → no preflight cross-origin).
 - **`premium`** — account-less premium by email: `email` (PK), `premium_until`, `stripe_customer_id`, `updated_at`. Written by `webhook.js`, read by `premium-status.js`.
 - **`gift_files`** — `id` (PK), `data` (base64 JPEG print file, <1.9 MB), `created`. Served by `gift-file.js` to Printful.
 - **`reminders`** — opt-in: `id` (device), `subscription` (JSON), `events` (JSON `[{n,d}]`), `locale`, `tz`, timestamps. Created by `reminders.js`, read by the cron worker.
